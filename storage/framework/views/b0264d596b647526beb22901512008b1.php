@@ -1,4 +1,4 @@
-<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="{ step:<?php if ((object) ('step') instanceof \Livewire\WireDirective) : ?>window.Livewire.find('<?php echo e($__livewire->getId(), false); ?>').entangle('<?php echo e('step'->value(), false); ?>')<?php echo e('step'->hasModifier('live') ? '.live' : '', false); ?><?php else : ?>window.Livewire.find('<?php echo e($__livewire->getId(), false); ?>').entangle('<?php echo e('step', false); ?>')<?php endif; ?>.defer, max:3 }">
     <div class="w-full sm:mx-auto sm:max-w-2xl">
 
         
@@ -129,11 +129,6 @@
 <?php unset($__componentOriginaldb6747d79aee05aaab45bb3a98f6c6bc); ?>
 <?php endif; ?>
                     </div>
-
-                    
-
-                    
-                    
 
                 </div>
             </div>

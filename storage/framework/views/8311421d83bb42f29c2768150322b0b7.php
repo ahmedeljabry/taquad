@@ -29,17 +29,17 @@
 
         </label>
     <?php endif; ?>
-    
+
     
     <div class="mt-2.5 relative">
 
         
         <textarea
             <?php if($required): ?> required <?php endif; ?>
-            placeholder="<?php echo e(htmlspecialchars_decode($placeholder), false); ?>" 
-            wire:model="<?php echo e($model, false); ?>" 
-            rows="<?php echo e($rows, false); ?>" 
-            id="textarea-input-component-id-<?php echo e($model, false); ?>" 
+            placeholder="<?php echo e(htmlspecialchars_decode($placeholder), false); ?>"
+            wire:model="<?php echo e($model, false); ?>"
+            rows="<?php echo e($rows, false); ?>"
+            id="textarea-input-component-id-<?php echo e($model, false); ?>"
             class="disabled:cursor-not-allowed resize-none focus:!ring focus:!ring-opacity-30 focus:!border-transparent block w-full ltr:pr-10 ltr:pl-4 rtl:pl-10 rtl:!pr-4 py-2.5 placeholder:font-normal placeholder:text-gray-400 dark:placeholder-zinc-300 text-xs shadow-sm font-medium tracking-wide text-zinc-700 dark:text-white rounded-md dark:bg-transparent <?php echo e($errors->first($model) ? 'focus:!ring-red-600 focus:!border-red-600 border-red-500' : 'focus:!ring-primary-600 focus:!border-primary-600 border-gray-300 dark:border-zinc-600', false); ?> scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-900 dark:scrollbar-track-zinc-600" <?php echo e($attributes, false); ?>>
             </textarea>
 
@@ -77,7 +77,7 @@
 
             // Check if element has maxlength attribute
             if ( counterElementInput<?php echo e(str_replace(['.', '-'], '_', $model), false); ?> && counterElementInput<?php echo e(str_replace(['.', '-'], '_', $model), false); ?>.hasAttribute('maxlength') ) {
-                
+
                 // Set max characters allowed
                 counterElementEnd<?php echo e(str_replace(['.', '-'], '_', $model), false); ?>.textContent = counterElementInput<?php echo e(str_replace(['.', '-'], '_', $model), false); ?>.getAttribute('maxlength');
 
@@ -116,4 +116,5 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
 
-</div><?php /**PATH C:\xampp\htdocs\taquad\resources\views/components/forms/textarea.blade.php ENDPATH**/ ?>
+</div>
+<?php /**PATH C:\xampp\htdocs\taquad\resources\views/components/forms/textarea.blade.php ENDPATH**/ ?>

@@ -32,15 +32,15 @@
 
     
     <div class="<?php echo \Illuminate\Support\Arr::toCssClasses(['relative', 'mt-2.5' => isset($label)]); ?>">
-        <select 
-            id="select-component-id-<?php echo e($model, false); ?>"  
+        <select
+            id="select-component-id-<?php echo e($model, false); ?>"
             <?php if($live): ?>
                 wire:model.live="<?php echo e($model, false); ?>"
             <?php else: ?>
                 wire:model="<?php echo e($model, false); ?>"
             <?php endif; ?>
             class="disabled:cursor-not-allowed focus:!ring focus:!ring-opacity-30 focus:!border-transparent block w-full ltr:pr-10 ltr:pl-4 rtl:pl-10 rtl:!pr-4 py-2.5 placeholder:font-normal placeholder:!text-gray-200 dark:placeholder-zinc-300 text-xs shadow-sm font-medium tracking-wide text-zinc-700 dark:text-white rounded-md hover:!border-primary-600 dark:bg-transparent <?php echo e($errors->first($model) ? 'focus:!ring-red-600 focus:!border-red-600 border-red-500' : 'focus:!ring-primary-600 focus:!border-primary-600 border-gray-300 dark:border-zinc-600', false); ?>" <?php echo e($attributes, false); ?>>
-            
+
             
             <?php if($placeholder): ?>
                 <option hidden><?php echo e(htmlspecialchars_decode($placeholder), false); ?></option>
@@ -49,7 +49,7 @@
             
             <?php echo e($options, false); ?>
 
-    
+
         </select>
     </div>
 
@@ -70,4 +70,5 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
 
-</div><?php /**PATH C:\xampp\htdocs\taquad\resources\views/components/forms/select-simple.blade.php ENDPATH**/ ?>
+</div>
+<?php /**PATH C:\xampp\htdocs\taquad\resources\views/components/forms/select-simple.blade.php ENDPATH**/ ?>

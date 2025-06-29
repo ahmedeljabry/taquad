@@ -1,4 +1,4 @@
-<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="{ step:@entangle('step').defer, max:3 }">
     <div class="w-full sm:mx-auto sm:max-w-2xl">
 
         {{-- Loading --}}
@@ -67,34 +67,6 @@
                             </x-slot:options>
                         </x-forms.select-simple>
                     </div>
-
-                  {{-- Subcategory
-                    <div class="col-span-12" wire:key="create-service-subcategories">
-                        <x-forms.select-simple required live
-                            model="subcategory"
-                            :label="__('messages.t_subcategory')"
-                            :placeholder="__('messages.t_choose_subcategory')">
-                            <x-slot:options>
-                                @foreach ($subcategories as $sub)
-                                    <option value="{{ $sub->id }}">{{ $sub->name }}</option>
-                                @endforeach
-                            </x-slot:options>
-                        </x-forms.select-simple>
-                    </div> --}}
-
-                    {{-- Childcategory --}}
-                    {{-- <div class="col-span-12" wire:key="create-service-childcategories">
-                        <x-forms.select-simple required
-                            model="childcategory"
-                            :label="__('messages.t_childcategory')"
-                            :placeholder="__('messages.t_choose_childcategory')">
-                            <x-slot:options>
-                                @foreach ($childcategories as $child)
-                                    <option value="{{ $child->id }}">{{ $child->name }}</option>
-                                @endforeach
-                            </x-slot:options>
-                        </x-forms.select-simple>
-                    </div> --}}
 
                 </div>
             </div>

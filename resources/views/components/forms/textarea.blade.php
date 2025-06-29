@@ -16,17 +16,17 @@
 
         </label>
     @endif
-    
+
     {{-- Form --}}
     <div class="mt-2.5 relative">
 
         {{-- Textarea --}}
         <textarea
             @if ($required) required @endif
-            placeholder="{{ htmlspecialchars_decode($placeholder) }}" 
-            wire:model="{{ $model }}" 
-            rows="{{ $rows }}" 
-            id="textarea-input-component-id-{{ $model }}" 
+            placeholder="{{ htmlspecialchars_decode($placeholder) }}"
+            wire:model="{{ $model }}"
+            rows="{{ $rows }}"
+            id="textarea-input-component-id-{{ $model }}"
             class="disabled:cursor-not-allowed resize-none focus:!ring focus:!ring-opacity-30 focus:!border-transparent block w-full ltr:pr-10 ltr:pl-4 rtl:pl-10 rtl:!pr-4 py-2.5 placeholder:font-normal placeholder:text-gray-400 dark:placeholder-zinc-300 text-xs shadow-sm font-medium tracking-wide text-zinc-700 dark:text-white rounded-md dark:bg-transparent {{ $errors->first($model) ? 'focus:!ring-red-600 focus:!border-red-600 border-red-500' : 'focus:!ring-primary-600 focus:!border-primary-600 border-gray-300 dark:border-zinc-600' }} scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-900 dark:scrollbar-track-zinc-600" {{ $attributes }}>
             </textarea>
 
@@ -63,7 +63,7 @@
 
             // Check if element has maxlength attribute
             if ( counterElementInput{{ str_replace(['.', '-'], '_', $model) }} && counterElementInput{{ str_replace(['.', '-'], '_', $model) }}.hasAttribute('maxlength') ) {
-                
+
                 // Set max characters allowed
                 counterElementEnd{{ str_replace(['.', '-'], '_', $model) }}.textContent = counterElementInput{{ str_replace(['.', '-'], '_', $model) }}.getAttribute('maxlength');
 

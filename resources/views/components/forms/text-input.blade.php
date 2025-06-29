@@ -20,15 +20,15 @@
     <div @class(['relative', 'mt-2.5' => isset($label)])>
 
         {{-- Input --}}
-        <input 
+        <input
             @if ($required) required @endif
-            type="{{ $type }}" 
+            type="{{ $type }}"
             @if ($placeholder) placeholder="{{ htmlspecialchars_decode($placeholder) }}" @endif
-            wire:model="{{ $model }}" 
-            id="text-input-component-id-{{ $model }}" 
-            {{ $type === 'password' ? 'readonly' : '' }} 
-            onfocus="{{ $type === 'password' ? "this.removeAttribute('readonly');" : "" }}" 
-            class="disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-transparent focus:!ring focus:!ring-opacity-30 focus:!border-transparent block w-full ltr:pr-10 ltr:pl-4 rtl:pl-10 rtl:!pr-4 py-2.5 placeholder:font-normal placeholder:text-gray-400 dark:placeholder-zinc-300 text-xs shadow-sm font-medium tracking-wide text-zinc-700 dark:text-white rounded-md dark:bg-transparent {{ $errors->first($model) ? 'focus:!ring-red-600 focus:!border-red-600 border-red-500' : 'focus:!ring-primary-600 focus:!border-primary-600 border-gray-300 dark:border-zinc-600' }}" 
+            wire:model="{{ $model }}"
+            id="text-input-component-id-{{ $model }}"
+            {{ $type === 'password' ? 'readonly' : '' }}
+            onfocus="{{ $type === 'password' ? "this.removeAttribute('readonly');" : "" }}"
+            class="disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-transparent focus:!ring focus:!ring-opacity-30 focus:!border-transparent block w-full ltr:pr-10 ltr:pl-4 rtl:pl-10 rtl:!pr-4 py-2.5 placeholder:font-normal placeholder:text-gray-400 dark:placeholder-zinc-300 text-xs shadow-sm font-medium tracking-wide text-zinc-700 dark:text-white rounded-md dark:bg-transparent {{ $errors->first($model) ? 'focus:!ring-red-600 focus:!border-red-600 border-red-500' : 'focus:!ring-primary-600 focus:!border-primary-600 border-gray-300 dark:border-zinc-600' }}"
             {{ $attributes }} />
 
         @if ($suffix)

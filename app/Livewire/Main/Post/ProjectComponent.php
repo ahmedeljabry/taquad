@@ -3,15 +3,14 @@ namespace App\Livewire\Main\Post;
 
 use Livewire\Component;
 use WireUi\Traits\Actions;
-use App\Models\Childcategory;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Illuminate\Database\Eloquent\Collection;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
-use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
-use App\Models\{ ProjectPlan ,Subcategory ,ProjectSkill ,Project ,ProjectCategory ,ProjectRequiredSkill ,ProjectSubscription };
 use App\Http\Validators\Main\Post\ProjectValidator;
-use Illuminate\Support\Str;
+use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
+use App\Models\{ ProjectPlan ,ProjectSkill ,Project ,ProjectCategory ,ProjectRequiredSkill ,ProjectSubscription };
 
 class ProjectComponent extends Component
 {
@@ -26,9 +25,6 @@ class ProjectComponent extends Component
     public $currency_symbol;
     public $required_skills = [];
     public $selected_plans  = [];
-
-    public $subcategories   = [];
-    public $childcategories = [];
     public $skills          = [];
 
     #[Locked]
