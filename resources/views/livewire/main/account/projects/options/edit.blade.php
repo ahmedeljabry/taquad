@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
     <div class="w-full sm:mx-auto sm:max-w-2xl">
 
         {{-- Loading --}}
@@ -37,8 +37,8 @@
                     {{-- Title --}}
                     <div class="col-span-12">
                         <x-forms.text-input required
-                            label="{{ __('messages.t_project_title') }}" 
-                            placeholder="{{ __('messages.t_enter_title') }}" 
+                            label="{{ __('messages.t_project_title') }}"
+                            placeholder="{{ __('messages.t_enter_title') }}"
                             model="title"
                             icon="text-italic" />
                     </div>
@@ -46,8 +46,8 @@
                     {{-- Description --}}
                     <div class="col-span-12">
                         <x-forms.textarea required
-                            label="{{ __('messages.t_project_description') }}" 
-                            placeholder="{{ __('messages.t_enter_description') }}" 
+                            label="{{ __('messages.t_project_description') }}"
+                            placeholder="{{ __('messages.t_enter_description') }}"
                             model="description"
                             :rows="12"
                             icon="text"
@@ -132,7 +132,7 @@
                 @if ($category)
                     @foreach ($skills as $skill)
                         @if ($skill?->name)
-                        
+
                             {{-- Check if skill selected --}}
                             @php
                                 $is_skill_selected = in_array($skill->id, $required_skills);
@@ -154,7 +154,7 @@
                         @endif
                     @endforeach
                 @else
-                
+
                     {{-- Select a category first --}}
                     <div class="w-full">
                         <div class="py-2.5 px-3 rounded text-yellow-700 bg-yellow-100">
@@ -209,7 +209,7 @@
                             {{-- Fixed price --}}
                             <li>
                                 <input type="radio" id="post-project-salary-type-fixed" name="salary_type" wire:model="salary_type" value="fixed" class="hidden peer">
-                                <label for="post-project-salary-type-fixed" class="inline-flex items-center justify-between w-full p-4 text-gray-500 bg-white border shadow-sm border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-zinc-700 dark:peer-checked:text-primary-600 peer-checked:border-primary-600 peer-checked:text-primary-600 hover:text-gray-600 hover:bg-gray-100 dark:text-zinc-400 dark:bg-zinc-800 dark:hover:bg-zinc-700">                           
+                                <label for="post-project-salary-type-fixed" class="inline-flex items-center justify-between w-full p-4 text-gray-500 bg-white border shadow-sm border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-zinc-700 dark:peer-checked:text-primary-600 peer-checked:border-primary-600 peer-checked:text-primary-600 hover:text-gray-600 hover:bg-gray-100 dark:text-zinc-400 dark:bg-zinc-800 dark:hover:bg-zinc-700">
                                     <div class="block">
                                         <div class="w-full text-xs+ tracking-wide font-semibold">
                                             @lang('messages.t_fixed_price')
@@ -237,8 +237,8 @@
                     {{-- Min price --}}
                     <div class="col-span-12 md:col-span-6">
                         <x-forms.text-input required
-                            :label="__('messages.t_min_price')" 
-                            placeholder="0.00" 
+                            :label="__('messages.t_min_price')"
+                            placeholder="0.00"
                             model="min_price"
                             suffix="{{ $currency_symbol }}" />
                     </div>
@@ -246,8 +246,8 @@
                     {{-- Max price --}}
                     <div class="col-span-12 md:col-span-6">
                         <x-forms.text-input required
-                            :label="__('messages.t_max_price')" 
-                            placeholder="0.00" 
+                            :label="__('messages.t_max_price')"
+                            placeholder="0.00"
                             model="max_price"
                             suffix="{{ $currency_symbol }}" />
                     </div>
@@ -328,9 +328,9 @@
                                                             {{ $plan->days }} {{ $plan->days > 1 ? __('messages.t_days') : __('messages.t_day') }}
                                                         </div>
                                                     @endif
-                                                
+
                                                 </div>
-                                                
+
                                                 <!-- Description -->
                                                 <div class="text-xs+ font-normal leading-6 text-gray-500 dark:text-zinc-200 tracking-wide">
                                                     {{ $plan->description }}
@@ -371,7 +371,7 @@
                     </div>
 
                 </div>
-                
+
             </div>
         @endif
 

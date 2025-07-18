@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
             <div class="divide-y divide-gray-200 dark:divide-zinc-700 lg:grid lg:grid-cols-12 lg:divide-y-0 lg:divide-x rtl:divide-x-reverse">
@@ -19,7 +19,7 @@
                             <h2 class="text-base leading-6 font-bold text-gray-900 dark:text-gray-100">{{ __('messages.t_billing_information') }}</h2>
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">{{ __('messages.t_billing_information_subtitle') }}</p>
                         </div>
-                        
+
                         {{-- Section content --}}
                         <div class="grid grid-cols-12 md:gap-x-8 gap-y-8 mb-6">
 
@@ -44,8 +44,8 @@
                             {{-- Firstname --}}
                             <div class="col-span-12 md:col-span-6">
                                 <x-forms.text-input required
-                                    label="{{ __('messages.t_firstname') }}" 
-                                    placeholder="{{ __('messages.t_enter_firstname') }}" 
+                                    label="{{ __('messages.t_firstname') }}"
+                                    placeholder="{{ __('messages.t_enter_firstname') }}"
                                     model="firstname"
                                     icon="user" />
                             </div>
@@ -53,35 +53,35 @@
                             {{-- Lastname --}}
                             <div class="col-span-12 md:col-span-6">
                                 <x-forms.text-input required
-                                    label="{{ __('messages.t_lastname') }}" 
-                                    placeholder="{{ __('messages.t_enter_lastname') }}" 
+                                    label="{{ __('messages.t_lastname') }}"
+                                    placeholder="{{ __('messages.t_enter_lastname') }}"
                                     model="lastname"
                                     icon="user" />
                             </div>
 
                             {{-- Company --}}
                             <div class="col-span-12">
-                                <x-forms.text-input 
-                                    label="{{ __('messages.t_company') }}" 
-                                    placeholder="{{ __('messages.t_enter_company_optional') }}" 
+                                <x-forms.text-input
+                                    label="{{ __('messages.t_company') }}"
+                                    placeholder="{{ __('messages.t_enter_company_optional') }}"
                                     model="company"
                                     icon="globe" />
                             </div>
 
                             {{-- City --}}
                             <div class="col-span-12 md:col-span-6">
-                                <x-forms.text-input 
-                                    label="{{ __('messages.t_city') }}" 
-                                    placeholder="{{ __('messages.t_enter_city') }}" 
+                                <x-forms.text-input
+                                    label="{{ __('messages.t_city') }}"
+                                    placeholder="{{ __('messages.t_enter_city') }}"
                                     model="city"
                                     icon="buildings" />
                             </div>
 
                             {{-- Zip --}}
                             <div class="col-span-12 md:col-span-6">
-                                <x-forms.text-input 
-                                    label="{{ __('messages.t_zip') }}" 
-                                    placeholder="{{ __('messages.t_enter_zip') }}" 
+                                <x-forms.text-input
+                                    label="{{ __('messages.t_zip') }}"
+                                    placeholder="{{ __('messages.t_enter_zip') }}"
                                     model="zip"
                                     icon="file-zip" />
                             </div>
@@ -98,7 +98,7 @@
                                         :label="__('messages.t_country')"
                                         :placeholder="__('messages.t_choose_country')"
                                         data="manual">
-                                    
+
                                         {{-- Values --}}
                                         @foreach ($countries as $country)
                                             <x-bladewind.select-item :label="$country->name" :value="$country->id" />
@@ -107,18 +107,18 @@
                                     </x-bladewind.select>
                                 </div>
 
-                                {{-- Error --}}  
+                                {{-- Error --}}
                                 @error('country')
                                     <p class="mt-1 text-xs text-red-600 dark:text-red-500">{{ $errors->first('country') }}</p>
-                                @enderror 
+                                @enderror
 
                             </div>
 
                             {{-- Address --}}
                             <div class="col-span-12" wire:key="billing-address">
                                 <x-forms.textarea required
-                                    label="{{ __('messages.t_address') }}" 
-                                    placeholder="{{ __('messages.t_enter_address') }}" 
+                                    label="{{ __('messages.t_address') }}"
+                                    placeholder="{{ __('messages.t_enter_address') }}"
                                     model="address"
                                     rows="8"
                                     icon="map-pin" />
@@ -126,9 +126,9 @@
 
                             {{-- VAT number --}}
                             <div class="col-span-12">
-                                <x-forms.text-input 
-                                    label="{{ __('messages.t_vat_number') }}" 
-                                    placeholder="{{ __('messages.t_enter_vat_number_optional') }}" 
+                                <x-forms.text-input
+                                    label="{{ __('messages.t_vat_number') }}"
+                                    placeholder="{{ __('messages.t_enter_vat_number_optional') }}"
                                     model="vat_number"
                                     icon="percent" />
                             </div>
@@ -140,7 +140,7 @@
                     {{-- Actions --}}
                     <div class="py-4 px-4 flex justify-end sm:px-6 bg-transparent">
                         <x-forms.button action="update" text="{{ __('messages.t_update') }}"  />
-                    </div>                    
+                    </div>
 
                 </div>
 

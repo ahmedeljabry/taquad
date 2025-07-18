@@ -20,14 +20,9 @@ class HomeComponent extends Component
 
     public $earnings              = 0;
     public $total_reach           = 0;
-    public $total_gigs            = 0;
     public $awarded_projects      = 0;
-    public $completed_orders      = 0;
     public $pending_orders        = 0;
-    public $orders_under_progress = 0;
-    public $canceled_orders       = 0;
     public $latest_messages       = [];
-    public $latest_orders;
     public $latest_awarded_projects;
 
     /**
@@ -38,7 +33,7 @@ class HomeComponent extends Component
     public function mount()
     {
         try {
-            
+
             // Get user id
             $user_id                           = auth()->id();
 
@@ -74,34 +69,10 @@ class HomeComponent extends Component
             // Caluclate total reach
             $this->total_reach                 = Gig::where('user_id', $user_id)->sum('counter_impressions');
 
-            // Calculate total gigs
-            $this->total_gigs                  = Gig::where('user_id', $user_id)->count();
-
             // Calculate awarded projects
             $this->awarded_projects            = ProjectBid::where('user_id', $user_id)
                                                                 ->where('is_awarded', true)
                                                                 ->where('is_freelancer_accepted', true)
-                                                                ->count();
-
-            // Calculate completed orders
-            $this->completed_orders            = OrderItem::where('owner_id', $user_id)
-                                                                ->where('status', 'delivered')
-                                                                ->where('is_finished', true)
-                                                                ->count();
-
-            // Calculate pending orders
-            $this->pending_orders              = OrderItem::where('owner_id', $user_id)
-                                                                ->where('status', 'pending')
-                                                                ->count();
-
-            // Calculate order under progress
-            $this->orders_under_progress       = OrderItem::where('owner_id', $user_id)
-                                                                ->where('status', 'proceeded')
-                                                                ->count();
-
-            // Canceled orders
-            $this->canceled_orders             = OrderItem::where('owner_id', $user_id)
-                                                                ->where('status', 'canceled')
                                                                 ->count();
 
             // Get latest contacts
@@ -129,7 +100,7 @@ class HomeComponent extends Component
                                          ->where('to_id', $user_id)
                                          ->where('seen', false)
                                          ->latest()
-                                         ->first();  
+                                         ->first();
 
                 // Check if message exists
                 if ($latest_message) {
@@ -148,16 +119,6 @@ class HomeComponent extends Component
                 }
 
             }
-
-            // Get latest orders
-            $this->latest_orders = OrderItem::where('owner_id', $user_id)
-                                            ->whereHas('gig', function($query) {
-                                                return $query->whereHas('category');
-                                            })
-                                            ->whereHas('order.invoice')
-                                            ->latest()
-                                            ->take(8)
-                                            ->get();
 
             // Check if projects enabled
             if (settings('projects')->is_enabled) {
@@ -185,7 +146,7 @@ class HomeComponent extends Component
             throw $th;
         }
     }
-    
+
     /**
      * Render component
      *
@@ -222,5 +183,5 @@ class HomeComponent extends Component
 
         return view('livewire.main.seller.home.home');
     }
-    
+
 }

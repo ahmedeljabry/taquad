@@ -1,8 +1,8 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
 
     {{-- Loading --}}
     <x-forms.loading />
-    
+
     {{-- Empty state --}}
     <div class="max-w-4xl mx-auto mb-16">
         <div class="text-center">
@@ -52,7 +52,7 @@
                                 {{ $p->name }}
                             </span>
                         </span>
-                        
+
                         {{-- Logo --}}
                         @if ($p->logo)
                             <span class="flex items-center">
@@ -60,10 +60,10 @@
                             </span>
                         @endif
 
-                        
+
                     </label>
                 @endforeach
-              
+
             </div>
 
             {{-- Offline method --}}
@@ -81,7 +81,7 @@
                                     {{ $offline_method->name }}
                                 </span>
                             </span>
-                            
+
                             {{-- Logo --}}
                             @if ($offline_method->logo)
                                 <span class="flex items-center">
@@ -89,8 +89,8 @@
                                 </span>
                             @endif
 
-                            
-                        </label>              
+
+                        </label>
                 </div>
             @endif
 
@@ -155,7 +155,7 @@
                             <span>@lang('messages.t_go_back')</span>
                         </div>
                     </h2>
-          
+
                     <dl class="mt-6 space-y-2">
 
                         {{-- Get payment method --}}
@@ -167,7 +167,7 @@
                             } else {
                                 $payment_gateway = payment_gateway($selected_method);
                             }
-                            
+
                             // Get currency
                             $payment_currency = !empty($payment_gateway->currency) ? $payment_gateway->currency : null;
 
@@ -214,17 +214,17 @@
                         </div>
 
                     </dl>
-                    
+
                 </section>
 
                 {{-- PayPal --}}
                 @if ($selected_method === 'paypal' && isset($payment_gateway_params['paypal']))
                     <div class="w-full">
-                
+
                         {{-- Paypal button --}}
                         <div id="paypal-button-container" wire:ignore></div>
 
-                    </div> 
+                    </div>
                 @endif
 
                 {{-- cPay --}}
@@ -372,7 +372,7 @@
                         <button @click="window.makeRazorpayPayment" type="button" id="razorpay-payment-button" class="bg-primary-50 border-primary-200 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-primary-500 font-semibold hover:bg-primary-100/50 inline-flex items-center justify-center leading-5 px-3 py-3.5 rounded text-primary-800 text-sm w-full">
                             @lang('messages.t_continue')
                         </button>
-                        
+
                     </div>
                 @endif
 
@@ -390,7 +390,7 @@
                             <button id="stripe-payment-button" type="submit" class="mt-8 bg-primary-50 border-primary-200 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-primary-500 font-semibold hover:bg-primary-100/50 inline-flex items-center justify-center leading-5 px-3 py-3.5 rounded text-primary-800 text-sm w-full  disabled:bg-gray-200 dark:disabled:bg-zinc-700 disabled:text-gray-600 dark:disabled:text-zinc-500 disabled:cursor-not-allowed disabled:hover:bg-gray-200 dark:disabled:hover:bg-zinc-700">
                                 @lang('messages.t_continue')
                             </button>
-                            
+
                         </form>
 
                     </div>
@@ -417,11 +417,11 @@
         @endif
 
     </div>
-    
+
 </div>
 
 @push('scripts')
-    
+
     {{-- Events --}}
     <script>
         document.addEventListener('livewire:initialized', () => {
@@ -445,7 +445,7 @@
 
                         // Finalize the transaction
                         onApprove: function(data, actions) {
-                            
+
                             // Redirecting
                             location.href = "{{ url('callback/paypal?order=') }}" + data.orderID;
 
@@ -676,7 +676,7 @@
 
     {{-- Paystack.js --}}
     @if (payment_gateway('paystack')?->is_active)
-        <script src="https://js.paystack.co/v1/inline.js"></script> 
+        <script src="https://js.paystack.co/v1/inline.js"></script>
     @endif
 
 @endpush

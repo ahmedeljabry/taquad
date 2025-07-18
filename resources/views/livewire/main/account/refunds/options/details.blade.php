@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
             <div class="divide-y divide-gray-200 dark:divide-zinc-700 lg:grid lg:grid-cols-12 lg:divide-y-0 lg:divide-x rtl:divide-x-reverse">
@@ -92,7 +92,7 @@
                                                         <span class="text-green-600 text-sm font-medium">{{ __('messages.t_approved_by_admin', ['app_name' => config('app.name')]) }}</span>
                                                     </div>
                                                     @break
-                                                    
+
                                                 {{-- Closed --}}
                                                 @case('closed')
                                                     <div class="flex items-center space-x-2 rtl:space-x-reverse">
@@ -100,7 +100,7 @@
                                                         <span class="text-gray-600 text-sm font-medium">{{ __('messages.t_closed') }}</span>
                                                     </div>
                                                     @break
-                                                    
+
                                             @endswitch
 
                                             {{-- Amount --}}
@@ -208,7 +208,7 @@
                                                                     <svg class="ltr:-ml-1 rtl:-mr-1 ltr:mr-2 rtl:ml-2 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"> <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path> </svg>
                                                                     <span class="text-xs font-medium">{{ __('messages.t_close_refund') }}</span>
                                                                 </button>
-                                                                
+
                                                                 <x-forms.button action="send" :text="__('messages.t_send')" :block="false" />
 
                                                             </div>
@@ -268,7 +268,7 @@
                                             <span class="text-green-600 text-sm font-medium">{{ __('messages.t_approved_by_admin', ['app_name' => config('app.name')]) }}</span>
                                         </div>
                                         @break
-                                        
+
                                     {{-- Closed --}}
                                     @case('closed')
                                         <div class="flex items-center space-x-2 rtl:space-x-reverse">
@@ -276,7 +276,7 @@
                                             <span class="text-gray-600 text-sm font-medium">{{ __('messages.t_closed') }}</span>
                                         </div>
                                         @break
-                                        
+
                                 @endswitch
 
                                 {{-- Amount --}}

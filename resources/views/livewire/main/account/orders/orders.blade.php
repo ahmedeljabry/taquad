@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
             <div class="divide-y divide-gray-200 dark:divide-zinc-700 lg:grid lg:grid-cols-12 lg:divide-y-0 lg:divide-x rtl:divide-x-reverse">
@@ -35,7 +35,7 @@
                                 </div>
                             </div>
                         @endif
-                        
+
                         {{-- Section content --}}
                         <div class="w-full mb-6">
                             @forelse ($orders as $order)
@@ -180,7 +180,7 @@
                                                                                             {{ format_date($item->canceled_at, config('carbon-formats.F_j,_Y_h_:_i_A')) }}
                                                                                         </div>
                                                                                         @break
-                                                                                    
+
                                                                                     {{-- Refunded --}}
                                                                                     @case('refunded')
                                                                                         <p data-tooltip-target="orders-{{ $order->uid }}-item-{{ $item->id }}-status-refunded" class="mt-2 text-[11px] text-red-500 font-medium cursor-pointer">
@@ -190,17 +190,17 @@
                                                                                             {{ format_date($item->refunded_at, config('carbon-formats.F_j,_Y_h_:_i_A')) }}
                                                                                         </div>
                                                                                         @break
-                                                                                        
+
                                                                                     @default
-                                                                                        
+
                                                                                 @endswitch
 
                                                                             @endif
 
-                                                                            
+
                                                                         </div>
                                                                     </span>
-                                                                    
+
                                                                 </div>
 
                                                             </div>
@@ -220,21 +220,21 @@
                                                                                 <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ __('messages.t_contact_seller') }}</span>
                                                                             </a>
                                                                         </li>
-                                                                        
+
                                                                         @php
-                                                                            
+
                                                                             // Check expected delivery date
                                                                             if ($item->expected_delivery_date && !$item->is_finished) {
-                                                                                
+
                                                                                 // Parse expected delivery date
                                                                                 $parsed = \Carbon\Carbon::parse($item->expected_delivery_date);
 
                                                                                 // Check if date is past
                                                                                 if ($parsed->isPast()) {
-                                                                                    
+
                                                                                     // Date in past, check item status
                                                                                     if (in_array($item->status, ['delivered', 'proceeded', 'pending'])) {
-                                                                                        
+
                                                                                         // Can request refund
                                                                                         $can_refund = true;
 
@@ -246,7 +246,7 @@
                                                                                     }
 
                                                                                 } else if ($item->status === 'delivered' && !$item->is_finished) {
-                                                                                    
+
                                                                                     // Can refund
                                                                                     $can_refund = true;
 
@@ -267,7 +267,7 @@
 
                                                                         {{-- View refund --}}
                                                                         @if ($item->refund)
-                                                                            
+
                                                                             <li>
                                                                                 <a href="{{ url('account/refunds/details', $item->refund->uid) }}" target="_blank" class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700">
                                                                                     <svg class="ltr:mr-3 rtl:ml-3 text-gray-500 w-5 h-5" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M16 12h2v4h-2z"></path><path d="M20 7V5c0-1.103-.897-2-2-2H5C3.346 3 2 4.346 2 6v12c0 2.201 1.794 3 3 3h15c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zM5 5h13v2H5a1.001 1.001 0 0 1 0-2zm15 14H5.012C4.55 18.988 4 18.805 4 18V8.815c.314.113.647.185 1 .185h15v10z"></path></svg>
@@ -276,7 +276,7 @@
                                                                             </li>
 
                                                                         @else
-                                                                            
+
                                                                             {{-- Request refund --}}
                                                                             @if ($can_refund)
                                                                                 <li>
@@ -318,7 +318,7 @@
                                                                                     </div>
 
                                                                                     <span class="text-xs font-medium">{{ __('messages.t_cancel_service') }}</span>
-                                                                                    
+
                                                                                 </button>
                                                                             </li>
                                                                         @endif
@@ -366,7 +366,7 @@
                                                                                 <p class="font-normal text-gray-400">
                                                                                     <div class="mt-1 flex text-sm">
                                                                                         <p class="text-gray-400 dark:text-gray-300 text-xs">+ {{ money($upgrade->price, settings('currency')->code, true) }}</p>
-                                                                    
+
                                                                                         @if ($upgrade->extra_days)
                                                                                             <p class="ltr:ml-4 rtl:mr-4 ltr:pl-4 rtl:pr-4 ltr:border-l rtl:border-r border-gray-200 dark:border-zinc-600 text-gray-400 dark:text-gray-300 text-xs">
                                                                                                 {{ __('messages.t_extra_days_delivery_time_short', ['time' => delivery_time_trans($upgrade->extra_days)]) }}
@@ -381,11 +381,11 @@
                                                                             </div>
                                                                         </div>
                                                                     @endforeach
-                                                                    
+
                                                                 </fieldset>
                                                             </div>
                                                         @endif
-                                                        
+
                                                     </div>
 
                                                 </div>
@@ -422,11 +422,11 @@
                                                                 <a href="{{ url('account/orders/requirements?order=' . $order->uid . '&item=' . $item->uid) }}" class="text-primary-600 whitespace-nowrap hover:text-primary-600">{{ __('messages.t_send_requirements') }}</a>
                                                             </div>
                                                         @endif
-                                                        
+
                                                     </div>
 
                                                 </div>
-                                                    
+
                                             </li>
                                         @endforeach
 
@@ -435,7 +435,7 @@
                                 </div>
 
                             @empty
-                                
+
                                 {{-- No orders yet --}}
                                 <div class="rounded-md bg-blue-50 p-4">
                                     <div class="flex">
@@ -464,7 +464,7 @@
 
                         </div>
 
-                    </div>                  
+                    </div>
 
                 </div>
 

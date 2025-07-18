@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="window.lRtoYGzyUMsMBKk" x-init="initialize">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="window.lRtoYGzyUMsMBKk" x-init="initialize">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
             <div class="divide-y divide-gray-200 dark:divide-zinc-700 lg:grid lg:grid-cols-12 lg:divide-y-0 lg:divide-x rtl:divide-x-reverse">
@@ -59,7 +59,7 @@
                                             </div>
                                         </div>
                                     </div>
-                        
+
                                     {{-- Message --}}
                                     @if ($review->message)
                                         <div class="mt-4 space-y-6 text-sm italic text-gray-600 dark:text-gray-50">

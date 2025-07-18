@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="{ step:@entangle('step').defer, max:3 }">
+<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="{ step:@entangle('step') }">
     <div class="w-full sm:mx-auto sm:max-w-2xl">
 
         {{-- Loading --}}
@@ -354,5 +354,6 @@
             </x-bladewind.button>
         </div>
 
+        -
     </div>
 </div>

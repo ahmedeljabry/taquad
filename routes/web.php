@@ -38,10 +38,10 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted', 'tracker'])->gr
 
     // Home
     Route::namespace('Home')->group(function() {
-    
+
         // Home
         Route::get('/', HomeComponent::class);
-    
+
     });
 
     // Post
@@ -280,7 +280,7 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted', 'tracker'])->gr
 
                 // Edit
                 Route::get('edit/{id}', EditComponent::class);
-                
+
             });
 
         });
@@ -300,14 +300,6 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted', 'tracker'])->gr
             Route::get('/', OffersComponent::class);
 
         });
-
-    });
-
-    // Create
-    Route::namespace('Create')->middleware('auth')->group(function() {
-
-        // Service
-        Route::get('create', CreateComponent::class);
 
     });
 
@@ -504,7 +496,7 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted', 'tracker'])->gr
 
     // Categories
     Route::namespace('Categories')->prefix('categories')->group(function() {
-        
+
         // Parent category
         Route::get('{category_slug}', CategoryComponent::class);
 
@@ -581,7 +573,7 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted', 'tracker'])->gr
 // Authentication
 Route::namespace('App\Livewire\Main')->prefix('auth')->group(function() {
 
-    // Authentication 
+    // Authentication
     Route::namespace('Auth')->middleware('guest')->group(function() {
 
         // Register
@@ -882,7 +874,7 @@ Route::namespace('App\Http\Controllers\Callback')->prefix('callback')->group(fun
 
 // Restrictions Removal Center
 Route::namespace('App\Livewire\Restricted')->middleware('auth')->prefix('restricted')->group(function() {
-    
+
     // Index
     Route::get('/', IndexComponent::class);
 

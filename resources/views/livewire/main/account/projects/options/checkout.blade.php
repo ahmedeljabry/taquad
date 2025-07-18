@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
 
     {{-- Loading --}}
     <x-forms.loading />
@@ -33,16 +33,16 @@
             <a href="{{ url('project/' . $subscription->project->pid . '/' . $subscription->project->slug) }}" target="_blank" class="block mb-4">
                 <h1 class="font-semibold text-base text-zinc-700 hover:underline hover:text-primary-600 transition-all duration-200 dark:text-white">{{ $subscription->project->title }}</h1>
             </a>
-        
+
             {{-- Details --}}
             <dl class="flex-1 grid grid-cols-2 gap-x-6 text-sm sm:col-span-3 sm:grid-cols-3 lg:col-span-2">
-        
+
                 {{-- Status --}}
                 <div>
                     <dt class="font-normal text-gray-500 dark:text-zinc-400 text-xs">@lang('messages.t_status')</dt>
                     <dd class="text-[13px] font-medium mt-1 text-amber-700 dark:text-amber-400">@lang('messages.t_pending_payment')</dd>
                 </div>
-        
+
                 {{-- Posted date --}}
                 <div class="hidden sm:block">
                     <dt class="font-normal text-gray-500 dark:text-zinc-400 text-xs">@lang('messages.t_posted_date')</dt>
@@ -50,7 +50,7 @@
                         <span>{{ format_date($subscription->project->created_at, 'ago') }}</span>
                     </dd>
                 </div>
-        
+
                 {{-- Budget --}}
                 <div>
                     <dt class="font-normal text-gray-500 dark:text-zinc-400 text-xs">@lang('messages.t_budget')</dt>
@@ -60,14 +60,14 @@
                         {{ money($subscription->project->budget_max, settings('currency')->code, true) }}
                     </dd>
                 </div>
-        
+
             </dl>
-        
+
             {{-- Description --}}
             <div class="my-4 block leading-relaxed text-gray-500 dark:text-zinc-100 text-sm">
                 {{ add_3_dots($subscription->project->description, 100) }}
             </div>
-        
+
             {{-- Skills --}}
             <div class="mt-4 space-y-1">
                 @foreach ($subscription->project->skills as $skill)
@@ -81,7 +81,7 @@
             <button type="button" id="modal-upgrades-button-{{ $subscription->uid }}" class="inline-flex justify-center items-center rounded border font-normal focus:outline-none px-3 py-2.5 leading-5 text-[13px] border-slate-100 bg-slate-100 text-slate-500 hover:bg-slate-50 focus:ring-0 mt-8 w-full tracking-wide dark:bg-zinc-700 dark:border-transparent dark:hover:bg-zinc-600 dark:hover:text-zinc-100 dark:text-zinc-300">
                 @lang('messages.t_selected_upgrades')
             </button>
-        
+
         </div>
 
         {{-- Content --}}
@@ -112,7 +112,7 @@
                                     {{ $p->name }}
                                 </span>
                             </span>
-                            
+
                             {{-- Logo --}}
                             @if ($p->logo)
                                 <span class="flex items-center">
@@ -120,10 +120,10 @@
                                 </span>
                             @endif
 
-                            
+
                         </label>
                     @endforeach
-                
+
                 </div>
 
                 {{-- Offline method --}}
@@ -141,7 +141,7 @@
                                         {{ $offline_method->name }}
                                     </span>
                                 </span>
-                                
+
                                 {{-- Logo --}}
                                 @if ($offline_method->logo)
                                     <span class="flex items-center">
@@ -149,8 +149,8 @@
                                     </span>
                                 @endif
 
-                                
-                            </label>              
+
+                            </label>
                     </div>
                 @endif
 
@@ -169,13 +169,13 @@
                                     @lang('messages.t_wallet')
                                 </span>
                             </span>
-                            
+
                             {{-- Available amount --}}
                             <span class="text-right text-xs font-semibold text-black tracking-wide">
                                 {{ money($wallet, settings('currency')->code, true) }}
                             </span>
-                            
-                        </label>              
+
+                        </label>
                     </div>
                 @endif
 
@@ -207,7 +207,7 @@
                             } else {
                                 $payment_gateway = payment_gateway($selected_method);
                             }
-                            
+
                             // Get currency
                             $payment_currency = !empty($payment_gateway->currency) ? $payment_gateway->currency : null;
 
@@ -240,7 +240,7 @@
                                 @endif
                             </div>
                         </div>
-                        
+
                     </div>
 
                     {{-- Order total --}}
@@ -278,7 +278,7 @@
                     <button wire:click="confirm" wire:loading.class.remove="bg-primary-600 hover:bg-primary-700 text-white cursor-pointer" wire:loading.attr="disabled" class="w-full text-[13px] font-semibold flex justify-center bg-primary-600 hover:bg-primary-700 text-white py-4 px-8 rounded tracking-wide focus:outline-none focus:shadow-outline cursor-pointer disabled:!bg-gray-200 disabled:!text-gray-600 disabled:cursor-not-allowed dark:disabled:!bg-zinc-700 dark:disabled:!text-zinc-400" {{ !$selected_method ? "disabled" : "" }}>
                         {{ __('messages.t_confirm') }}
                     </button>
-                    
+
                 @endif
 
                 {{-- Third step --}}
@@ -288,11 +288,11 @@
                         {{-- PayPal --}}
                         @if ($selected_method === 'paypal' && isset($payment_gateway_params['paypal']))
                             <div class="w-full">
-                                
+
                                 {{-- Paypal button --}}
                                 <div id="paypal-button-container" wire:ignore></div>
 
-                            </div> 
+                            </div>
                         @endif
 
                         {{-- cPay --}}
@@ -440,7 +440,7 @@
                                 <button @click="window.makeRazorpayPayment" type="button" id="razorpay-payment-button" class="w-full text-[13px] font-semibold flex justify-center bg-primary-600 hover:bg-primary-700 text-white py-4 px-8 rounded tracking-wide focus:outline-none focus:shadow-outline cursor-pointer disabled:!bg-gray-200 disabled:!text-gray-600 disabled:cursor-not-allowed dark:disabled:!bg-zinc-700 dark:disabled:!text-zinc-400">
                                     {{ __('messages.t_checkout') }}
                                 </button>
-                                
+
                             </div>
                         @endif
 
@@ -460,7 +460,7 @@
                                     <button id="stripe-payment-button" type="submit" class="w-full text-[13px] font-semibold flex justify-center bg-primary-600 hover:bg-primary-700 text-white py-4 px-8 rounded tracking-wide focus:outline-none focus:shadow-outline cursor-pointer disabled:!bg-gray-200 disabled:!text-gray-600 disabled:cursor-not-allowed dark:disabled:!bg-zinc-700 dark:disabled:!text-zinc-400">
                                         {{ __('messages.t_checkout') }}
                                     </button>
-                                    
+
                                 </form>
 
                             </div>
@@ -497,28 +497,28 @@
 
                     {{-- Pages --}}
                     <div class="flex rtl:space-x-reverse space-x-3">
-                        
+
                         @if (settings('footer')->terms)
-        
+
                             {{-- Terms of service --}}
                             <a href="{{ url('page', settings('footer')->terms?->slug) }}" class="text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 whitespace-nowrap">
                                 {{ settings('footer')->terms?->title }}
                             </a>
-        
+
                         @endif
-        
+
                         @if (settings('footer')->privacy)
-        
+
                             {{-- Divider --}}
                             <span class="mx-1 text-gray-200 dark:text-zinc-600 hidden md:block">|</span>
-                            
+
                             {{-- Privacy policy --}}
                             <a href="{{ url('page', settings('footer')->privacy?->slug) }}" class="text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 whitespace-nowrap">
                                 {{ settings('footer')->privacy?->title }}
                             </a>
-                            
+
                         @endif
-                        
+
                     </div>
 
                 </div>
@@ -546,7 +546,7 @@
                             <div class="pb-4 flex items-center justify-between">
                                 <dt class="text-gray-600 dark:text-zinc-300">
                                     <span class="font-semibold px-3 py-1 rounded-sm text-[13px] tracking-wide dark:!bg-zinc-500 dark:!text-zinc-200" style="color: {{ $urgent->badge_text_color }};background-color: {{ $urgent->badge_bg_color }}">{{ $urgent->title }}</span>
-                                    <p class="text-[13px] mt-2">{{ $urgent->description }}</p>    
+                                    <p class="text-[13px] mt-2">{{ $urgent->description }}</p>
                                 </dt>
                                 <dd class="font-medium text-gray-900 dark:text-zinc-100 ltr:pl-5 rtl:pr-5 whitespace-nowrap">
                                     {{ money($urgent->price, settings('currency')->code, true) }}
@@ -554,7 +554,7 @@
                             </div>
                         @endif
                     @endif
-    
+
                     {{-- Highlight plan --}}
                     @if ($subscription->project->is_highlighted)
                         @php
@@ -564,7 +564,7 @@
                             <div class="py-4 flex items-center justify-between">
                                 <dt class="text-gray-600 dark:text-zinc-300">
                                     <span class="font-semibold px-3 py-1 rounded-sm text-[13px] tracking-wide dark:!bg-zinc-500 dark:!text-zinc-200" style="color: {{ $highlight->badge_text_color }};background-color: {{ $highlight->badge_bg_color }}">{{ $highlight->title }}</span>
-                                    <p class="text-[13px] mt-2">{{ $highlight->description }}</p>    
+                                    <p class="text-[13px] mt-2">{{ $highlight->description }}</p>
                                 </dt>
                                 <dd class="font-medium text-gray-900 dark:text-zinc-100 ltr:pl-5 rtl:pr-5 whitespace-nowrap">
                                     {{ money($highlight->price, settings('currency')->code, true) }}
@@ -572,7 +572,7 @@
                             </div>
                         @endif
                     @endif
-    
+
                     {{-- Featured plan --}}
                     @if ($subscription->project->is_featured)
                         @php
@@ -582,7 +582,7 @@
                             <div class="py-4 flex items-center justify-between">
                                 <dt class="text-gray-600 dark:text-zinc-300">
                                     <span class="font-semibold px-3 py-1 rounded-sm text-[13px] tracking-wide dark:!bg-zinc-500 dark:!text-zinc-200" style="color: {{ $featured->badge_text_color }};background-color: {{ $featured->badge_bg_color }}">{{ $featured->title }}</span>
-                                    <p class="text-[13px] mt-2">{{ $featured->description }}</p>    
+                                    <p class="text-[13px] mt-2">{{ $featured->description }}</p>
                                 </dt>
                                 <dd class="font-medium text-gray-900 dark:text-zinc-100 ltr:pl-5 rtl:pr-5 whitespace-nowrap">
                                     {{ money($featured->price, settings('currency')->code, true) }}
@@ -590,7 +590,7 @@
                             </div>
                         @endif
                     @endif
-    
+
                     {{-- Alert plan --}}
                     @if ($subscription->project->is_alert)
                         @php
@@ -608,7 +608,7 @@
                             </div>
                         @endif
                     @endif
-    
+
                     {{-- Total --}}
                     <div class="pt-4 flex items-center justify-between">
                         <dt class="font-medium text-gray-900 dark:text-white">@lang('messages.t_total')</dt>
@@ -616,18 +616,18 @@
                             {{ money($subscription->total, settings('currency')->code, true) }}
                         </dd>
                     </div>
-    
+
                 </div>
             </x-slot>
 
         </x-forms.modal>
 
     </div>
-                
+
 </div>
 
 @push('scripts')
-    
+
     {{-- Events --}}
     <script>
         document.addEventListener('livewire:initialized', () => {
@@ -651,7 +651,7 @@
 
                         // Finalize the transaction
                         onApprove: function(data, actions) {
-                            
+
                             // Redirecting
                             location.href = "{{ url('callback/paypal?order=') }}" + data.orderID;
 
@@ -884,7 +884,7 @@
 
     {{-- Paystack.js --}}
     @if (payment_gateway('paystack')?->is_active)
-        <script src="https://js.paystack.co/v1/inline.js"></script> 
+        <script src="https://js.paystack.co/v1/inline.js"></script>
     @endif
 
 @endpush

@@ -1,8 +1,8 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
 
     {{-- Loading --}}
     <x-forms.loading />
-                
+
     {{-- Head --}}
     <div class="w-full mb-16">
         <div class="lg:flex lg:items-center lg:justify-between">
@@ -26,7 +26,7 @@
                                 </a>
                             </div>
                         </li>
-        
+
                         {{-- My offers --}}
                         <li aria-current="page">
                             <div class="flex items-center">
@@ -36,10 +36,10 @@
                                 </span>
                             </div>
                         </li>
-        
+
                     </ol>
                 </div>
-                
+
             </div>
 
             {{-- Actions --}}
@@ -51,7 +51,7 @@
                         @lang('messages.t_find_freelancers')
                     </a>
                 </span>
-    
+
             </div>
 
         </div>
@@ -108,17 +108,17 @@
                                     </a>
                                 </div>
                                 <div class="flex items-center space-x-3 rtl:space-x-reverse text-xs font-normal text-gray-400 dark:text-zinc-300">
-        
+
                                     {{-- Country --}}
                                     @if ($offer->freelancer->country)
                                         <p class="flex items-center space-x-1 rtl:space-x-reverse">
                                             <img class="h-4 ltr:pr-0.5 rtl:pl-0.5 -mt-0.5 lazy" src="{{ placeholder_img() }}" data-src="{{ countryFlag($offer->freelancer->country->code) }}" alt="{{ $offer->freelancer->country->name }}">
                                             <span class="dark:text-zinc-300 hidden sm:block">{{ $offer->freelancer->country->name }}</span>
                                         </p>
-                
+
                                         <div class="mx-2 my-0.5 text-gray-300 dark:text-zinc-600">|</div>
                                     @endif
-                
+
                                     {{-- Rating --}}
                                     <p class="flex shrink-0 items-center space-x-1 rtl:space-x-reverse">
                                         <svg aria-hidden="true" class="w-4 h-4 {{ $offer->freelancer->rating() == 0 ? 'text-gray-400' : 'text-amber-500' }} -mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
@@ -126,7 +126,7 @@
                                             {{ $offer->freelancer->rating() }}
                                         </span>
                                     </p>
-                
+
                                     {{-- Verified account --}}
                                     @if ($offer->freelancer->status === 'verified')
                                         <div class="mx-2 my-0.5 text-gray-300 dark:text-zinc-600">|</div>
@@ -143,7 +143,7 @@
                                             <span class="dark:text-zinc-300">@lang('messages.t_verified_account')</span>
                                         </div>
                                     @endif
-                
+
                                 </div>
                             </div>
                         </div>
@@ -351,13 +351,13 @@
 
                                         {{-- Attachments --}}
                                         @if ($offer->attachments && $offer->attachments()->count())
-                                            
+
                                             {{-- Divider --}}
                                             <div class="h-px bg-zinc-100 -mx-6 my-5 dark:bg-zinc-700"></div>
 
                                             {{-- Files --}}
                                             <ul role="list" class="divide-y divide-gray-200 rounded-md border border-gray-200 dark:divide-zinc-700 dark:border-zinc-700">
-                            
+
                                                 @foreach ($offer->attachments as $attachment)
                                                     <li class="flex items-center justify-between py-3 ltr:pl-3 ltr:pr-4 rtl:pr-3 rtl:pl-4 text-sm">
                                                         <div class="flex w-0 flex-1 items-center">
@@ -373,7 +373,7 @@
                                                         </div>
                                                     </li>
                                                 @endforeach
-                                            
+
                                             </ul>
 
                                         @endif
@@ -389,13 +389,13 @@
 
                             {{-- Budget --}}
                             <div class="text-gray-900 dark:text-gray-100 text-sm font-black">{{ money($offer->budget_amount, settings('currency')->code, true) }}</div>
-        
+
                             {{-- Delivery time --}}
                             <div class="text-xs text-gray-400 tracking-wide font-normal mt-1 whitespace-nowrap block">{{ __('messages.t_number_days_for_delivery', ['number' => $offer->delivery_time]) }}</div>
 
                             {{-- Submitted date --}}
                             <div class="text-xs text-gray-400 tracking-wide font-normal mt-1 whitespace-nowrap block">
-                                @lang('messages.t_submitted_ago') {{ format_date($offer->submitted_at) }}  
+                                @lang('messages.t_submitted_ago') {{ format_date($offer->submitted_at) }}
                             </div>
 
                         </div>
@@ -436,7 +436,7 @@
                                             <div class="flex items-center justify-between mb-11">
                                                 <p tabindex="0" class="focus:outline-none text-base font-semibold leading-5 text-gray-800 dark:text-white">@lang('messages.t_delivered_work')</p>
                                                 <button x-on:click="close" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ltr:ml-auto rtl:mr-auto inline-flex items-center dark:hover:bg-zinc-600 dark:hover:text-white">
-                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>  
+                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                                                 </button>
                                             </div>
 
@@ -445,7 +445,7 @@
                                                 <div class="mt-6 flex" wire:key="employer-delivered-work-{{ $file->uid }}">
 
                                                     <div class="w-10 flex flex-col items-center">
-                                                        
+
                                                         {{-- File extension preview --}}
                                                         <div class="fiv-sqo fiv-icon-{{ $file->file_extension }} text-4xl"></div>
 
@@ -465,7 +465,7 @@
 
                                                         {{-- Date / Download --}}
                                                         <div class="focus:outline-none text-xs leading-3 text-gray-500 pt-1 space-x-2 rtl:space-x-reverse dark:text-zinc-400">
-                                                            
+
                                                             {{-- Download --}}
                                                             <a href="{{ url('uploads/offers/work', $file->uid . '.' . $file->file_extension) }}" class="text-primary-600 hover:underline">@lang('messages.t_download')</a>
 
@@ -485,9 +485,9 @@
 
                                                 </div>
                                             @endforeach
-        
+
                                         </x-slot>
-        
+
                                     </x-forms.modal>
 
                                 @endif
@@ -508,11 +508,11 @@
 
                                         {{-- Header --}}
                                         <x-slot name="title">{{ __('messages.t_edit_offer') }}</x-slot>
-                        
+
                                         {{-- Content --}}
                                         <x-slot name="content">
                                             <div class="grid grid-cols-12 md:gap-x-6 gap-y-6">
-                        
+
                                                 {{-- Message --}}
                                                 <div class="col-span-12">
                                                     <x-forms.textarea
@@ -521,10 +521,10 @@
                                                         svg_icon='<svg class="w-5 h-5 text-gray-400 dark:text-gray-300" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 2H8C4.691 2 2 4.691 2 8v13a1 1 0 0 0 1 1h13c3.309 0 6-2.691 6-6V8c0-3.309-2.691-6-6-6zm4 14c0 2.206-1.794 4-4 4H4V8c0-2.206 1.794-4 4-4h8c2.206 0 4 1.794 4 4v8z"></path><path d="M7 9h10v2H7zm0 4h7v2H7z"></path></svg>'
                                                         maxlength="2500" />
                                                 </div>
-                        
+
                                                 {{-- Attachments --}}
                                                 @if (settings('publish')->custom_offer_enable_attachments)
-                        
+
                                                     {{-- Form --}}
                                                     <div class="col-span-12" wire:ignore wire:key='attachments-uploader-form'>
                                                         <x-forms.attachments-form
@@ -534,9 +534,9 @@
                                                             :extensions="explode(',', settings('publish')->custom_offer_attachments_allowed_extensions)"
                                                             size="{{ settings('publish')->custom_offer_attachment_max_size }}"
                                                             max="{{ settings('publish')->custom_offer_attachment_max_files }}" />
-                                                            
+
                                                     </div>
-                                            
+
                                                     {{-- Errors --}}
                                                     @if ($errors->has('attachments'))
                                                         <div class="col-span-12" wire:key='attachments-errors'>
@@ -554,7 +554,7 @@
                                                             </div>
                                                         </div>
                                                     @endif
-                        
+
                                                     {{-- Info --}}
                                                     <div class="col-span-12">
                                                         <div class="p-4 md:p-5 rounded text-slate-700 bg-slate-50 dark:bg-zinc-600 dark:text-zinc-300">
@@ -565,29 +565,29 @@
                                                                 </h3>
                                                             </div>
                                                             <ul class="list-inside ltr:ml-8 rtl:mr-8 space-y-2">
-                        
+
                                                                 {{-- Allowed extensions --}}
                                                                 <li class="flex items-center text-[13px] tracking-wide">
                                                                     <svg class="inline-block w-4 h-4 flex-none ltr:mr-2 rtl:pl-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                                                                     @lang('messages.t_acceptable_file_types_are') &nbsp; <b>{{ str_replace(',', ' | ', settings('publish')->custom_offer_attachments_allowed_extensions) }}</b>
                                                                 </li>
-                        
+
                                                                 {{-- Maximum file size --}}
                                                                 <li class="flex items-center text-[13px] tracking-wide">
                                                                     <svg class="inline-block w-4 h-4 flex-none ltr:mr-2 rtl:pl-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                                                                     @lang('messages.t_the_max_allowable_file_size_is') &nbsp; <b>{{ settings('publish')->custom_offer_attachment_max_size }} @lang('messages.t_size_mb')</b>
                                                                 </li>
-                        
+
                                                                 {{-- Maximum files --}}
                                                                 <li class="flex items-center text-[13px] tracking-wide">
                                                                     <svg class="inline-block w-4 h-4 flex-none ltr:mr-2 rtl:pl-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                                                                     @lang('messages.t_u_can_upload_max_files') &nbsp; <b>{{ settings('publish')->custom_offer_attachment_max_files }}</b>
                                                                 </li>
-                                                                
+
                                                             </ul>
                                                         </div>
                                                     </div>
-                        
+
                                                 @endif
 
                                                 {{-- Old attachments --}}
@@ -624,43 +624,43 @@
                                                         </ul>
                                                     </div>
                                                 @endif
-                        
+
                                                 {{-- Divider --}}
                                                 <div class="col-span-12 h-px bg-slate-200 dark:bg-zinc-700 -mx-6 mt-4"></div>
-                        
+
                                                 {{-- Expected delivery time --}}
                                                 <div class="col-span-12">
-                        
+
                                                     {{-- Label --}}
                                                     <h3 class="mb-4 text-sm font-medium tracking-wide {{ $errors->first('expected_duration') ? 'text-red-600 dark:text-red-500' : 'text-gray-600 dark:text-white' }}">@lang('messages.t_expected_duration')</h3>
-                        
+
                                                     {{-- List --}}
                                                     <ul class="grid w-full gap-x-2 gap-y-3 md:grid-cols-4">
-                        
+
                                                         {{-- 24 hours --}}
                                                         <li>
                                                             <input type="radio" id="expected-duration-1-day" name="expected_duration" value="1" class="hidden peer" required wire:model.defer="edit_form.expected_duration">
-                                                            <label for="expected-duration-1-day" class="text-xs font-medium px-2 py-3 inline-flex items-center justify-center w-full text-gray-500 bg-white border border-slate-200 rounded-md cursor-pointer dark:hover:text-zinc-300 peer-checked:border-primary-600 peer-checked:text-white peer-checked:bg-primary-600 hover:text-gray-600 hover:bg-slate-100 dark:text-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-800 dark:border-zinc-600 dark:hover:peer-checked:bg-primary-600 dark:hover:peer-checked:text-white" onclick="document.getElementById('expected-duration-other').value = ''">                           
+                                                            <label for="expected-duration-1-day" class="text-xs font-medium px-2 py-3 inline-flex items-center justify-center w-full text-gray-500 bg-white border border-slate-200 rounded-md cursor-pointer dark:hover:text-zinc-300 peer-checked:border-primary-600 peer-checked:text-white peer-checked:bg-primary-600 hover:text-gray-600 hover:bg-slate-100 dark:text-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-800 dark:border-zinc-600 dark:hover:peer-checked:bg-primary-600 dark:hover:peer-checked:text-white" onclick="document.getElementById('expected-duration-other').value = ''">
                                                                 @lang('messages.t_24_hours')
                                                             </label>
                                                         </li>
-                        
+
                                                         {{-- 3 days --}}
                                                         <li>
                                                             <input type="radio" id="expected-duration-3-days" name="expected_duration" value="3" class="hidden peer" required wire:model.defer="edit_form.expected_duration">
-                                                            <label for="expected-duration-3-days" class="text-xs font-medium px-2 py-3 inline-flex items-center justify-center w-full text-gray-500 bg-white border border-slate-200 rounded-md cursor-pointer dark:hover:text-zinc-300 peer-checked:border-primary-600 peer-checked:text-white peer-checked:bg-primary-600 hover:text-gray-600 hover:bg-slate-100 dark:text-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-800 dark:border-zinc-600 dark:hover:peer-checked:bg-primary-600 dark:hover:peer-checked:text-white" onclick="document.getElementById('expected-duration-other').value = ''">                           
+                                                            <label for="expected-duration-3-days" class="text-xs font-medium px-2 py-3 inline-flex items-center justify-center w-full text-gray-500 bg-white border border-slate-200 rounded-md cursor-pointer dark:hover:text-zinc-300 peer-checked:border-primary-600 peer-checked:text-white peer-checked:bg-primary-600 hover:text-gray-600 hover:bg-slate-100 dark:text-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-800 dark:border-zinc-600 dark:hover:peer-checked:bg-primary-600 dark:hover:peer-checked:text-white" onclick="document.getElementById('expected-duration-other').value = ''">
                                                                 @lang('messages.t_3_days')
                                                             </label>
                                                         </li>
-                        
+
                                                         {{-- 7 days --}}
                                                         <li>
                                                             <input type="radio" id="expected-duration-7-days" name="expected_duration" value="7" class="hidden peer" required wire:model.defer="edit_form.expected_duration">
-                                                            <label for="expected-duration-7-days" class="text-xs font-medium px-2 py-3 inline-flex items-center justify-center w-full text-gray-500 bg-white border border-slate-200 rounded-md cursor-pointer dark:hover:text-zinc-300 peer-checked:border-primary-600 peer-checked:text-white peer-checked:bg-primary-600 hover:text-gray-600 hover:bg-slate-100 dark:text-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-800 dark:border-zinc-600 dark:hover:peer-checked:bg-primary-600 dark:hover:peer-checked:text-white" onclick="document.getElementById('expected-duration-other').value = ''">                           
+                                                            <label for="expected-duration-7-days" class="text-xs font-medium px-2 py-3 inline-flex items-center justify-center w-full text-gray-500 bg-white border border-slate-200 rounded-md cursor-pointer dark:hover:text-zinc-300 peer-checked:border-primary-600 peer-checked:text-white peer-checked:bg-primary-600 hover:text-gray-600 hover:bg-slate-100 dark:text-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-800 dark:border-zinc-600 dark:hover:peer-checked:bg-primary-600 dark:hover:peer-checked:text-white" onclick="document.getElementById('expected-duration-other').value = ''">
                                                                 @lang('messages.t_7_days')
                                                             </label>
                                                         </li>
-                        
+
                                                         {{-- Other --}}
                                                         <li>
                                                             <div class="relative">
@@ -670,19 +670,19 @@
                                                                 <input type="number" min="1" max="365" maxlength="3" id="expected-duration-other" wire:model.defer="edit_form.expected_duration" class="text-xs font-medium py-3 bg-white border border-slate-200 text-gray-900 rounded-md focus:ring-0 focus:ring-offset-0 focus:border-slate-200 focus:outline-none block w-full ltr:pl-10 rtl:pr-10 hover:text-gray-600 hover:bg-slate-100 dark:bg-zinc-700 dark:border-zinc-600 dark:text-zinc-100 dark:placeholder-zinc-300 dark:hover:bg-zinc-800" placeholder="@lang('messages.t_other')" onkeyup="$('input[name=expected_duration]').prop('checked',false);">
                                                             </div>
                                                         </li>
-                        
+
                                                     </ul>
-                        
+
                                                     {{-- Error message --}}
                                                     @error('expected_duration')
                                                         <p class="mt-2 text-xs text-red-600 dark:text-red-500">{{ $errors->first('expected_duration') }}</p>
                                                     @enderror
-                        
+
                                                 </div>
-                        
+
                                                 {{-- Divider --}}
                                                 <div class="col-span-12 h-px bg-slate-200 dark:bg-zinc-700 -mx-6"></div>
-                        
+
                                                 {{-- Budget --}}
                                                 <div class="col-span-12">
                                                     <x-forms.text-input
@@ -691,20 +691,20 @@
                                                         model="edit_form.budget"
                                                         :suffix="config('money.currencies.' . mb_strtoupper( settings('currency')->code ))['symbol']" />
                                                 </div>
-                        
+
                                                 {{-- Extra fee --}}
                                                 @if (settings('publish')->custom_offers_commission_value_buyer > 0)
                                                     @php
                                                         if (settings('publish')->custom_offers_commission_type === 'percentage') {
-                                                            
+
                                                             // Percentage amount
                                                             $offer_fee = settings('publish')->custom_offers_commission_value_buyer . "%";
-                        
+
                                                         } else {
-                        
+
                                                             // Fixed amount
                                                             $offer_fee = money(settings('publish')->custom_offers_commission_value_buyer, settings('currency')->code, true);
-                        
+
                                                         }
                                                     @endphp
                                                     <div class="col-span-12">
@@ -714,15 +714,15 @@
                                                         </div>
                                                     </div>
                                                 @endif
-                        
+
                                             </div>
                                         </x-slot>
-                        
+
                                         {{-- Footer --}}
                                         <x-slot name="footer">
                                             <x-forms.button action="update" text="{{ __('messages.t_update') }}" :block="0"  />
                                         </x-slot>
-                        
+
                                     </x-forms.modal>
 
                                 @endif

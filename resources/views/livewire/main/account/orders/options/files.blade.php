@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
             <div class="divide-y divide-gray-200 dark:divide-zinc-700 lg:grid lg:grid-cols-12 lg:divide-y-0 lg:divide-x rtl:divide-x-reverse">
@@ -22,7 +22,7 @@
                             </div>
                             @if (!$item->is_finished && $item->status === 'delivered')
                                 <div class="mt-5 flex lg:mt-0 lg:ltr:ml-4 lg:rtl:mr-4">
-                                
+
                                     {{-- Request refund --}}
                                     @if (!$item->refund)
                                         <span class="block">
@@ -32,12 +32,12 @@
                                             </a>
                                         </span>
                                     @endif
-                                
+
                                     {{-- Job completed --}}
                                     <span class="ltr:ml-3 rtl:mr-3">
                                         <button x-on:click='confirm("{{ __('messages.t_are_sure_completed_work_buyer') }}") ? $wire.completed() : "" ' wire:loading.attr="disabled" wire:target="completed" type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-sm shadow-sm text-xs font-bold tracking-wide text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                                             <svg class="ltr:-ml-1 ltr:mr-2 rtl:-mr-1 rtl:ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"> <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/> </svg>
-                                            {{ __('messages.t_work_completed') }} 
+                                            {{ __('messages.t_work_completed') }}
                                         </button>
                                     </span>
 
@@ -52,7 +52,7 @@
                                 <span class="text-xs font-medium tracking-wide ltr:ml-2 rtl:mr-2">{{ __('messages.t_order_item_will_mark_done_after_1_week', ['date' => format_date($item->delivered_at, config('carbon-formats.F_j,_Y'))]) }}</span>
                             </div>
                         @endif
-                        
+
                         {{-- Section content --}}
                         <div class="grid grid-cols-12 md:gap-x-8 gap-y-8 mb-6">
 
@@ -60,7 +60,7 @@
                             <div class="col-span-12 xl:col-span-6">
                                 <section>
                                     <div class="rounded-lg bg-white dark:bg-zinc-700 overflow-hidden border border-gray-200 dark:border-zinc-600">
-                                        
+
                                         {{-- Section title --}}
                                         <div class="bg-gray-50 dark:bg-zinc-600 px-8 py-4 rounded-t-md">
                                             <div class="ltr:-ml-4 rtl:-mr-4 -mt-4 flex justify-between items-center flex-wrap sm:flex-nowrap">
@@ -71,7 +71,7 @@
                                                 <div class="ltr:ml-4 rtl:mr-4 mt-4 flex-shrink-0">
                                                     <a href="{{ url('account/orders') }}" class="inline-flex items-center py-2 px-3 border border-transparent rounded-full bg-transparent hover:bg-transparent focus:outline-none focus:ring-0">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary-600 hover:text-primary-600 ltr:mr-2 rtl:ml-2" " fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12"/></svg>
-                                                        <span class="text-xs font-medium text-primary-600 hover:text-primary-600"> 
+                                                        <span class="text-xs font-medium text-primary-600 hover:text-primary-600">
                                                             {{ __('messages.t_back_to_orders') }}
                                                         </span>
                                                     </a>
@@ -110,7 +110,7 @@
                                                             </div>
                                                         </li>
                                                     @endforeach
-                        
+
                                                 </ul>
                                             </div>
 
@@ -131,7 +131,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                        
+
                                                                 <div class="absolute bottom-0 inset-x-0 ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2 py-2 flex justify-between">
                                                                     <div></div>
                                                                     <div class="flex-shrink-0">
@@ -166,7 +166,7 @@
                                                 </div>
                                             </div>
                                             <div class="px-8 py-5">
-                                                
+
                                                 {{-- File details --}}
                                                 @if ($item->delivered_work->attached_work)
                                                     <div class="flex items-center justify-between space-x-3 mb-6 rtl:space-x-reverse">
@@ -195,7 +195,7 @@
                                                     </a>
                                                 @endif
 
-                                                {{-- Message from seller --}}    
+                                                {{-- Message from seller --}}
                                                 @if ($item->delivered_work->quick_response)
                                                     <div class="flex flex-col space-y-4 overflow-y-auto">
                                                         <div class="flex items-center">
@@ -210,7 +210,7 @@
                                                         </div>
                                                     </div>
                                                 @endif
-                                                
+
                                             </div>
                                         </div>
                                     </section>
@@ -220,7 +220,7 @@
 
                         </div>
 
-                    </div>                  
+                    </div>
 
                 </div>
 

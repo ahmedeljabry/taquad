@@ -29,7 +29,43 @@ class ProjectComponent extends Component
 
     #[Locked]
     public $promoting_total = 0;
+ public int $step = 0;
 
+    /* … keep your existing public props … */
+
+    /** ----- NAVIGATION ----- */
+    public function nextStep()
+    {
+        $this->validate($this->rulesFor($this->step));   // per-step validation
+        $this->step++;
+    }
+
+    public function prevStep()
+    {
+        $this->step = max(0, $this->step - 1);
+    }
+
+    
+    /** ----- RULES PER STEP ----- */
+private function rulesFor(int $step): array
+    {
+        return match ($step) {
+            0 => [
+                'title'       => 'required|string|max:120',
+                'description' => 'required|string|min:30',
+                'category'    => 'required|exists:project_categories,id',
+            ],
+            1 => [
+                'required_skills' => 'array|min:1',
+            ],
+            2 => [
+                'salary_type' => 'required|in:fixed,hourly',
+                'min_price'   => 'required|numeric|min:0',
+                'max_price'   => 'required|numeric|gt:min_price',
+            ],
+            default => [],
+        };
+    }
     /**
      * Intialize component
      *

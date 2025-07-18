@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
 
     {{-- Loading --}}
     <x-forms.loading />
@@ -24,7 +24,7 @@
                             <h2 class="text-base leading-6 font-bold text-gray-900 dark:text-gray-100">{{ __('messages.t_browser_sessions') }}</h2>
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">{{ __('messages.t_browser_sessions_subtitle') }}</p>
                         </div>
-                        
+
                         {{-- Section content --}}
                         <div class="w-full mb-6">
                             @if (count($this->sessions) > 0)
@@ -33,7 +33,7 @@
                                     @foreach ($this->sessions as $session)
                                         <div class="flex items-center justify-between {{ !$loop->first ? 'pt-5' : '' }}">
                                             <div class="flex items-center">
-                                                
+
                                                 {{-- Check device type --}}
                                                 @if ($session->agent->isMobile() || $session->agent->isPhone())
                                                     <div class="focus:outline-none w-10 h-10 bg-red-100 dark:bg-zinc-700 rounded flex items-center justify-center">
@@ -87,7 +87,7 @@
                             </button>
                         </div>
 
-                    </div>                 
+                    </div>
 
                 </div>
 

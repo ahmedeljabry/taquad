@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="<?php echo e(app()->getLocale(), false); ?>" dir="<?php echo e(config()->get('direction'), false); ?>" class="<?php echo \Illuminate\Support\Arr::toCssClasses(['dark' => current_theme() === 'dark']); ?>">
-    
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -166,7 +166,7 @@ if (isset($__slots)) unset($__slots);
 
         
 
-        <main class="flex-grow"> 
+        <main class="flex-grow">
             <div class="min-h-screen">
                 <?php echo e($slot, false); ?>
 
@@ -279,7 +279,7 @@ if (isset($__slots)) unset($__slots);
 <?php $component = $__componentOriginalf78ffbe4a2783cbb9a46d3509ee95265; ?>
 <?php unset($__componentOriginalf78ffbe4a2783cbb9a46d3509ee95265); ?>
 <?php endif; ?>
-                    
+
                 </div>
 
                 
@@ -321,7 +321,7 @@ if (isset($__slots)) unset($__slots);
 
         
         <script defer>
-            
+
             document.addEventListener("DOMContentLoaded", function(){
 
                 jQuery.event.special.touchstart = {
@@ -349,7 +349,7 @@ if (isset($__slots)) unset($__slots);
                 window.addEventListener('refresh',() => {
                     location.reload();
                 });
- 
+
             });
 
             function jwUBiFxmwbrUwww() {
@@ -372,7 +372,7 @@ if (isset($__slots)) unset($__slots);
             document.ontouchmove = function(event){
                 event.preventDefault();
             }
-            
+
         </script>
 
         
@@ -468,7 +468,7 @@ if (isset($__slots)) unset($__slots);
                     }
 
                 });
-        
+
             </script>
         <?php endif; ?>
 
@@ -491,8 +491,64 @@ if (isset($__slots)) unset($__slots);
 ?>
 
         <?php echo \Rawilk\FormComponents\Facades\FormComponents::javaScript(); ?>
-        
+
         <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+
+        <script src="https://js.pusher.com/8.2/pusher.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1/dist/echo.iife.js"></script>
+        <script type="text/JavaScript">
+            (function () {
+                // ---------------- server settings pushed to JS -------------
+                const PUSHER_KEY = <?php echo json_encode(config('chatify.pusher.key'), 15, 512) ?>,
+                PUSHER_OPTS = <?php echo json_encode(config('chatify.pusher.options'), 15, 512) ?>,
+                USER_ID = <?php echo e(auth()->id(), false); ?>,
+                BASE_TITLE = document.title.replace(/\(\d+\)\s*/, '');
+
+                let   unread = <?php echo e(unseen_messages_count(), false); ?>;
+
+                // -------------- Bootstrap Echo -----------
+                window.Pusher = Pusher;
+                window.Echo = new Echo({
+                    broadcaster : 'pusher',
+                    key         : PUSHER_KEY,
+                    ...PUSHER_OPTS,   
+                    csrfToken   : '<?php echo e(csrf_token(), false); ?>',
+                    authEndpoint: "<?php echo e(route('pusher.auth'), false); ?>",
+                    enabledTransports: ['ws','wss'] 
+                });
+
+                // -------------- helper to write tab title ------------------
+                const paint = () => {
+                    document.title = unread ? `(${unread}) ${BASE_TITLE}` : BASE_TITLE;
+                };
+                paint();
+                
+                // -------------- listen for new msgs on ALL pages -----------
+                window.Echo.private(`chat.${USER_ID}`)
+                    .listen('.messaging', (e) => {
+                        if (e.to_id == USER_ID) {
+                            ++unread;
+                            const sound = new Audio("<?php echo e(asset('js/chatify/sounds/new-message-sound.mp3'), false); ?>");
+                            sound.play();
+                            paint();
+                        }
+                    })
+                    .listen('.client-seen', (e) => {
+                        if (e.to_id == USER_ID && e.seen) {
+                            unread = 0;
+                            paint();
+                        }
+                    });
+
+                // -------------- reset when tab gains focus -----------------
+                window.addEventListener('focus', () => {
+                    if (unread) {
+                        unread = 0;
+                        paint();
+                    }
+                });
+            })();
+        </script>
 
         
         <script>
@@ -500,7 +556,7 @@ if (isset($__slots)) unset($__slots);
 
                 // Change current theme
                 window.Livewire.on('change-current-theme', () => {
-                
+
                     // Remove or add dark class
                     document.getElementsByTagName("html")[0].classList.toggle("dark");
 
@@ -534,4 +590,5 @@ if (isset($__slots)) unset($__slots);
 
     </body>
 
-</html><?php /**PATH C:\xampp\htdocs\taquad\resources\views/components/layouts/main-app.blade.php ENDPATH**/ ?>
+</html>
+<?php /**PATH C:\xampp\htdocs\taquad\resources\views/components/layouts/main-app.blade.php ENDPATH**/ ?>

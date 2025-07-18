@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="window.nYpPIEgUauhEVLt">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="window.nYpPIEgUauhEVLt">
 
     {{-- Please wait dialog --}}
     <div class="fixed top-0 left-0 z-50 bg-black dark:bg-gray-400/50 w-full h-full opacity-80" wire:loading>
@@ -33,11 +33,11 @@
                             <h2 class="text-base leading-6 font-bold text-gray-900 dark:text-gray-100">{{ __('messages.t_verification_center') }}</h2>
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">{{ __('messages.t_verification_center_subtitle') }}</p>
                         </div>
-                        
+
                         {{-- Check if user has a verification before or not --}}
                         @if ($verification)
-                            
-                            {{-- Verification status --}} 
+
+                            {{-- Verification status --}}
                             <div class="py-5">
                                 <dl class="grid grid-cols-1 gap-y-8 sm:grid-cols-2">
                                     <div class="sm:col-span-1">
@@ -51,7 +51,7 @@
                                         @endif
                                     </div>
                                     <div class="sm:col-span-1">
-                                        
+
                                         {{-- Verified --}}
                                         @if ($verification->status === 'verified')
                                             <dt class="text-sm font-medium text-gray-500">{{ __('messages.t_verified_at') }}</dt>
@@ -69,11 +69,11 @@
                                             <dt class="text-sm font-medium text-gray-500">{{ __('messages.t_declined_at') }}</dt>
                                             <dd class="mt-1 text-xs text-gray-500">{{ format_date($verification->declined_at, config('carbon-formats.F_j,_Y_h_:_i_A')) }}</dd>
                                         @endif
-                                        
+
                                     </div>
                                 </dl>
-                            </div>  
-                            
+                            </div>
+
                             {{-- Verification files --}}
                             <div class="sm:col-span-2 mt-6">
                                 <dt class="text-xs font-medium text-gray-500">{{ __('messages.t_verification_documents') }}</dt>
@@ -99,7 +99,7 @@
                                                 <svg class="flex-shrink-0 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                                 <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd" />
                                                 </svg>
-                                                <span class="ltr:ml-2 rtl:mr-2 flex-1 w-0 truncate text-xs"> 
+                                                <span class="ltr:ml-2 rtl:mr-2 flex-1 w-0 truncate text-xs">
                                                     @if ($verification->document_type === 'id')
                                                         <span class="font-semibold">{{ __('messages.t_government_issued_id_frontside') }}</span>
                                                     @elseif ($verification->document_type === 'driver_license')
@@ -121,7 +121,7 @@
                                                     <svg class="flex-shrink-0 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                                     <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd" />
                                                     </svg>
-                                                    <span class="ltr:ml-2 rtl:mr-2 flex-1 w-0 truncate text-xs"> 
+                                                    <span class="ltr:ml-2 rtl:mr-2 flex-1 w-0 truncate text-xs">
                                                         @if ($verification->document_type === 'id')
                                                             <span class="font-semibold">{{ __('messages.t_government_issued_id_backside') }}</span>
                                                         @elseif ($verification->document_type === 'driver_license')
@@ -134,7 +134,7 @@
                                                 </div>
                                             </li>
                                         @endif
-                                        
+
                                     </ul>
                                 </dd>
                             </div>
@@ -143,10 +143,10 @@
 
                             {{-- Choose verification document type --}}
                             @if ($currentStep === 1)
-                                
+
                                 <fieldset>
                                     <legend class="text-xs font-medium text-gray-900 dark:text-gray-100 mb-2">{{ __('messages.t_choose_document_type') }}</legend>
-                            
+
                                     <div class="mt-1 bg-white dark:bg-zinc-700 rounded-md shadow-sm -space-y-px">
 
                                         {{-- Identify card --}}
@@ -178,7 +178,7 @@
                                                 </span>
                                             </div>
                                         </label>
-                                        
+
                                     </div>
                                 </fieldset>
 
@@ -197,26 +197,26 @@
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="mb-3 w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
                                                             </svg>
-    
+
                                                             {{-- Choose file text --}}
                                                             <template x-if="!preview.front">
                                                                 <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">{{ __('messages.t_upload_doc_front_side') }}</span></p>
                                                             </template>
-    
+
                                                             {{-- Choosen file name --}}
                                                             <template x-if="preview.front">
                                                                 <p class="mb-2 text-sm text-gray-900 dark:text-gray-400 truncate">
                                                                     <span class="font-semibold" x-text="preview.front"></span></p>
                                                             </template>
-    
+
                                                             <p class="text-xs text-gray-500 dark:text-gray-400">
                                                                 {{ __('messages.t_verification_allowed_mimes_size') }}
                                                             </p>
                                                         </div>
-    
+
                                                     <input id="doc_id_frontside" type="file" accept="image/jpg,image/jpeg,image/png"  class="hidden" @change="setFrontSide" wire:model="doc_id.front">
                                                 </label>
-                                            </div> 
+                                            </div>
                                             @error('front')
                                                 <div class="text-xs font-medium text-red-500 pt-1">
                                                     {{ $errors->first('front') }}
@@ -232,26 +232,26 @@
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="mb-3 w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                                             </svg>
-    
+
                                                             {{-- Choose file text --}}
                                                             <template x-if="!preview.back">
                                                                 <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">{{ __('messages.t_upload_doc_back_side') }}</span></p>
                                                             </template>
-    
+
                                                             {{-- Choosen file name --}}
                                                             <template x-if="preview.back">
                                                                 <p class="mb-2 text-sm text-gray-900 dark:text-gray-400 truncate">
                                                                     <span class="font-semibold" x-text="preview.back"></span></p>
                                                             </template>
-    
+
                                                             <p class="text-xs text-gray-500 dark:text-gray-400">
                                                                 {{ __('messages.t_verification_allowed_mimes_size') }}
                                                             </p>
                                                         </div>
-    
+
                                                     <input id="doc_id_backside" type="file" accept="image/jpg,image/jpeg,image/png" class="hidden" @change="setBackSide" wire:model="doc_id.back">
                                                 </label>
-                                            </div>  
+                                            </div>
                                             @error('back')
                                                 <div class="text-xs font-medium text-red-500 pt-1">
                                                     {{ $errors->first('back') }}
@@ -290,7 +290,7 @@
 
                                                     <input id="doc_driver_license_frontside" type="file" accept="image/jpg,image/jpeg,image/png"  class="hidden" @change="setFrontSide" wire:model="doc_driver_license.front">
                                                 </label>
-                                            </div> 
+                                            </div>
                                             @error('front')
                                                 <div class="text-xs font-medium text-red-500 pt-1">
                                                     {{ $errors->first('front') }}
@@ -325,7 +325,7 @@
 
                                                     <input id="doc_driver_license_backside" type="file" accept="image/jpg,image/jpeg,image/png" class="hidden" @change="setBackSide" wire:model="doc_driver_license.back">
                                                 </label>
-                                            </div>  
+                                            </div>
                                             @error('back')
                                                 <div class="text-xs font-medium text-red-500 pt-1">
                                                     {{ $errors->first('back') }}
@@ -364,7 +364,7 @@
 
                                                     <input id="doc_passport_frontside" type="file" accept="image/jpg,image/jpeg,image/png" class="hidden" @change="setFrontSide" wire:model="doc_passport.front">
                                                 </label>
-                                            </div> 
+                                            </div>
                                             @error('front')
                                                 <div class="text-xs font-medium text-red-500 pt-1">
                                                     {{ $errors->first('front') }}
@@ -430,7 +430,7 @@
                                 </script>
 
                             @endif
-                            
+
 
                         @endif
 
@@ -444,10 +444,10 @@
                             <div>
                                 @if ($currentStep !== 1)
                                     <div class="py-4 px-4 flex justify-end sm:px-6">
-                                        <x-forms.button 
-                                            action="back" 
-                                            text="{{ __('messages.t_back') }}" 
-                                            block="0" 
+                                        <x-forms.button
+                                            action="back"
+                                            text="{{ __('messages.t_back') }}"
+                                            block="0"
                                             active="text-gray-900 bg-gray-100 hover:bg-gray-200" />
                                     </div>
                                 @endif
@@ -482,7 +482,7 @@
                         <div class="py-4 px-4 flex justify-end sm:px-6 bg-transparent">
                             <x-forms.button action="sendFilesAgain" text="{{ __('messages.t_send_files_again') }}" block="0" />
                         </div>
-                    @endif                
+                    @endif
 
                 </div>
 
@@ -493,7 +493,7 @@
 
 {{-- Include in Header --}}
 @push('styles')
-    
+
     {{-- Include WebcamJS Plugin --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
 
@@ -525,17 +525,17 @@
                 },
 
                 dataURLtoFile(dataurl, filename) {
- 
+
                     var arr = dataurl.split(','),
                         mime = arr[0].match(/:(.*?);/)[1],
-                        bstr = atob(arr[1]), 
-                        n = bstr.length, 
+                        bstr = atob(arr[1]),
+                        n = bstr.length,
                         u8arr = new Uint8Array(n);
-                        
+
                     while(n--){
                         u8arr[n] = bstr.charCodeAt(n);
                     }
-                    
+
                     return new File([u8arr], filename, {type:mime});
                 },
 

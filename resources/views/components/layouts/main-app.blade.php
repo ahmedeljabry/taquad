@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" dir="{{ config()->get('direction') }}" @class(['dark' => current_theme() === 'dark'])>
-    
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -106,7 +106,7 @@
 
         {{-- Content --}}
 
-        <main class="flex-grow"> 
+        <main class="flex-grow">
             <div class="min-h-screen">
                 {{ $slot }}
             </div>
@@ -142,7 +142,7 @@
                         <i class="flex h-full items-center justify-center mx-auto ph-duotone ph-power text-2xl w-full text-slate-400"></i>
                     </a>
                     <x-forms.tooltip id="tooltip-admin-quick-action-dial-logout" :text="__('messages.t_logout')" />
-                    
+
                 </div>
 
                 {{-- Button --}}
@@ -168,7 +168,7 @@
 
         {{-- Custom JS codes --}}
         <script defer>
-            
+
             document.addEventListener("DOMContentLoaded", function(){
 
                 jQuery.event.special.touchstart = {
@@ -196,7 +196,7 @@
                 window.addEventListener('refresh',() => {
                     location.reload();
                 });
- 
+
             });
 
             function jwUBiFxmwbrUwww() {
@@ -219,7 +219,7 @@
             document.ontouchmove = function(event){
                 event.preventDefault();
             }
-            
+
         </script>
 
         {{-- Laravel components --}}
@@ -295,7 +295,7 @@
                     }
 
                 });
-        
+
             </script>
         @endif
 
@@ -303,8 +303,65 @@
         @livewire('wire-elements-modal')
 
         @fcScripts
-        
+
         <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+
+        {{-- Update browser Tab base count messages --}}
+        <script src="https://js.pusher.com/8.2/pusher.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1/dist/echo.iife.js"></script>
+        <script type="text/JavaScript">
+            (function () {
+                // ---------------- server settings pushed to JS -------------
+                const PUSHER_KEY = @json(config('chatify.pusher.key')),
+                PUSHER_OPTS = @json(config('chatify.pusher.options')),
+                USER_ID = {{ auth()->id() }},
+                BASE_TITLE = document.title.replace(/\(\d+\)\s*/, '');
+
+                let   unread = {{ unseen_messages_count() }};
+
+                // -------------- Bootstrap Echo -----------
+                window.Pusher = Pusher;
+                window.Echo = new Echo({
+                    broadcaster : 'pusher',
+                    key         : PUSHER_KEY,
+                    ...PUSHER_OPTS,   
+                    csrfToken   : '{{ csrf_token() }}',
+                    authEndpoint: "{{ route('pusher.auth') }}",
+                    enabledTransports: ['ws','wss'] 
+                });
+
+                // -------------- helper to write tab title ------------------
+                const paint = () => {
+                    document.title = unread ? `(${unread}) ${BASE_TITLE}` : BASE_TITLE;
+                };
+                paint();
+                
+                // -------------- listen for new msgs on ALL pages -----------
+                window.Echo.private(`chat.${USER_ID}`)
+                    .listen('.messaging', (e) => {
+                        if (e.to_id == USER_ID) {
+                            ++unread;
+                            const sound = new Audio("{{ asset('js/chatify/sounds/new-message-sound.mp3') }}");
+                            sound.play();
+                            paint();
+                        }
+                    })
+                    .listen('.client-seen', (e) => {
+                        if (e.to_id == USER_ID && e.seen) {
+                            unread = 0;
+                            paint();
+                        }
+                    });
+
+                // -------------- reset when tab gains focus -----------------
+                window.addEventListener('focus', () => {
+                    if (unread) {
+                        unread = 0;
+                        paint();
+                    }
+                });
+            })();
+        </script>
 
         {{-- Events --}}
         <script>
@@ -312,7 +369,7 @@
 
                 // Change current theme
                 window.Livewire.on('change-current-theme', () => {
-                
+
                     // Remove or add dark class
                     document.getElementsByTagName("html")[0].classList.toggle("dark");
 

@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="window.TJPlQeqplTFcTQC" x-init="initialize()">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="window.TJPlQeqplTFcTQC" x-init="initialize()">
 
     {{-- Loading --}}
     <x-forms.loading />
@@ -25,7 +25,7 @@
 
                     {{-- Username --}}
                     <div class="mt-4 text-gray-900 dark:text-gray-200 text-sm font-medium flex items-center justify-center">
-                        <span class="text-[15px] font-extrabold text-gray-700 dark:text-gray-100">{{ auth()->user()->username }}</span>  
+                        <span class="text-[15px] font-extrabold text-gray-700 dark:text-gray-100">{{ auth()->user()->username }}</span>
                         @if (auth()->user()->status === 'verified')
                             @php
                                 $uuid = uid();
@@ -34,7 +34,7 @@
                             <div id="tooltip-account-verified-{{ $uuid }}" role="tooltip" class="inline-block absolute invisible z-10 py-2 px-3 text-xs font-medium text-white bg-gray-900 rounded-sm shadow-sm opacity-0 tooltip dark:bg-gray-700">
                                 {{ __('messages.t_account_verified') }}
                             </div>
-                        @endif  
+                        @endif
                     </div>
 
                     {{-- Fullname --}}
@@ -94,13 +94,13 @@
                             </div>
 
                         </div>
-                        
+
                     </div>
 
                     {{-- User status --}}
                     <dl class="mt-1 flex-grow flex flex-col justify-between">
                         <dd>
-                            
+
                             @if (auth()->user()->isOnline() && !$availability)
                                 <span class="px-2 py-1 text-green-800 text-xs font-medium bg-green-100 rounded-full">{{ __('messages.t_online') }}</span>
                             @elseif ($availability)
@@ -134,14 +134,14 @@
                         <dt class="text-gray-400 font-normal">{{ __('messages.t_country') }}</dt>
                         <dd class="text-gray-700 dark:text-gray-300 flex items-center">
                             @if (auth()->user()->country)
-                                <img src="{{ placeholder_img() }}" data-src="{{ countryFlag(auth()->user()->country?->code) }}" alt="{{ auth()->user()->country?->name }}" class="lazy h-5 w-5 ltr:mr-2 rtl:ml-2">  
-                                <span>{{ auth()->user()->country?->name }}</span> 
+                                <img src="{{ placeholder_img() }}" data-src="{{ countryFlag(auth()->user()->country?->code) }}" alt="{{ auth()->user()->country?->name }}" class="lazy h-5 w-5 ltr:mr-2 rtl:ml-2">
+                                <span>{{ auth()->user()->country?->name }}</span>
                             @else
-                                {{ __('messages.t_n_a') }} 
+                                {{ __('messages.t_n_a') }}
                             @endif
                         </dd>
                     </div>
-                    
+
                 </dl>
 
             </div>
@@ -161,7 +161,7 @@
                                 <div class="ltr:ml-4 rtl:mr-4 flex-shrink-0 mt-4">
                                     <button id="modal-set-availability-button" class="inline-flex items-center py-2 px-3 border border-transparent rounded-full bg-transparent hover:bg-transparent focus:outline-none focus:ring-0">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary-600 hover:text-primary-700 ltr:mr-2 rtl:ml-2" viewBox="0 0 20 20" fill="currentColor"> <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
-                                        <span class="text-xs font-medium text-primary-600 hover:text-primary-700"> 
+                                        <span class="text-xs font-medium text-primary-600 hover:text-primary-700">
                                             {{ __('messages.t_set_availability') }}
                                         </span>
                                     </button>
@@ -188,7 +188,7 @@
                                     <p class="text-gray-800 text-sm dark:text-white"><em>
                                         {{ $availability->message }}
                                     </p></em>
-                                
+
                                     <footer class="mt-2">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0">
@@ -222,7 +222,7 @@
                         <div class="ltr:ml-4 rtl:mr-4 flex-shrink-0 mt-4">
                             <button @click="isDescriptionEditing = !isDescriptionEditing" class="inline-flex items-center py-2 px-3 border border-transparent rounded-full bg-transparent hover:bg-transparent focus:outline-none focus:ring-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary-600 hover:text-primary-700 ltr:mr-2 rtl:ml-2" viewBox="0 0 20 20" fill="currentColor"> <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
-                                <span class="text-xs font-medium text-primary-600 hover:text-primary-700"> 
+                                <span class="text-xs font-medium text-primary-600 hover:text-primary-700">
                                     {{ __('messages.t_edit') }}
                                 </span>
                             </button>
@@ -279,7 +279,7 @@
 
                         {{-- Facebook --}}
                         <div class="col-span-12 px-5">
-                            <x-forms.text-input 
+                            <x-forms.text-input
                                 :label="__('messages.t_facebook')"
                                 :placeholder="__('messages.t_enter_facebook_profile')"
                                 model="facebook_profile"
@@ -288,7 +288,7 @@
 
                         {{-- Twitter --}}
                         <div class="col-span-12 px-5">
-                            <x-forms.text-input 
+                            <x-forms.text-input
                                 :label="__('messages.t_twitter')"
                                 :placeholder="__('messages.t_enter_twitter_profile')"
                                 model="twitter_profile"
@@ -297,7 +297,7 @@
 
                         {{-- Dribbble --}}
                         <div class="col-span-12 px-5">
-                            <x-forms.text-input 
+                            <x-forms.text-input
                                 :label="__('messages.t_dribbble')"
                                 :placeholder="__('messages.t_enter_dribbble_profile')"
                                 model="dribbble_profile"
@@ -306,7 +306,7 @@
 
                         {{-- Stackoverflow --}}
                         <div class="col-span-12 px-5">
-                            <x-forms.text-input 
+                            <x-forms.text-input
                                 :label="__('messages.t_stackoverflow')"
                                 :placeholder="__('messages.t_enter_stackoverflow_profile')"
                                 model="stackoverflow_profile"
@@ -315,7 +315,7 @@
 
                         {{-- Github --}}
                         <div class="col-span-12 px-5">
-                            <x-forms.text-input 
+                            <x-forms.text-input
                                 :label="__('messages.t_github')"
                                 :placeholder="__('messages.t_enter_github_profile')"
                                 model="github_profile"
@@ -324,7 +324,7 @@
 
                         {{-- Youtube --}}
                         <div class="col-span-12 px-5">
-                            <x-forms.text-input 
+                            <x-forms.text-input
                                 :label="__('messages.t_youtube')"
                                 :placeholder="__('messages.t_enter_youtube_profile')"
                                 model="youtube_profile"
@@ -333,7 +333,7 @@
 
                         {{-- Vimeo --}}
                         <div class="col-span-12 px-5">
-                            <x-forms.text-input 
+                            <x-forms.text-input
                                 :label="__('messages.t_vimeo')"
                                 :placeholder="__('messages.t_enter_vimeo_profile')"
                                 model="vimeo_profile"
@@ -371,7 +371,7 @@
                 {{-- Section content --}}
                 <div class="py-6" x-cloak>
 
-                    {{-- Create/Update new skill --}}  
+                    {{-- Create/Update new skill --}}
                     <div class="px-5" x-show="isAddSkill">
 
                         {{-- Skill name --}}
@@ -386,7 +386,7 @@
                             <label class="text-sm font-medium text-gray-900 dark:text-gray-300">{{ __('messages.t_experience') }}</label>
                             <fieldset class="mt-4">
                                 <div class="space-y-4">
-                                
+
                                     {{-- Beginner --}}
                                     <div class="flex items-center">
                                         <input id="skill-experience-beginner" wire:model.defer="add_skill.experience" value="beginner" name="skill_experience" type="radio" class="focus:ring-primary-600 h-4 w-4 text-primary-600 border-gray-300 dark:border-zinc-600 dark:bg-transparent">
@@ -410,7 +410,7 @@
                                             {{ __('messages.t_expert') }}
                                         </label>
                                     </div>
-                                
+
                                 </div>
                             </fieldset>
                         </div>
@@ -523,7 +523,7 @@
                 {{-- Section content --}}
                 <div class="py-6" x-cloak>
 
-                    {{-- Create/Update new language --}}  
+                    {{-- Create/Update new language --}}
                     <div class="px-5" x-show="isAddLanguage">
 
                         {{-- Language name --}}
@@ -538,7 +538,7 @@
                                     :label="__('messages.t_language')"
                                     :placeholder="__('messages.t_choose_language')"
                                     data="manual">
-                                
+
                                     {{-- Values --}}
                                     @foreach (config('languages') as $code => $name)
                                         <x-bladewind.select-item :label="$name" :value="$code" />
@@ -547,10 +547,10 @@
                                 </x-bladewind.select>
                             </div>
 
-                            {{-- Error --}}  
+                            {{-- Error --}}
                             @error('add_language.name')
                                 <p class="mt-1 text-xs text-red-600 dark:text-red-500">{{ $errors->first('add_language.name') }}</p>
-                            @enderror 
+                            @enderror
 
                         </div>
 
@@ -558,7 +558,7 @@
                         <div class="mt-6">
                             <fieldset class="mt-4">
                                 <div class="space-y-4">
-                                
+
                                     {{-- Basic --}}
                                     <div class="flex items-center">
                                         <input id="languages-level-basic" wire:model.defer="add_language.level" value="basic" name="languages_level" type="radio" class="focus:ring-primary-600 h-4 w-4 text-primary-600 border-gray-300 dark:border-zinc-600 dark:bg-transparent">
@@ -566,7 +566,7 @@
                                             {{ __('messages.t_basic') }}
                                         </label>
                                     </div>
-                                    
+
                                     {{-- Conversational --}}
                                     <div class="flex items-center">
                                         <input id="languages-level-conversational" wire:model.defer="add_language.level" value="conversational" name="languages_level" type="radio" class="focus:ring-primary-600 h-4 w-4 text-primary-600 border-gray-300 dark:border-zinc-600 dark:bg-transparent">
@@ -590,7 +590,7 @@
                                             {{ __('messages.t_native') }}
                                         </label>
                                     </div>
-                                
+
                                 </div>
                             </fieldset>
                         </div>
@@ -745,7 +745,7 @@
 
                     {{-- Expected available date --}}
                     <div class="col-span-12">
-                        <x-forms.text-input 
+                        <x-forms.text-input
                             :label="__('messages.t_when_do_u_expect_tobe_ready_for_new_work')"
                             :placeholder="__('messages.t_mm_dd_yyyy_example', ['example' => now()->addDay()->translatedFormat('m/d/Y')])"
                             model="availability_date"
@@ -797,7 +797,7 @@
                         });
                     }
                 },
-                
+
                 // Disable headline editing
                 disableEditing() {
                     this.isHeadlineEditing = false;

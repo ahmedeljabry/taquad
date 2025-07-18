@@ -84,7 +84,7 @@
                             
                         @endif
                     </div>
-
+                    
                     {{-- New messages counter --}}
                     {!! $unseenCounter > 0 ? "<b class='new-messages-counter'>".$unseenCounter."</b>" : '' !!}
 

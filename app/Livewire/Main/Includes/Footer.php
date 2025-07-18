@@ -7,7 +7,7 @@ use Livewire\Component;
 
 class Footer extends Component
 {
-    
+
     /**
      * Render component
      *

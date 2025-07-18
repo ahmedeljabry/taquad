@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
 
     {{-- Loading --}}
     <x-forms.loading />
@@ -18,9 +18,9 @@
             <div class="w-full mb-16">
                 <div class="mx-auto max-w-7xl">
                     <div class="lg:flex lg:items-center lg:justify-between">
-            
+
                         <div class="min-w-0 flex-1">
-            
+
                             {{-- Breadcrumbs --}}
                             <div class="mb-3 flex flex-col sm:flex-row sm:flex-wrap sm:space-x-6 rtl:space-x-reverse">
                                 <ol class="inline-flex items-center mb-3 space-x-1 md:space-x-3 md:rtl:space-x-reverse sm:mb-0">
@@ -33,7 +33,7 @@
                                             </a>
                                         </div>
                                     </li>
-                    
+
                                     {{-- My projects --}}
                                     <li aria-current="page">
                                         <div class="flex items-center">
@@ -43,10 +43,10 @@
                                             </span>
                                         </div>
                                     </li>
-                    
+
                                 </ol>
                             </div>
-            
+
                             {{-- Section heading --}}
                             <h2 class="text-lg font-bold leading-7 text-zinc-700 dark:text-gray-50 sm:truncate sm:text-xl sm:tracking-tight">
                                 @lang('messages.t_milestone_payments')
@@ -56,9 +56,9 @@
                             <p class="leading-relaxed text-gray-400 mt-1 text-sm">
                                 @lang('messages.t_employer_milestone_payments_subtitle')
                             </p>
-                            
+
                         </div>
-            
+
                         {{-- Actions --}}
                         <div class="mt-5 flex justify-between lg:mt-0 lg:ltr::ml-4 lg:rtl:mr-4">
 
@@ -69,9 +69,9 @@
                                     {{ __('messages.t_view_project') }}
                                 </a>
                             </span>
-                
+
                         </div>
-            
+
                     </div>
                 </div>
             </div>
@@ -136,7 +136,7 @@
                                             @break
 
                                         @default
-                                            
+
                                     @endswitch
                                 </div>
                             </div>
@@ -154,7 +154,7 @@
                                         {{ format_date($expected_delivery_date, config('carbon-formats.F_j_Y')) }}
                                     @else
                                         @lang('messages.t_n_a')
-                                    @endif  
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -207,7 +207,7 @@
                     {{-- Action buttons --}}
                     <div class="flex justify-end items-center mt-12">
                         <div class="flex items-center space-x-3 rtl:space-x-reverse">
-                            
+
                             {{-- View awarded bid --}}
                             <button type="button" class="inline-flex justify-center items-center space-x-2 rtl:space-x-reverse rounded border font-medium focus:outline-none px-3 py-2 tracking-wide text-[13px] border-gray-300 bg-white text-gray-800 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 hover:shadow focus:ring focus:ring-gray-500 focus:ring-opacity-25 active:bg-white active:border-white active:shadow-none dark:bg-zinc-700 dark:border-transparent dark:text-zinc-200 dark:hover:bg-zinc-600" id="modal-awarded-bid-button-{{ $project->uid }}">
                                 @lang('messages.t_awarded_bid')
@@ -228,82 +228,82 @@
                         <table class="w-full text-left border-spacing-y-[10px] border-separate -mt-2">
                             <thead class="">
                                 <tr class="bg-slate-200 dark:bg-zinc-600">
-            
+
                                     {{-- Date --}}
                                     <th class="font-bold tracking-wider text-gray-600 px-5 py-4.5 border-b-0 whitespace-nowrap text-xs uppercase dark:text-zinc-300 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md rtl:text-right">@lang('messages.t_date')</th>
-            
+
                                     {{-- Description --}}
                                     <th class="font-bold tracking-wider text-gray-600 px-5 py-4.5 border-b-0 whitespace-nowrap text-xs uppercase dark:text-zinc-300 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md rtl:text-right">@lang('messages.t_description')</th>
-            
+
                                     {{-- Status --}}
                                     <th class="font-bold tracking-wider text-gray-600 px-5 py-4.5 text-center border-b-0 whitespace-nowrap text-xs uppercase dark:text-zinc-300 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md">@lang('messages.t_status')</th>
-            
+
                                     {{-- Paid to freelancer --}}
                                     <th class="font-bold tracking-wider text-gray-600 px-5 py-4.5 text-center border-b-0 whitespace-nowrap text-xs uppercase dark:text-zinc-300 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md">@lang('messages.t_paid_to_freelancer')</th>
-                                    
+
                                     {{-- Total --}}
                                     <th class="font-bold tracking-wider text-gray-600 px-5 py-4.5 text-center border-b-0 whitespace-nowrap text-xs uppercase dark:text-zinc-300 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md">@lang('messages.t_total')</th>
 
                                     {{-- Options --}}
                                     <th class="font-bold tracking-wider text-gray-600 px-5 py-4.5 text-center border-b-0 whitespace-nowrap text-xs uppercase dark:text-zinc-300 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md">@lang('messages.t_options')</th>
-                                    
+
                                 </tr>
                             </thead>
                             <thead>
                                 @forelse ($payments as $p)
                                     <tr class="intro-x shadow-sm bg-white dark:bg-zinc-800 rounded-md h-16" wire:key="employer-dashboard-project-milestones-{{ $p->uid }}">
-            
+
                                         {{-- Date --}}
                                         <td class="px-5 py-3 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md rtl:text-right">
                                             <div class="text-gray-600 dark:text-gray-100 text-[13px] font-normal whitespace-nowrap">
-                                                {{ format_date($p->created_at) }}    
+                                                {{ format_date($p->created_at) }}
                                             </div>
                                         </td>
-            
+
                                         {{-- Description --}}
                                         <td class="px-5 py-3 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md w-48 rtl:text-right">
                                             <div class="text-gray-500 leading-relaxed dark:text-gray-100 text-[13px] font-normal break-words flex-none truncate w-48 overflow-hidden block">
-                                                {{ $p->description }} 
+                                                {{ $p->description }}
                                             </div>
                                         </td>
-            
+
                                         {{-- Status --}}
                                         <td class="px-5 py-3 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md text-center">
                                             @switch($p->status)
-            
+
                                                 {{-- Requested --}}
                                                 @case('request')
                                                     <span class="inline-flex items-center px-3 py-2 rounded-3xl text-xs tracking-wide font-medium bg-yellow-100 text-yellow-800 dark:bg-transparent dark:text-amber-400">
                                                         {{ __('messages.t_requested') }}
                                                     </span>
                                                     @break
-                                                
+
                                                 {{-- Paid --}}
                                                 @case('paid')
                                                     <span class="inline-flex items-center px-4 py-2 rounded-3xl text-xs tracking-wide font-medium bg-green-100 text-green-800 dark:bg-transparent dark:text-green-400">
                                                         {{ __('messages.t_paid') }}
                                                     </span>
                                                     @break
-            
+
                                                 {{-- Funded --}}
                                                 @case('funded')
                                                     <span class="inline-flex items-center px-3 py-2 rounded-3xl text-xs tracking-wide font-medium bg-purple-100 text-purple-800 dark:bg-transparent dark:text-purple-400">
                                                         {{ __('messages.t_funded') }}
                                                     </span>
                                                     @break
-            
+
                                                 @default
-                                                    
+
                                             @endswitch
                                         </td>
-            
+
                                         {{-- Pait to freelancer --}}
                                         <td class="px-5 py-3 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md text-center">
                                             <div class="text-gray-700 dark:text-gray-100 text-sm font-medium">
                                                 {{ money(convertToNumber($p->amount), settings('currency')->code, true) }}
                                             </div>
                                         </td>
-            
+
                                         {{-- Paid to you --}}
                                         <td class="px-5 py-3 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md text-center">
                                             <div class="text-gray-700 dark:text-gray-100 text-sm font-medium">
@@ -320,7 +320,7 @@
                                                     <svg class="h-4.5 w-4.5 mt-px" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h3v3.767L13.277 18H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zm0 14h-7.277L9 18.233V16H4V4h16v12z"></path><path d="M7 7h10v2H7zm0 4h7v2H7z"></path></svg>
                                                 </button>
                                                 <x-forms.tooltip id="tooltip-actions-details-{{ $p->uid }}" :text="__('messages.t_details')" />
-        
+
                                                 {{-- Pay --}}
                                                 @if ($p->status === 'request')
                                                     <button wire:click="confirmPay('{{ $p->uid }}')" type="button" class="inline-flex justify-center items-center border font-semibold focus:outline-none w-8 h-8 text-sm rounded border-gray-300 bg-white text-gray-600 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 hover:shadow focus:ring focus:ring-gray-500 focus:ring-opacity-25 active:bg-white active:border-white active:shadow-none dark:bg-zinc-700 dark:border-transparent dark:text-zinc-200 dark:hover:bg-zinc-600" data-tooltip-target="tooltip-actions-pay-{{ $p->uid }}">
@@ -336,12 +336,12 @@
                                                     </button>
                                                     <x-forms.tooltip id="tooltip-actions-release-{{ $p->uid }}" :text="__('messages.t_release')" />
                                                 @endif
-                                                
+
                                             </div>
                                         </td>
-            
+
                                     </tr>
-            
+
                                 @empty
                                     <tr>
                                         <td colspan="6" class="py-4.5 font-light text-sm text-gray-400 dark:text-zinc-200 text-center tracking-wide shadow-sm bg-white dark:bg-zinc-800 rounded-md">
@@ -388,51 +388,51 @@
             {{-- Bid --}}
             <div class="w-full relative">
                 <div class="relative">
-                
+
                     {{-- Bid heading --}}
                     <div class="mb-8">
-                
+
                         {{-- Freelancer profile --}}
                         <div class="flex items-center space-x-4 rtl:space-x-reverse">
-                
+
                             {{-- Avatar --}}
                               <a href="{{ url('profile', $project->awarded_bid->user->username) }}" class="block">
                                 <img class="rounded-full h-12 w-12 object-cover object-center lazy" src="{{ placeholder_img() }}" data-src="{{ src($project->awarded_bid->user->avatar) }}" alt="{{ $project->awarded_bid->user->username }}">
                             </a>
-                
+
                             {{-- User info --}}
                             <div class="space-y-0.5">
-                
+
                                 <div class="flex items-center">
-                
+
                                     {{-- User fullname --}}
                                     @if ($project->awarded_bid->user->fullname)
                                         <span class="font-medium text-zinc-900 text-sm hover:text-black dark:text-zinc-200 dark:hover:text-white ltr:pr-1 rtl:pl-1">
                                             {{ $project->awarded_bid->user->fullname }}
                                         </span>
                                     @endif
-                
+
                                     {{-- Username --}}
                                     <a href="{{ url('profile', $project->awarded_bid->user->username) }}" class="font-medium text-gray-500 text-[13px] hover:text-primary-600 focus:text-primary-600 inline-flex items-center dark:text-zinc-400">
                                         <svg class="w-4 h-4" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10c1.466 0 2.961-.371 4.442-1.104l-.885-1.793C14.353 19.698 13.156 20 12 20c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8v1c0 .692-.313 2-1.5 2-1.396 0-1.494-1.819-1.5-2V8h-2v.025A4.954 4.954 0 0 0 12 7c-2.757 0-5 2.243-5 5s2.243 5 5 5c1.45 0 2.748-.631 3.662-1.621.524.89 1.408 1.621 2.838 1.621 2.273 0 3.5-2.061 3.5-4v-1c0-5.514-4.486-10-10-10zm0 13c-1.654 0-3-1.346-3-3s1.346-3 3-3 3 1.346 3 3-1.346 3-3 3z"></path></svg>
                                         <span>{{ $project->awarded_bid->user->username }}</span>
                                     </a>
-                
+
                                 </div>
-                
+
                                 {{-- User details --}}
                                 <div class="flex items-center space-x-3 rtl:space-x-reverse text-[13px] dark:text-zinc-400">
-                
+
                                     {{-- Country --}}
                                     @if ($project->awarded_bid->user->country)
                                         <p class="flex items-center space-x-1 rtl:space-x-reverse">
                                             <img class="h-4 ltr:pr-0.5 rtl:pl-0.5 -mt-0.5 lazy" src="{{ placeholder_img() }}" data-src="{{ countryFlag($project->awarded_bid->user->country->code) }}" alt="{{ $project->awarded_bid->user->country->name }}">
                                             <span>{{ $project->awarded_bid->user->country->name }}</span>
                                         </p>
-                
+
                                         <div class="mx-2 my-0.5 text-gray-300 dark:text-zinc-400">|</div>
                                     @endif
-                
+
                                     {{-- Rating --}}
                                     <p class="flex shrink-0 items-center space-x-1 rtl:space-x-reverse">
                                         <svg aria-hidden="true" class="w-4 h-4 {{ $project->awarded_bid->user->rating() == 0 ? 'text-gray-400' : 'text-amber-500' }} -mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
@@ -440,7 +440,7 @@
                                             {{ $project->awarded_bid->user->rating() }}
                                         </span>
                                     </p>
-                
+
                                     {{-- Verified account --}}
                                     @if ($project->awarded_bid->user->status === 'verified')
                                         <div class="mx-2 my-0.5 text-gray-300 dark:text-zinc-400">|</div>
@@ -449,20 +449,20 @@
                                             <span>@lang('messages.t_verified_account')</span>
                                         </div>
                                     @endif
-                
+
                                 </div>
-                
+
                             </div>
-                
+
                         </div>
-                                    
+
                     </div>
-                    
+
                     {{-- Bid body --}}
                     <p class="mb-2 font-light text-sm leading-relaxed text-gray-500 dark:text-gray-300">
                         {!! nl2br($project->awarded_bid->message) !!}
                     </p>
-                
+
                 </div>
             </div>
 
@@ -480,7 +480,7 @@
         </x-slot>
 
     </x-forms.modal>
-    
+
     {{-- Create milestone --}}
     @if (in_array($project->status, ['active', 'under_development', 'pending_final_review']))
         <x-forms.modal id="modal-create-milestone-container-{{ $project->uid }}" target="modal-create-milestone-button-{{ $project->uid }}" uid="modal_create_milestone_{{ $project->uid }}" placement="center-center" size="max-w-md">
@@ -494,9 +494,9 @@
 
                     {{-- Amount --}}
                     <div>
-                        <x-forms.text-input 
-                            :label="__('messages.t_amount')" 
-                            placeholder="0.00" 
+                        <x-forms.text-input
+                            :label="__('messages.t_amount')"
+                            placeholder="0.00"
                             model="milestone_amount"
                             :suffix="settings('currency')->code"
                             hint="{{ __('messages.t_available_balance') }} {{ money(convertToNumber(auth()->user()->balance_available), settings('currency')->code, true) }}" />
@@ -504,9 +504,9 @@
 
                     {{-- Description --}}
                     <div>
-                        <x-forms.textarea 
-                            :label="__('messages.t_description')" 
-                            :placeholder="__('messages.t_enter_milestone_payment_description')" 
+                        <x-forms.textarea
+                            :label="__('messages.t_description')"
+                            :placeholder="__('messages.t_enter_milestone_payment_description')"
                             model="milestone_description"
                             :rows="6"
                             svg_icon='<svg class="w-5 h-5 text-gray-400 dark:text-gray-300" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.045 7.401c.378-.378.586-.88.586-1.414s-.208-1.036-.586-1.414l-1.586-1.586c-.378-.378-.88-.586-1.414-.586s-1.036.208-1.413.585L4 13.585V18h4.413L19.045 7.401zm-3-3 1.587 1.585-1.59 1.584-1.586-1.585 1.589-1.584zM6 16v-1.585l7.04-7.018 1.586 1.586L7.587 16H6zm-2 4h16v2H4z"></path></svg>' />
@@ -526,11 +526,11 @@
 
                     {{-- Create --}}
                     <button
-                        type="button" 
+                        type="button"
                         wire:click="confirmCreate"
                         wire:loading.attr="disabled"
                         class="inline-flex justify-center items-center rounded border font-semibold focus:outline-none px-3 py-2 leading-5 text-xs tracking-wide border-transparent bg-primary-500 text-white hover:bg-primary-600 focus:ring focus:ring-primary-500 focus:ring-opacity-25 disabled:bg-gray-200 disabled:hover:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed">
-                        
+
                         {{-- Loading indicator --}}
                         <div wire:loading wire:target="confirmCreate">
                             <svg role="status" class="inline w-4 h-4 text-gray-700 animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -11,7 +11,7 @@ use WireUi\Traits\Actions;
 class Footer extends Component
 {
     use Actions;
-    
+
     public $default_language_name;
     public $default_language_code;
     public $default_country_code;
@@ -31,7 +31,7 @@ class Footer extends Component
 
         // Check if language exists
         if ($language) {
-            
+
             // Set default language
             $this->default_language_name = $language->name;
             $this->default_language_code = $language->language_code;
@@ -46,7 +46,7 @@ class Footer extends Component
 
         }
     }
-    
+
     /**
      * Render component
      *
@@ -84,7 +84,7 @@ class Footer extends Component
 
         // Check if language exists
         if (!$language) {
-            
+
             // Not found
             $this->notification([
                 'title'       => __('messages.t_error'),
@@ -112,19 +112,19 @@ class Footer extends Component
     public function switchTheme()
     {
         try {
-            
+
             // Get appearance settings
             $settings = settings('appearance');
 
             // Check if theme switcher enabled
             if ($settings->is_theme_switcher) {
-                
+
                 // Get current theme
                 $current = current_theme();
 
                 // Check current theme
                 if ($current === 'light') {
-                   
+
                     // Switch to dark mode
                     Cookie::queue('default_theme', 'dark', 10080); // 7 days = 10080 min
 
@@ -141,11 +141,11 @@ class Footer extends Component
             }
 
         } catch (\Throwable $th) {
-            
+
             // Something went wrong
             return;
 
         }
     }
-    
+
 }

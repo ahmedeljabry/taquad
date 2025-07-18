@@ -1,8 +1,8 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
-    
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+
     {{-- Loading --}}
     <x-forms.loading />
-                
+
     {{-- Head --}}
     <div class="w-full mb-16">
         <div class="lg:flex lg:items-center lg:justify-between">
@@ -26,7 +26,7 @@
                                 </a>
                             </div>
                         </li>
-        
+
                         {{-- Deposit --}}
                         <li aria-current="page">
                             <div class="flex items-center">
@@ -36,10 +36,10 @@
                                 </span>
                             </div>
                         </li>
-        
+
                     </ol>
                 </div>
-                
+
             </div>
 
             {{-- Actions --}}
@@ -51,7 +51,7 @@
                         @lang('messages.t_deposit')
                     </a>
                 </span>
-    
+
             </div>
 
         </div>
@@ -110,16 +110,16 @@
 
                         {{-- Amount --}}
                         <th class="font-bold tracking-wider text-gray-600 px-5 py-4.5 text-center border-b-0 whitespace-nowrap text-xs uppercase dark:text-zinc-300 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md">@lang('messages.t_amount')</th>
-                        
+
                         {{-- Status --}}
                         <th class="font-bold tracking-wider text-gray-600 px-5 py-4.5 text-center border-b-0 whitespace-nowrap text-xs uppercase dark:text-zinc-300 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md">@lang('messages.t_status')</th>
-                        
+
                     </tr>
                 </thead>
                 <thead>
                     @forelse ($transactions as $t)
                         <tr class="intro-x shadow-sm bg-white dark:bg-zinc-800 rounded-md h-16" wire:key="deposit-history-transactions-{{ $t->uid }}">
-                        
+
                             {{-- Date --}}
                             <td class="px-5 py-3 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md text-center">
 
@@ -152,13 +152,13 @@
                                         {{-- Name --}}
                                         <div class="flex items-center">
                                             <div class="font-bold whitespace-nowrap truncate block max-w-[240px] hover:text-zinc-900 dark:text-white text-sm text-zinc-700">
-                                                
+
                                                 {{-- Check payment gateway --}}
                                                 @if ($t->payment_method === "offline")
-                                    
+
                                                     {{-- Check if offline payment has a name --}}
                                                     @if ( !empty(payment_gateway($t->payment_method, false, true)->name) )
-                                                        
+
                                                         {{-- Offline method --}}
                                                         {{ payment_gateway($t->payment_method, false, true)?->name }}
 
@@ -224,7 +224,7 @@
                                             @lang('messages.t_rejected')
                                         </span>
                                     @break
-                                        
+
                                 @endswitch
                             </td>
 

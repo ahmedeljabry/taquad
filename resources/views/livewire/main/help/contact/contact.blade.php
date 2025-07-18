@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
 
     {{-- Loading --}}
     <x-forms.loading />
@@ -63,7 +63,7 @@
                             <p class="text-xs text-red-600 dark:text-red-500">{{ $errors->first('recaptcha_token') }}</p>
                         </div>
                     @enderror
-                    
+
                     {{-- Submit --}}
                     <div class="col-span-2">
                         <x-bladewind.button size="small" class="mx-auto block w-full" can_submit="true">
@@ -79,14 +79,14 @@
                             @if (settings('security')->is_recaptcha)
                                 <li>
                                     <div class="text-xs tracking-wide text-slate-400 dark:text-zinc-400 inline-block">
-                                        @lang('messages.t_this_site_protected_by_recaptcha_and_google') 
+                                        @lang('messages.t_this_site_protected_by_recaptcha_and_google')
                                         <a href="https://policies.google.com/privacy" target="_blank" class="text-gray-900 dark:text-zinc-200 hover:underline font-medium">
                                             @lang('messages.t_privacy_policy')
-                                        </a> 
+                                        </a>
                                         <span class="lowercase">@lang('messages.t_and')</span>
                                         <a href="https://policies.google.com/terms" target="_blank" class="text-gray-900 dark:text-zinc-200 hover:underline font-medium">
                                             @lang('messages.t_terms_of_service')
-                                        </a> 
+                                        </a>
                                         @lang('messages.t_recaptcha_apply')
                                     </div>
                                 </li>
@@ -103,10 +103,10 @@
                                     ]) !!}
                                 </div>
                             </li>
-                            
+
                         </ul>
                     </div>
-                    
+
                 </x-form>
             </div>
         </div>
@@ -119,13 +119,13 @@
 
     {{-- reCaptcha --}}
 	@if (settings('security')->is_recaptcha)
-        <script src="https://www.google.com/recaptcha/api.js?render={{ config('recaptcha.site_key') }}"></script> 
+        <script src="https://www.google.com/recaptcha/api.js?render={{ config('recaptcha.site_key') }}"></script>
     @endif
 
 @endpush
 
 {{-- Inject Js --}}
-@push('scripts') 
+@push('scripts')
 
     {{-- Verify reCaptcha --}}
 	@if (settings('security')->is_recaptcha)

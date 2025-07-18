@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
 
     {{-- Breadcrumbs --}}
     <nav class="flex" aria-label="Breadcrumb">
@@ -13,7 +13,7 @@
                     </a>
                 </div>
             </li>
-      
+
             {{-- Projects --}}
             <li>
                 <div class="flex items-center">
@@ -62,7 +62,7 @@
             @forelse ($projects as $project)
 
                 @livewire('main.cards.project', [ 'id' => $project->uid ], key('project-card-id-' . $project->uid))
-            
+
             @empty
 
                 {{-- Nothing to show --}}

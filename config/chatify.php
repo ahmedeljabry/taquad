@@ -38,11 +38,11 @@ return [
     |-------------------------------------
     */
     'pusher' => [
-        'key'     => '38f61258228e5c034bf0',
-        'secret'  => 'c4b0ccc03526ea56d6d7',
-        'app_id'  => '1622147',
+        'key'     => '543a807d1a1fec6d1fc6',
+        'secret'  => '10c1191d044909ef3f9b',
+        'app_id'  => '1939320',
         'options' => [
-            'cluster'   => 'eu',
+            'cluster'   => 'ap2',
             'encrypted' => 1,
         ],
     ],

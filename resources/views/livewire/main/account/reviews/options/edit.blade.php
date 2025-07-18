@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="window.AoyAvhrbNoSMGMS" x-init="initialize">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="window.AoyAvhrbNoSMGMS" x-init="initialize">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
             <div class="divide-y divide-gray-200 dark:divide-zinc-700 lg:grid lg:grid-cols-12 lg:divide-y-0 lg:divide-x rtl:divide-x-reverse">
@@ -19,7 +19,7 @@
                             <h2 class="text-base leading-6 font-bold text-gray-900 dark:text-gray-100">{{ __('messages.t_edit_review') }}</h2>
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">{{ __('messages.t_update_ur_review_for_this_gig') }}</p>
                         </div>
-                        
+
                         {{-- Section content --}}
                         <div class="grid grid-cols-12 md:gap-x-8 gap-y-8 mb-6">
 
@@ -75,7 +75,7 @@
 
                         </div>
 
-                    </div>               
+                    </div>
 
                 </div>
 
@@ -100,7 +100,7 @@
     				} else {
     					this.rating= amount;
     					@this.set('rating', amount);
-    				} 
+    				}
     			},
 
                 // Init

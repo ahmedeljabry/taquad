@@ -18,7 +18,7 @@ use App\Mail\User\Everyone\NewsletterVerification as EveryoneNewsletterVerificat
 class HomeComponent extends Component
 {
     use SEOToolsTrait, LivewireAlert, Actions;
-    
+
     public $email;
 
 
@@ -32,6 +32,11 @@ class HomeComponent extends Component
         // Check if app installed
         if (!isInstalled()) {
             return redirect('install');
+        }
+
+        // If user is authenticated, redirect to explore projects
+        if (auth()->check() && settings('projects')->is_enabled) {
+            return redirect('explore/projects');
         }
     }
 
@@ -89,7 +94,7 @@ class HomeComponent extends Component
     {
         return Gig::active()->inRandomOrder()->take(4)->get();
     }
-    
+
 
     /**
      * Get categories in home page
@@ -111,7 +116,7 @@ class HomeComponent extends Component
     {
         // Check if bestsellers section enabled
         if (settings('appearance')->is_best_sellers) {
-            
+
             // Get top sellers randomly
             return User::where('account_type', 'seller')
                         ->whereHas('sales')
@@ -139,7 +144,7 @@ class HomeComponent extends Component
     {
         // Check if projects enabled
         if (settings('projects')->is_enabled) {
-            
+
             // Get latest 12 projects
             return Project::whereIn('status', ['completed', 'active'])
                             ->where('is_featured', true)
@@ -163,113 +168,113 @@ class HomeComponent extends Component
     public function newsletter()
     {
         try {
-            
+
             // Check if newsletter enabled
             if (!settings('newsletter')->is_enabled) {
                 return;
             }
-    
+
             // Validate email address
             if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-    
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
                     'description' => __('messages.t_pls_enter_valid_email_address'),
                     'icon'        => 'error'
                 ]);
-    
+
                 return;
-    
+
             }
-    
+
             // Get email in list
             $email = NewsletterList::where('email', $this->email)->first();
-    
+
             // Check if email exists
             if ($email) {
-                
+
                 // Check if email already verified
                 if ($email->status === 'verified') {
-                    
+
                     // Reset form
                     $this->reset('email');
-    
+
                     // Return
                     return;
-    
+
                 } else {
-    
+
                     // Delete old verifications
                     NewsletterVerification::where('list_id', $email->id)->delete();
-    
+
                     // Generate verification token
                     $token                 = uid(60);
-    
+
                     // Generate verification
                     $verification          = new NewsletterVerification();
                     $verification->list_id = $email->id;
                     $verification->token   = $token;
                     $verification->save();
-    
+
                     // Send verification token
                     Mail::to($this->email)->send(new EveryoneNewsletterVerification($token));
-    
+
                     // Reset form
                     $this->reset('email');
-    
+
                     // Success
                     $this->notification([
                         'title'       => __('messages.t_success'),
                         'description' => __('messages.t_we_sent_verification_link_newsletter'),
                         'icon'        => 'success'
                     ]);
-    
+
                 }
-    
+
             } else {
-    
+
                 // Add email to list
                 $list                  = new NewsletterList();
                 $list->uid             = uid();
                 $list->email           = clean($this->email);
                 $list->ip_address      = request()->ip();
                 $list->save();
-    
+
                 // Email not found, generate verification token
                 $token                 = uid(60);
-    
+
                 // Generate verification
                 $verification          = new NewsletterVerification();
                 $verification->list_id = $list->id;
                 $verification->token   = $token;
                 $verification->save();
-    
+
                 // Send verification token
                 Mail::to($this->email)->send(new EveryoneNewsletterVerification($token));
-    
+
                 // Reset form
                 $this->reset('email');
-    
+
                 // Success
                 $this->notification([
                     'title'       => __('messages.t_success'),
                     'description' => __('messages.t_we_sent_verification_link_newsletter'),
                     'icon'        => 'success'
                 ]);
-    
+
             }
 
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
+                'error',
+                __('messages.t_error'),
                 livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
             );
 
         }
     }
-    
+
 }

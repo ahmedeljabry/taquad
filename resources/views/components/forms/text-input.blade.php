@@ -4,7 +4,7 @@
 
     {{-- Label --}}
     @if ($label)
-        <label for="text-input-component-id-{{ $model }}" class="block text-xs font-bold tracking-wide whitespace-nowrap overflow-hidden truncate {{ $errors->first($model) ? 'text-red-600 dark:text-red-500' : 'text-zinc-500 dark:text-white' }}" title="{{ htmlspecialchars_decode($label) }}">
+        <label for="text-input-component-id-{{ $model }}" class="block font-medium  tracking-wide whitespace-nowrap overflow-hidden truncate {{ $errors->first($model) ? 'text-red-600 dark:text-red-500' : 'text-black dark:text-white' }}" title="{{ htmlspecialchars_decode($label) }}">
 
             {{-- Label text --}}
             {{ htmlspecialchars_decode($label) }}

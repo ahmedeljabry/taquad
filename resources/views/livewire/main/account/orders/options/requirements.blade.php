@@ -1,5 +1,5 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24"
-    x-data="window.aelkGHWmZHjwNJZ" 
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24"
+    x-data="window.aelkGHWmZHjwNJZ"
     x-init="initialize()"
     x-on:livewire-upload-start="uploadStart()"
     x-on:livewire-upload-finish="uploadFinish()"
@@ -25,7 +25,7 @@
                             <h2 class="text-base leading-6 font-bold text-gray-900 dark:text-gray-100">{{ __('messages.t_send_requirements') }}</h2>
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">{{ __('messages.t_send_requirements_subtitle') }}</p>
                         </div>
-                        
+
                         {{-- Section content --}}
                         <div class="grid grid-cols-12 md:gap-x-8 gap-y-8 mb-6">
 
@@ -53,10 +53,10 @@
                                     </div>
 
                                     @foreach ($item->gig->requirements as $key => $req)
-                                    
+
                                         {{-- Text type --}}
                                         @if ($req->type === 'text')
-                                        
+
                                             <div class="col-span-12">
                                                 <label for="requirements-text-{{ $key }}-{{ $item->uid }}" class="block text-sm font-medium text-gray-900 dark:text-gray-100">
                                                     {{ $req->question }}
@@ -71,12 +71,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        
+
                                         @endif
-                                        
+
                                         {{-- File type --}}
                                         @if ($req->type === 'file')
-                                        
+
                                             <div class="col-span-12">
                                                 <label for="requirements-file-{{ $key }}-{{ $item->uid }}" class="block text-sm font-medium text-gray-900 dark:text-gray-100">
                                                     {{ $req->question }}
@@ -91,13 +91,13 @@
                                             </div>
 
                                         @endif
-                                        
+
                                         {{-- Multiple choices type --}}
                                         @if ($req->type === 'choice')
-                                        
+
                                             {{-- Checkboxes --}}
                                             @if ($req->is_multiple)
-                                                
+
                                                 <div class="col-span-12">
                                                     <fieldset>
                                                         <legend class="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -149,10 +149,10 @@
                                                                     </div>
                                                                 </div>
                                                             @endforeach
-                                                            
+
                                                         </div>
                                                     </fieldset>
-                                                    
+
                                                 </div>
 
                                             @endif
@@ -192,7 +192,7 @@
 
                                         {{-- Loop through submitted required inputs --}}
                                         @foreach ($item->requirements as $req)
-                                            
+
                                             {{-- Text field --}}
                                             @if ($req->form_type === 'text')
                                                 <div class="w-full mb-8 block">
@@ -215,7 +215,7 @@
 
                                                         {{-- Check if multiple choices --}}
                                                         @if ( is_array($req->form_value) && count($req->form_value) )
-                                                        
+
                                                             {{-- Loop through options --}}
                                                             @foreach ($req->form_value as $key => $value)
                                                                 <div class="flex items-center mb-3">
@@ -240,7 +240,7 @@
                                                             </div>
 
                                                         @endif
-                                                        
+
                                                     </dd>
                                                 </div>
                                             @endif
@@ -270,7 +270,7 @@
                                                     </dd>
                                                 </div>
                                             @endif
-                                            
+
                                         @endforeach
 
                                     </div>
@@ -306,7 +306,7 @@
 
                         </div>
 
-                    </div>                  
+                    </div>
 
                 </div>
 
@@ -333,7 +333,7 @@
                             <div class="bg-primary-600 h-2.5 rounded-full" :style="{ width: uploadingProgress + '%' }"></div>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -406,7 +406,7 @@
 
                 // Listen when file changed
                 fileInputChanged(e, key) {
-                    
+
                     // Get maximum file size
                     const max_size  = Number('{{ settings("media")->requirements_file_max_size }}');
 
@@ -418,7 +418,7 @@
 
                     // Check if extension is valid
                     if (!this.isValidExtension(file_name)) {
-                        
+
                         // Show error
                         window.$wireui.notify({
                             title      : "{{ __('messages.t_error') }}",
@@ -434,7 +434,7 @@
 
                     // Validate file size
                     if (file_size > max_size) {
-                        
+
                         // Show error
                         window.$wireui.notify({
                             title      : "{{ __('messages.t_error') }}",
@@ -450,11 +450,11 @@
 
                     // File is good upload it
                     @this.upload(key, e.target.files[0], (uploadedFilename) => {
-                        
+
                         this.uploadFinish();
 
                     }, () => {
-                        
+
                         this.uploadError();
 
                     }, (event) => {
@@ -469,7 +469,7 @@
 
                     // Check file name
                     if (filename.length > 0) {
-                        
+
                         // Get allowed extensions
                         const allowed_extensions = @js( explode(',', settings('media')->requirements_file_allowed_extensions) );
 
@@ -487,7 +487,7 @@
                                 is_valid = true;
                                 break;
                             }
-                            
+
                         }
 
                         // Return response

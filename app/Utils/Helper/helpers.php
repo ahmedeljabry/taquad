@@ -2183,3 +2183,25 @@ function generate_slug($string) : string
 
     }
 }
+
+/**
+ * Get unseen messages count
+ *
+ * @return mixed
+ */
+function unseen_messages_count(): mixed
+{
+    try {
+    
+        $unseen = 0;
+        if (auth()->check()) {
+            $unseen = \App\Models\ChMessage::where('to_id', auth()->id())
+                                                ->where('seen', false)
+                                                ->count();     
+        }
+        return $unseen;
+
+    } catch (\Throwable $th) {
+        return 0;
+    }
+}

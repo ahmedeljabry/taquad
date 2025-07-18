@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
             <div class="divide-y divide-gray-200 dark:divide-zinc-700 lg:grid lg:grid-cols-12 lg:divide-y-0 lg:divide-x rtl:divide-x-reverse">
@@ -33,9 +33,9 @@
                                         </p>
                                     </div>
                                 </div>
-                            </div>  
+                            </div>
                         @endif
-                        
+
                         <div class="bg-white dark:bg-zinc-800 overflow-y-auto border !border-t-0 !border-b-0 dark:border-zinc-600">
                             <table class="w-full whitespace-nowrap old-tables">
                                 <thead class="bg-gray-100 dark:bg-zinc-700">
@@ -48,10 +48,10 @@
                                     </tr>
                                 </thead>
                                 <tbody class="w-full">
-                    
+
                                     @foreach ($refunds as $refund)
                                         <tr class="focus:outline-none text-sm leading-none text-gray-800 bg-white dark:bg-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-700 border-b border-t border-gray-100 dark:border-zinc-700/40" wire:key="refunds-{{ $refund->id }}">
-                    
+
                                             {{-- Gig --}}
                                             <td class="ltr:pl-4 rtl:pr-4">
                                                 <a href="{{ url('service', $refund->item->gig->slug) }}" target="_blank" class="flex items-center">
@@ -78,7 +78,7 @@
                                                                 {{ $refund->seller->fullname }}
                                                             @else
                                                                 -
-                                                            @endif    
+                                                            @endif
                                                         </p>
                                                     </div>
                                                 </a>
@@ -129,15 +129,15 @@
                                                             {{ __('messages.t_approved_by_admin', ['app_name' => config('app.name')]) }}
                                                         </span>
                                                         @break
-                                                        
+
                                                 @endswitch
                                             </td>
-                    
+
                                             {{-- Date --}}
                                             <td class="text-center">
                                                 <span class="text-[11px] font-normal text-gray-400 dark:text-gray-200">{{ format_date($refund->created_at, 'ago') }}</span>
                                             </td>
-                    
+
                                             {{-- Options --}}
                                             <td class="text-center">
                                                 <div class="relative inline-block text-left">
@@ -148,14 +148,14 @@
                                                     </div>
                                                 </div>
                                             </td>
-                    
+
                                         </tr>
                                     @endforeach
-                                    
+
                                 </tbody>
                             </table>
                         </div>
-                    
+
                         {{-- Pagination --}}
                         @if ($refunds->hasPages())
                             <div class="bg-gray-100 px-4 py-5 sm:px-6 rounded-bl-lg rounded-br-lg flex justify-center border-t-0 border-r border-l border-b">

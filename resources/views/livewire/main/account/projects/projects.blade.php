@@ -1,20 +1,20 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
 
     {{-- Loading --}}
     <x-forms.loading />
-                
+
     {{-- Head --}}
     <div class="w-full mb-16">
         <div class="mx-auto">
             <div class="lg:flex lg:items-center lg:justify-between">
-    
+
                 <div class="min-w-0 flex-1">
-    
+
                     {{-- Section heading --}}
                     <h2 class="text-lg font-bold leading-7 text-zinc-700 dark:text-gray-50 sm:truncate sm:text-xl sm:tracking-tight">
                         @lang('messages.t_my_projects')
                     </h2>
-    
+
                     {{-- Breadcrumbs --}}
                     <div class="mt-3 flex flex-col sm:flex-row sm:flex-wrap sm:space-x-6 rtl:space-x-reverse">
                         <ol class="inline-flex items-center mb-3 space-x-1 md:space-x-3 md:rtl:space-x-reverse sm:mb-0">
@@ -27,7 +27,7 @@
                                     </a>
                                 </div>
                             </li>
-            
+
                             {{-- My projects --}}
                             <li aria-current="page">
                                 <div class="flex items-center">
@@ -37,12 +37,12 @@
                                     </span>
                                 </div>
                             </li>
-            
+
                         </ol>
                     </div>
-                    
+
                 </div>
-    
+
                 {{-- Actions --}}
                 <div class="mt-5 flex justify-between lg:mt-0 lg:ltr::ml-4 lg:rtl:mr-4">
 
@@ -54,9 +54,9 @@
                             </a>
                         </span>
                     @endif
-        
+
                 </div>
-    
+
             </div>
         </div>
     </div>
@@ -106,44 +106,44 @@
                     </p>
                 </div>
             </div>
-        </div>  
+        </div>
     @endif
 
     {{-- Body --}}
     <div class="w-full">
         @if ($projects->count())
-            
+
             {{-- Projects --}}
             <div class="mt-8 overflow-x-auto overflow-y-hidden sm:mt-0 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-800 dark:scrollbar-track-zinc-600">
                 <table class="w-full text-left border-spacing-y-[10px] border-separate sm:mt-2">
                     <thead class="">
                         <tr class="bg-slate-200 dark:bg-zinc-600">
-    
+
                             {{-- Project --}}
                             <th class="font-bold tracking-wider text-gray-600 px-5 py-4.5 border-b-0 whitespace-nowrap text-xs uppercase dark:text-zinc-300 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md rtl:text-right">@lang('messages.t_project')</th>
-    
+
                             {{-- Status --}}
                             <th class="font-bold tracking-wider text-gray-600 px-5 py-4.5 text-center border-b-0 whitespace-nowrap text-xs uppercase dark:text-zinc-300 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md">@lang('messages.t_status')</th>
-    
+
                             {{-- Budget --}}
                             <th class="font-bold tracking-wider text-gray-600 px-5 py-4.5 text-center border-b-0 whitespace-nowrap text-xs uppercase dark:text-zinc-300 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md">@lang('messages.t_budget')</th>
-    
+
                             {{-- Date --}}
                             <th class="font-bold tracking-wider text-gray-600 px-5 py-4.5 text-center border-b-0 whitespace-nowrap text-xs uppercase dark:text-zinc-300 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md">@lang('messages.t_submitted_date')</th>
-    
+
                             {{-- Options --}}
                             <th class="font-bold tracking-wider text-gray-600 px-5 py-4.5 text-center border-b-0 whitespace-nowrap text-xs uppercase dark:text-zinc-300 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md">@lang('messages.t_options')</th>
-    
+
                         </tr>
                     </thead>
                     <thead>
                         @foreach ($projects as $project)
                             <tr class="intro-x shadow-sm bg-white dark:bg-zinc-800 rounded-md h-16" wire:key="employer-projects-{{ $project->uid }}">
-    
+
                                 {{-- Project --}}
                                 <td class="px-5 py-3 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md w-52 rtl:text-right">
                                     <div class="flex justify-center flex-col">
-                                            
+
                                         {{-- Title --}}
                                         <a href="{{ url('project/' . $project->pid . '/' . $project->slug) }}" class="text-black font-bold whitespace-nowrap truncate block max-w-xs hover:text-primary-600 dark:text-white text-[0.9375rem] mb-2 dark:hover:text-primary-600" title="{{ $project->title }}">
                                             {{ $project->title }}
@@ -196,9 +196,9 @@
                                                     @endif
                                                 </span>
                                             </div>
-                                            
+
                                         </div>
-    
+
                                     </div>
                                 </td>
 
@@ -277,7 +277,7 @@
                                             @break
 
                                         @default
-                                            
+
                                     @endswitch
                                 </td>
 
@@ -369,7 +369,7 @@
                                                 <x-forms.tooltip id="tooltip-actions-delete-{{ $project->uid }}" :text="__('messages.t_delete_project')" />
                                             </div>
                                         @endif
-                                        
+
                                     </div>
                                 </td>
 
@@ -420,5 +420,5 @@
             {!! $projects->links('pagination::tailwind') !!}
         </div>
     @endif
-    
+
 </div>

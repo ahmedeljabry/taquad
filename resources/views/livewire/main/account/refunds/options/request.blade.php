@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
             <div class="divide-y divide-gray-200 dark:divide-zinc-700 lg:grid lg:grid-cols-12 lg:divide-y-0 lg:divide-x rtl:divide-x-reverse">
@@ -51,7 +51,7 @@
                                                                         <p class="font-normal text-gray-400">
                                                                             <div class="mt-1 flex text-sm">
                                                                                 <p class="text-gray-400 text-xs">+ {{ money($upgrade->price, settings('currency')->code, true) }}</p>
-                                                            
+
                                                                                 @if ($upgrade->extra_days)
                                                                                     <p class="ltr:ml-4 rtl:mr-4 ltr:pl-4 rtl:pr-4 ltr:border-l rtl:border-r border-gray-200 text-gray-400 text-xs">
                                                                                         {{ __('messages.t_extra_days_delivery_time_short', ['time' => delivery_time_trans($upgrade->extra_days)]) }}
@@ -66,7 +66,7 @@
                                                                     </div>
                                                                 </div>
                                                             @endforeach
-                                                            
+
                                                         </fieldset>
                                                     </div>
                                                 @endif
@@ -104,7 +104,7 @@
                                                 } else if ($item->status === 'delivered') {
                                                     $width = "100%";
                                                 }
-                                                    
+
                                             @endphp
 
                                             <div class="bg-gray-200 dark:bg-zinc-500 rounded-full overflow-hidden">
@@ -123,11 +123,11 @@
 
                             {{-- Reason --}}
                             <div class="col-span-12">
-                                <x-forms.textarea 
+                                <x-forms.textarea
                                     label="{{ __('messages.t_reason') }}"
-                                    placeholder="{{ __('messages.t_enter_refund_reason') }}" 
+                                    placeholder="{{ __('messages.t_enter_refund_reason') }}"
                                     model="reason"
-                                    :rows="18" 
+                                    :rows="18"
                                     icon="card-text-outline" />
                             </div>
 
