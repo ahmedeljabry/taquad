@@ -100,11 +100,12 @@
 
             </div>
         </div>
-                            
+ 
 
         {{-- ----------------------Messaging side---------------------- --}}
         <div class="messenger-messagingView">
-
+                           
+       
             {{-- header title [conversation name] amd buttons --}}
             <div class="m-header m-header-messaging py-5 border-b dark:border-zinc-700 px-4" style="display: none">
                 <nav class="chatify-d-flex chatify-justify-content-between chatify-align-items-center">
@@ -128,9 +129,9 @@
                             <h3 class="user-name show-infoSide cursor-pointer dark:!text-white" style="font-size:28px;font-wegiht:550;">{{ config('app.name') }}</h3>
 
                             @isset($project)
-                                <div class="chatify-d-flex">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" style="width: 16px;" aria-hidden="true" viewBox="0 0 24 24" role="img"><path vector-effect="non-scaling-stroke" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M17.8 20.2h-12c-1.7 0-3-1.3-3-3v-8c0-1.7 1.3-3 3-3h12c1.7 0 3 1.3 3 3v8c0 1.6-1.4 3-3 3z" clip-rule="evenodd"></path><path vector-effect="non-scaling-stroke" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M7.7 13.9v-3m8.1 3v-3m-13 1.3h18m-7.6-8.4h-3c-.6 0-1 .4-1 1v1.4h5V4.8c0-.6-.4-1-1-1z"></path></svg>
-                                    <span>{!! htmlspecialchars_decode(nl2br($project?->title)) !!}</span>
+                                <div class="chatify-d-flex gap-2">
+                                    <svg fill="none" style="width: 16px;color: rgb(75, 85, 99);" stroke="currentColor" fill="currentColor" aria-hidden="true" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" stroke-width="1.5" d="M17.8 20.2h-12c-1.7 0-3-1.3-3-3v-8c0-1.7 1.3-3 3-3h12c1.7 0 3 1.3 3 3v8c0 1.6-1.4 3-3 3z" clip-rule="evenodd"></path><path vector-effect="non-scaling-stroke" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M7.7 13.9v-3m8.1 3v-3m-13 1.3h18m-7.6-8.4h-3c-.6 0-1 .4-1 1v1.4h5V4.8c0-.6-.4-1-1-1z"></path></svg>
+                                    <span style="font-size: 14px;font-weight: 500;">{!! htmlspecialchars_decode(nl2br($project?->title)) !!}</span>
                                 </div>
                             @endisset
 
@@ -155,6 +156,17 @@
             {{-- Messaging area --}}
             <div class="m-body messages-container app-scroll">
 
+                @isset($project)
+                    <a href="{{ url('project/' . $project?->pid . '/' . $project?->slug) }}" class="view_project" style=" display: flex;align-items: center;color: gray;margin-right: 21px;position: fixed;top: 26%;">
+                        <div class="view_project " style="display: flex;align-items: center;color: gray;margin-right: 21px;padding: -3px;position: fixed;">
+                            <div class="bg-blue-100 d-flex" style="display: flex;gap: 7px;padding: 9px;border-radius: 15px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" data-name="Layer 1" viewBox="0 0 24 24" role="img" style="width: 18px;color: rgb(63 131 248 / var(--tw-text-opacity));" class="text-blue-500"><path fill="none" vector-effect="non-scaling-stroke" stroke="rgb(63 131 248 / var(--tw-text-opacity))" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 5a9.31 9.31 0 00-9 7 9.29 9.29 0 0018 0 9.31 9.31 0 00-9-7zm0 10.1a3.1 3.1 0 113.1-3.1 3.1 3.1 0 01-3.1 3.1z"></path></svg>
+                                <span>@lang('messages.t_view_project')</span>
+                            </div>
+                        </div>
+                    </a>
+                @endisset
+                    
                 {{-- Internet connection --}}
                 <div class="internet-connection">
 

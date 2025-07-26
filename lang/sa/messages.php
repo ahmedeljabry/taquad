@@ -1978,6 +1978,7 @@
         "t_award" => "قبول العرض",
         "t_revoke" => "سحب",
         "t_chat_now" => "الدردشة الآن",
+        "t_view_project" => 'عرض المشروع',
         "t_u_dont_have_permissions_to_do_action" => "ليس لديك الصلاحيات للقيام بهذا الإجراء.",
         "t_this_bid_is_not_active_yet" => "هذا العرض غير نشط بعد. يرجى المحاولة مرة أخرى لاحقًا.",
         "t_project_is_not_open_for_bid" => "هذا المشروع غير مفتوح للعروض حاليًا",

@@ -61,13 +61,18 @@ class MessagesController extends Controller
                             ->where('uid', $id)
                             ->whereIn('status', ['active', 'verified'])
                             ->first();
-        // Get Project
-        $project         = Project::whereUid(request()->query('project'))
+        
+        if (request()->query('project')) {
+            // Get Project
+            $project         = Project::whereUid(request()->query('project'))
                                     ->where(fn ($q) => $q->where('user_id' , auth()->id())
                                     ->orWhereHas('bids' , fn ($q) => $q->where('user_id' ,auth()->id()))
                                 )
-                                ->select('title' , 'uid')
+                                ->select('title' , 'uid' , 'pid' , 'slug')
                                 ->first();
+                                abort_unless($project , 405);
+        }
+        
 
         // SEO
         $separator   = settings('general')->separator;
@@ -102,7 +107,7 @@ class MessagesController extends Controller
             'type'           => 'user',
             'messengerColor' => settings('appearance')->colors['primary'],
             'dark_mode'      => current_theme(),
-            'project'        => $project
+            'project'        => $project ?? null
         ]);
     }
 

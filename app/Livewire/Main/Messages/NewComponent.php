@@ -17,7 +17,7 @@ class NewComponent extends Component
      * @param string|null $project_id
      * @return void
      */
-    public function mount($username , ?string $project_id)
+    public function mount($username , ?string $project_id = null)
     {
         // Get user
         $user = User::where('username', $username)
