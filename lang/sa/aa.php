@@ -1975,7 +1975,7 @@
         "t_open" => "مفتوح",
         "t_milestones" => "المراحل",
         "t_awarded" => "تم منحه",
-        "t_award" => "منح",
+        "t_award" => "قبول",
         "t_revoke" => "سحب",
         "t_chat_now" => "الدردشة الآن",
         "t_u_dont_have_permissions_to_do_action" => "ليس لديك الصلاحيات للقيام بهذا الإجراء.",

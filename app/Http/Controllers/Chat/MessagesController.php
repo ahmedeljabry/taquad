@@ -9,9 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
-use App\Models\ChMessage as Message;
+use App\Models\{ChMessage as Message , Project , ChFavorite as Favorite};
 use Illuminate\Support\Facades\Cache;
-use App\Models\ChFavorite as Favorite;
 use Illuminate\Support\Facades\Response;
 use App\Notifications\User\Everyone\NewMessage;
 use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
@@ -62,6 +61,13 @@ class MessagesController extends Controller
                             ->where('uid', $id)
                             ->whereIn('status', ['active', 'verified'])
                             ->first();
+        // Get Project
+        $project         = Project::whereUid(request()->query('project'))
+                                    ->where(fn ($q) => $q->where('user_id' , auth()->id())
+                                    ->orWhereHas('bids' , fn ($q) => $q->where('user_id' ,auth()->id()))
+                                )
+                                ->select('title' , 'uid')
+                                ->first();
 
         // SEO
         $separator   = settings('general')->separator;
@@ -96,6 +102,7 @@ class MessagesController extends Controller
             'type'           => 'user',
             'messengerColor' => settings('appearance')->colors['primary'],
             'dark_mode'      => current_theme(),
+            'project'        => $project
         ]);
     }
 
@@ -251,6 +258,7 @@ class MessagesController extends Controller
                 'type'       => 'user',
                 'from_id'    => auth()->id(),
                 'to_id'      => $request->get('id'),
+                'project_id' => $request->get('project_id'),
                 'body'       => $request->get('message') ? clean($request->get('message')) : null,
                 'attachment' => ($attachment) ? json_encode((object)[
                     'new_name'  => $attachment,

@@ -14,9 +14,10 @@ class NewComponent extends Component
      * Init component
      *
      * @param string $username
+     * @param string|null $project_id
      * @return void
      */
-    public function mount($username)
+    public function mount($username , ?string $project_id)
     {
         // Get user
         $user = User::where('username', $username)
@@ -29,8 +30,8 @@ class NewComponent extends Component
             return redirect('/');
         }
 
-        // Set redirect url
-        $url = "inbox/$user->uid";
+        // Set redirect url & pass project_id for first conversition
+        $url = "inbox/$user->uid?project=$project_id";
 
         // Redirect to conversation
         return redirect($url);

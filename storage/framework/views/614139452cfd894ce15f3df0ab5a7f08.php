@@ -88,7 +88,7 @@
             // Initialize emojis box
             <?php if(settings('live_chat')->enable_emojis): ?>
             emojis() {
-                
+
                 // Access this
                 const _this           = this;
 
@@ -96,7 +96,7 @@
                 const emoji_container = $("#emojis-box-container");
 
                 // Set options
-                const options = { 
+                const options = {
                     set            : 'twitter',
                     theme          : "<?php echo e(current_theme(), false); ?>",
                     dynamicWidth   : true,
@@ -276,17 +276,17 @@
 
                             // Toggle hidden class
                             emoji_container.toggle();
-                            
+
                         } else {
 
                             // Hide the box
                             emoji_container.hide();
 
                         }
-                        
+
                     },
                     onEmojiSelect(selection) {
-                        
+
                         // Insert the emoji
                         _this.message = _this.message + " " + selection.native;
 
@@ -314,7 +314,7 @@
                 this.emojis();
 
                 // Listen to open/close emoji box
-                document.getElementById('emojis-box-trigger').addEventListener('click', function() { 
+                document.getElementById('emojis-box-trigger').addEventListener('click', function() {
                     $('#emojis-box-container').toggleClass('hidden');
                 }, false);
 
@@ -333,4 +333,5 @@
         }
     }
     window.ieFgUjXUHsNGdOd = ieFgUjXUHsNGdOd();
-</script><?php /**PATH C:\xampp\htdocs\taquad\resources\views/vendor/Chatify/layouts/sendForm.blade.php ENDPATH**/ ?>
+</script>
+<?php /**PATH C:\xampp\htdocs\taquad\resources\views/vendor/Chatify/layouts/sendForm.blade.php ENDPATH**/ ?>

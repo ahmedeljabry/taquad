@@ -1067,24 +1067,6 @@ class JazzcashController extends Controller
 
             break;
 
-            // Gigs order
-            case 'gigs':
-                
-                // Check if payment succeeded
-                if ($status === 'success') {
-                    
-                    // Redirect to deposit history page
-                    return redirect('account/orders')->with('success', __('messages.t_submit_ur_info_now_seller_start_order'));
-
-                } else if ($status === 'pending') {
-                    
-                    // Redirect to deposit history page
-                    return redirect('account/orders')->with('success', __('messages.t_mollie_payment_pending'));
-
-                }
-
-            break;
-
             // Projects
             case 'projects':
 

@@ -125,14 +125,6 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted', 'tracker'])->gr
 
     });
 
-    // Cart
-    Route::namespace('Cart')->prefix('cart')->group(function() {
-
-        // cart
-        Route::get('/', CartComponent::class);
-
-    });
-
     // Checkout
     Route::namespace('Checkout')->prefix('checkout')->middleware('auth')->group(function() {
 
@@ -176,47 +168,6 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted', 'tracker'])->gr
 
         });
 
-        // Orders
-        Route::namespace('Orders')->prefix('orders')->group(function() {
-
-            // All
-            Route::get('/', OrdersComponent::class);
-
-            // Options
-            Route::namespace('Options')->group(function() {
-
-                // Requirements
-                Route::get('requirements', RequirementsComponent::class);
-
-                // Delivered work
-                Route::get('files', FilesComponent::class);
-
-            });
-
-        });
-
-        // Reviews
-        Route::namespace('Reviews')->prefix('reviews')->group(function() {
-
-            // Reviews
-            Route::get('/', ReviewsComponent::class);
-
-            // Options
-            Route::namespace('Options')->group(function() {
-
-                // Create
-                Route::get('create/{itemId}', CreateComponent::class);
-
-                // Preview
-                Route::get('preview/{id}', PreviewComponent::class);
-
-                // Edit
-                Route::get('edit/{id}', EditComponent::class);
-
-            });
-
-        });
-
         // Favorite list
         Route::namespace('Favorite')->prefix('favorite')->group(function() {
 
@@ -230,25 +181,6 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted', 'tracker'])->gr
 
             // Billing
             Route::get('/', BillingComponent::class);
-
-        });
-
-        // Refunds
-        Route::namespace('Refunds')->prefix('refunds')->group(function() {
-
-            // Refund
-            Route::get('/', RefundsComponent::class);
-
-            // Options
-            Route::namespace('Options')->group(function() {
-
-                // Request
-                Route::get('request/{id}', RequestComponent::class);
-
-                // Details
-                Route::get('details/{id}', DetailsComponent::class);
-
-            });
 
         });
 
@@ -357,28 +289,6 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted', 'tracker'])->gr
 
         });
 
-        // Orders
-        Route::namespace('Orders')->prefix('orders')->group(function() {
-
-            // Index
-            Route::get('/', OrdersComponent::class);
-
-            // Options
-            Route::namespace('Options')->group(function() {
-
-                // Details
-                Route::get('details/{id}', DetailsComponent::class);
-
-                // Deliver
-                Route::get('deliver/{id}', DeliverComponent::class);
-
-                // Requirements
-                Route::get('requirements/{id}', RequirementsComponent::class);
-
-            });
-
-        });
-
         // Portfolio
         Route::namespace('Portfolio')->prefix('portfolio')->group(function() {
 
@@ -417,22 +327,6 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted', 'tracker'])->gr
 
             // Create
             Route::get('create', CreateComponent::class);
-
-        });
-
-        // Refunds
-        Route::namespace('Refunds')->prefix('refunds')->group(function() {
-
-            // Index
-            Route::get('/', RefundsComponent::class);
-
-            // Options
-            Route::namespace('Options')->group(function() {
-
-                // Details
-                Route::get('details/{id}', DetailsComponent::class);
-
-            });
 
         });
 
@@ -537,7 +431,7 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted', 'tracker'])->gr
         Route::get('/', MessagesComponent::class);
 
         // New
-        Route::get('new/{username}', NewComponent::class);
+        Route::get('new/{username}/{project_id?}', NewComponent::class);
 
         // Conversation
         Route::get('{conversationId}', ConversationComponent::class);
@@ -670,41 +564,6 @@ Route::namespace('App\Livewire\Main')->prefix('auth')->group(function() {
     });
 
 });
-
-// Main (Controllers)
-// Route::namespace('App\Http\Controllers\Main')->group(function() {
-
-//     // Posting
-//     Route::namespace('Post')->prefix('post-project')->middleware('auth')->group(function() {
-
-//         // Project
-//         Route::namespace('Project')->prefix('project')->group(function() {
-
-//             // Get
-//             Route::get('/', 'ProjectController@form');
-
-//             // Post
-//             Route::post('/', 'ProjectController@create');
-
-//             // Skills
-//             Route::post('skills', 'ProjectController@skills');
-
-//         });
-
-//     });
-
-//     // Edit project
-//     Route::namespace('Account\Projects')->prefix('account/projects')->middleware('auth')->group(function() {
-
-//         // Edit
-//         Route::get('edit/{id}', 'EditController@form');
-
-//         // Update
-//         Route::post('edit/{id}', 'EditController@update');
-
-//     });
-
-// });
 
 // Uploads
 Route::namespace('App\Http\Controllers\Uploads')->prefix('uploads')->group(function() {

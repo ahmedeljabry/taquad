@@ -36,4 +36,14 @@ class ChMessage extends Model
     {
         return $this->belongsTo(FileManager::class, 'avatar_id');
     }
+
+    /**
+     * Get projects
+     *
+     * @return object
+     */
+    public function projects()
+    {
+        return $this->belongsTo(Project::class, 'project_id');
+    }
 }

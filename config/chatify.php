@@ -80,7 +80,7 @@ return [
         'folder'              => 'attachments',
         'download_route_name' => 'attachments.download',
         'allowed_images'      => (array) ['png','jpg','jpeg','gif'],
-        'allowed_files'       => (array) ['zip','rar','txt', 'pdf'],
+        'allowed_files'       => (array) ['zip','rar','txt', 'pdf', 'mp3', 'webm' , 'audio'],
         'max_upload_size'     => 10, // MB
     ],
 

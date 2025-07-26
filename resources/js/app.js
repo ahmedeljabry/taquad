@@ -4,7 +4,6 @@ import swal from 'sweetalert2';
 window.Swal = swal;
 
 import './bootstrap';
-import 'tabCounter';
 import 'flowbite';
 import { createApp } from 'vue';
 import axios from 'axios';

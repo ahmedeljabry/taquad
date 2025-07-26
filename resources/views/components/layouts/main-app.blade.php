@@ -306,7 +306,7 @@
 
         <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
 
-        {{-- Update browser Tab base count messages --}}
+        {{-- Add global real‑time unread counter to browser tab --}}
         <script src="https://js.pusher.com/8.2/pusher.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1/dist/echo.iife.js"></script>
         <script type="text/JavaScript">
@@ -324,24 +324,50 @@
                 window.Echo = new Echo({
                     broadcaster : 'pusher',
                     key         : PUSHER_KEY,
-                    ...PUSHER_OPTS,   
+                    ...PUSHER_OPTS,
                     csrfToken   : '{{ csrf_token() }}',
                     authEndpoint: "{{ route('pusher.auth') }}",
-                    enabledTransports: ['ws','wss'] 
+                    enabledTransports: ['ws','wss']
                 });
 
+                const badgeHTML   =
+                    `<span id="nav-badge"
+                            class="flex absolute h-2 w-2 top-0 ltr:right-0 rtl:left-0 mt-0 ltr:-mr-1 rtl:-ml-1">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full
+                                    bg-primary-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                    </span>`,
+
+                inboxLink = document.querySelector('a[href="{{ url("inbox") }}"]');
+                console.log('inboxLink', inboxLink);
+
+                const addBadge = () => {
+                        if (!document.getElementById('nav-badge')) {
+                            inboxLink.insertAdjacentHTML('beforeend', badgeHTML);
+                        }
+                    };
+
+                  const   removeBadge = () => {
+                        const el = document.getElementById('nav-badge');
+                        if (el) el.remove();
+                    };
                 // -------------- helper to write tab title ------------------
                 const paint = () => {
                     document.title = unread ? `(${unread}) ${BASE_TITLE}` : BASE_TITLE;
+
+                    if (unread) {
+                        addBadge();;
+                    }
                 };
                 paint();
-                
+
                 // -------------- listen for new msgs on ALL pages -----------
                 window.Echo.private(`chat.${USER_ID}`)
                     .listen('.messaging', (e) => {
                         if (e.to_id == USER_ID) {
                             ++unread;
                             const sound = new Audio("{{ asset('js/chatify/sounds/new-message-sound.mp3') }}");
+                             addBadge();
                             sound.play();
                             paint();
                         }
@@ -350,16 +376,10 @@
                         if (e.to_id == USER_ID && e.seen) {
                             unread = 0;
                             paint();
+                            removeBadge();
                         }
                     });
 
-                // -------------- reset when tab gains focus -----------------
-                window.addEventListener('focus', () => {
-                    if (unread) {
-                        unread = 0;
-                        paint();
-                    }
-                });
             })();
         </script>
 

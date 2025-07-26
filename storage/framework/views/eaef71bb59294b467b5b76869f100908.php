@@ -1,9 +1,3 @@
-<!DOCTYPE html>
-<html lang="<?php echo e(app()->getLocale(), false); ?>" dir="<?php echo e(config()->get('direction'), false); ?>" class="<?php echo \Illuminate\Support\Arr::toCssClasses(['dark' => current_theme() === 'dark']); ?>">
-<head>
-
-	
-	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="id" content="<?php echo e($id, false); ?>">
 	<meta name="uid" content="<?php echo e($uid, false); ?>">
 	<meta name="type" content="<?php echo e($type, false); ?>">
@@ -13,17 +7,6 @@
 	<meta name="url" content="<?php echo e(url('').'/'.config('chatify.routes.prefix'), false); ?>" data-user="<?php echo e(auth()->id(), false); ?>">
 	<meta name="time-locale" content="<?php echo e(config()->get('frontend_timing_locale'), false); ?>" />
 	<meta name="time-timezone" content="<?php echo e(config('app.timezone'), false); ?>" />
-
-	
-	<?php echo SEO::generate(); ?>
-
-
-	
-	<?php echo settings('appearance')->font_link; ?>
-
-
-	
-	<link rel="icon" type="image/png" href="<?php echo e(src( settings('general')->favicon ), false); ?>"/>
 
 	
 	<link rel="stylesheet" href="<?php echo e(url('public/js/plugins/emojipanel/dist/emojipanel.css'), false); ?>" />
@@ -78,5 +61,4 @@
 	<script src="<?php echo e(url('public/js/plugins/momentjs/moment-timezone-with-data-1970-2030.min.js'), false); ?>"></script>
 
 	<?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css','resources/js/app.js']); ?>
-
-</head><?php /**PATH C:\xampp\htdocs\taquad\resources\views/vendor/Chatify/layouts/headLinks.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\xampp\htdocs\taquad\resources\views/vendor/Chatify/layouts/headLinks.blade.php ENDPATH**/ ?>

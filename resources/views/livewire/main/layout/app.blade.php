@@ -231,13 +231,16 @@
 
         {{-- Content --}}
         <main class="flex-grow">
-            <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-16 pb-24 space-y-8 min-h-screen">
+            <div @class(['container max-w-7xl lg:px-8 min-h-screen pt-16 pb-24 space-y-8 py-12 mx-auto px-4 sm:px-6' => !$do_not_add_width, 'space-y-6 mt-20' => $do_not_add_width ])>
                 @yield('content')
             </div>
         </main>
 
         {{-- Footer --}}
-        @livewire('main.includes.footer')
+        @unless($disable_footer)
+            @livewire('main.includes.footer')
+        @endunless
+
 
         {{-- Livewire scripts --}}
         @livewireScripts

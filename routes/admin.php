@@ -7,10 +7,10 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
 
     // Home
     Route::namespace('Home')->group(function() {
-    
+
         // Index
         Route::get('/', HomeComponent::class);
-    
+
     });
 
     // Profile
@@ -200,22 +200,6 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
 
     });
 
-    // Refunds
-    Route::namespace('Refunds')->prefix('refunds')->group(function() {
-
-        // Refunds
-        Route::get('/', RefundsComponent::class);
-
-        // Options
-        Route::namespace('Options')->group(function() {
-
-            // Details
-            Route::get('details/{id}', DetailsComponent::class);
-
-        });
-
-    });
-
     // Projects
     Route::namespace('Projects')->prefix('projects')->group(function() {
 
@@ -323,71 +307,71 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
         Route::get('/', OffersComponent::class);
 
     });
-    
+
     // Categories
     Route::namespace('Categories')->prefix('categories')->group(function() {
-    
+
         // All
         Route::get('/', CategoriesComponent::class);
-    
+
         // Options
         Route::namespace('Options')->group(function() {
-    
+
             // Create
             Route::get('create', CreateComponent::class);
-    
+
             // Edit
             Route::get('edit/{id}', EditComponent::class);
 
             // Delete
             Route::get('delete/{id}', DeleteComponent::class);
-    
+
         });
-    
+
     });
-    
+
     // Subcategories
     Route::namespace('Subcategories')->prefix('subcategories')->group(function() {
-    
+
         // All
         Route::get('/', SubcategoriesComponent::class);
-    
+
         // Options
         Route::namespace('Options')->group(function() {
-    
+
             // Create
             Route::get('create', CreateComponent::class);
-    
+
             // Edit
             Route::get('edit/{id}', EditComponent::class);
 
             // Delete
             Route::get('delete/{id}', DeleteComponent::class);
-    
+
         });
-    
+
     });
 
     // Childcategories
     Route::namespace('Childcategories')->prefix('childcategories')->group(function() {
-    
+
         // All
         Route::get('/', ChildcategoriesComponent::class);
-    
+
         // Options
         Route::namespace('Options')->group(function() {
-    
+
             // Create
             Route::get('create', CreateComponent::class);
-    
+
             // Edit
             Route::get('edit/{id}', EditComponent::class);
 
             // Delete
             Route::get('delete/{id}', DeleteComponent::class);
-    
+
         });
-    
+
     });
 
     // Reviews
@@ -409,7 +393,7 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
 
         // Projects
         Route::get('projects', ProjectsComponent::class);
-        
+
         // Bids
         Route::get('bids', BidsComponent::class);
 
@@ -643,13 +627,13 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
         Route::get('findip', FindipComponent::class);
 
     });
-    
+
     // Settings
     Route::namespace('Settings')->prefix('settings')->group(function() {
 
         // General
         Route::get('general', GeneralComponent::class);
-    
+
         // Currency
         Route::get('currency', CurrencyComponent::class);
 
@@ -674,7 +658,7 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
         // Seo
         Route::get('seo', SeoComponent::class);
 
-        // Smtp 
+        // Smtp
         Route::get('smtp', SmtpComponent::class);
 
         // Withdrawal
@@ -688,7 +672,7 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
 
         // Chat
         Route::get('chat', ChatComponent::class);
-    
+
     });
 
     // Verifications
@@ -756,7 +740,7 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
         Route::get('licensing', LicensingComponent::class);
 
     });
-    
+
 });
 
 // Dashboard login

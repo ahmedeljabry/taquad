@@ -39,7 +39,7 @@ class EcpayController extends Controller
     public function callback(Request $request)
     {
         try {
-            
+
             // Get payment gateway settings
             $settings       = AutomaticPaymentGateway::where('slug', $this->gateway)
                                                      ->where('is_active', true)
@@ -62,13 +62,13 @@ class EcpayController extends Controller
 
                     // Check if deposit callback
                     if ( Str::startsWith($order_id, "DD") ) {
-                        
+
                         // Get saved webhook data in our database
                         $data = DepositWebhook::where('payment_id', $order_id)
                                                 ->where('payment_method', $this->gateway)
                                                 ->where('status', 'pending')
                                                 ->firstOrFail();
-        
+
                         // Handle deposit callback
                         $this->deposit($data->user_id, $data->amount, $order_id);
 
@@ -79,22 +79,22 @@ class EcpayController extends Controller
                         return $this->redirect('deposit');
 
                     }
-    
+
                     // Check if checkout callback
                     if ( Str::startsWith($order_id, "GG") ) {
-                        
+
                         // Get saved webhook data in our database
                         $data = CheckoutWebhook::where('payment_id', $order_id)
                                                 ->where('payment_method', $this->gateway)
                                                 ->where('status', 'pending')
                                                 ->firstOrFail();
-    
+
                         // Get cart
                         $cart = $data->data['cart'];
-    
+
                         // Get user
                         $user = User::where('id', $data->data['buyer_id'])->firstOrFail();
-        
+
                         // Handle deposit callback
                         $this->checkout($cart, $user, $order_id);
 
@@ -103,43 +103,43 @@ class EcpayController extends Controller
 
                         // Redirecting
                         return $this->redirect('gigs');
-    
+
                     }
 
                     // Check if projects checkout callback
                     if (Str::startsWith($order_id, "PP")) {
-                        
+
                         // Get subscription
                         $subscription = ProjectSubscription::where('payment_id', $order_id)
                                                             ->where('status', 'pending')
                                                             ->where('payment_method', $this->gateway)
                                                             ->with('project')
                                                             ->firstOrFail();
-    
+
                         // Hande project promoting checkout
                         $this->project($subscription);
 
                         // Redirecting
                         return $this->redirect('projects');
-    
+
                     }
 
                     // Check if projects checkout callback
                     if (Str::startsWith($order_id, "BB")) {
-                        
+
                         // Get subscription
                         $subscription = ProjectBidUpgrade::where('payment_id', $order_id)
                                             ->where('status', 'pending')
                                             ->where('payment_method', $this->gateway)
                                             ->with('bid')
                                             ->firstOrFail();
-    
+
                         // Hande bid promoting checkout
                         $this->bid($subscription);
 
                         // Redirecting
                         return $this->redirect('bids');
-    
+
                     }
 
                 }
@@ -178,7 +178,7 @@ class EcpayController extends Controller
             // Set request url
             if ($this->settings?->settings['env'] === 'sandbox') {
                 $request_url = 'https://sandbox.duitku.com/webapi/api/merchant/transactionStatus';
-                
+
             } else {
                 $request_url = 'https://passport.duitku.com/webapi/api/merchant/transactionStatus';
             }
@@ -195,7 +195,7 @@ class EcpayController extends Controller
 
             // Check if payment succeeded
             if ( is_array($response) && isset($response['statusCode']) && ($response['statusCode'] == '00' || $response['statusCode'] == '01') ) {
-                
+
                 // Done
                 return [
                     'success'  => true,
@@ -213,7 +213,7 @@ class EcpayController extends Controller
             }
 
         } catch (\Throwable $th) {
-            
+
             // Error
             return [
                 'success' => false,
@@ -235,12 +235,12 @@ class EcpayController extends Controller
     private function deposit($user_id, $amount, $payment_id)
     {
         try {
-            
+
             // Set amount
             $amount                  = convertToNumber($amount);
-            
+
             // Calculate fee from this amount
-            $fee                     = convertToNumber($this->fee('deposit', $amount)); 
+            $fee                     = convertToNumber($this->fee('deposit', $amount));
 
             // Make transaction
             $deposit                 = new DepositTransaction();
@@ -295,7 +295,7 @@ class EcpayController extends Controller
 
             // Loop through items in cart
             foreach ($cart as $key => $item) {
-                    
+
                 // Add gig price to subtotal
                 $subtotal += convertToNumber($item['gig']['price']) * convertToNumber($item['quantity']);
 
@@ -304,13 +304,13 @@ class EcpayController extends Controller
 
                 // Loop through upgrades
                 if ( isset($upgrades) && is_array($upgrades) && count($upgrades) ) {
-                    
+
                     // Loop through upgrades
                     foreach ($upgrades as $j => $upgrade) {
-                        
+
                         // Check if upgrade checked
                         if ( isset($upgrade['checked']) && $upgrade['checked'] == 1 ) {
-                            
+
                             // Add upgrade price to subtotal
                             $subtotal += convertToNumber($upgrade['price']) * convertToNumber($item['quantity']);
 
@@ -327,15 +327,15 @@ class EcpayController extends Controller
 
             // Check if taxes enabled
             if ($commission_settings->enable_taxes) {
-                
+
                 // Check if type of taxes percentage
                 if ($commission_settings->tax_type === 'percentage') {
-                    
+
                     // Set tax amount
                     $tax       = convertToNumber(bcmul($subtotal, $commission_settings->tax_value) / 100);
 
                 } else {
-                    
+
                     // Set tax amount
                     $tax       = convertToNumber($commission_settings->tax_value);
 
@@ -345,10 +345,10 @@ class EcpayController extends Controller
 
             // Calculate payment gateway fee
             $fee                   = convertToNumber($this->fee( 'gigs', $subtotal ));
-            
+
             // Calculate total price
             $total                 = $subtotal + $tax + $fee;
-        
+
             // Get user billing address
             $billing_info          = $user->billing;
 
@@ -369,13 +369,13 @@ class EcpayController extends Controller
 
             // Loop through items in cart
             foreach ($cart as $key => $item) {
-                    
+
                 // Get gig
                 $gig = Gig::where('uid', $item['id'])->with('owner')->active()->first();
 
                 // Check if gig exists
                 if ($gig) {
-                    
+
                     // Set quantity
                     $quantity        = isset($item['quantity']) ? convertToNumber($item['quantity']) : 1;
 
@@ -387,10 +387,10 @@ class EcpayController extends Controller
 
                     // Loop through upgrades
                     foreach ($upgrades as $index => $upgrade) {
-                        
+
                         // Check if upgrade is selected
                         if ( isset($upgrade['checked']) && $upgrade['checked'] == 1 ) {
-                            
+
                             $upgrades_amount += convertToNumber($upgrade['price']) * $quantity;
 
                         }
@@ -402,22 +402,22 @@ class EcpayController extends Controller
 
                     // Calculate commission first
                     if ($commission_settings->commission_from === 'orders') {
-                        
+
                         // Check commission type
                         if ($commission_settings->commission_type === 'percentage') {
-                            
+
                             // Calculate commission
                             $commission = convertToNumber($commission_settings->commission_value) * $item_total / 100;
-    
+
                         } else {
-    
+
                             // Fixed amount
                             $commission = convertToNumber($commission_settings->commission_value);
-    
+
                         }
 
                     } else {
-                        
+
                         // No commission
                         $commission = 0;
 
@@ -438,16 +438,16 @@ class EcpayController extends Controller
 
                     // Loop through upgrades again
                     foreach ($upgrades as $index => $value) {
-                        
+
                         // Check if upgrade is selected
                         if ( isset($upgrade['checked']) && $upgrade['checked'] == 1 ) {
-                        
+
                             // Get upgrade
                             $upgrade = GigUpgrade::where('uid', $value['id'])->where('gig_id', $gig->id)->first();
-    
+
                             // Check if upgrade exists
                             if ($upgrade) {
-                                
+
                                 // Save item upgrade
                                 $order_item_upgrade             = new OrderItemUpgrade();
                                 $order_item_upgrade->item_id    = $order_item->id;
@@ -455,11 +455,11 @@ class EcpayController extends Controller
                                 $order_item_upgrade->price      = $upgrade->price;
                                 $order_item_upgrade->extra_days = $upgrade->extra_days;
                                 $order_item_upgrade->save();
-    
+
                             }
 
                         }
-                        
+
                     }
 
                     // Update seller pending balance
@@ -514,7 +514,7 @@ class EcpayController extends Controller
             $user->notify( (new OrderPlaced($order, $total))->locale(config('app.locale')) );
 
         } catch (\Throwable $th) {
-            
+
             // Error
             throw $th;
 
@@ -531,7 +531,7 @@ class EcpayController extends Controller
     public function project($subscription)
     {
         try {
-            
+
             // Get project
             $project              = $subscription->project;
 
@@ -544,7 +544,7 @@ class EcpayController extends Controller
 
             // Check if project has featured plan
             if ($project->is_featured) {
-                
+
                 // Get featured plan
                 $featured_plan = ProjectPlan::whereType('featured')->first();
 
@@ -557,7 +557,7 @@ class EcpayController extends Controller
 
             // Check if project has urgent plan
             if ($project->is_urgent) {
-                
+
                 // Get urgent plan
                 $urgent_plan = ProjectPlan::whereType('urgent')->first();
 
@@ -570,7 +570,7 @@ class EcpayController extends Controller
 
             // Check if project has alert plan
             if ($project->is_alert) {
-                
+
                 // Get alert plan
                 $alert_plan = ProjectPlan::whereType('alert')->first();
 
@@ -583,7 +583,7 @@ class EcpayController extends Controller
 
             // Check if project has highlighted plan
             if ($project->is_highlighted) {
-                
+
                 // Get highlighted plan
                 $highlighted_plan = ProjectPlan::whereType('highlight')->first();
 
@@ -596,7 +596,7 @@ class EcpayController extends Controller
 
             // We need to send notifications to freelancer if alert plans was selected for this project
             if ($alert_plan) {
-                
+
                 // Run a job for this in background
                 SendAlertToFreelancers::dispatch($project);
 
@@ -627,7 +627,7 @@ class EcpayController extends Controller
     public function bid($subscription)
     {
         try {
-            
+
             // Get bid
             $bid                          = $subscription->bid;
 
@@ -661,7 +661,7 @@ class EcpayController extends Controller
     private function fee($type, $amount = null)
     {
         try {
-            
+
             // Set amount for deposit
             $amount = convertToNumber($amount) * $this->settings?->exchange_rate / settings('currency')->exchange_rate;
 
@@ -670,68 +670,68 @@ class EcpayController extends Controller
 
             // Check fee type
             switch ($type) {
-    
+
                 // Deposit
                 case 'deposit':
-    
+
                     // Get deposit fixed fee
                     if (isset($this->settings->fixed_fee['deposit'])) {
-                        
+
                         // Set fixed fee
                         $fee_fixed = convertToNumber($this->settings->fixed_fee['deposit']);
-    
+
                     } else {
-    
+
                         // No fixed fee
                         $fee_fixed = 0;
-    
+
                     }
-    
+
                     // Get deposit percentage fee
                     if (isset($this->settings->percentage_fee['deposit'])) {
-                        
+
                         // Set percentage fee
                         $fee_percentage = convertToNumber($this->settings->percentage_fee['deposit']);
-    
+
                     } else {
-    
+
                         // No percentage fee
                         $fee_percentage = 0;
-    
+
                     }
-    
-                    // Calculate percentage of this amount 
+
+                    // Calculate percentage of this amount
                     $fee_percentage_amount = $this->exchange( $fee_percentage * $amount / 100, $this->settings->exchange_rate );
 
                     // Calculate exchange rate of this fixed fee
                     $fee_fixed_exchange    = $this->exchange( $fee_fixed,  $this->settings->exchange_rate);
-                    
+
                     // Calculate fee value and visible text
                     if ($fee_fixed > 0 && $fee_percentage > 0) {
-                        
+
                         // Calculate fee value
                         $fee_value = convertToNumber($fee_percentage_amount) + convertToNumber($fee_fixed_exchange);
-    
+
                     } else if (!$fee_fixed && $fee_percentage > 0) {
-                        
+
                         // Calculate fee value
                         $fee_value = convertToNumber($fee_percentage_amount);
-    
+
                     } else if ($fee_fixed > 0 && !$fee_percentage) {
-    
+
                         // Calculate fee value
                         $fee_value = convertToNumber($fee_fixed_exchange);
-                        
+
                     } else if (!$fee_percentage && !$fee_fixed) {
-                        
+
                         // Calculate fee value
                         $fee_value = 0;
-    
+
                     }
-                    
+
                     // Return fee value
                     return number_format($fee_value, 2, '.', '');
-    
+
                 break;
 
                 // Gigs
@@ -739,59 +739,59 @@ class EcpayController extends Controller
 
                     // Get gigs fixed fee
                     if (isset($this->settings->fixed_fee['gigs'])) {
-                        
+
                         // Set fixed fee
                         $fee_fixed = convertToNumber($this->settings->fixed_fee['gigs']);
-    
+
                     } else {
-    
+
                         // No fixed fee
                         $fee_fixed = 0;
-    
+
                     }
-    
+
                     // Get gigs percentage fee
                     if (isset($this->settings->percentage_fee['gigs'])) {
-                        
+
                         // Set percentage fee
                         $fee_percentage = convertToNumber($this->settings->percentage_fee['gigs']);
-    
+
                     } else {
-    
+
                         // No percentage fee
                         $fee_percentage = 0;
-    
+
                     }
-    
-                    // Calculate percentage of this amount 
+
+                    // Calculate percentage of this amount
                     $fee_percentage_amount = $this->exchange( $fee_percentage * $amount / 100, $this->settings->exchange_rate );
 
                     // Calculate exchange rate of this fixed fee
                     $fee_fixed_exchange    = $this->exchange( $fee_fixed,  $this->settings->exchange_rate);
-    
+
                     // Calculate fee value and visible text
                     if ($fee_fixed > 0 && $fee_percentage > 0) {
-                        
+
                         // Calculate fee value
                         $fee_value = convertToNumber($fee_percentage_amount) + convertToNumber($fee_fixed_exchange);
-    
+
                     } else if (!$fee_fixed && $fee_percentage > 0) {
-                        
+
                         // Calculate fee value
                         $fee_value = convertToNumber($fee_percentage_amount);
-    
+
                     } else if ($fee_fixed > 0 && !$fee_percentage) {
-    
+
                         // Calculate fee value
                         $fee_value = convertToNumber($fee_fixed_exchange);
-                        
+
                     } else if (!$fee_percentage && !$fee_fixed) {
-                        
+
                         // Calculate fee value
                         $fee_value = 0;
-    
+
                     }
-    
+
                     // Return fee value
                     return $fee_value;
 
@@ -802,59 +802,59 @@ class EcpayController extends Controller
 
                     // Get projects fixed fee
                     if (isset($this->settings->fixed_fee['projects'])) {
-                        
+
                         // Set fixed fee
                         $fee_fixed = convertToNumber($this->settings->fixed_fee['projects']);
-    
+
                     } else {
-    
+
                         // No fixed fee
                         $fee_fixed = 0;
-    
+
                     }
-    
+
                     // Get projects percentage fee
                     if (isset($this->settings->percentage_fee['projects'])) {
-                        
+
                         // Set percentage fee
                         $fee_percentage = convertToNumber($this->settings->percentage_fee['projects']);
-    
+
                     } else {
-    
+
                         // No percentage fee
                         $fee_percentage = 0;
-    
+
                     }
-    
-                    // Calculate percentage of this amount 
+
+                    // Calculate percentage of this amount
                     $fee_percentage_amount = $this->exchange( $fee_percentage * $amount / 100, $this->settings->exchange_rate );
 
                     // Calculate exchange rate of this fixed fee
                     $fee_fixed_exchange    = $this->exchange( $fee_fixed,  $this->settings->exchange_rate);
-    
+
                     // Calculate fee value and visible text
                     if ($fee_fixed > 0 && $fee_percentage > 0) {
-                        
+
                         // Calculate fee value
                         $fee_value = convertToNumber($fee_percentage_amount) + convertToNumber($fee_fixed_exchange);
-    
+
                     } else if (!$fee_fixed && $fee_percentage > 0) {
-                        
+
                         // Calculate fee value
                         $fee_value = convertToNumber($fee_percentage_amount);
-    
+
                     } else if ($fee_fixed > 0 && !$fee_percentage) {
-    
+
                         // Calculate fee value
                         $fee_value = convertToNumber($fee_fixed_exchange);
-                        
+
                     } else if (!$fee_percentage && !$fee_fixed) {
-                        
+
                         // Calculate fee value
                         $fee_value = 0;
-    
+
                     }
-    
+
                     // Return fee value
                     return $fee_value;
 
@@ -865,68 +865,68 @@ class EcpayController extends Controller
 
                     // Get bids fixed fee
                     if (isset($this->settings->fixed_fee['bids'])) {
-                        
+
                         // Set fixed fee
                         $fee_fixed = convertToNumber($this->settings->fixed_fee['bids']);
-    
+
                     } else {
-    
+
                         // No fixed fee
                         $fee_fixed = 0;
-    
+
                     }
-    
+
                     // Get bids percentage fee
                     if (isset($this->settings->percentage_fee['bids'])) {
-                        
+
                         // Set percentage fee
                         $fee_percentage = convertToNumber($this->settings->percentage_fee['bids']);
-    
+
                     } else {
-    
+
                         // No percentage fee
                         $fee_percentage = 0;
-    
+
                     }
-    
-                    // Calculate percentage of this amount 
+
+                    // Calculate percentage of this amount
                     $fee_percentage_amount = $this->exchange( $fee_percentage * $amount / 100, $this->settings->exchange_rate );
 
                     // Calculate exchange rate of this fixed fee
                     $fee_fixed_exchange    = $this->exchange( $fee_fixed,  $this->settings->exchange_rate);
-    
+
                     // Calculate fee value and visible text
                     if ($fee_fixed > 0 && $fee_percentage > 0) {
-                        
+
                         // Calculate fee value
                         $fee_value = convertToNumber($fee_percentage_amount) + convertToNumber($fee_fixed_exchange);
-    
+
                     } else if (!$fee_fixed && $fee_percentage > 0) {
-                        
+
                         // Calculate fee value
                         $fee_value = convertToNumber($fee_percentage_amount);
-    
+
                     } else if ($fee_fixed > 0 && !$fee_percentage) {
-    
+
                         // Calculate fee value
                         $fee_value = convertToNumber($fee_fixed_exchange);
-                        
+
                     } else if (!$fee_percentage && !$fee_fixed) {
-                        
+
                         // Calculate fee value
                         $fee_value = 0;
-    
+
                     }
-    
+
                     // Return fee value
                     return $fee_value;
 
                 break;
-    
+
             }
 
         } catch (\Throwable $th) {
-            
+
             // Something went wrong
             return 0;
 
@@ -961,7 +961,7 @@ class EcpayController extends Controller
 
             // Check if we have to return a formatted value
             if ($formatted) {
-                
+
                 return money( $exchanged_amount, $currency, true )->format();
 
             }
@@ -988,42 +988,42 @@ class EcpayController extends Controller
     private function notification($type, $user)
     {
         try {
-            
+
             // Check notification type
             switch ($type) {
 
                 // Deposit funds
                 case 'deposit':
-                    
+
 
 
                 break;
 
                 // Gig checkout
                 case 'gig':
-                    
-                    
+
+
 
                 break;
 
                 // Project payment
                 case 'project':
-                    
-                    
+
+
 
                 break;
 
                 // Bid payment
                 case 'bid':
-                    
-                    
+
+
 
                 break;
 
             }
 
         } catch (\Throwable $th) {
-            
+
             // Something went wrong
             return;
 
@@ -1045,38 +1045,20 @@ class EcpayController extends Controller
 
             // Deposit history
             case 'deposit':
-                
+
                 // Check if payment succeeded
                 if ($status === 'success') {
-                    
+
                     // Redirect to deposit history page
                     return redirect('account/deposit/history')->with('success', __('messages.t_ur_transaction_has_completed'));
 
                 } else if ($status === 'pending') {
-                    
+
                     // Redirect to deposit history page
                     return redirect('account/deposit/history')->with('success', __('messages.t_mollie_payment_pending'));
 
                 }
-                
 
-            break;
-
-            // Gigs order
-            case 'gigs':
-                
-                // Check if payment succeeded
-                if ($status === 'success') {
-                    
-                    // Redirect to deposit history page
-                    return redirect('account/orders')->with('success', __('messages.t_submit_ur_info_now_seller_start_order'));
-
-                } else if ($status === 'pending') {
-                    
-                    // Redirect to deposit history page
-                    return redirect('account/orders')->with('success', __('messages.t_mollie_payment_pending'));
-
-                }
 
             break;
 
@@ -1085,17 +1067,17 @@ class EcpayController extends Controller
 
                 // Check if payment succeeded
                 if ($status === 'success') {
-                    
+
                     // Redirect to deposit history page
                     return redirect('account/projects')->with('success', __('messages.t_ur_payment_has_succeeded'));
 
                 } else if ($status === 'pending') {
-                    
+
                     // Redirect to deposit history page
                     return redirect('account/projects')->with('success', __('messages.t_mollie_payment_pending'));
 
                 }
-            
+
             break;
 
             // Bids
@@ -1103,17 +1085,17 @@ class EcpayController extends Controller
 
                 // Check if payment succeeded
                 if ($status === 'success') {
-                    
+
                     // Redirect to deposit history page
                     return redirect('seller/projects/bids')->with('success', __('messages.t_ur_payment_has_succeeded'));
 
                 } else if ($status === 'pending') {
-                    
+
                     // Redirect to deposit history page
                     return redirect('seller/projects/bids')->with('success', __('messages.t_mollie_payment_pending'));
 
                 }
-            
+
             break;
 
         }

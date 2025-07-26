@@ -494,6 +494,7 @@ if (isset($__slots)) unset($__slots);
 
         <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
 
+        
         <script src="https://js.pusher.com/8.2/pusher.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1/dist/echo.iife.js"></script>
         <script type="text/JavaScript">
@@ -511,24 +512,50 @@ if (isset($__slots)) unset($__slots);
                 window.Echo = new Echo({
                     broadcaster : 'pusher',
                     key         : PUSHER_KEY,
-                    ...PUSHER_OPTS,   
+                    ...PUSHER_OPTS,
                     csrfToken   : '<?php echo e(csrf_token(), false); ?>',
                     authEndpoint: "<?php echo e(route('pusher.auth'), false); ?>",
-                    enabledTransports: ['ws','wss'] 
+                    enabledTransports: ['ws','wss']
                 });
 
+                const badgeHTML   =
+                    `<span id="nav-badge"
+                            class="flex absolute h-2 w-2 top-0 ltr:right-0 rtl:left-0 mt-0 ltr:-mr-1 rtl:-ml-1">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full
+                                    bg-primary-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                    </span>`,
+
+                inboxLink = document.querySelector('a[href="<?php echo e(url("inbox"), false); ?>"]');
+                console.log('inboxLink', inboxLink);
+
+                const addBadge = () => {
+                        if (!document.getElementById('nav-badge')) {
+                            inboxLink.insertAdjacentHTML('beforeend', badgeHTML);
+                        }
+                    };
+
+                  const   removeBadge = () => {
+                        const el = document.getElementById('nav-badge');
+                        if (el) el.remove();
+                    };
                 // -------------- helper to write tab title ------------------
                 const paint = () => {
                     document.title = unread ? `(${unread}) ${BASE_TITLE}` : BASE_TITLE;
+
+                    if (unread) {
+                        addBadge();;
+                    }
                 };
                 paint();
-                
+
                 // -------------- listen for new msgs on ALL pages -----------
                 window.Echo.private(`chat.${USER_ID}`)
                     .listen('.messaging', (e) => {
                         if (e.to_id == USER_ID) {
                             ++unread;
                             const sound = new Audio("<?php echo e(asset('js/chatify/sounds/new-message-sound.mp3'), false); ?>");
+                             addBadge();
                             sound.play();
                             paint();
                         }
@@ -537,16 +564,10 @@ if (isset($__slots)) unset($__slots);
                         if (e.to_id == USER_ID && e.seen) {
                             unread = 0;
                             paint();
+                            removeBadge();
                         }
                     });
 
-                // -------------- reset when tab gains focus -----------------
-                window.addEventListener('focus', () => {
-                    if (unread) {
-                        unread = 0;
-                        paint();
-                    }
-                });
             })();
         </script>
 

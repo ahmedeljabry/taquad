@@ -1,4 +1,4 @@
-<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="window.LVoePqYZdmjQURo" x-init="initialize">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-7 py-12 lg:pt-16 lg:pb-24" x-data="window.LVoePqYZdmjQURo" x-init="initialize">
 
     {{-- Breadcrumbs --}}
     <nav class="hidden justify-between px-4 py-3 text-gray-700 rounded-lg sm:flex sm:px-5 bg-white dark:bg-zinc-700/40 dark:border-zinc-700 shadow" aria-label="Breadcrumb">
@@ -89,7 +89,7 @@
 
     </nav>
 
-    <div class="py-0 sm:py-10">
+    <div class="py-0">
         <div class="gap-6 grid grid-cols-1 lg:grid-cols-3 lg:grid-flow-col-dense sm:mt-8">
 
 			{{-- Left section --}}

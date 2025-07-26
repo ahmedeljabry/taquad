@@ -1,9 +1,3 @@
-<!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="{{ config()->get('direction') }}" @class(['dark' => current_theme() === 'dark'])>
-<head>
-
-	{{-- Meta tags --}}
-	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="id" content="{{ $id }}">
 	<meta name="uid" content="{{ $uid }}">
 	<meta name="type" content="{{ $type }}">
@@ -13,15 +7,6 @@
 	<meta name="url" content="{{ url('').'/'.config('chatify.routes.prefix') }}" data-user="{{ auth()->id() }}">
 	<meta name="time-locale" content="{{ config()->get('frontend_timing_locale') }}" />
 	<meta name="time-timezone" content="{{ config('app.timezone') }}" />
-
-	{{-- Generate seo tags --}}
-	{!! SEO::generate() !!}
-
-	{{-- Custom fonts --}}
-	{!! settings('appearance')->font_link !!}
-
-	{{-- Favicon --}}
-	<link rel="icon" type="image/png" href="{{ src( settings('general')->favicon ) }}"/>
 
 	{{-- Styles --}}
 	<link rel="stylesheet" href="{{ url('public/js/plugins/emojipanel/dist/emojipanel.css') }}" />
@@ -76,5 +61,3 @@
 	<script src="{{ url('public/js/plugins/momentjs/moment-timezone-with-data-1970-2030.min.js') }}"></script>
 
 	@vite(['resources/css/app.css','resources/js/app.js'])
-
-</head>

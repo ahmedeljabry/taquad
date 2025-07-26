@@ -94,31 +94,11 @@
                     </div>
 
                     
-                    <?php if(count($gigs) || count($sellers) || count($tags) || $q): ?>
+                    <?php if(count($sellers) || count($tags) || $q): ?>
                         <div id="search-results-box" class="ltr:ml-5 rtl:mr-5 absolute top-16 w-full bg-white dark:bg-zinc-800 rounded-lg border border-gray-100 dark:border-zinc-800 shadow-md max-w-md z-[60]" @keydown.window.escape="opne = false" x-show="open" style="display: none" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" x-on:click.away="open = false">
                             
-                            <?php if(count($gigs) || count($sellers) || count($tags)): ?>
+                            <?php if(count($sellers) || count($tags)): ?>
                                 <ul class="max-h-80 scroll-py-10 scroll-pb-2 space-y-4 overflow-y-auto p-4 pb-2" id="options" role="listbox">
-
-                                    
-                                    <?php if($gigs && count($gigs)): ?>
-                                        <li>
-                                            <h2 class="text-xs font-semibold text-gray-900 dark:text-white"><?php echo e(__('messages.t_gigs'), false); ?></h2>
-                                            <ul class="-mx-4 mt-2 text-sm text-gray-700 dark:text-gray-400">
-
-                                                
-                                                <?php $__currentLoopData = $gigs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $gig): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <li class="group flex cursor-default select-none items-center px-4 py-2">
-                                                        <a href="<?php echo e(url('service', $gig->slug), false); ?>" class="flex items-center">
-                                                            <svg class="h-6 w-6 flex-none text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/> </svg>
-                                                            <span class="ltr:ml-3 rtl:mr-3 flex-auto ext-ellipsis overflow-hidden"><?php echo e($gig->title, false); ?></span>
-                                                        </a>
-                                                    </li>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-                                            </ul>
-                                        </li>
-                                    <?php endif; ?>
 
                                     
                                     <?php if($sellers && count($sellers)): ?>
@@ -165,7 +145,7 @@
                             <?php endif; ?>
 
                             
-                            <?php if(count($gigs) === 0 && count($sellers) === 0 && count($tags) === 0 && $q): ?>
+                            <?php if(count($sellers) === 0 && count($tags) === 0 && $q): ?>
                                 <div class="py-14 px-6 text-center text-sm sm:px-14">
                                     <svg class="mx-auto h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/> </svg>
                                     <p class="mt-4 font-semibold text-gray-900 dark:text-white"><?php echo e(__('messages.no_results_found'), false); ?></p>
@@ -238,12 +218,6 @@ if (isset($__slots)) unset($__slots);
                 <?php if(auth()->guard()->check()): ?>
                     <a href="<?php echo e(url('inbox'), false); ?>" class="text-gray-500 hover:text-primary-600 transition-colors duration-300 py-2 relative mx-4 dark:text-gray-100 dark:hover:text-white hidden md:block">
                         <svg class="text-gray-400 hover:text-gray-700 h-6 w-6 dark:text-gray-100 dark:hover:text-white" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.044l7.386 5.745a.994.994 0 0 0 1.228 0L20 9.044 20.002 18H4z"></path></svg>
-                        <?php if($new_messages): ?>
-                            <span class="flex absolute h-2 w-2 top-0 ltr:right-0 rtl:left-0 mt-0 ltr:-mr-1 rtl:-ml-1">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
-                            </span>
-                        <?php endif; ?>
                     </a>
                 <?php endif; ?>
 
@@ -497,19 +471,6 @@ if (isset($__slots)) unset($__slots);
                                                 </a>
 
                                                 
-                                                <a href="<?php echo e(url('account/orders'), false); ?>"
-                                                    class="group flex items-center py-1.5 hover:text-primary-600">
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                        class="flex-none ltr:mr-3 rtl:ml-3 text-gray-400 hover:text-primary-600 h-5 w-5"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                                                    </svg>
-                                                    <span
-                                                        class="font-semibold text-xs text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-500"><?php echo e(__('messages.t_my_orders'), false); ?></span>
-                                                </a>
-
-                                                
                                                 <a href="<?php echo e(url('inbox'), false); ?>"
                                                     class="group flex items-center py-1.5 hover:text-primary-600">
                                                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -520,18 +481,6 @@ if (isset($__slots)) unset($__slots);
                                                     </svg>
                                                     <span
                                                         class="font-semibold text-xs text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-500"><?php echo e(__('messages.t_messages'), false); ?></span>
-                                                </a>
-
-                                                
-                                                <a href="<?php echo e(url('account/reviews'), false); ?>" class="group flex items-center py-1.5 hover:text-primary-600">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="flex-none ltr:mr-3 rtl:ml-3 text-gray-400 hover:text-primary-600 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
-                                                    <span class="font-semibold text-xs text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-500"><?php echo e(__('messages.t_reviews'), false); ?></span>
-                                                </a>
-
-                                                
-                                                <a href="<?php echo e(url('account/refunds'), false); ?>" class="group flex items-center py-1.5 hover:text-primary-600">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="flex-none ltr:mr-3 rtl:ml-3 text-gray-400 hover:text-primary-600 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z"/></svg>
-                                                    <span class="font-semibold text-xs text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-500"><?php echo e(__('messages.t_refunds'), false); ?></span>
                                                 </a>
 
                                             </div>
@@ -756,12 +705,6 @@ if (isset($__slots)) unset($__slots);
                         <?php if(auth()->guard()->check()): ?>
                             <a href="<?php echo e(url('inbox'), false); ?>" class="text-gray-500 hover:text-primary-600 transition-colors duration-300 py-2 relative mx-4 dark:text-gray-100 dark:hover:text-white md:hidden">
                                 <svg class="text-gray-400 hover:text-gray-700 h-6 w-6 dark:text-gray-100 dark:hover:text-white" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.044l7.386 5.745a.994.994 0 0 0 1.228 0L20 9.044 20.002 18H4z"></path></svg>
-                                <?php if($new_messages): ?>
-                                    <span class="flex absolute h-2 w-2 top-0 ltr:right-0 rtl:left-0 mt-0 ltr:-mr-1 rtl:-ml-1">
-                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
-                                    </span>
-                                <?php endif; ?>
                             </a>
                         <?php endif; ?>
 
@@ -804,12 +747,7 @@ if (isset($__slots)) unset($__slots);
                             <?php echo app('translator')->get('messages.t_become_a_seller'); ?>
                         </a>
                     <?php endif; ?>
-
                     
-                    <a href="<?php echo e(url('search'), false); ?>" class="py-2 px-5 block text-gray-500 dark:text-gray-200 font-semibold text-sm">
-                        <?php echo app('translator')->get('messages.t_explore_gigs'); ?>
-                    </a>
-
                     
                     <?php if(settings('projects')->is_enabled): ?>
                         <a href="<?php echo e(url('explore/projects'), false); ?>" class="py-2 px-5 block text-gray-500 dark:text-gray-200 font-semibold text-sm">
