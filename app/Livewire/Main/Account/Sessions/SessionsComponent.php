@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Main\Account\Sessions;
 
 use Carbon\Carbon;
@@ -30,26 +31,26 @@ class SessionsComponent extends Component
         $separator   = settings('general')->separator;
         $title       = __('messages.t_browser_sessions') . " $separator " . settings('general')->title;
         $description = settings('seo')->description;
-        $ogimage     = src( settings('seo')->ogimage );
+        $ogimage     = src(settings('seo')->ogimage);
 
-        $this->seo()->setTitle( $title );
-        $this->seo()->setDescription( $description );
-        $this->seo()->setCanonical( url()->current() );
-        $this->seo()->opengraph()->setTitle( $title );
-        $this->seo()->opengraph()->setDescription( $description );
-        $this->seo()->opengraph()->setUrl( url()->current() );
+        $this->seo()->setTitle($title);
+        $this->seo()->setDescription($description);
+        $this->seo()->setCanonical(url()->current());
+        $this->seo()->opengraph()->setTitle($title);
+        $this->seo()->opengraph()->setDescription($description);
+        $this->seo()->opengraph()->setUrl(url()->current());
         $this->seo()->opengraph()->setType('website');
-        $this->seo()->opengraph()->addImage( $ogimage );
-        $this->seo()->twitter()->setImage( $ogimage );
-        $this->seo()->twitter()->setUrl( url()->current() );
-        $this->seo()->twitter()->setSite( "@" . settings('seo')->twitter_username );
+        $this->seo()->opengraph()->addImage($ogimage);
+        $this->seo()->twitter()->setImage($ogimage);
+        $this->seo()->twitter()->setUrl(url()->current());
+        $this->seo()->twitter()->setSite("@" . settings('seo')->twitter_username);
         $this->seo()->twitter()->addValue('card', 'summary_large_image');
         $this->seo()->metatags()->addMeta('fb:page_id', settings('seo')->facebook_page_id, 'property');
         $this->seo()->metatags()->addMeta('fb:app_id', settings('seo')->facebook_app_id, 'property');
         $this->seo()->metatags()->addMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'name');
-        $this->seo()->jsonLd()->setTitle( $title );
-        $this->seo()->jsonLd()->setDescription( $description );
-        $this->seo()->jsonLd()->setUrl( url()->current() );
+        $this->seo()->jsonLd()->setTitle($title);
+        $this->seo()->jsonLd()->setDescription($description);
+        $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
         return view('livewire.main.account.sessions.sessions', [
@@ -106,13 +107,13 @@ class SessionsComponent extends Component
     public function logout()
     {
         try {
-            
+
             // Set current user
             $user = auth()->user();
 
             // Validate current password
-            if ( $user->password && !Hash::check($this->password, $user->password)) {
-                
+            if ($user->password && !Hash::check($this->password, $user->password)) {
+
                 // Password does not match
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -121,41 +122,38 @@ class SessionsComponent extends Component
                 ]);
 
                 return;
-
             }
-    
+
             // Logout other devices
             Auth::guard('web')->logoutOtherDevices($this->password, 'password');
-    
+
             // Delete sessions records
             $this->deleteOtherSessionRecords();
-    
+
             request()->session()->put([
-                'password_hash_'.Auth::getDefaultDriver() => Auth::user()->getAuthPassword(),
+                'password_hash_' . Auth::getDefaultDriver() => Auth::user()->getAuthPassword(),
             ]);
 
             // Reset password field
             $this->reset('password');
-    
+
             // Refresh the page
             $this->dispatch('refresh');
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Throwable $th) {
-        
+
             // Something went wrong
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
 
@@ -177,5 +175,4 @@ class SessionsComponent extends Component
             ->where('id', '!=', request()->session()->getId())
             ->delete();
     }
-    
 }

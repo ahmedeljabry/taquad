@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Projects\Categories\Options;
 
 use Livewire\Component;
@@ -16,7 +17,7 @@ use App\Http\Validators\Admin\Projects\Categories\TranslationValidator;
 
 class CreateComponent extends Component
 {
-    use WithFileUploads ,SEOToolsTrait, Actions, LivewireAlert;
+    use WithFileUploads, SEOToolsTrait, Actions, LivewireAlert;
 
     public $translations = [];
     public $translation_language_code;
@@ -36,8 +37,8 @@ class CreateComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_create_projects_category'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_create_projects_category'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.projects.categories.options.create', [
             'languages' => $this->languages
@@ -70,7 +71,7 @@ class CreateComponent extends Component
 
             // Check if already set a category in this language
             if (array_search($this->translation_language_code, array_column($this->translations, 'language_code'))) {
-            
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -79,7 +80,6 @@ class CreateComponent extends Component
                 ]);
 
                 return;
-
             }
 
             // Add catgeory in this language
@@ -96,33 +96,30 @@ class CreateComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
 
@@ -137,26 +134,24 @@ class CreateComponent extends Component
     {
         // Check if key exists
         if (array_key_exists($index, $this->translations)) {
-            
+
             // delete
             unset($this->translations[$index]);
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } else {
 
             // Not found
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
 
@@ -176,9 +171,9 @@ class CreateComponent extends Component
             // Upload thumbnail
             if ($this->thumbnail) {
                 $thumbnail_id = ImageUploader::make($this->thumbnail)
-                                        ->extension('jpg')
-                                        ->folder('projects/categories/thumbnails')
-                                        ->handle();
+                    ->extension('jpg')
+                    ->folder('projects/categories/thumbnails')
+                    ->handle();
             } else {
                 $thumbnail_id = null;
             }
@@ -186,9 +181,9 @@ class CreateComponent extends Component
             // Upload ogimage
             if ($this->ogimage) {
                 $ogimage_id = ImageUploader::make($this->ogimage)
-                                        ->extension('jpg')
-                                        ->folder('projects/categories/ogimages')
-                                        ->handle();
+                    ->extension('jpg')
+                    ->folder('projects/categories/ogimages')
+                    ->handle();
             } else {
                 $ogimage_id = null;
             }
@@ -205,21 +200,19 @@ class CreateComponent extends Component
 
             // Check if has translations
             if (count($this->translations)) {
-                
+
                 // Loop though translations
                 foreach ($this->translations as $key => $value) {
                     if (isset($value['language_code']) && isset($value['language_value'])) {
-                        
+
                         // Create new translation
                         $translation                       = new ProjectCategoryTranslation();
                         $translation->projects_category_id = $category->id;
                         $translation->language_code        = strtolower($value['language_code']);
                         $translation->language_value       = $value['language_value'];
                         $translation->save();
-
                     }
                 }
-
             }
 
             // Reset form
@@ -227,34 +220,30 @@ class CreateComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
-    
 }

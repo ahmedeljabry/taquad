@@ -17,7 +17,7 @@ class CrontabComponent extends Component
      *
      * @return Illuminate\View\View
      */
-    #[Layout('components.layouts.install')] 
+    #[Layout('components.layouts.install')]
     public function render()
     {
         // SEO
@@ -37,5 +37,4 @@ class CrontabComponent extends Component
         // Redirect to next step
         return redirect('install/finish');
     }
-    
 }

@@ -1,14 +1,15 @@
 <?php
+
 namespace App\Livewire\Admin\Projects\Skills\Options;
 
 use Livewire\Component;
-use App\Models\Category;
 use WireUi\Traits\Actions;
 use App\Models\ProjectSkill;
 use Livewire\Attributes\Layout;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
 use App\Http\Validators\Admin\Projects\Skills\EditValidator;
+use App\Models\ProjectCategory;
 
 class EditComponent extends Component
 {
@@ -50,8 +51,8 @@ class EditComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_edit_skill'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_edit_skill'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.projects.skills.options.edit', [
             'categories' => $this->categories
@@ -66,7 +67,7 @@ class EditComponent extends Component
      */
     public function getCategoriesProperty()
     {
-        return Category::orderBy('id', 'asc')->withTranslation()->get();
+        return ProjectCategory::orderBy('id', 'asc')->get();
     }
 
 
@@ -81,7 +82,7 @@ class EditComponent extends Component
 
             // Validate form
             EditValidator::validate($this);
-            
+
             // Update skill
             $this->skill->name        = $this->name;
             $this->skill->slug        = generate_slug($this->slug);
@@ -90,32 +91,28 @@ class EditComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
-    
 }

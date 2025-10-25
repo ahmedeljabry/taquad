@@ -1,5 +1,12 @@
+@php
+    $initialThemePreference = current_theme() ?: 'system';
+@endphp
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="{{ config()->get('direction') }}" @class(['dark' => current_theme() === 'dark'])>
+<html lang="{{ app()->getLocale() }}"
+      dir="{{ config()->get('direction') }}"
+      data-theme-preference="{{ $initialThemePreference }}"
+      data-theme="{{ $initialThemePreference }}"
+      @class(['dark' => current_theme() === 'dark'])>
 
     <head>
         <meta charset="UTF-8">
@@ -124,12 +131,6 @@
                         <i class="flex h-full items-center justify-center mx-auto ph-duotone ph-layout text-2xl w-full text-slate-400"></i>
                     </a>
                     <x-forms.tooltip id="tooltip-admin-quick-action-dial-dashboard" :text="__('messages.t_dashboard')" />
-
-                    {{-- Gigs --}}
-                    <a href="{{ admin_url('gigs') }}" target="_blank" data-tooltip-target="tooltip-admin-quick-action-dial-gigs" data-tooltip-placement="{{ config()->get('direction') == 'ltr' ? 'left' : 'right' }}" class="relative w-11 h-11 text-gray-600 bg-white rounded-md border border-gray-200 hover:text-gray-900 dark:border-zinc-600 shadow-sm dark:hover:text-white dark:text-zinc-300 hover:bg-gray-50 dark:bg-zinc-700 dark:hover:bg-zinc-600 focus:ring-2 focus:ring-slate-300 focus:outline-none dark:focus:ring-zinc-400">
-                        <i class="flex h-full items-center justify-center mx-auto ph-duotone ph-images text-2xl w-full text-slate-400"></i>
-                    </a>
-                    <x-forms.tooltip id="tooltip-admin-quick-action-dial-gigs" :text="__('dashboard.t_manage_gigs')" />
 
                     {{-- Projects --}}
                     <a href="{{ admin_url('projects') }}" target="_blank" data-tooltip-target="tooltip-admin-quick-action-dial-projects" data-tooltip-placement="{{ config()->get('direction') == 'ltr' ? 'left' : 'right' }}" class="relative w-11 h-11 text-gray-600 bg-white rounded-md border border-gray-200 hover:text-gray-900 dark:border-zinc-600 shadow-sm dark:hover:text-white dark:text-zinc-300 hover:bg-gray-50 dark:bg-zinc-700 dark:hover:bg-zinc-600 focus:ring-2 focus:ring-slate-300 focus:outline-none dark:focus:ring-zinc-400">
@@ -298,6 +299,9 @@
 
             </script>
         @endif
+
+        {{-- AI assistant widget --}}
+        @include('components.layouts.partials.ai-widget')
 
         {{-- Wire modals --}}
         @livewire('wire-elements-modal')

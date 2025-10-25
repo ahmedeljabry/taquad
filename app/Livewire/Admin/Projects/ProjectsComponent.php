@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Projects;
 
 use App\Models\Project;
@@ -34,8 +35,8 @@ class ProjectsComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_projects'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_projects'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.projects.projects', [
             'projects' => $this->projects
@@ -63,7 +64,7 @@ class ProjectsComponent extends Component
     public function approve($id)
     {
         try {
-                
+
             // Get project
             $project         = Project::whereStatus('pending_approval')->whereId($id)->firstOrFail();
 
@@ -79,20 +80,18 @@ class ProjectsComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
 
@@ -106,7 +105,7 @@ class ProjectsComponent extends Component
     public function reject($id)
     {
         try {
-                
+
             // Get project
             $project = Project::whereStatus('pending_approval')->whereId($id)->firstOrFail();
 
@@ -129,31 +128,28 @@ class ProjectsComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
-        }catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
 
@@ -167,7 +163,7 @@ class ProjectsComponent extends Component
     public function delete($id)
     {
         try {
-            
+
             // Get project
             $project = Project::where('id', $id)->firstOrFail();
 
@@ -179,7 +175,7 @@ class ProjectsComponent extends Component
 
             // Loop through bids
             foreach ($bids as $bid) {
-                
+
                 // Delete bid upgrades
                 ProjectBidUpgrade::whereBidId($bid->id)->delete();
 
@@ -188,7 +184,6 @@ class ProjectsComponent extends Component
 
                 // Delete this bid
                 $bid->delete();
-
             }
 
             // Delete skills
@@ -214,21 +209,18 @@ class ProjectsComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
-    
 }

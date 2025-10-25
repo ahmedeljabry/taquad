@@ -1,4 +1,5 @@
 @if ($paginator->hasPages())
+    @php($elements = $elements ?? [])
     <nav role="navigation" aria-label="{{ __('Pagination Navigation') }}" class="flex items-center justify-between w-full">
         <div class="flex justify-between flex-1 md:hidden">
             @if ($paginator->onFirstPage())

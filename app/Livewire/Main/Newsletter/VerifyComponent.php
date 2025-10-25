@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Main\Newsletter;
 
 use Livewire\Component;
@@ -12,7 +13,7 @@ use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
 class VerifyComponent extends Component
 {
     use SEOToolsTrait, LivewireAlert, Actions;
-    
+
     public $token;
 
     protected $queryString = [
@@ -27,7 +28,7 @@ class VerifyComponent extends Component
      */
     public function mount()
     {
-        
+
         // Get email
         $verification = NewsletterVerification::where('token', $this->token)->first();
 
@@ -50,5 +51,4 @@ class VerifyComponent extends Component
         // Success
         return redirect('/');
     }
-    
 }

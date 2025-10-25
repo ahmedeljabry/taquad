@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Main\Account\Deposit;
 
 use DateTime;
@@ -45,26 +46,26 @@ class DepositComponent extends Component
         $separator   = settings('general')->separator;
         $title       = __('messages.t_deposit') . " $separator " . settings('general')->title;
         $description = settings('seo')->description;
-        $ogimage     = src( settings('seo')->ogimage );
+        $ogimage     = src(settings('seo')->ogimage);
 
-        $this->seo()->setTitle( $title );
-        $this->seo()->setDescription( $description );
-        $this->seo()->setCanonical( url()->current() );
-        $this->seo()->opengraph()->setTitle( $title );
-        $this->seo()->opengraph()->setDescription( $description );
-        $this->seo()->opengraph()->setUrl( url()->current() );
+        $this->seo()->setTitle($title);
+        $this->seo()->setDescription($description);
+        $this->seo()->setCanonical(url()->current());
+        $this->seo()->opengraph()->setTitle($title);
+        $this->seo()->opengraph()->setDescription($description);
+        $this->seo()->opengraph()->setUrl(url()->current());
         $this->seo()->opengraph()->setType('website');
-        $this->seo()->opengraph()->addImage( $ogimage );
-        $this->seo()->twitter()->setImage( $ogimage );
-        $this->seo()->twitter()->setUrl( url()->current() );
-        $this->seo()->twitter()->setSite( "@" . settings('seo')->twitter_username );
+        $this->seo()->opengraph()->addImage($ogimage);
+        $this->seo()->twitter()->setImage($ogimage);
+        $this->seo()->twitter()->setUrl(url()->current());
+        $this->seo()->twitter()->setSite("@" . settings('seo')->twitter_username);
         $this->seo()->twitter()->addValue('card', 'summary_large_image');
         $this->seo()->metatags()->addMeta('fb:page_id', settings('seo')->facebook_page_id, 'property');
         $this->seo()->metatags()->addMeta('fb:app_id', settings('seo')->facebook_app_id, 'property');
         $this->seo()->metatags()->addMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'name');
-        $this->seo()->jsonLd()->setTitle( $title );
-        $this->seo()->jsonLd()->setDescription( $description );
-        $this->seo()->jsonLd()->setUrl( url()->current() );
+        $this->seo()->jsonLd()->setTitle($title);
+        $this->seo()->jsonLd()->setDescription($description);
+        $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
         return view('livewire.main.account.deposit.deposit', [
@@ -81,8 +82,8 @@ class DepositComponent extends Component
     public function getPaymentMethodsProperty()
     {
         return AutomaticPaymentGateway::where('is_active', true)
-                                        ->oldest('name')
-                                        ->get();
+            ->oldest('name')
+            ->get();
     }
 
 
@@ -94,33 +95,31 @@ class DepositComponent extends Component
     public function next()
     {
         try {
-            
+
             // Check if offline method
             if ($this->selected_method === 'offline') {
-                
+
                 // Get selected payment gateway
                 $selected = OfflinePaymentGateway::where('is_active', true)
-                                                    ->where('slug', $this->selected_method)
-                                                    ->first();
-
+                    ->where('slug', $this->selected_method)
+                    ->first();
             } else {
 
                 // Get selected payment gateway
                 $selected = AutomaticPaymentGateway::where('is_active', true)
-                                                    ->where('slug', $this->selected_method)
-                                                    ->first();
-
+                    ->where('slug', $this->selected_method)
+                    ->first();
             }
 
             // Check if there is a selected payment gateway
             if ($selected) {
-                
+
                 // Get amount
                 $amount = convertToNumber($this->amount);
 
                 // Check is amount is valid number
                 if (!is_int($amount) && !is_float($amount)) {
-                    
+
                     // Error
                     $this->notification([
                         'title'       => __('messages.t_error'),
@@ -129,7 +128,6 @@ class DepositComponent extends Component
                     ]);
 
                     return;
-
                 }
 
                 // Set maximum deposit amount
@@ -137,22 +135,21 @@ class DepositComponent extends Component
 
                 // Set minmum deposit amount
                 $min_deposit_amount = $this->calculateExchangeRate($selected->deposit_min_amount, $selected->exchange_rate);
-                
+
                 // Check deposit amount (max/min)
                 if ($amount < $min_deposit_amount || $amount > $max_deposit_amount) {
-                    
+
                     // Error
                     $this->notification([
                         'title'       => __('messages.t_error'),
                         'description' => __('messages.t_min_deposit_amount_is_and_max_is', [
-                            'min' => money($min_deposit_amount, settings('currency')->code, true)->format(), 
+                            'min' => money($min_deposit_amount, settings('currency')->code, true)->format(),
                             'max' => money($max_deposit_amount, settings('currency')->code, true)->format()
                         ]),
                         'icon'        => 'error'
                     ]);
 
                     return;
-
                 }
 
                 // Calculate fee
@@ -163,26 +160,26 @@ class DepositComponent extends Component
                 $this->fee_text  = $fee['text'];
 
                 // Check if fee applicable
-                if ( isset($fee['value']) && $fee['value'] > 0 ) {
+                if (isset($fee['value']) && $fee['value'] > 0) {
 
                     // Show confirmation dialog
                     $this->dialog()->confirm([
-                        'title'          => '<h1 class="text-base font-bold tracking-wide">'. __('messages.t_confirmation') .'</h1>',
+                        'title'          => '<h1 class="text-base font-bold tracking-wide">' . __('messages.t_confirmation') . '</h1>',
                         'description'    => "<div class='leading-relaxed'>" . __('messages.t_confirm_deposit') . "<br></div>
                         <div class='rounded border dark:border-secondary-600 my-8'>
                         <dl class='divide-y divide-gray-200 dark:divide-gray-600'>
                             <div class='grid grid-cols-3 gap-4 py-3 px-4'>
-                                <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>". __('messages.t_amount') ."</dt>
-                                <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>". money($amount, settings('currency')->code, true) ."</dd>
-                            </div>  
+                                <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>" . __('messages.t_amount') . "</dt>
+                                <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>" . money($amount, settings('currency')->code, true) . "</dd>
+                            </div>
                             <div class='grid grid-cols-3 gap-4 py-3 px-4'>
-                                <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>". __('messages.t_fee') ."</dt>
-                                <dd class='text-sm font-semibold text-red-600 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>". $fee['text'] ."</dd>
-                            </div>  
+                                <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>" . __('messages.t_fee') . "</dt>
+                                <dd class='text-sm font-semibold text-red-600 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>" . $fee['text'] . "</dd>
+                            </div>
                             <div class='grid grid-cols-3 gap-4 py-3 px-4 bg-gray-100/60 dark:bg-secondary-700 rounded-b'>
-                                <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-400 ltr:text-left rtl:text-right'>". __('messages.t_u_will_get') ."</dt>
-                                <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>". money($amount - $fee['value'], settings('currency')->code, true) ."</dd>
-                            </div>  
+                                <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-400 ltr:text-left rtl:text-right'>" . __('messages.t_u_will_get') . "</dt>
+                                <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>" . money($amount - $fee['value'], settings('currency')->code, true) . "</dd>
+                            </div>
                         </dl>
                         </div>
                         ",
@@ -198,23 +195,22 @@ class DepositComponent extends Component
                             'label'  => __('messages.t_cancel')
                         ],
                     ]);
-
                 } else {
 
                     // Show confirmation dialog
                     $this->dialog()->confirm([
-                        'title'          => '<h1 class="text-base font-bold tracking-wide">'. __('messages.t_confirmation') .'</h1>',
+                        'title'          => '<h1 class="text-base font-bold tracking-wide">' . __('messages.t_confirmation') . '</h1>',
                         'description'    => "<div class='leading-relaxed'>" . __('messages.t_confirm_deposit') . "<br></div>
                         <div class='rounded border dark:border-secondary-600 my-8'>
                         <dl class='divide-y divide-gray-200 dark:divide-gray-600'>
                             <div class='grid grid-cols-3 gap-4 py-3 px-4'>
-                                <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>". __('messages.t_amount') ."</dt>
-                                <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>". money($amount, settings('currency')->code, true) ."</dd>
-                            </div> 
+                                <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>" . __('messages.t_amount') . "</dt>
+                                <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>" . money($amount, settings('currency')->code, true) . "</dd>
+                            </div>
                             <div class='grid grid-cols-3 gap-4 py-3 px-4 bg-gray-100/60 dark:bg-secondary-700 rounded-b'>
-                                <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-400 ltr:text-left rtl:text-right'>". __('messages.t_u_will_get') ."</dt>
-                                <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>". money($amount, settings('currency')->code, true) ."</dd>
-                            </div>  
+                                <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-400 ltr:text-left rtl:text-right'>" . __('messages.t_u_will_get') . "</dt>
+                                <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>" . money($amount, settings('currency')->code, true) . "</dd>
+                            </div>
                         </dl>
                         </div>
                         ",
@@ -230,9 +226,7 @@ class DepositComponent extends Component
                             'label'  => __('messages.t_cancel')
                         ],
                     ]);
-                    
                 }
-
             } else {
 
                 // Error
@@ -243,18 +237,15 @@ class DepositComponent extends Component
                 ]);
 
                 return;
-
             }
-
         } catch (\Throwable $th) {
-            
+
             // Something went wrong
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
 
@@ -267,33 +258,31 @@ class DepositComponent extends Component
     public function confirm()
     {
         try {
-            
+
             // Check if offline method
             if ($this->selected_method === 'offline') {
-                
+
                 // Get selected payment gateway
                 $selected = OfflinePaymentGateway::where('is_active', true)
-                                                    ->where('slug', $this->selected_method)
-                                                    ->first();
-
+                    ->where('slug', $this->selected_method)
+                    ->first();
             } else {
 
                 // Get selected payment gateway
                 $selected = AutomaticPaymentGateway::where('is_active', true)
-                                                    ->where('slug', $this->selected_method)
-                                                    ->first();
-
+                    ->where('slug', $this->selected_method)
+                    ->first();
             }
 
             // Check if there is a selected payment gateway
             if ($selected) {
-                
+
                 // Get amount
                 $amount = convertToNumber($this->amount);
 
                 // Check is amount is valid number
                 if (!is_int($amount) && !is_float($amount)) {
-                    
+
                     // Error
                     $this->notification([
                         'title'       => __('messages.t_error'),
@@ -302,7 +291,6 @@ class DepositComponent extends Component
                     ]);
 
                     return;
-
                 }
 
                 // Set maximum deposit amount
@@ -310,22 +298,21 @@ class DepositComponent extends Component
 
                 // Set minmum deposit amount
                 $min_deposit_amount = $this->calculateExchangeRate($selected->deposit_min_amount, $selected->exchange_rate);
-                
+
                 // Check deposit amount (max/min)
                 if ($amount < $min_deposit_amount || $amount > $max_deposit_amount) {
-                    
+
                     // Error
                     $this->notification([
                         'title'       => __('messages.t_error'),
                         'description' => __('messages.t_min_deposit_amount_is_and_max_is', [
-                            'min' => money($min_deposit_amount, settings('currency')->code, true)->format(), 
+                            'min' => money($min_deposit_amount, settings('currency')->code, true)->format(),
                             'max' => money($max_deposit_amount, settings('currency')->code, true)->format()
                         ]),
                         'icon'        => 'error'
                     ]);
 
                     return;
-
                 }
 
                 // Set amount
@@ -336,7 +323,7 @@ class DepositComponent extends Component
 
                     // PayPal
                     case 'paypal':
-                        
+
                         // Generate order id
                         $order_id = "DD" . uid(17);
 
@@ -351,49 +338,48 @@ class DepositComponent extends Component
                         // Dispatch event
                         $this->dispatch('checkout-paypal-order-event', ['orderID' => $order_id]);
 
-                    break;
+                        break;
 
                     // Asaas
                     case 'asaas':
-                        
+
                         // Get key
                         $key     = $selected?->settings['api_key'];
-                        
+
                         // Set api url
                         $link    = $selected?->settings['env'] === 'sandbox' ? $selected?->settings['sandbox_link'] : $selected?->settings['production_link'];
 
                         // Send request
                         $request = Http::withHeaders([
-                                            'access_token' => $key
-                                        ])->post("$link/paymentLinks", [
-                                            "name"                => auth()->user()->fullname ?? auth()->user()->username,
-                                            "description"         => __('messages.t_add_funds'),
-                                            "endDate"             => now()->addDays(2)->format('Y-d-m'),
-                                            "value"               => $amount,
-                                            "billingType"         => "UNDEFINED",
-                                            "chargeType"          => "DETACHED",
-                                            "dueDateLimitDays"    => 10,
-                                            "subscriptionCycle"   => null,
-                                            "maxInstallmentCount" => 1,
-                                            "notificationEnabled" => true,
-                                            "callback"            => [
-                                                "successUrl"   => url('callback/asaas'),
-                                                "autoRedirect" => true
-                                            ]
-                                        ]);
+                            'access_token' => $key
+                        ])->post("$link/paymentLinks", [
+                            "name"                => auth()->user()->fullname ?? auth()->user()->username,
+                            "description"         => __('messages.t_add_funds'),
+                            "endDate"             => now()->addDays(2)->format('Y-d-m'),
+                            "value"               => $amount,
+                            "billingType"         => "UNDEFINED",
+                            "chargeType"          => "DETACHED",
+                            "dueDateLimitDays"    => 10,
+                            "subscriptionCycle"   => null,
+                            "maxInstallmentCount" => 1,
+                            "notificationEnabled" => true,
+                            "callback"            => [
+                                "successUrl"   => url('callback/asaas'),
+                                "autoRedirect" => true
+                            ]
+                        ]);
 
                         // Get response
                         $response = $request->json();
-                        
+
                         // Check if link generated
-                        if ( is_array($response) && isset($response['url']) ) {
-                            
+                        if (is_array($response) && isset($response['url'])) {
+
                             // Save webhook details to later response
                             $this->webhook(['payment_id' => $response['id'], 'payment_method' => 'asaas']);
 
                             // Go to payment url
                             return redirect($response['url']);
-
                         } else {
 
                             // Somthing went wrong
@@ -404,14 +390,13 @@ class DepositComponent extends Component
                             ]);
 
                             return;
-
                         }
 
-                    break;
+                        break;
 
                     // CampPay
                     case 'campay':
-                        
+
                         // Get credentials
                         $campay_username = $selected?->settings['app_username'];
                         $campay_password = $selected?->settings['app_password'];
@@ -427,8 +412,8 @@ class DepositComponent extends Component
                         $response = $request->json();
 
                         // Check if token set
-                        if ( is_array($response) && isset($response['token']) ) {
-                            
+                        if (is_array($response) && isset($response['token'])) {
+
                             // Generate payment id
                             $payment_id      = "DD" . uid(17);
 
@@ -448,14 +433,13 @@ class DepositComponent extends Component
                             $payment_response = $payment_request->json();
 
                             // Check if link is set
-                            if ( isset($payment_response['link']) ) {
-                                
+                            if (isset($payment_response['link'])) {
+
                                 // Save webhook details to later response
                                 $this->webhook(['payment_id' => $payment_id, 'payment_method' => 'campay']);
-    
+
                                 // Go to payment url
                                 return redirect($payment_response['link']);
-
                             } else {
 
                                 // Something went wrong
@@ -466,10 +450,7 @@ class DepositComponent extends Component
                                 ]);
 
                                 return;
-
                             }
-
-
                         } else {
 
                             // Somthing went wrong
@@ -480,18 +461,17 @@ class DepositComponent extends Component
                             ]);
 
                             return;
-
                         }
 
-                    break;
+                        break;
 
                     // Cashfree
                     case 'cashfree':
-                        
+
                         // Get api keys
                         $cashfree_client_id     = $selected?->settings['app_id'];
                         $cashfree_client_secret = $selected?->settings['secret_key'];
-                        
+
                         // Set api url
                         $link                   = $selected?->settings['env'] === 'sandbox' ? $selected?->settings['sandbox_link'] : $selected?->settings['production_link'];
 
@@ -500,48 +480,47 @@ class DepositComponent extends Component
 
                         // Send request
                         $request = Http::withHeaders([
-                                            'x-api-version'   => '2022-09-01',
-                                            'x-client-id'     => $cashfree_client_id,
-                                            'x-client-secret' => $cashfree_client_secret,
-                                        ])->post("$link/pg/links", [
+                            'x-api-version'   => '2022-09-01',
+                            'x-client-id'     => $cashfree_client_id,
+                            'x-client-secret' => $cashfree_client_secret,
+                        ])->post("$link/pg/links", [
 
-                                            "customer_details" => [
-                                                "customer_phone"=> "+919090407368",
-                                                "customer_email"=> auth()->user()->email,
-                                                "customer_name" => auth()->user()->fullname ?? auth()->user()->username
-                                            ],
-                                            "link_notify" => [
-                                                "send_sms"   => false,
-                                                "send_email" => true
-                                            ], 
-                                            "link_meta" => [
-                                                "notify_url" => url('callback/cashfree'),
-                                                "return_url" => url('callback/cashfree?action=D'),
-                                                "upi_intent" => false
-                                            ], 
-                                            "link_id"                     => $payment_id,
-                                            "link_amount"                 => $amount,
-                                            "link_currency"               => $selected->currency,
-                                            "link_purpose"                => __('messages.t_add_funds'),
-                                            "link_partial_payments"       => false,
-                                            "link_minimum_partial_amount" => 1,
-                                            "link_expiry_time"            => now()->addDay(),
-                                            "link_auto_reminders"         => true
+                            "customer_details" => [
+                                "customer_phone" => "+919090407368",
+                                "customer_email" => auth()->user()->email,
+                                "customer_name" => auth()->user()->fullname ?? auth()->user()->username
+                            ],
+                            "link_notify" => [
+                                "send_sms"   => false,
+                                "send_email" => true
+                            ],
+                            "link_meta" => [
+                                "notify_url" => url('callback/cashfree'),
+                                "return_url" => url('callback/cashfree?action=D'),
+                                "upi_intent" => false
+                            ],
+                            "link_id"                     => $payment_id,
+                            "link_amount"                 => $amount,
+                            "link_currency"               => $selected->currency,
+                            "link_purpose"                => __('messages.t_add_funds'),
+                            "link_partial_payments"       => false,
+                            "link_minimum_partial_amount" => 1,
+                            "link_expiry_time"            => now()->addDay(),
+                            "link_auto_reminders"         => true
 
-                                        ]);
+                        ]);
 
                         // Get response
                         $response = $request->json();
 
                         // Check if link generated
-                        if ( is_array($response) && isset($response['link_url']) ) {
-                            
+                        if (is_array($response) && isset($response['link_url'])) {
+
                             // Save webhook details to later response
                             $this->webhook(['payment_id' => $payment_id, 'payment_method' => 'cashfree']);
 
                             // Go to payment url
                             return redirect($response['link_url']);
-
                         } else {
 
                             // Somthing went wrong
@@ -552,14 +531,13 @@ class DepositComponent extends Component
                             ]);
 
                             return;
-
                         }
 
-                    break;
+                        break;
 
                     // cPay
                     case 'cpay':
-                        
+
                         // Set request params
                         $globalpay         = $amount;
                         $arr2              = "DD" . uid(17);
@@ -634,11 +612,11 @@ class DepositComponent extends Component
                         // Go to next step
                         $this->is_third_step                  = true;
 
-                    break;
+                        break;
 
                     // Duitku
                     case 'duitku':
-                        
+
                         // Set request params
                         $merchantCode     = $selected?->settings['merchant_code'];
                         $apiKey           = $selected?->settings['api_key'];
@@ -683,7 +661,7 @@ class DepositComponent extends Component
                             'price'    => $paymentAmount,
                             'quantity' => 1
                         );
-                        $itemDetails = array( $item1 );
+                        $itemDetails = array($item1);
                         $params      = array(
                             'merchantCode'     => $merchantCode,
                             'paymentAmount'    => $paymentAmount,
@@ -703,45 +681,47 @@ class DepositComponent extends Component
                             'expiryPeriod'     => $expiryPeriod
                         );
                         $params_string = json_encode($params);
-                        
+
                         // Get url
                         if ($selected?->settings['env'] === 'sandbox') {
                             $url = 'https://sandbox.duitku.com/webapi/api/merchant/v2/inquiry';
-                            
                         } else {
                             $url = 'https://passport.duitku.com/webapi/api/merchant/v2/inquiry';
                         }
 
                         $ch = curl_init();
 
-                        curl_setopt($ch, CURLOPT_URL, $url); 
-                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-                        curl_setopt($ch, CURLOPT_POSTFIELDS, $params_string);                                                                  
-                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                                                                      
-                        curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-                            'Content-Type: application/json',                                                                                
-                            'Content-Length: ' . strlen($params_string))                                                                       
-                        );   
+                        curl_setopt($ch, CURLOPT_URL, $url);
+                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $params_string);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt(
+                            $ch,
+                            CURLOPT_HTTPHEADER,
+                            array(
+                                'Content-Type: application/json',
+                                'Content-Length: ' . strlen($params_string)
+                            )
+                        );
                         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 
                         //execute post
                         $request  = curl_exec($ch);
                         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-                        if($httpCode == 200) {
+                        if ($httpCode == 200) {
 
                             // Get results
                             $results = json_decode($request, true);
 
                             // Check if succeeded
                             if (isset($results['statusCode']) && $results['statusCode'] == "00") {
-                                
+
                                 // Save webhook details to later response
                                 $this->webhook(['payment_id' => $merchantOrderId, 'payment_method' => 'duitku']);
 
                                 // Redirect to payment url
                                 return redirect($results['paymentUrl']);
-
                             } else {
 
                                 // Error
@@ -752,9 +732,7 @@ class DepositComponent extends Component
                                 ]);
 
                                 return;
-
                             }
-
                         } else {
 
                             $request = json_decode($request);
@@ -765,14 +743,13 @@ class DepositComponent extends Component
                                 'description' => $request->Message,
                                 'icon'        => 'error'
                             ]);
-
                         }
 
-                    break;
+                        break;
 
                     // Ecpay
                     case 'ecpay':
-                        
+
                         // Set params
                         $ecpay_link        = $selected?->settings['env'] === 'sandbox' ? $selected?->settings['sandbox_link'] : $selected?->settings['production_link'];
                         $hashKey           = $selected?->settings['hash_key'];
@@ -799,7 +776,7 @@ class DepositComponent extends Component
                             "TotalAmount"       => $TotalAmount,
                             "TradeDesc"         => $TradeDesc
                         ], $hashKey, $hashIv);
-                        
+
                         // Set payment gateway option
                         $this->payment_gateway_params['ecpay']['link']              = $ecpay_link;
                         $this->payment_gateway_params['ecpay']['ChoosePayment']     = $ChoosePayment;
@@ -821,11 +798,11 @@ class DepositComponent extends Component
                         $this->is_third_step                  = true;
 
 
-                    break;
+                        break;
 
                     // Epoint.az
                     case 'epoint':
-                        
+
                         // Set epoint.az settings
                         $public_key                = $selected?->settings['public_key'];
                         $private_key               = $selected?->settings['private_key'];
@@ -851,7 +828,7 @@ class DepositComponent extends Component
                         $signature = base64_encode(sha1($private_key . $data . $private_key, 1));
 
                         // Set post fields
-                        $fields    = http_build_query(array( 'data' => $data, 'signature' => $signature));
+                        $fields    = http_build_query(array('data' => $data, 'signature' => $signature));
 
                         // Send request
                         $_ch = curl_init();
@@ -859,7 +836,7 @@ class DepositComponent extends Component
                         curl_setopt($_ch, CURLOPT_POSTFIELDS, $fields);
                         curl_setopt($_ch, CURLOPT_RETURNTRANSFER, TRUE);
                         $_response = curl_exec($_ch);
-                        
+
                         // Decode results
                         $results = json_decode($_response, true);
 
@@ -871,7 +848,6 @@ class DepositComponent extends Component
 
                             // Redirect
                             return redirect($results['redirect_url']);
-
                         } else {
 
                             // Error
@@ -882,14 +858,13 @@ class DepositComponent extends Component
                             ]);
 
                             return;
-
                         }
 
-                    break;
+                        break;
 
                     // FastPay
                     case 'fastpay':
-                    
+
                         // Set request params
                         $post_data                       = array();
                         $post_data['merchant_mobile_no'] = $selected?->settings['merchant_mobile_no'];
@@ -902,26 +877,25 @@ class DepositComponent extends Component
                         $direct_api_url                  = $selected?->settings['env'] === 'sandbox' ? "https://dev.fast-pay.cash/" : "https://secure.fast-pay.cash/";
 
                         $handle = curl_init();
-                        curl_setopt($handle, CURLOPT_URL, $direct_api_url . "merchant/generate-payment-token" );
+                        curl_setopt($handle, CURLOPT_URL, $direct_api_url . "merchant/generate-payment-token");
                         curl_setopt($handle, CURLOPT_TIMEOUT, 10);
                         curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 10);
-                        curl_setopt($handle, CURLOPT_POST, 1 );
+                        curl_setopt($handle, CURLOPT_POST, 1);
                         curl_setopt($handle, CURLOPT_POSTFIELDS, $post_data);
                         curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 
-                        $content = curl_exec($handle );
+                        $content = curl_exec($handle);
 
                         $code = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-                        
-                        if($code == 200 && !( curl_errno($handle))) {
 
-                            curl_close( $handle);
+                        if ($code == 200 && !(curl_errno($handle))) {
+
+                            curl_close($handle);
                             $response = $content;
-
                         } else {
 
-                            curl_close( $handle);
-                            
+                            curl_close($handle);
+
                             // Error
                             $this->notification([
                                 'title'       => __('messages.t_error'),
@@ -930,21 +904,19 @@ class DepositComponent extends Component
                             ]);
 
                             return;
-
                         }
 
                         // Decode response
-                        $results = json_decode( $response, true );
+                        $results = json_decode($response, true);
 
                         // Check if token generated
-                        if ( is_array($results) && isset($results['token']) ) {
-                            
+                        if (is_array($results) && isset($results['token'])) {
+
                             // Save webhook details to later response
                             $this->webhook(['payment_id' => $post_data['order_id'], 'payment_method' => 'fastpay']);
 
                             // Go to payment url
                             return redirect($direct_api_url . "merchant/payment?token=" . $results['token']);
-
                         } else {
 
                             // Somthing went wrong
@@ -955,14 +927,13 @@ class DepositComponent extends Component
                             ]);
 
                             return;
-
                         }
 
-                    break;
+                        break;
 
                     // Flutterwave
                     case 'flutterwave':
-                    
+
                         // Generate order id
                         $order_id = "DD" . uid(17);
 
@@ -977,11 +948,11 @@ class DepositComponent extends Component
                         // Dispatch event
                         $this->dispatch('checkout-flutterwave-order-event', ['orderID' => $order_id]);
 
-                    break;
+                        break;
 
                     // Freekassa
                     case 'freekassa':
-                    
+
                         // Set FreeKassa credentials
                         $merchant_id        = $selected?->settings['shop_id'];
                         $secret_key         = $selected?->settings['merchant_password1'];
@@ -991,57 +962,56 @@ class DepositComponent extends Component
                         $params             = [];
                         $params['m']        = $merchant_id;
                         $params['oa']       = $amount;
-                        $params['o']        = 77 . rand(10000000,99999999);
+                        $params['o']        = 77 . rand(10000000, 99999999);
                         $params['i']        = 1;
                         $params['currency'] = $selected->currency;
                         $params['pay']      = 'Оплатить';
-    
+
                         // Generate signature
-                        $sign               = md5($merchant_id.':'.$params['oa'].':'.$secret_key.':'.$params['currency'].':'.$params['o']);
+                        $sign               = md5($merchant_id . ':' . $params['oa'] . ':' . $secret_key . ':' . $params['currency'] . ':' . $params['o']);
 
                         // Set signature
                         $params['s']        = $sign;
-                        
+
                         // Save webhook details to later response
                         $this->webhook(['payment_id' => $params['o'], 'payment_method' => 'freekassa']);
 
                         // Redirect to payment url
                         return redirect("$pay_url?" . http_build_query($params));
 
-                    break;
+                        break;
 
                     // Genie business
                     case 'genie-business':
-                        
-                        // Get credentials 
+
+                        // Get credentials
                         $app_key      = $selected?->settings['app_key'];
                         $request_link = $selected?->settings['env'] === 'sandbox' ? $selected?->settings['sandbox_link'] : $selected?->settings['production_link'];
 
                         // Send request
                         $request = Http::withHeaders([
-                                            'Accept'        => 'application/json',
-                                            'Authorization' => $app_key,
-                                            'Content-Type'  => 'application/json',
-                                        ])->post("$request_link/public/v2/transactions", [
-                                            "customerReference" => "DD" . uid(17),
-                                            "currency"          => $selected->currency,
-                                            "amount"            => $amount,
-                                            "redirectUrl"       => url('callback/genie?action=D'),
-                                            "webhook"           => url('callback/genie')
-                                        ]);
+                            'Accept'        => 'application/json',
+                            'Authorization' => $app_key,
+                            'Content-Type'  => 'application/json',
+                        ])->post("$request_link/public/v2/transactions", [
+                            "customerReference" => "DD" . uid(17),
+                            "currency"          => $selected->currency,
+                            "amount"            => $amount,
+                            "redirectUrl"       => url('callback/genie?action=D'),
+                            "webhook"           => url('callback/genie')
+                        ]);
 
                         // Get response
                         $response = $request->json();
-                        
+
                         // Check if link generated
-                        if ( is_array($response) && isset($response['url']) ) {
-                            
+                        if (is_array($response) && isset($response['url'])) {
+
                             // Save webhook details to later response
                             $this->webhook(['payment_id' => $response['customerReference'], 'payment_method' => 'genie-business']);
 
                             // Go to payment url
                             return redirect($response['url']);
-
                         } else {
 
                             // Somthing went wrong
@@ -1052,16 +1022,15 @@ class DepositComponent extends Component
                             ]);
 
                             return;
-
                         }
-                                        
-                        
 
-                    break;
+
+
+                        break;
 
                     // Iyzico
                     case 'iyzico':
-                    
+
                         // Get iyzico api config
                         $api_key         = $selected?->settings['api_key'];
                         $secret_key      = $selected?->settings['secret_key'];
@@ -1134,16 +1103,15 @@ class DepositComponent extends Component
 
                         // Send request
                         $payWithIyzicoInitialize = \Iyzipay\Model\PayWithIyzicoInitialize::create($request, $options);
-                        
+
                         // Check if link generated
-                        if ( $payWithIyzicoInitialize?->getPayWithIyzicoPageUrl() ) {
-                            
+                        if ($payWithIyzicoInitialize?->getPayWithIyzicoPageUrl()) {
+
                             // Save webhook details to later response
                             $this->webhook(['payment_id' => $conversation_id, 'payment_method' => 'iyzico']);
 
                             // Go to payment url
-                            return redirect( $payWithIyzicoInitialize?->getPayWithIyzicoPageUrl() );
-
+                            return redirect($payWithIyzicoInitialize?->getPayWithIyzicoPageUrl());
                         } else {
 
                             // Somthing went wrong
@@ -1154,16 +1122,15 @@ class DepositComponent extends Component
                             ]);
 
                             return;
-
                         }
 
-                    break;
+                        break;
 
                     // Jazzcash
                     case 'jazzcash':
-                    
+
                         $jazzcash_env           = $selected?->settings['env'];
-                        $jazzcash_endpoint      = $jazzcash_env === 'sandbox' ? $selected?->settings['sandbox_link'] : $selected?->settings['production_link'] ;
+                        $jazzcash_endpoint      = $jazzcash_env === 'sandbox' ? $selected?->settings['sandbox_link'] : $selected?->settings['production_link'];
                         $jazzcash_merchant_id   = $selected?->settings['merchant_id'];
                         $jazzcash_password      = $selected?->settings['password'];
                         $jazzcash_salt          = $selected?->settings['integerity_salt'];
@@ -1241,16 +1208,16 @@ class DepositComponent extends Component
                         // Go to next step
                         $this->is_third_step = true;
 
-                    break;
+                        break;
 
                     // Mercadopago
                     case 'mercadopago':
-                    
+
                         // Set api secret key
-                        \MercadoPago\SDK::setAccessToken( $selected?->settings['access_token'] );
+                        \MercadoPago\SDK::setAccessToken($selected?->settings['access_token']);
 
                         $preference              = new \MercadoPago\Preference();
- 
+
                         // Crear un elemento en la preferencia
                         $item                    = new \MercadoPago\Item();
                         $item->title             = __('messages.t_add_funds');
@@ -1265,7 +1232,7 @@ class DepositComponent extends Component
                             'failure' => url('callback/mercadopago/failed'),
                         ];
                         $preference->save();
-                        
+
                         // Save webhook details to later response
                         $this->webhook(['payment_id' => $preference->id, 'payment_method' => 'mercadopago']);
 
@@ -1273,21 +1240,21 @@ class DepositComponent extends Component
                         $this->payment_gateway_params['mercadopago']['preference_id'] = $preference->id;
 
                         // Go to next step
-                        $this->is_third_step = true;   
+                        $this->is_third_step = true;
 
                         // Dispatch event
-                        $this->dispatch('checkout-mercadopago-order-event', ['preferenceId' => $preference->id]);  
+                        $this->dispatch('checkout-mercadopago-order-event', ['preferenceId' => $preference->id]);
 
-                    break;
+                        break;
 
                     // Mollie
                     case 'mollie':
-                    
+
                         // Set currency
                         $currency        = $selected->currency;
 
                         // Set amount
-                        $amount          = number_format( $amount, 2, '.', '' );
+                        $amount          = number_format($amount, 2, '.', '');
 
                         // Generate mollie order id
                         $mollie_order_id = "DD" . uid(17);
@@ -1296,7 +1263,7 @@ class DepositComponent extends Component
                         $mollie          = new \Mollie\Api\MollieApiClient();
 
                         // Set api key
-                        $mollie->setApiKey( $selected?->settings['key'] );
+                        $mollie->setApiKey($selected?->settings['key']);
 
                         // Create a payment request
                         $payment  = $mollie->payments->create([
@@ -1316,14 +1283,14 @@ class DepositComponent extends Component
                         // Redirect to payment link
                         return redirect($payment->getCheckoutUrl());
 
-                    break;
+                        break;
 
                     // Nowpayment.io
                     case 'nowpayments':
 
                         // Set new client request
                         $client  = new Client();
-                        
+
                         // Set headers
                         $headers = [
                             'x-api-key'    => $selected?->settings['api_key'],
@@ -1334,8 +1301,8 @@ class DepositComponent extends Component
                         $order_id = "DD" . uid(17);
 
                         // Set request link
-                        $request_link = $selected?->settings['env'] === 'sandbox' ? $selected?->settings['sandbox_link'] : $selected?->settings['production_link'] ;
-        
+                        $request_link = $selected?->settings['env'] === 'sandbox' ? $selected?->settings['sandbox_link'] : $selected?->settings['production_link'];
+
                         // Set request body
                         $body = [
                             "price_amount"      => $this->amount,
@@ -1346,7 +1313,7 @@ class DepositComponent extends Component
                             "success_url"       => url('callback/nowpayments/success'),
                             "cancel_url"        => url('callback/nowpayments/cancel')
                         ];
-                        
+
                         // Send request
                         $request = new Request('POST', $request_link . "invoice", $headers, json_encode($body));
 
@@ -1357,14 +1324,13 @@ class DepositComponent extends Component
                         $data    = json_decode($res->getBody(), true);
 
                         // Check if link generated
-                        if ( is_array($data) && isset($data['invoice_url']) ) {
-                            
+                        if (is_array($data) && isset($data['invoice_url'])) {
+
                             // Save webhook details to later response
                             $this->webhook(['payment_id' => $data['order_id'], 'payment_method' => 'nowpayments']);
 
                             // Go to payment url
                             return redirect($data['invoice_url']);
-
                         } else {
 
                             // Somthing went wrong
@@ -1375,67 +1341,65 @@ class DepositComponent extends Component
                             ]);
 
                             return;
-
                         }
 
-                    break;
+                        break;
 
                     // Paymob
                     case 'paymob':
-                        
+
                         // Get auth token
                         $auth    = Http::acceptJson()->post('https://accept.paymob.com/api/auth/tokens', [
-                                        'api_key' => $selected?->settings['api_key'],
-                                    ])->json();
+                            'api_key' => $selected?->settings['api_key'],
+                        ])->json();
 
                         // Check if token is set
                         if (isset($auth['token'])) {
-                            
+
                             // Create order
                             $order   = Http::acceptJson()->post('https://accept.paymob.com/api/ecommerce/orders', [
-                                            'auth_token'      => $auth['token'],
-                                            'delivery_needed' => false,
-                                            'amount_cents'    => $amount * 100,
-                                            'items'           => []
-                                        ])->json();
+                                'auth_token'      => $auth['token'],
+                                'delivery_needed' => false,
+                                'amount_cents'    => $amount * 100,
+                                'items'           => []
+                            ])->json();
 
                             // Check if order created
                             if (isset($order['id'])) {
-                                
+
                                 // Make payment
                                 $payment = Http::acceptJson()->post('https://accept.paymob.com/api/acceptance/payment_keys', [
-                                                'auth_token'     => $auth['token'],
-                                                'amount_cents'   => $amount * 100,
-                                                'expiration'     => 3600,
-                                                'order_id'       => $order['id'],
-                                                'billing_data'   => [
-                                                    "first_name"     => auth()->user()->fullname ?? auth()->user()->username,
-                                                    "last_name"      => auth()->user()->fullname ?? auth()->user()->username,
-                                                    "email"          => auth()->user()->email,
-                                                    "phone_number"   => "+2087513693",
-                                                    "apartment"      => "NA",
-                                                    "floor"          => "NA",
-                                                    "street"         => "NA",
-                                                    "building"       => "NA",
-                                                    "shipping_method"=> "D",
-                                                    "postal_code"    => "NA",
-                                                    "city"           => "NA",
-                                                    "country"        => "NA",
-                                                    "state"          => "NA"
-                                                ],
-                                                'currency'       => $selected?->currency,
-                                                'integration_id' => $selected?->settings['integration_id']
-                                            ])->json();
+                                    'auth_token'     => $auth['token'],
+                                    'amount_cents'   => $amount * 100,
+                                    'expiration'     => 3600,
+                                    'order_id'       => $order['id'],
+                                    'billing_data'   => [
+                                        "first_name"     => auth()->user()->fullname ?? auth()->user()->username,
+                                        "last_name"      => auth()->user()->fullname ?? auth()->user()->username,
+                                        "email"          => auth()->user()->email,
+                                        "phone_number"   => "+2087513693",
+                                        "apartment"      => "NA",
+                                        "floor"          => "NA",
+                                        "street"         => "NA",
+                                        "building"       => "NA",
+                                        "shipping_method" => "D",
+                                        "postal_code"    => "NA",
+                                        "city"           => "NA",
+                                        "country"        => "NA",
+                                        "state"          => "NA"
+                                    ],
+                                    'currency'       => $selected?->currency,
+                                    'integration_id' => $selected?->settings['integration_id']
+                                ])->json();
 
                                 // Save webhook details to later response
                                 $this->webhook(['payment_id' => "DD" . $order['id'], 'payment_method' => 'paymob']);
-                                            
+
                                 // Set payment token
                                 $this->payment_gateway_params['paymob']['token'] = $payment['token'];
 
                                 // Go to next step
                                 $this->is_third_step = true;
-
                             } else {
 
                                 // Something went wrong
@@ -1444,9 +1408,7 @@ class DepositComponent extends Component
                                     'description' => __('messages.t_toast_something_went_wrong'),
                                     'icon'        => 'error'
                                 ]);
-
                             }
-                            
                         } else {
 
                             // Something went wrong
@@ -1455,14 +1417,13 @@ class DepositComponent extends Component
                                 'description' => __('messages.t_toast_something_went_wrong'),
                                 'icon'        => 'error'
                             ]);
-
                         }
 
-                    break;
+                        break;
 
                     // Paymob PK
                     case 'paymob-pk':
-                    
+
                         // Get auth token
                         $auth    = Http::acceptJson()->post('https://pakistan.paymob.com/api/auth/tokens', [
                             'api_key' => $selected?->settings['api_key'],
@@ -1470,52 +1431,51 @@ class DepositComponent extends Component
 
                         // Check if token is set
                         if (isset($auth['token'])) {
-                            
+
                             // Create order
                             $order   = Http::acceptJson()->post('https://pakistan.paymob.com/api/ecommerce/orders', [
-                                            'auth_token'      => $auth['token'],
-                                            'delivery_needed' => false,
-                                            'amount_cents'    => $amount * 100,
-                                            'items'           => []
-                                        ])->json();
+                                'auth_token'      => $auth['token'],
+                                'delivery_needed' => false,
+                                'amount_cents'    => $amount * 100,
+                                'items'           => []
+                            ])->json();
 
                             // Check if order created
                             if (isset($order['id'])) {
-                                
+
                                 // Make payment
                                 $payment = Http::acceptJson()->post('https://pakistan.paymob.com/api/acceptance/payment_keys', [
-                                                'auth_token'     => $auth['token'],
-                                                'amount_cents'   => $amount * 100,
-                                                'expiration'     => 3600,
-                                                'order_id'       => $order['id'],
-                                                'billing_data'   => [
-                                                    "first_name"     => auth()->user()->fullname ?? auth()->user()->username,
-                                                    "last_name"      => auth()->user()->fullname ?? auth()->user()->username,
-                                                    "email"          => auth()->user()->email,
-                                                    "phone_number"   => "+86(8)9135210487",
-                                                    "apartment"      => "NA",
-                                                    "floor"          => "NA",
-                                                    "street"         => "NA",
-                                                    "building"       => "NA",
-                                                    "shipping_method"=> "D",
-                                                    "postal_code"    => "NA",
-                                                    "city"           => "NA",
-                                                    "country"        => "NA",
-                                                    "state"          => "NA"
-                                                ],
-                                                'currency'       => $selected?->currency,
-                                                'integration_id' => $selected?->settings['integration_id']
-                                            ])->json();
+                                    'auth_token'     => $auth['token'],
+                                    'amount_cents'   => $amount * 100,
+                                    'expiration'     => 3600,
+                                    'order_id'       => $order['id'],
+                                    'billing_data'   => [
+                                        "first_name"     => auth()->user()->fullname ?? auth()->user()->username,
+                                        "last_name"      => auth()->user()->fullname ?? auth()->user()->username,
+                                        "email"          => auth()->user()->email,
+                                        "phone_number"   => "+86(8)9135210487",
+                                        "apartment"      => "NA",
+                                        "floor"          => "NA",
+                                        "street"         => "NA",
+                                        "building"       => "NA",
+                                        "shipping_method" => "D",
+                                        "postal_code"    => "NA",
+                                        "city"           => "NA",
+                                        "country"        => "NA",
+                                        "state"          => "NA"
+                                    ],
+                                    'currency'       => $selected?->currency,
+                                    'integration_id' => $selected?->settings['integration_id']
+                                ])->json();
 
                                 // Save webhook details to later response
                                 $this->webhook(['payment_id' => $order['id'], 'payment_method' => 'paymob-pk']);
-                                            
+
                                 // Set payment token
                                 $this->payment_gateway_params['paymob-pk']['token'] = $payment['token'];
 
                                 // Go to next step
                                 $this->is_third_step = true;
-
                             } else {
 
                                 // Something went wrong
@@ -1524,9 +1484,7 @@ class DepositComponent extends Component
                                     'description' => __('messages.t_toast_something_went_wrong'),
                                     'icon'        => 'error'
                                 ]);
-
                             }
-                            
                         } else {
 
                             // Something went wrong
@@ -1535,17 +1493,16 @@ class DepositComponent extends Component
                                 'description' => __('messages.t_toast_something_went_wrong'),
                                 'icon'        => 'error'
                             ]);
-
                         }
 
-                    break;
+                        break;
 
                     // Paystack
                     case 'paystack':
-                    
+
                         // Generate order id
                         $order_id                                          = "DD" . uid(17);
-                        
+
                         // Save webhook details to later response
                         $this->webhook(['payment_id' => $order_id, 'payment_method' => 'paystack']);
 
@@ -1557,34 +1514,34 @@ class DepositComponent extends Component
 
                         // Dispatch event
                         $this->dispatch('checkout-paystack-order-event', ['orderID' => $order_id]);
-                        
-                    break;
+
+                        break;
 
                     // Paytabs
                     case 'paytabs':
-                        
+
                         // Generate order id
                         $order_id = "DD" . uid(17);
 
                         // Send payment request
                         $payment  = paypage::sendPaymentCode('all')
-                                            ->sendTransaction('Auth')
-                                            ->sendCart( $order_id, $amount, __('messages.t_add_funds') )
-                                            ->sendCustomerDetails(
-                                                auth()->user()->fullname ?? auth()->user()->username, 
-                                                auth()->user()->email, 
-                                                'NA', 
-                                                'NA', 
-                                                'NA', 
-                                                'NA', 
-                                                'NA', 
-                                                'NA',
-                                                request()->ip()
-                                            )
-                                            ->sendHideShipping(true)
-                                            ->sendURLs( url('callback/paytabs'), url('callback/paytabs') )
-                                            ->sendLanguage('en')
-                                            ->create_pay_page();
+                            ->sendTransaction('Auth')
+                            ->sendCart($order_id, $amount, __('messages.t_add_funds'))
+                            ->sendCustomerDetails(
+                                auth()->user()->fullname ?? auth()->user()->username,
+                                auth()->user()->email,
+                                'NA',
+                                'NA',
+                                'NA',
+                                'NA',
+                                'NA',
+                                'NA',
+                                request()->ip()
+                            )
+                            ->sendHideShipping(true)
+                            ->sendURLs(url('callback/paytabs'), url('callback/paytabs'))
+                            ->sendLanguage('en')
+                            ->create_pay_page();
 
                         // Redirect
                         if ($payment) {
@@ -1594,7 +1551,6 @@ class DepositComponent extends Component
 
                             // Redirect
                             return $payment;
-
                         } else {
 
                             // Something went wrong
@@ -1607,11 +1563,11 @@ class DepositComponent extends Component
                             return;
                         }
 
-                    break;
+                        break;
 
                     // Paytr
                     case 'paytr':
-                    
+
                         // Generate order id
                         $merchant_oid = "DD" . uid(17);
 
@@ -1620,14 +1576,14 @@ class DepositComponent extends Component
 
                         // Set currency
                         $currency     = $selected?->currency === 'TRY' ? 'TL' : $selected->currency;
-        
+
                         // Start new payment
-                        $paytr        = new \App\Utils\PayTR\PayTR(); 
+                        $paytr        = new \App\Utils\PayTR\PayTR();
 
                         // Set payment gateway api keys
-                        $paytr->setMerchantId( $selected?->settings['merchant_id'] );
-                        $paytr->setMerchantKey( $selected?->settings['merchant_key'] );
-                        $paytr->setMerchantSalt( $selected?->settings['merchant_salt'] );
+                        $paytr->setMerchantId($selected?->settings['merchant_id']);
+                        $paytr->setMerchantKey($selected?->settings['merchant_key']);
+                        $paytr->setMerchantSalt($selected?->settings['merchant_salt']);
                         $paytr->setMerchantOrderId($merchant_oid);
 
                         // Set order details
@@ -1636,15 +1592,15 @@ class DepositComponent extends Component
                         $paytr->setUserName(auth()->user()->username);
                         $paytr->setAddress('N/A');
                         $paytr->setPhone('5205000000');
-                        $paytr->setBasket([[ "name" => __('messages.t_add_funds'), "price" => $amount , "currency" => $currency ]]);
+                        $paytr->setBasket([["name" => __('messages.t_add_funds'), "price" => $amount, "currency" => $currency]]);
                         $paytr->setCurrency($currency);
                         $paytr->setSuccessUrl(url('callback/paytr/success?action=D'));
                         $paytr->setFailUrl(url('callback/paytr/failed?action=D'));
                         $paytr->initialize();
 
                         // Check if token generated
-                        if ( $paytr?->token ) {
-                            
+                        if ($paytr?->token) {
+
                             // Save webhook details to later response
                             $this->webhook(['payment_id' => $merchant_oid, 'payment_method' => 'paytr']);
 
@@ -1656,7 +1612,6 @@ class DepositComponent extends Component
 
                             // Dispatch event
                             $this->dispatch('checkout-paytr-order-event');
-
                         } else {
 
                             // Somthing went wrong
@@ -1667,16 +1622,15 @@ class DepositComponent extends Component
                             ]);
 
                             return;
-
                         }
 
-                    break;
+                        break;
 
                     // Razorpay
                     case 'razorpay':
-                    
+
                         // Send a request
-                        $request = new Api( $selected?->settings['key_id'], $selected?->settings['key_secret'] );
+                        $request = new Api($selected?->settings['key_id'], $selected?->settings['key_secret']);
 
                         // Create order
                         $order   = $request->order->create([
@@ -1696,11 +1650,11 @@ class DepositComponent extends Component
                         // Dispatch event
                         $this->dispatch('checkout-razorpay-order-event', ['orderID' => $order->id]);
 
-                    break;
+                        break;
 
                     // Robokassa
                     case 'robokassa':
-  
+
                         // Set request params
                         $mrh_login = $selected?->settings['mrh_login'];
                         $mrh_pass1 = $selected?->settings['mrh_pass1'];
@@ -1710,33 +1664,33 @@ class DepositComponent extends Component
 
                         // build CRC value
                         $crc       = md5("$mrh_login:$out_summ:$inv_id:$mrh_pass1");
-        
+
                         // build URL
                         $url       = "https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin=$mrh_login&" . "OutSum=$out_summ&InvId=$inv_id&Description=$inv_desc&SignatureValue=$crc";
-        
+
                         // Save webhook details to later response
                         $this->webhook(['payment_id' => $inv_id, 'payment_method' => 'robokassa']);
 
                         // Redirect to payment link
                         return redirect($url);
 
-                    break;
+                        break;
 
                     // Stripe
                     case 'stripe':
-                        
+
                         // Set your secret key. Remember to switch to your live secret key in production.
-                        $stripe   = new \Stripe\StripeClient( $selected?->settings['secret_key'] );
+                        $stripe   = new \Stripe\StripeClient($selected?->settings['secret_key']);
 
                         // Create a stripe customer
                         $customer = $stripe->customers->create([
                             'name' => auth()->user()->fullname ?: auth()->user()->username,
                             'address' => [
-                              'line1'       => '',
-                              'postal_code' => '',
-                              'city'        => '',
-                              'state'       => '',
-                              'country'     => '',
+                                'line1'       => '',
+                                'postal_code' => '',
+                                'city'        => '',
+                                'state'       => '',
+                                'country'     => '',
                             ],
                         ]);
 
@@ -1751,11 +1705,11 @@ class DepositComponent extends Component
                                 'shipping'             => [
                                     'name'    => auth()->user()->fullname ?: auth()->user()->username,
                                     'address' => [
-                                    'line1'       => '',
-                                    'postal_code' => '',
-                                    'city'        => '',
-                                    'state'       => '',
-                                    'country'     => '',
+                                        'line1'       => '',
+                                        'postal_code' => '',
+                                        'city'        => '',
+                                        'state'       => '',
+                                        'country'     => '',
                                     ],
                                 ]
                             ]
@@ -1772,12 +1726,12 @@ class DepositComponent extends Component
 
                         // Dispatch event
                         $this->dispatch('checkout-stripe-order-event', ['clientSecret' => $intent->client_secret]);
-                        
-                    break;
+
+                        break;
 
                     // Vnpay
                     case 'vnpay':
-                    
+
                         // Set timezone
                         $tz                        = 'Asia/Ho_Chi_Minh';
                         $timestamp                 = time();
@@ -1798,7 +1752,7 @@ class DepositComponent extends Component
                         $vnp_Amount                = $amount * 100;
                         $vnp_Locale                = app()->getLocale() == 'en' ? "en" : "vn";
                         $vnp_IpAddr                = request()->ip();
-                        $vnp_ExpireDate            = date('YmdHis',strtotime('+15 minutes',strtotime($startTime)));
+                        $vnp_ExpireDate            = date('YmdHis', strtotime('+15 minutes', strtotime($startTime)));
 
                         // Set data
                         $inputData                 = array(
@@ -1837,7 +1791,7 @@ class DepositComponent extends Component
 
                         // Generate secure hash
                         if (isset($vnp_HashSecret)) {
-                            $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret);//  
+                            $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
                             $vnp_Url      .= 'vnp_SecureHash=' . $vnpSecureHash;
                         }
 
@@ -1846,17 +1800,17 @@ class DepositComponent extends Component
 
                         // Go to payment url
                         return redirect($vnp_Url);
-                        
-                    break;
+
+                        break;
 
                     // Xendit
                     case 'xendit':
-                    
+
                         // Set xendit secret key
-                        Xendit::setApiKey( $selected?->settings['secret_key'] );
-                
+                        Xendit::setApiKey($selected?->settings['secret_key']);
+
                         // Set payment parameters
-                        $params = [ 
+                        $params = [
                             'external_id'          => "DD" . uid(17),
                             'amount'               => $amount,
                             'description'          => __('messages.t_add_funds'),
@@ -1865,27 +1819,26 @@ class DepositComponent extends Component
                             'failure_redirect_url' => url('callback/xendit/failed?action=D'),
                             'currency'             => $selected?->currency
                         ];
-                
+
                         // Create invoice
                         $invoice = \Xendit\Invoice::create($params);
-            
+
                         // Check if invocie created successfully
                         if (isset($invoice['invoice_url'])) {
-                            
+
                             // Get payment url
                             $payment_url = $invoice['invoice_url'];
-        
+
                             // Get invoice id
                             $invoice_id  = $invoice['id'];
-        
+
                             // Save webhook details to later response
                             $this->webhook(['payment_id' => $invoice_id, 'payment_method' => 'xendit']);
-        
+
                             // Go to payment url
                             return redirect($payment_url);
-                    
                         } else {
-        
+
                             // Something went wrong
                             $this->notification([
                                 'title'       => __('messages.t_error'),
@@ -1894,21 +1847,20 @@ class DepositComponent extends Component
                             ]);
 
                             return;
-        
                         }
 
-                    break;
+                        break;
 
                     // Youcanpay
                     case 'youcanpay':
-                    
+
                         // Get payment gateways keys
                         $public_key  = $selected?->settings['public_key'];
                         $private_key = $selected?->settings['private_key'];
                         $order_id    = "DD" . uid(17);
 
                         // Enable sandbox mode?
-                        if (Str::of( $public_key )->startsWith('pub_sandbox')) {
+                        if (Str::of($public_key)->startsWith('pub_sandbox')) {
                             YouCanPay::setIsSandboxMode(true);
                         }
 
@@ -1943,20 +1895,18 @@ class DepositComponent extends Component
                         $this->webhook(['payment_id' => $order_id, 'payment_method' => 'youcanpay']);
 
                         // Redirect to payment gateway
-                        return redirect($token->getPaymentURL(app()->getLocale()));               
+                        return redirect($token->getPaymentURL(app()->getLocale()));
 
-                    break;
+                        break;
 
                     // Offline method
                     case 'offline':
-                        
+
                         // Go to next step
                         $this->is_third_step = true;
 
-                    break;
-
+                        break;
                 }
-
             } else {
 
                 // Error
@@ -1967,18 +1917,15 @@ class DepositComponent extends Component
                 ]);
 
                 return;
-
             }
-
         } catch (\Throwable $th) {
-            
+
             // Something went wrong
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
 
@@ -1997,17 +1944,16 @@ class DepositComponent extends Component
 
             // Check if payment gateway enabled
             if (!$gateway?->is_active && $this->selected_method != 'offline') {
-                
+
                 // Not enabled or selected
                 return;
-
             }
 
             // Set amount to deposit
             $amount                  = convertToNumber($this->amount) * $gateway?->exchange_rate / settings('currency')->exchange_rate;
 
             // Remove long decimal
-            $amount                  = convertToNumber( number_format($amount, 2, '.', '') );
+            $amount                  = convertToNumber(number_format($amount, 2, '.', ''));
 
             // Calculate fee from this amount
             $fee                     = convertToNumber($this->fee($gateway)['value']);
@@ -2028,16 +1974,14 @@ class DepositComponent extends Component
 
             // Redirecting
             return redirect('account/deposit/history')->with('success', __('messages.t_deposit_offline_pending_msg'));
-
         } catch (\Throwable $th) {
-            
+
             // Something went wrong
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
 
@@ -2053,7 +1997,7 @@ class DepositComponent extends Component
         $this->dispatch('refresh');
     }
 
- 
+
     /**
      * Save deposit for webhook callback
      *
@@ -2063,17 +2007,17 @@ class DepositComponent extends Component
     private function webhook($data)
     {
         try {
-            
+
             // Set user id
             $user_id                 = auth()->id();
-            
+
             // Set amount
             $amount                  = convertToNumber($this->amount);
 
             // Set payment id
             $payment_id              = $data['payment_id'];
 
-            // Set payment method 
+            // Set payment method
             $payment_method          = $data['payment_method'];
 
             // Save
@@ -2083,7 +2027,6 @@ class DepositComponent extends Component
             $webhook->amount         = $amount;
             $webhook->user_id        = $user_id;
             $webhook->save();
-
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -2113,23 +2056,20 @@ class DepositComponent extends Component
             $default_exchange_rate = convertToNumber($currency_settings->exchange_rate);
 
             // Get exchanged amount
-            $exchanged_amount      = convertToNumber( $amount *  $default_exchange_rate / $exchange_rate );
+            $exchanged_amount      = convertToNumber($amount *  $default_exchange_rate / $exchange_rate);
 
             // Check if we have to return a formatted value
             if ($formatted) {
-                
-                return money( $exchanged_amount, $currency, true )->format();
 
+                return money($exchanged_amount, $currency, true)->format();
             }
 
             // Return max deposit
-            return convertToNumber(number_format( $exchanged_amount, 2, '.', '' ));
-
+            return convertToNumber(number_format($exchanged_amount, 2, '.', ''));
         } catch (\Throwable $th) {
 
             // Something went wrong
             return $amount;
-
         }
     }
 
@@ -2143,98 +2083,87 @@ class DepositComponent extends Component
     private function fee($gateway)
     {
         try {
-            
+
             // Set amount to deposit
             $amount = convertToNumber($this->amount) * $gateway?->exchange_rate / settings('currency')->exchange_rate;
 
             // Remove long decimal
-            $amount = convertToNumber( number_format($amount, 2, '.', '') );
-            
+            $amount = convertToNumber(number_format($amount, 2, '.', ''));
+
             // Get deposit fixed fee
             if (isset($gateway->fixed_fee['deposit'])) {
-                
+
                 // Set fixed fee
                 $fee_fixed = convertToNumber($gateway->fixed_fee['deposit']);
-
             } else {
 
                 // No fixed fee
                 $fee_fixed = 0;
-
             }
 
             // Get deposit percentage fee
             if (isset($gateway->percentage_fee['deposit'])) {
-                
+
                 // Set percentage fee
                 $fee_percentage = convertToNumber($gateway->percentage_fee['deposit']);
-
             } else {
 
                 // No percentage fee
                 $fee_percentage = 0;
-
             }
 
-            // Calculate percentage of this amount 
-            $fee_percentage_amount = $this->calculateExchangeRate( $fee_percentage * $amount / 100, $gateway->exchange_rate );
+            // Calculate percentage of this amount
+            $fee_percentage_amount = $this->calculateExchangeRate($fee_percentage * $amount / 100, $gateway->exchange_rate);
 
             // Calculate exchange rate of this fixed fee
-            $fee_fixed_exchange    = $this->calculateExchangeRate( $fee_fixed,  $gateway->exchange_rate);
+            $fee_fixed_exchange    = $this->calculateExchangeRate($fee_fixed,  $gateway->exchange_rate);
 
             // Set value of the fee
             $fee_value             = 0;
 
             // Calculate fee value and visible text
             if ($fee_fixed > 0 && $fee_percentage > 0) {
-                
+
                 // Calculate fee value
                 $fee_value = convertToNumber($fee_percentage_amount) + convertToNumber($fee_fixed_exchange);
 
                 // Set visible fee text
-                $fee_txt   = $fee_percentage . "% + " . money( $fee_fixed_exchange, settings('currency')->code, true )->format();
-
+                $fee_txt   = $fee_percentage . "% + " . money($fee_fixed_exchange, settings('currency')->code, true)->format();
             } else if (!$fee_fixed && $fee_percentage > 0) {
-                
+
                 // Calculate fee value
                 $fee_value = convertToNumber($fee_percentage_amount);
 
                 // Set visible fee text
                 $fee_txt   = $fee_percentage . "%";
-
             } else if ($fee_fixed > 0 && !$fee_percentage) {
 
                 // Calculate fee value
                 $fee_value = convertToNumber($fee_fixed_exchange);
 
                 // Set visible fee text
-                $fee_txt   = money( $fee_fixed_exchange, settings('currency')->code, true )->format();
-                
+                $fee_txt   = money($fee_fixed_exchange, settings('currency')->code, true)->format();
             } else if (!$fee_percentage && !$fee_fixed) {
-                
+
                 // Calculate fee value
                 $fee_value = 0;
 
                 // Set visible fee text
                 $fee_txt   = 0;
-
             }
-            
+
             // Return values
             return [
-                'value' => convertToNumber( number_format($fee_value, 2, '.', '') ),
+                'value' => convertToNumber(number_format($fee_value, 2, '.', '')),
                 'text'  => $fee_txt
             ];
-
         } catch (\Throwable $th) {
-            
+
             // Something went wrong
             return [
                 'value' => 0,
                 'text'  => 0
             ];
-
         }
     }
-
 }

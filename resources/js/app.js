@@ -4,7 +4,9 @@ import swal from 'sweetalert2';
 window.Swal = swal;
 
 import './bootstrap';
+import { Modal } from 'flowbite';
 import 'flowbite';
+window.Modal = Modal;
 import { createApp } from 'vue';
 import axios from 'axios';
 // import Helpers from './plugins/helpers';
@@ -21,6 +23,8 @@ import focus from "@alpinejs/focus";
 import "@tabler/icons-webfont/tabler-icons.min.css";
 // Import the plugin code
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+
+import './theme/theme-manager';
 
 // Import the plugin styles
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';

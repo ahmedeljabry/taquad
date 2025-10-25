@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Main\Messages;
 
 use Cache;
@@ -15,7 +16,7 @@ use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
 class ConversationComponent extends Component
 {
     use SEOToolsTrait, Actions, LivewireAlert;
-    
+
     public $conversation;
     public $message;
 
@@ -37,20 +38,17 @@ class ConversationComponent extends Component
 
         // Check if user has permissions to see this conversation
         if ($conversation->from_id == auth()->id() || $conversation->to_id == auth()->id()) {
-            
+
             // Set conversation
             $this->conversation = $conversation;
-
         } else {
 
             // User has no permission
             return redirect('messages');
-
         }
 
         // Mark messages as read
         $this->markAsRead();
-
     }
 
 
@@ -66,26 +64,26 @@ class ConversationComponent extends Component
         $separator   = settings('general')->separator;
         $title       = __('messages.t_messages') . " $separator " . settings('general')->title;
         $description = settings('seo')->description;
-        $ogimage     = src( settings('seo')->ogimage );
+        $ogimage     = src(settings('seo')->ogimage);
 
-        $this->seo()->setTitle( $title );
-        $this->seo()->setDescription( $description );
-        $this->seo()->setCanonical( url()->current() );
-        $this->seo()->opengraph()->setTitle( $title );
-        $this->seo()->opengraph()->setDescription( $description );
-        $this->seo()->opengraph()->setUrl( url()->current() );
+        $this->seo()->setTitle($title);
+        $this->seo()->setDescription($description);
+        $this->seo()->setCanonical(url()->current());
+        $this->seo()->opengraph()->setTitle($title);
+        $this->seo()->opengraph()->setDescription($description);
+        $this->seo()->opengraph()->setUrl(url()->current());
         $this->seo()->opengraph()->setType('website');
-        $this->seo()->opengraph()->addImage( $ogimage );
-        $this->seo()->twitter()->setImage( $ogimage );
-        $this->seo()->twitter()->setUrl( url()->current() );
-        $this->seo()->twitter()->setSite( "@" . settings('seo')->twitter_username );
+        $this->seo()->opengraph()->addImage($ogimage);
+        $this->seo()->twitter()->setImage($ogimage);
+        $this->seo()->twitter()->setUrl(url()->current());
+        $this->seo()->twitter()->setSite("@" . settings('seo')->twitter_username);
         $this->seo()->twitter()->addValue('card', 'summary_large_image');
         $this->seo()->metatags()->addMeta('fb:page_id', settings('seo')->facebook_page_id, 'property');
         $this->seo()->metatags()->addMeta('fb:app_id', settings('seo')->facebook_app_id, 'property');
         $this->seo()->metatags()->addMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'name');
-        $this->seo()->jsonLd()->setTitle( $title );
-        $this->seo()->jsonLd()->setDescription( $description );
-        $this->seo()->jsonLd()->setUrl( url()->current() );
+        $this->seo()->jsonLd()->setTitle($title);
+        $this->seo()->jsonLd()->setDescription($description);
+        $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
         return view('livewire.main.messages.conversation', [
@@ -114,9 +112,9 @@ class ConversationComponent extends Component
     public function getConversationsProperty()
     {
         return Conversation::where('from_id', auth()->id())
-                            ->orWhere('to_id', auth()->id())
-                            ->orderBy('id', 'DESC')
-                            ->get();
+            ->orWhere('to_id', auth()->id())
+            ->orderBy('id', 'DESC')
+            ->get();
     }
 
 
@@ -134,14 +132,14 @@ class ConversationComponent extends Component
 
             // Get conversation
             $conversation = Conversation::where('uid', $this->conversation->uid)
-                                        ->where(function($query) {
-                                            return $query->where('from_id', auth()->id())->orWhere('to_id', auth()->id());
-                                        })
-                                        ->first();
+                ->where(function ($query) {
+                    return $query->where('from_id', auth()->id())->orWhere('to_id', auth()->id());
+                })
+                ->first();
 
             // Check if conversation exists
             if (!$conversation) {
-                
+
                 // Conversation not exists
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -150,12 +148,11 @@ class ConversationComponent extends Component
                 ]);
 
                 return;
-
             }
 
             // Check if conversation blocked
             if ($conversation->status === 'blocked') {
-                
+
                 // Conversation not exists
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -164,7 +161,6 @@ class ConversationComponent extends Component
                 ]);
 
                 return;
-
             }
 
             // Save message
@@ -188,15 +184,15 @@ class ConversationComponent extends Component
 
                 // Set cache key
                 $cache_key = "messages-notification-email-conversation-" . $conversation->uid;
-                
+
                 // User right now is offline
                 // We have to get last message
                 // Because we can't send notification on every new message
                 // So we will make sure that at least 1 hour past since last message
                 if (!Cache::has($cache_key)) {
-                    
+
                     // Send a notification to him via email
-                    $conversation->sender->notify( (new NewMessage($conversation, $message))->locale(config('app.locale')) );
+                    $conversation->sender->notify((new NewMessage($conversation, $message))->locale(config('app.locale')));
 
                     // Send notification
                     notification([
@@ -208,37 +204,31 @@ class ConversationComponent extends Component
 
                     // Set cache key, to prevent multiple notification at short time
                     Cache::set($cache_key, true, now()->addHour());
-                    
                 }
-                
-
             }
 
             // Reset form
             $this->reset('message');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
 
@@ -252,10 +242,10 @@ class ConversationComponent extends Component
     {
         // Get conversation
         // We have to load conversation to prevent user from block another one
-        $conversation             = Conversation::where('uid', $this->conversation->uid)->where(function($query) {
-                                                    return $query->where('from_id', auth()->id())->orWhere('to_id', auth()->id());
-                                                })->where('status', 'active')->firstOrFail();
-        
+        $conversation             = Conversation::where('uid', $this->conversation->uid)->where(function ($query) {
+            return $query->where('from_id', auth()->id())->orWhere('to_id', auth()->id());
+        })->where('status', 'active')->firstOrFail();
+
         // Block conversation
         $conversation->status     = 'blocked';
         $conversation->blocked_by = auth()->id();
@@ -281,10 +271,10 @@ class ConversationComponent extends Component
     {
         // Get conversation
         // We have to load conversation to prevent user from block another one
-        $conversation             = Conversation::where('uid', $this->conversation->uid)->where(function($query) {
-                                                    return $query->where('from_id', auth()->id())->orWhere('to_id', auth()->id());
-                                                })->where('status', 'blocked')->firstOrFail();
-        
+        $conversation             = Conversation::where('uid', $this->conversation->uid)->where(function ($query) {
+            return $query->where('from_id', auth()->id())->orWhere('to_id', auth()->id());
+        })->where('status', 'blocked')->firstOrFail();
+
         // Block conversation
         $conversation->status     = 'active';
         $conversation->blocked_by = null;
@@ -301,7 +291,7 @@ class ConversationComponent extends Component
         ]);
     }
 
-    
+
     /**
      * Mark message as read
      *
@@ -311,10 +301,9 @@ class ConversationComponent extends Component
     {
         // Mark all messages as read
         ConversationMessage::where('conversation_id', $this->conversation->id)
-                            ->where('message_from', '!=', auth()->id())
-                            ->update([
-                                'is_seen' => true
-                            ]);
+            ->where('message_from', '!=', auth()->id())
+            ->update([
+                'is_seen' => true
+            ]);
     }
-    
 }

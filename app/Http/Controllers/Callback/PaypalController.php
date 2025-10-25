@@ -83,31 +83,7 @@ class PaypalController extends Controller
 
                     }
     
-                    // Check if checkout callback
-                    if (Str::startsWith($order_id, "GG")) {
-                        
-                        // Get saved webhook data in our database
-                        $data = CheckoutWebhook::where('payment_id', $order_id)
-                                                ->where('payment_method', $this->gateway)
-                                                ->where('status', 'pending')
-                                                ->firstOrFail();
-    
-                        // Get cart
-                        $cart = $data->data['cart'];
-    
-                        // Get user
-                        $user = User::where('id', $data->data['buyer_id'])->firstOrFail();
-        
-                        // Handle deposit callback
-                        $this->checkout($cart, $user, $order_id);
-
-                        // Delete saved webhook data in our database
-                        $data->delete();
-
-                        // Redirecting
-                        return $this->redirect('gigs');
-    
-                    }
+                    // Legacy Gig checkout removed
 
                     // Check if projects checkout callback
                     if (Str::startsWith($order_id, "PP")) {

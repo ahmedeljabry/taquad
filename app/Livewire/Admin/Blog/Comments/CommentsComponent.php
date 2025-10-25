@@ -22,8 +22,8 @@ class CommentsComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_comments'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_comments'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.blog.comments.comments', [
             'comments' => $this->comments
@@ -38,7 +38,7 @@ class CommentsComponent extends Component
      */
     public function getCommentsProperty()
     {
-        return ArticleComment::with('article', 'article.image')->latest()->paginate(40); 
+        return ArticleComment::with('article', 'article.image')->latest()->paginate(40);
     }
 
 
@@ -55,9 +55,9 @@ class CommentsComponent extends Component
 
         // Success
         $this->alert(
-            'success', 
-            __('messages.t_success'), 
-            livewire_alert_params( __('messages.t_toast_operation_success') )
+            'success',
+            __('messages.t_success'),
+            livewire_alert_params(__('messages.t_toast_operation_success'))
         );
     }
 
@@ -77,9 +77,9 @@ class CommentsComponent extends Component
 
         // Success
         $this->alert(
-            'success', 
-            __('messages.t_success'), 
-            livewire_alert_params( __('messages.t_toast_operation_success') )
+            'success',
+            __('messages.t_success'),
+            livewire_alert_params(__('messages.t_toast_operation_success'))
         );
     }
 
@@ -99,10 +99,9 @@ class CommentsComponent extends Component
 
         // Success
         $this->alert(
-            'success', 
-            __('messages.t_success'), 
-            livewire_alert_params( __('messages.t_toast_operation_success') )
+            'success',
+            __('messages.t_success'),
+            livewire_alert_params(__('messages.t_toast_operation_success'))
         );
     }
-    
 }

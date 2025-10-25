@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Projects\Plans;
 
 use Livewire\Component;
@@ -24,7 +25,7 @@ class PlansComponent extends Component
     public function mount()
     {
         // Check if alert must be hidden
-        if (File::exists( base_path('regular') )) {
+        if (File::exists(base_path('regular'))) {
             $this->alert = true;
         }
     }
@@ -39,8 +40,8 @@ class PlansComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_projects_plans'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_projects_plans'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.projects.plans.plans', [
             'plans'         => $this->plans,
@@ -86,9 +87,9 @@ class PlansComponent extends Component
 
         // Success
         $this->alert(
-            'success', 
-            __('messages.t_success'), 
-            livewire_alert_params( __('messages.t_toast_operation_success') )
+            'success',
+            __('messages.t_success'),
+            livewire_alert_params(__('messages.t_toast_operation_success'))
         );
     }
 
@@ -108,9 +109,9 @@ class PlansComponent extends Component
 
         // Success
         $this->alert(
-            'success', 
-            __('messages.t_success'), 
-            livewire_alert_params( __('messages.t_toast_operation_success') )
+            'success',
+            __('messages.t_success'),
+            livewire_alert_params(__('messages.t_toast_operation_success'))
         );
     }
 
@@ -123,10 +124,9 @@ class PlansComponent extends Component
     public function hideAlert()
     {
         // Delete file
-        File::delete( base_path('regular') );
+        File::delete(base_path('regular'));
 
         // Hide alert
         $this->alert = false;
     }
-    
 }

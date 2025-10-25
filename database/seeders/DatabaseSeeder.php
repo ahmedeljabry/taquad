@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SettingsAppearanceTableSeeder::class);
         $this->call(BlogSettingsTableSeeder::class);
         $this->call(OfflinePaymentSettingsTableSeeder::class);
+        $this->call(ProjectSkillsSeeder::class);
         $this->call(PaystackSettingsTableSeeder::class);
         $this->call(CashfreeSettingsTableSeeder::class);
         $this->call(XenditSettingsTableSeeder::class);
@@ -45,7 +46,9 @@ class DatabaseSeeder extends Seeder
         $this->call(PaytabsSettingsTableSeeder::class);
         $this->call(PaytrSettingsTableSeeder::class);
         $this->call(ProjectsSettingsTableSeeder::class);
+        $this->call(ProjectCategoriesSeeder::class);
         $this->call(ProjectsPlansTableSeeder::class);
+        $this->call(ProjectPlanEnhancementsSeeder::class);
         $this->call(ProjectsBiddingPlansTableSeeder::class);
         $this->call(RazorpaySettingsTableSeeder::class);
         $this->call(StripeSettingsTableSeeder::class);
@@ -56,5 +59,8 @@ class DatabaseSeeder extends Seeder
         $this->call(LiveChatSettingsTableSeeder::class);
         $this->call(AutomaticPaymentGatewaysTableSeeder::class);
         $this->call(OfflinePaymentGatewaysTableSeeder::class);
+        $this->call(CoreContentSeeder::class);
+        $this->call(DemoUsersSeeder::class);
+        $this->call(DemoProjectsSeeder::class);
     }
 }

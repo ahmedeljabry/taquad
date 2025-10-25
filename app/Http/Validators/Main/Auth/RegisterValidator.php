@@ -25,6 +25,7 @@ class RegisterValidator
                 'email'           => 'required|max:60|email|unique:users',
                 'password'        => 'required|max:60',
                 'fullname'        => 'required|max:60|min:3',
+                'account_type'    => 'required|in:seller,buyer',
                 'recaptcha_token' => new Recaptcha()
             ];
 
@@ -44,14 +45,17 @@ class RegisterValidator
                 'fullname.max'      => __('messages.t_validator_max', ['max' => 60]),
                 'fullname.min'      => __('messages.t_validator_min', ['min' => 3]),
                 'fullname.regex'    => __('messages.t_validator_regex'),
+                'account_type.required' => __('messages.t_validator_required'),
+                'account_type.in'       => __('messages.t_validator_in'),
             ];
 
             // Set data to validate
             $data     = [
                 'email'    => $request->email,
                 'username' => $request->username,
-                'password' => $request->password,
-                'fullname' => $request->fullname,
+                'password'     => $request->password,
+                'fullname'     => $request->fullname,
+                'account_type' => $request->account_type,
             ];
 
             // Validate data

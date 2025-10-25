@@ -1,12 +1,9 @@
 <?php
+
 namespace App\Livewire\Main\Home;
 
-use App\Models\Gig;
-use App\Models\User;
-use App\Models\Project;
+
 use Livewire\Component;
-use App\Models\Category;
-use WireUi\Traits\Actions;
 use App\Models\NewsletterList;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Mail;
@@ -14,13 +11,13 @@ use App\Models\NewsletterVerification;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
 use App\Mail\User\Everyone\NewsletterVerification as EveryoneNewsletterVerification;
+use WireUi\Traits\Actions;
 
 class HomeComponent extends Component
 {
     use SEOToolsTrait, LivewireAlert, Actions;
 
     public $email;
-
 
     /**
      * Init component
@@ -32,11 +29,6 @@ class HomeComponent extends Component
         // Check if app installed
         if (!isInstalled()) {
             return redirect('install');
-        }
-
-        // If user is authenticated, redirect to explore projects
-        if (auth()->check() && settings('projects')->is_enabled) {
-            return redirect('explore/projects');
         }
     }
 
@@ -53,112 +45,31 @@ class HomeComponent extends Component
         $separator   = settings('general')->separator;
         $title       = settings('general')->title . " $separator " . settings('general')->subtitle;
         $description = settings('seo')->description;
-        $ogimage     = src( settings('seo')->ogimage );
+        $ogimage     = src(settings('seo')->ogimage);
 
-        $this->seo()->setTitle( $title );
-        $this->seo()->setDescription( $description );
-        $this->seo()->setCanonical( url()->current() );
-        $this->seo()->opengraph()->setTitle( $title );
-        $this->seo()->opengraph()->setDescription( $description );
-        $this->seo()->opengraph()->setUrl( url()->current() );
+        $this->seo()->setTitle($title);
+        $this->seo()->setDescription($description);
+        $this->seo()->setCanonical(url()->current());
+        $this->seo()->opengraph()->setTitle($title);
+        $this->seo()->opengraph()->setDescription($description);
+        $this->seo()->opengraph()->setUrl(url()->current());
         $this->seo()->opengraph()->setType('website');
-        $this->seo()->opengraph()->addImage( $ogimage );
-        $this->seo()->twitter()->setImage( $ogimage );
-        $this->seo()->twitter()->setUrl( url()->current() );
-        $this->seo()->twitter()->setSite( "@" . settings('seo')->twitter_username );
+        $this->seo()->opengraph()->addImage($ogimage);
+        $this->seo()->twitter()->setImage($ogimage);
+        $this->seo()->twitter()->setUrl(url()->current());
+        $this->seo()->twitter()->setSite("@" . settings('seo')->twitter_username);
         $this->seo()->twitter()->addValue('card', 'summary_large_image');
         $this->seo()->metatags()->addMeta('fb:page_id', settings('seo')->facebook_page_id, 'property');
         $this->seo()->metatags()->addMeta('fb:app_id', settings('seo')->facebook_app_id, 'property');
         $this->seo()->metatags()->addMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'name');
-        $this->seo()->jsonLd()->setTitle( $title );
-        $this->seo()->jsonLd()->setDescription( $description );
-        $this->seo()->jsonLd()->setUrl( url()->current() );
+        $this->seo()->jsonLd()->setTitle($title);
+        $this->seo()->jsonLd()->setDescription($description);
+        $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
 
-        return view('livewire.main.home.home', [
-            'categories' => $this->categories,
-            'sellers'    => $this->sellers,
-            'gigs'       => $this->gigs,
-            'projects'   => $this->projects
-        ]);
+        return view('livewire.main.home.home');
     }
-
-
-    /**
-     * Get 4 gigs randomly
-     *
-     * @return object
-     */
-    public function getGigsProperty()
-    {
-        return Gig::active()->inRandomOrder()->take(4)->get();
-    }
-
-
-    /**
-     * Get categories in home page
-     *
-     * @return object
-     */
-    public function getCategoriesProperty()
-    {
-        return Category::where('is_visible', true)->inRandomOrder()->get();
-    }
-
-
-    /**
-     * Get best sellers
-     *
-     * @return object
-     */
-    public function getSellersProperty()
-    {
-        // Check if bestsellers section enabled
-        if (settings('appearance')->is_best_sellers) {
-
-            // Get top sellers randomly
-            return User::where('account_type', 'seller')
-                        ->whereHas('sales')
-                        ->whereIn('status', ['active', 'verified'])
-                        ->withCount('sales')
-                        ->orderBy('sales_count', 'desc')
-                        ->take(12)
-                        ->get();
-
-        } else {
-
-            // No need to make sql query
-            return null;
-
-        }
-    }
-
-
-    /**
-     * Get recent projects
-     *
-     * @return mixed
-     */
-    public function getProjectsProperty()
-    {
-        // Check if projects enabled
-        if (settings('projects')->is_enabled) {
-
-            // Get latest 12 projects
-            return Project::whereIn('status', ['completed', 'active'])
-                            ->where('is_featured', true)
-                            ->take(12)
-                            ->get();
-
-        } else {
-
-            // Not enabled
-            return null;
-
-        }
-    }
-
 
     /**
      * Subscribe to our newsletter
@@ -185,7 +96,6 @@ class HomeComponent extends Component
                 ]);
 
                 return;
-
             }
 
             // Get email in list
@@ -202,7 +112,6 @@ class HomeComponent extends Component
 
                     // Return
                     return;
-
                 } else {
 
                     // Delete old verifications
@@ -229,9 +138,7 @@ class HomeComponent extends Component
                         'description' => __('messages.t_we_sent_verification_link_newsletter'),
                         'icon'        => 'success'
                     ]);
-
                 }
-
             } else {
 
                 // Add email to list
@@ -262,19 +169,15 @@ class HomeComponent extends Component
                     'description' => __('messages.t_we_sent_verification_link_newsletter'),
                     'icon'        => 'success'
                 ]);
-
             }
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
                 'error',
                 __('messages.t_error'),
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
-
 }

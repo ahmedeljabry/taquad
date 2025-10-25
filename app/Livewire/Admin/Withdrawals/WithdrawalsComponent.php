@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Withdrawals;
 
 use Livewire\Component;
@@ -24,8 +25,8 @@ class WithdrawalsComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_withdrawals_history'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_withdrawals_history'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.withdrawals.withdrawals', [
             'withdrawals' => $this->withdrawals
@@ -56,7 +57,7 @@ class WithdrawalsComponent extends Component
         $payment = UserWithdrawalHistory::where('id', $id)->where('status', 'pending')->firstOrFail();
 
         // Send notification to user
-        $payment->user->notify( (new PaymentApproved($payment))->locale(config('app.locale')) );
+        $payment->user->notify((new PaymentApproved($payment))->locale(config('app.locale')));
 
         // Mark it as approved
         $payment->status = 'paid';
@@ -90,7 +91,7 @@ class WithdrawalsComponent extends Component
         $payment = UserWithdrawalHistory::where('id', $id)->where('status', 'pending')->firstOrFail();
 
         // Send notification to user
-        $payment->user->notify( (new PaymentRejected($payment))->locale(config('app.locale')) );
+        $payment->user->notify((new PaymentRejected($payment))->locale(config('app.locale')));
 
         // Mark it as rejectd
         $payment->status = 'rejected';
@@ -118,5 +119,4 @@ class WithdrawalsComponent extends Component
             'icon'        => 'success'
         ]);
     }
-
 }

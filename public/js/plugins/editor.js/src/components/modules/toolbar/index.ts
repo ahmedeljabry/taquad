@@ -1,14 +1,14 @@
-import Module from '../../__module';
-import $ from '../../dom';
-import * as _ from '../../utils';
-import I18n from '../../i18n';
-import { I18nInternalNS } from '../../i18n/namespace-internal';
-import Tooltip from '../../utils/tooltip';
-import { ModuleConfig } from '../../../types-internal/module-config';
-import { BlockAPI } from '../../../../types';
-import Block from '../../block';
-import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
-import { IconMenu, IconPlus } from '@codexteam/icons';
+import Module from "../../__module";
+import $ from "../../dom";
+import * as _ from "../../utils";
+import I18n from "../../i18n";
+import { I18nInternalNS } from "../../i18n/namespace-internal";
+import Tooltip from "../../utils/tooltip";
+import { ModuleConfig } from "../../../types-internal/module-config";
+import { BlockAPI } from "../../../../types";
+import Block from "../../block";
+import Toolbox, { ToolboxEvent } from "../../ui/toolbox";
+import { IconMenu, IconPlus } from "@codexteam/icons";
 
 /**
  * @todo Tab on non-empty block should open Block Settings of the hoveredBlock (not where caret is set)
@@ -127,18 +127,18 @@ export default class Toolbar extends Module<ToolbarNodes> {
    */
   public get CSS(): { [name: string]: string } {
     return {
-      toolbar: 'ce-toolbar',
-      content: 'ce-toolbar__content',
-      actions: 'ce-toolbar__actions',
-      actionsOpened: 'ce-toolbar__actions--opened',
+      toolbar: "ce-toolbar",
+      content: "ce-toolbar__content",
+      actions: "ce-toolbar__actions",
+      actionsOpened: "ce-toolbar__actions--opened",
 
-      toolbarOpened: 'ce-toolbar--opened',
-      openedToolboxHolderModifier: 'codex-editor--toolbox-opened',
+      toolbarOpened: "ce-toolbar--opened",
+      openedToolboxHolderModifier: "codex-editor--toolbox-opened",
 
-      plusButton: 'ce-toolbar__plus',
-      plusButtonShortcut: 'ce-toolbar__plus-shortcut',
-      settingsToggler: 'ce-toolbar__settings-btn',
-      settingsTogglerHidden: 'ce-toolbar__settings-btn--hidden',
+      plusButton: "ce-toolbar__plus",
+      plusButtonShortcut: "ce-toolbar__plus-shortcut",
+      settingsToggler: "ce-toolbar__settings-btn",
+      settingsTogglerHidden: "ce-toolbar__settings-btn--hidden",
     };
   }
 
@@ -160,7 +160,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     open: () => void;
     toggle: () => void;
     hasFocus: () => boolean;
-    } {
+  } {
     return {
       opened: this.toolboxInstance.opened,
       close: (): void => {
@@ -198,8 +198,14 @@ export default class Toolbar extends Module<ToolbarNodes> {
    */
   private get blockTunesToggler(): { hide: () => void; show: () => void } {
     return {
-      hide: (): void => this.nodes.settingsToggler.classList.add(this.CSS.settingsTogglerHidden),
-      show: (): void => this.nodes.settingsToggler.classList.remove(this.CSS.settingsTogglerHidden),
+      hide: (): void =>
+        this.nodes.settingsToggler.classList.add(
+          this.CSS.settingsTogglerHidden
+        ),
+      show: (): void =>
+        this.nodes.settingsToggler.classList.remove(
+          this.CSS.settingsTogglerHidden
+        ),
     };
   }
 
@@ -224,7 +230,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
    *
    * @param block - block to move Toolbar near it
    */
-  public moveAndOpen(block: Block = this.Editor.BlockManager.currentBlock): void {
+  public moveAndOpen(
+    block: Block = this.Editor.BlockManager.currentBlock
+  ): void {
     /**
      * Close Toolbox when we move toolbar
      */
@@ -244,7 +252,10 @@ export default class Toolbar extends Module<ToolbarNodes> {
     const { isMobile } = this.Editor.UI;
     const renderedContent = block.pluginsContent;
     const renderedContentStyle = window.getComputedStyle(renderedContent);
-    const blockRenderedElementPaddingTop = parseInt(renderedContentStyle.paddingTop, 10);
+    const blockRenderedElementPaddingTop = parseInt(
+      renderedContentStyle.paddingTop,
+      10
+    );
     const blockHeight = targetBlockHolder.offsetHeight;
 
     let toolbarY;
@@ -308,7 +319,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       } else {
         this.blockActions.hide();
       }
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 50)();
   }
 
@@ -316,13 +327,13 @@ export default class Toolbar extends Module<ToolbarNodes> {
    * Draws Toolbar elements
    */
   private make(): void {
-    this.nodes.wrapper = $.make('div', this.CSS.toolbar);
+    this.nodes.wrapper = $.make("div", this.CSS.toolbar);
 
     /**
      * Make Content Zone and Actions Zone
      */
-    ['content', 'actions'].forEach((el) => {
-      this.nodes[el] = $.make('div', this.CSS[el]);
+    ["content", "actions"].forEach((el) => {
+      this.nodes[el] = $.make("div", this.CSS[el]);
     });
 
     /**
@@ -336,25 +347,34 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *  - Plus Button
      *  - Toolbox
      */
-    this.nodes.plusButton = $.make('div', this.CSS.plusButton, {
+    this.nodes.plusButton = $.make("div", this.CSS.plusButton, {
       innerHTML: IconPlus,
     });
-    $.append(this.nodes.actions, this.nodes.plusButton);
+    $.append(this.nodes.WireUiActions, this.nodes.plusButton);
 
-    this.readOnlyMutableListeners.on(this.nodes.plusButton, 'click', () => {
-      this.tooltip.hide(true);
-      this.plusButtonClicked();
-    }, false);
+    this.readOnlyMutableListeners.on(
+      this.nodes.plusButton,
+      "click",
+      () => {
+        this.tooltip.hide(true);
+        this.plusButtonClicked();
+      },
+      false
+    );
 
     /**
      * Add events to show/hide tooltip for plus button
      */
-    const tooltipContent = $.make('div');
+    const tooltipContent = $.make("div");
 
-    tooltipContent.appendChild(document.createTextNode(I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Add')));
-    tooltipContent.appendChild($.make('div', this.CSS.plusButtonShortcut, {
-      textContent: '⇥ Tab',
-    }));
+    tooltipContent.appendChild(
+      document.createTextNode(I18n.ui(I18nInternalNS.ui.toolbar.toolbox, "Add"))
+    );
+    tooltipContent.appendChild(
+      $.make("div", this.CSS.plusButtonShortcut, {
+        textContent: "⇥ Tab",
+      })
+    );
 
     this.tooltip.onHover(this.nodes.plusButton, tooltipContent, {
       hidingDelay: 400,
@@ -366,15 +386,15 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *  - Remove Block Button
      *  - Settings Panel
      */
-    this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler, {
+    this.nodes.settingsToggler = $.make("span", this.CSS.settingsToggler, {
       innerHTML: IconMenu,
     });
 
-    $.append(this.nodes.actions, this.nodes.settingsToggler);
+    $.append(this.nodes.WireUiActions, this.nodes.settingsToggler);
 
     this.tooltip.onHover(
       this.nodes.settingsToggler,
-      I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
+      I18n.ui(I18nInternalNS.ui.blockTunes.toggler, "Click to tune"),
       {
         hidingDelay: 400,
       }
@@ -383,8 +403,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Appending Toolbar components to itself
      */
-    $.append(this.nodes.actions, this.makeToolbox());
-    $.append(this.nodes.actions, this.Editor.BlockSettings.getElement());
+    $.append(this.nodes.WireUiActions, this.makeToolbox());
+    $.append(this.nodes.WireUiActions, this.Editor.BlockSettings.getElement());
 
     /**
      * Append toolbar to the Editor
@@ -403,35 +423,42 @@ export default class Toolbar extends Module<ToolbarNodes> {
       api: this.Editor.API.methods,
       tools: this.Editor.Tools.blockTools,
       i18nLabels: {
-        filter: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
-        nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
+        filter: I18n.ui(I18nInternalNS.ui.popover, "Filter"),
+        nothingFound: I18n.ui(I18nInternalNS.ui.popover, "Nothing found"),
       },
     });
 
     this.toolboxInstance.on(ToolboxEvent.Opened, () => {
-      this.Editor.UI.nodes.wrapper.classList.add(this.CSS.openedToolboxHolderModifier);
+      this.Editor.UI.nodes.wrapper.classList.add(
+        this.CSS.openedToolboxHolderModifier
+      );
     });
 
     this.toolboxInstance.on(ToolboxEvent.Closed, () => {
-      this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolboxHolderModifier);
+      this.Editor.UI.nodes.wrapper.classList.remove(
+        this.CSS.openedToolboxHolderModifier
+      );
     });
 
-    this.toolboxInstance.on(ToolboxEvent.BlockAdded, ({ block }: {block: BlockAPI }) => {
-      const { BlockManager, Caret } = this.Editor;
-      const newBlock = BlockManager.getBlockById(block.id);
+    this.toolboxInstance.on(
+      ToolboxEvent.BlockAdded,
+      ({ block }: { block: BlockAPI }) => {
+        const { BlockManager, Caret } = this.Editor;
+        const newBlock = BlockManager.getBlockById(block.id);
 
-      /**
-       * If the new block doesn't contain inputs, insert the new paragraph below
-       */
-      if (newBlock.inputs.length === 0) {
-        if (newBlock === BlockManager.lastBlock) {
-          BlockManager.insertAtEnd();
-          Caret.setToBlock(BlockManager.lastBlock);
-        } else {
-          Caret.setToBlock(BlockManager.nextBlock);
+        /**
+         * If the new block doesn't contain inputs, insert the new paragraph below
+         */
+        if (newBlock.inputs.length === 0) {
+          if (newBlock === BlockManager.lastBlock) {
+            BlockManager.insertAtEnd();
+            Caret.setToBlock(BlockManager.lastBlock);
+          } else {
+            Caret.setToBlock(BlockManager.nextBlock);
+          }
         }
       }
-    });
+    );
 
     return this.toolboxInstance.make();
   }
@@ -458,20 +485,25 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *
      * mousedown is used because on click selection is lost in Safari and FF
      */
-    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'mousedown', (e) => {
-      /**
-       * Stop propagation to prevent block selection clearance
-       *
-       * @see UI.documentClicked
-       */
-      e.stopPropagation();
+    this.readOnlyMutableListeners.on(
+      this.nodes.settingsToggler,
+      "mousedown",
+      (e) => {
+        /**
+         * Stop propagation to prevent block selection clearance
+         *
+         * @see UI.documentClicked
+         */
+        e.stopPropagation();
 
-      this.settingsTogglerClicked();
+        this.settingsTogglerClicked();
 
-      this.toolboxInstance.close();
+        this.toolboxInstance.close();
 
-      this.tooltip.hide(true);
-    }, true);
+        this.tooltip.hide(true);
+      },
+      true
+    );
 
     /**
      * Subscribe to the 'block-hovered' event if current view is not mobile
@@ -482,16 +514,19 @@ export default class Toolbar extends Module<ToolbarNodes> {
       /**
        * Subscribe to the 'block-hovered' event
        */
-      this.eventsDispatcher.on(this.Editor.UI.events.blockHovered, (data: {block: Block}) => {
-        /**
-         * Do not move toolbar if Block Settings or Toolbox opened
-         */
-        if (this.Editor.BlockSettings.opened || this.toolboxInstance.opened) {
-          return;
-        }
+      this.eventsDispatcher.on(
+        this.Editor.UI.events.blockHovered,
+        (data: { block: Block }) => {
+          /**
+           * Do not move toolbar if Block Settings or Toolbox opened
+           */
+          if (this.Editor.BlockSettings.opened || this.toolboxInstance.opened) {
+            return;
+          }
 
-        this.moveAndOpen(data.block);
-      });
+          this.moveAndOpen(data.block);
+        }
+      );
     }
   }
 

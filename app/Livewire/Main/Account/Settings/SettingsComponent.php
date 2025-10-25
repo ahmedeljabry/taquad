@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Main\Account\Settings;
 
 use App\Models\User;
@@ -14,7 +15,7 @@ use App\Http\Validators\Main\Account\Settings\EditValidator;
 class SettingsComponent extends Component
 {
     use SEOToolsTrait, LivewireAlert, Actions;
-    
+
     public $username;
     public $email;
     public $fullname;
@@ -57,26 +58,26 @@ class SettingsComponent extends Component
         $separator   = settings('general')->separator;
         $title       = __('messages.t_account_settings') . " $separator " . settings('general')->title;
         $description = settings('seo')->description;
-        $ogimage     = src( settings('seo')->ogimage );
+        $ogimage     = src(settings('seo')->ogimage);
 
-        $this->seo()->setTitle( $title );
-        $this->seo()->setDescription( $description );
-        $this->seo()->setCanonical( url()->current() );
-        $this->seo()->opengraph()->setTitle( $title );
-        $this->seo()->opengraph()->setDescription( $description );
-        $this->seo()->opengraph()->setUrl( url()->current() );
+        $this->seo()->setTitle($title);
+        $this->seo()->setDescription($description);
+        $this->seo()->setCanonical(url()->current());
+        $this->seo()->opengraph()->setTitle($title);
+        $this->seo()->opengraph()->setDescription($description);
+        $this->seo()->opengraph()->setUrl(url()->current());
         $this->seo()->opengraph()->setType('website');
-        $this->seo()->opengraph()->addImage( $ogimage );
-        $this->seo()->twitter()->setImage( $ogimage );
-        $this->seo()->twitter()->setUrl( url()->current() );
-        $this->seo()->twitter()->setSite( "@" . settings('seo')->twitter_username );
+        $this->seo()->opengraph()->addImage($ogimage);
+        $this->seo()->twitter()->setImage($ogimage);
+        $this->seo()->twitter()->setUrl(url()->current());
+        $this->seo()->twitter()->setSite("@" . settings('seo')->twitter_username);
         $this->seo()->twitter()->addValue('card', 'summary_large_image');
         $this->seo()->metatags()->addMeta('fb:page_id', settings('seo')->facebook_page_id, 'property');
         $this->seo()->metatags()->addMeta('fb:app_id', settings('seo')->facebook_app_id, 'property');
         $this->seo()->metatags()->addMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'name');
-        $this->seo()->jsonLd()->setTitle( $title );
-        $this->seo()->jsonLd()->setDescription( $description );
-        $this->seo()->jsonLd()->setUrl( url()->current() );
+        $this->seo()->jsonLd()->setTitle($title);
+        $this->seo()->jsonLd()->setDescription($description);
+        $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
         return view('livewire.main.account.settings.settings', [
@@ -112,8 +113,8 @@ class SettingsComponent extends Component
             $user = auth()->user();
 
             // Validate current password
-            if ( $user->password && !Hash::check($this->password, $user->password)) {
-                
+            if ($user->password && !Hash::check($this->password, $user->password)) {
+
                 // Password does not match
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -122,7 +123,6 @@ class SettingsComponent extends Component
                 ]);
 
                 return;
-
             }
 
             // Get available timezone
@@ -130,7 +130,7 @@ class SettingsComponent extends Component
 
             // Check if timezone exists
             if (array_search($this->timezone, array_column($timezones, 'tzCode')) === FALSE) {
-                
+
                 // Selected timezone not found
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -138,8 +138,7 @@ class SettingsComponent extends Component
                     'icon'        => 'error'
                 ]);
 
-                return;                
-
+                return;
             }
 
             // Update user data
@@ -164,29 +163,24 @@ class SettingsComponent extends Component
                 'description' => __('messages.t_ur_account_settings_updated'),
                 'icon'        => 'success'
             ]);
-
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
-    
 }

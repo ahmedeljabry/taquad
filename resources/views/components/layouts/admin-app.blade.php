@@ -263,31 +263,7 @@
                                         </a>
                                     @endif
 
-                                    {{-- Pending gigs --}}
-                                    @if ($notifications['count_pending_gigs'])
-                                        <a href="{{ admin_url('gigs') }}" class="w-full p-3 bg-green-100 text-green-700 rounded flex items-center hover:bg-opacity-50">
-                        
-                                            {{-- Icon --}}
-                                            <div class="focus:outline-none w-8 h-8 border rounded-full border-green-200 flex items-center flex-shrink-0 justify-center">
-                                                <svg class="h-4 w-4" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"></path><path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
-                                            </div>
-                        
-                                            {{-- Notification --}}
-                                            <div class="ltr:pl-3 rtl:pr-3 w-full flex items-center justify-between">
-                        
-                                                {{-- Message --}}
-                                                <p class="focus:outline-none text-sm leading-none">
-                                                    @lang('messages.t_pending_gigs')
-                                                </p>
-                        
-                                                {{-- Total --}}
-                                                <p class="bg-green-200 border border-green-300 flex focus:outline-none font-bold h-6 items-center justify-center p-1 rounded-full text-xs w-6">
-                                                    {{ $notifications['count_pending_gigs'] }}
-                                                </p>
-                        
-                                            </div>
-                                        </a>
-                                    @endif
+                                    {{-- Pending gigs removed --}}
 
                                     {{-- Pending projects --}}
                                     @if ($notifications['count_pending_projects'])
@@ -445,31 +421,7 @@
                                         </a>
                                     @endif
 
-                                    {{-- Pending reported gigs --}}
-                                    @if ($notifications['count_reported_gigs'])
-                                        <a href="{{ admin_url('reports/gigs') }}" class="w-full p-3 bg-lime-100 text-lime-700 rounded flex items-center hover:bg-opacity-50">
-                        
-                                            {{-- Icon --}}
-                                            <div class="focus:outline-none w-8 h-8 border rounded-full border-lime-200 flex items-center flex-shrink-0 justify-center">
-                                                <svg class="h-4 w-4" stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M11.99 1.968c1.023 0 1.97 .521 2.512 1.359l.103 .172l7.1 12.25l.062 .126a3 3 0 0 1 -2.568 4.117l-.199 .008h-14l-.049 -.003l-.112 .002a3 3 0 0 1 -2.268 -1.226l-.109 -.16a3 3 0 0 1 -.32 -2.545l.072 -.194l.06 -.125l7.092 -12.233a3 3 0 0 1 2.625 -1.548zm.02 12.032l-.127 .007a1 1 0 0 0 0 1.986l.117 .007l.127 -.007a1 1 0 0 0 0 -1.986l-.117 -.007zm-.01 -6a1 1 0 0 0 -.993 .883l-.007 .117v2l.007 .117a1 1 0 0 0 1.986 0l.007 -.117v-2l-.007 -.117a1 1 0 0 0 -.993 -.883z" stroke-width="0" fill="currentColor"></path></svg>
-                                            </div>
-                        
-                                            {{-- Notification --}}
-                                            <div class="ltr:pl-3 rtl:pr-3 w-full flex items-center justify-between">
-                        
-                                                {{-- Message --}}
-                                                <p class="focus:outline-none text-sm leading-none">
-                                                    @lang('messages.t_reported_gigs')
-                                                </p>
-                        
-                                                {{-- Total --}}
-                                                <p class="bg-lime-200 border border-lime-300 flex focus:outline-none font-bold h-6 items-center justify-center p-1 rounded-full text-xs w-6">
-                                                    {{ $notifications['count_reported_gigs'] }}
-                                                </p>
-                        
-                                            </div>
-                                        </a>
-                                    @endif
+                                    {{-- Pending reported gigs removed --}}
 
                                     {{-- Pending reported projects --}}
                                     @if ($notifications['count_reported_projects'])

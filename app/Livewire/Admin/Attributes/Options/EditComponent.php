@@ -46,7 +46,7 @@ class EditComponent extends Component
 
         // Loop through supported languages
         foreach (supported_languages() as $language) {
-            
+
             // Get translation
             $translation = $this->attribute->translate($language->language_code);
 
@@ -59,10 +59,10 @@ class EditComponent extends Component
 
         // Check if type is select element
         if ($this->attribute->type === 'select') {
-            
+
             // Loop through options
             foreach ($this->attribute?->options as $option) {
-                
+
                 // Insert option
                 array_push($this->options, [
                     'id'    => $option->id,
@@ -118,49 +118,6 @@ class EditComponent extends Component
 
 
     /**
-     * Get categories
-     *
-     * @return object
-     */
-    public function getCategoriesProperty() : object
-    {
-        return Category::latest()->withTranslation()->get();
-    }
-
-
-    /**
-     * Fetch subcategories
-     *
-     * @param integer $id
-     * @return void
-     */
-    public function updatedCategoryId($id) : void
-    {
-        // Fetch subcategories
-        $this->subcategories = Subcategory::where('parent_id', $id)
-                                            ->withTranslation()
-                                            ->latest()
-                                            ->get();
-    }
-
-
-    /**
-     * Fetch childcategories
-     *
-     * @param integer $id
-     * @return void
-     */
-    public function updatedSubcategoryId($id) : void
-    {
-        // Fetch childcategories
-        $this->childcategories = Childcategory::where('subcategory_id', $id)
-                                            ->withTranslation()
-                                            ->latest()
-                                            ->get();
-    }
-
-
-    /**
      * Add new option
      *
      * @return void
@@ -169,7 +126,7 @@ class EditComponent extends Component
     {
         // Check type of this attribute
         if ($this->type === 'select') {
-            
+
             // Create an option
             $option = [
                 'text'  => '',
@@ -181,8 +138,8 @@ class EditComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
+                'success',
+                __('messages.t_success'),
                 livewire_alert_params( __('messages.t_toast_operation_success') )
             );
 
@@ -200,10 +157,10 @@ class EditComponent extends Component
     {
         // Check type of this attribute
         if ($this->type === 'select') {
-            
+
             // Delete option from list
             if (isset($this->options[$key])) {
-                
+
                 // Delete it
                 unset($this->options[$key]);
 
@@ -214,8 +171,8 @@ class EditComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
+                'success',
+                __('messages.t_success'),
                 livewire_alert_params( __('messages.t_toast_operation_success') )
             );
 
@@ -231,7 +188,7 @@ class EditComponent extends Component
     public function update()
     {
         try {
-            
+
             // Validate form
             EditValidator::validate($this);
 
@@ -250,21 +207,21 @@ class EditComponent extends Component
                 $this->attribute->translateOrNew($language->language_code)->description = isset($this->description[$language->language_code]) && !empty($this->description[$language->language_code]) ? $this->description[$language->language_code] : null;
                 $this->attribute->translateOrNew($language->language_code)->hint        = isset($this->hint[$language->language_code]) && !empty($this->hint[$language->language_code]) ? $this->hint[$language->language_code] : null;
             }
-        
+
             // Save again
             $this->attribute->save();
 
             // Check if select attribute
             if ($this->type === 'select') {
-                
+
                 // Loop through options
                 foreach ($this->options as $key => $item) {
                     if (isset($item['text']) && isset($item['value'])) {
-                        
+
                         // First check if we have to just update the current option
                         // Or we need to create a new one
                         if (isset($item['id'])) {
-                            
+
                             // Update option
                             AttributeOption::where('id', $item['id'])
                                             ->where('attribute_id', $this->attribute->id)
@@ -291,8 +248,8 @@ class EditComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
+                'success',
+                __('messages.t_success'),
                 livewire_alert_params( __('messages.t_toast_operation_success') )
             );
 
@@ -300,11 +257,11 @@ class EditComponent extends Component
             $this->dispatch('refresh');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            
+
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
+                'error',
+                __('messages.t_error'),
                 livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
             );
 
@@ -315,8 +272,8 @@ class EditComponent extends Component
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
+                'error',
+                __('messages.t_error'),
                 livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
             );
 
@@ -325,5 +282,5 @@ class EditComponent extends Component
 
         }
     }
-    
+
 }

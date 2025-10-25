@@ -43,8 +43,8 @@ class TrashComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_trashed_users'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_trashed_users'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.users.trash.trash', [
             'users' => $this->users
@@ -61,7 +61,7 @@ class TrashComponent extends Component
     {
         return User::onlyTrashed()->paginate(40);
     }
-    
+
 
     /**
      * Confirm restoration
@@ -77,7 +77,7 @@ class TrashComponent extends Component
         // Confirm restore
         $this->dialog()->confirm([
             'title'       => __('messages.t_confirm_restore'),
-            'description' => "<div class='leading-relaxed'>" . __('messages.t_are_u_sure_u_want_to_restore_this_user') . "<br>". $user->username . "</div>",
+            'description' => "<div class='leading-relaxed'>" . __('messages.t_are_u_sure_u_want_to_restore_this_user') . "<br>" . $user->username . "</div>",
             'icon'        => 'error',
             'accept'      => [
                 'label'  => __('messages.t_restore'),
@@ -107,9 +107,9 @@ class TrashComponent extends Component
 
         // Success
         $this->alert(
-            'success', 
-            __('messages.t_success'), 
-            livewire_alert_params( __('messages.t_toast_operation_success') )
+            'success',
+            __('messages.t_success'),
+            livewire_alert_params(__('messages.t_toast_operation_success'))
         );
     }
 
@@ -128,7 +128,7 @@ class TrashComponent extends Component
         // Confirm delete
         $this->dialog()->confirm([
             'title'       => __('messages.t_confirm_delete'),
-            'description' => "<div class='leading-relaxed'>" . __('messages.t_are_u_sure_u_want_to_prmtly_delete_usr') . "<br>". $user->username ."<br>" . __('messages.t_all_records_related_to_user_will_erased') . "</div>",
+            'description' => "<div class='leading-relaxed'>" . __('messages.t_are_u_sure_u_want_to_prmtly_delete_usr') . "<br>" . $user->username . "<br>" . __('messages.t_all_records_related_to_user_will_erased') . "</div>",
             'icon'        => 'error',
             'accept'      => [
                 'label'  => __('messages.t_delete'),
@@ -151,10 +151,10 @@ class TrashComponent extends Component
     public function delete($id)
     {
         try {
-            
+
             // Get user
             $user = User::onlyTrashed()->where('id', $id)->firstOrFail();
-            
+
             // Disable foreign key check
             Schema::disableForeignKeyConstraints();
 
@@ -163,13 +163,12 @@ class TrashComponent extends Component
 
             // Loop through conversations
             foreach ($conversations as $conversation) {
-                
+
                 // Delete messages inside this conversation
                 $conversation->messages()->delete();
 
                 // Delete conversation
                 $conversation->delete();
-
             }
 
             // Delete deposit transactions made by this user
@@ -186,7 +185,7 @@ class TrashComponent extends Component
 
             // loop through orders (In case his a buyer)
             foreach ($orders as $order) {
-                
+
                 // Delete order invoice
                 $order->invoice()->delete();
 
@@ -195,15 +194,14 @@ class TrashComponent extends Component
 
                 // Loop through items inside this order
                 foreach ($order_items as $item) {
-                    
+
                     // Check item status
                     if (in_array($item->status, ['pending', 'proceeded']) && !$item->is_finished) {
-                        
+
                         // Update order in queue
                         if ($item->gig->total_orders_in_queue() > 0) {
                             $item->gig()->decrement('orders_in_queue');
                         }
-
                     }
 
                     // Delete requirements
@@ -223,20 +221,17 @@ class TrashComponent extends Component
 
                     // Check if refund exists
                     if ($refund) {
-                        
+
                         // Delete refund conversation
                         $refund->conversation()->delete();
-    
+
                         // Delete refund
                         $refund->delete();
-
                     }
-
                 }
 
                 // Delete this order
                 $order->delete();
-
             }
 
             // Get gigs created by this user
@@ -244,7 +239,7 @@ class TrashComponent extends Component
 
             // Loop through gigs
             foreach ($gigs as $gig) {
-                
+
                 // Delete gig faqs
                 $gig->faqs()->delete();
 
@@ -253,18 +248,16 @@ class TrashComponent extends Component
 
                 // Loop through documents
                 foreach ($documents as $doc) {
-                    
+
                     // Delete this file from local storage first
                     if (File::exists(public_path('storage/gigs/documents/' . $doc->name))) {
-                        
+
                         // File exists, delete it
                         File::delete(public_path('storage/gigs/documents/' . $doc->name));
-
                     }
 
                     // Now delete it from database
                     $doc->delete();
-
                 }
 
                 // Get gig images
@@ -272,7 +265,7 @@ class TrashComponent extends Component
 
                 // loop through images
                 foreach ($images as $img) {
-                    
+
                     // Delete large image
                     deleteModelFile($img->large);
 
@@ -284,7 +277,6 @@ class TrashComponent extends Component
 
                     // Delete this record from database
                     $img->delete();
-
                 }
 
                 // Delete thumbnail
@@ -310,13 +302,12 @@ class TrashComponent extends Component
 
                 // loop through requirements
                 foreach ($requirements as $req) {
-                    
+
                     // Delete options
                     $req->options()->delete();
 
                     // Delete requirement
                     $req->delete();
-
                 }
 
                 // Delete reviews
@@ -330,7 +321,7 @@ class TrashComponent extends Component
 
                 // Loop through items
                 foreach ($order_items as $item) {
-                    
+
                     // Delete requirements
                     $item->requirements()->delete();
 
@@ -348,21 +339,17 @@ class TrashComponent extends Component
 
                     // Check if there is a refund
                     if ($refund) {
-                        
+
                         // Delete refund conversation
                         $refund->conversation()->delete();
 
                         // Delete refund
                         $refund->delete();
-
                     }
-
-
                 }
 
                 // Now force deleting this gig
                 $gig->forceDelete();
-
             }
 
             // Delete notifications for this user
@@ -373,7 +360,7 @@ class TrashComponent extends Component
 
             // Loop through projects
             foreach ($projects as $project) {
-                
+
                 // Delete required skills
                 ProjectRequiredSkill::whereProjectId($project->id)->delete();
 
@@ -388,7 +375,7 @@ class TrashComponent extends Component
 
                 // loop through bids
                 foreach ($bids as $bid) {
-                    
+
                     // If bid reported delete it
                     ProjectReportedBid::whereBidId($bid->id)->delete();
 
@@ -397,12 +384,10 @@ class TrashComponent extends Component
 
                     // Delete this bid
                     $bid->delete();
-
                 }
 
                 // Delete project now
                 $project->delete();
-
             }
 
             // If this user already reported, delete that report
@@ -426,21 +411,20 @@ class TrashComponent extends Component
             // Get user portfolio
             $portfolio = UserPortfolio::whereUserId($user->id)->get();
 
-            // Lopp through his works 
+            // Lopp through his works
             foreach ($portfolio as $p) {
-                
+
                 // Get gallery
                 $gallery = $p->gallery;
 
                 // Loop through gallery
                 foreach ($gallery as $g) {
-                    
+
                     // Delete image
                     deleteModelFile($g->image);
 
                     // Delete this record
                     $g->delete();
-
                 }
 
                 // Delete thumbnail
@@ -448,7 +432,6 @@ class TrashComponent extends Component
 
                 // Delete work
                 $p->delete();
-
             }
 
             // Delete user skills
@@ -474,21 +457,18 @@ class TrashComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Throwable $th) {
             throw $th;
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
-
 }

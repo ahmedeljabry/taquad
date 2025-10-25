@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Projects\Subscriptions;
 
 use Livewire\Component;
@@ -22,8 +23,8 @@ class SubscriptionsComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_projects_subscriptions'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_projects_subscriptions'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.projects.subscriptions.subscriptions', [
             'subscriptions' => $this->subscriptions
@@ -51,7 +52,7 @@ class SubscriptionsComponent extends Component
     public function delete($id)
     {
         try {
-            
+
             // Get subscription
             $subscription = ProjectSubscription::where('id', $id)->firstOrFail();
 
@@ -60,10 +61,10 @@ class SubscriptionsComponent extends Component
 
             // Check if this subscription not paid yet
             if ($subscription->status === 'pending') {
-                
+
                 // We have to update project first
                 if ($project->status === 'pending_payment') {
-                    
+
                     // Update this project
                     $project->is_featured    = false;
                     $project->is_urgent      = false;
@@ -71,9 +72,7 @@ class SubscriptionsComponent extends Component
                     $project->is_alert       = false;
                     $project->status         = settings('projects')->auto_approve_projects ? 'active' : 'pending_approval';
                     $project->save();
-
                 }
-
             }
 
             // Delete subscription
@@ -84,21 +83,18 @@ class SubscriptionsComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
-    
 }

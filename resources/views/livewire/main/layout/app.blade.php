@@ -1,11 +1,54 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="{{ config()->get('direction') }}" @class(['dark' => current_theme() === 'dark'])>
+@php
+    $serverTheme = current_theme();
+    $serverThemePreference = in_array($serverTheme, ['light', 'dark']) ? $serverTheme : 'system';
+@endphp
+<html lang="{{ app()->getLocale() }}" dir="{{ config()->get('direction') }}"
+    data-theme-preference="{{ $serverThemePreference }}"
+    data-theme="{{ $serverTheme === 'dark' ? 'dark' : 'light' }}"
+    data-theme-label-light="{{ __('messages.t_theme_light') }}"
+    data-theme-label-dark="{{ __('messages.t_theme_dark') }}"
+    data-theme-label-system="{{ __('messages.t_theme_system') }}"
+    data-theme-label-toggle="{{ __('messages.t_theme_toggle') }}"
+    @class(['dark' => $serverTheme === 'dark'])>
 
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <script>
+            (function () {
+                const storageKey = 'taquad-theme-preference';
+                const root = document.documentElement;
+                let preference = root.dataset.themePreference || 'system';
+
+                try {
+                    const stored = localStorage.getItem(storageKey);
+                    if (stored) {
+                        preference = stored;
+                    }
+                } catch (error) {
+                    console.warn('Theme preference unavailable', error);
+                }
+
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                let theme = preference;
+
+                if (preference !== 'light' && preference !== 'dark') {
+                    theme = systemPrefersDark ? 'dark' : 'light';
+                    preference = 'system';
+                }
+
+                root.dataset.themePreference = preference;
+                root.dataset.theme = theme;
+                if (theme === 'dark') {
+                    root.classList.add('dark');
+                } else {
+                    root.classList.remove('dark');
+                }
+            })();
+        </script>
 
         {{-- Generate seo tags --}}
         {!! SEO::generate() !!}
@@ -169,8 +212,10 @@
         {{-- Dialog --}}
         <x-dialog z-index="z-[65]" blur="sm" />
 
-		{{-- Header --}}
-        @livewire('main.includes.header')
+        @unless($disabeld_header)
+		    {{-- Header --}}
+            @livewire('main.includes.header')
+        @endunless
 
         {{-- Hero section --}}
         @if (request()->is('/'))

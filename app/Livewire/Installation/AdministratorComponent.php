@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Installation;
 
 use App\Models\Admin;
@@ -22,7 +23,7 @@ class AdministratorComponent extends Component
      *
      * @return Illuminate\View\View
      */
-    #[Layout('components.layouts.install')] 
+    #[Layout('components.layouts.install')]
     public function render()
     {
         // SEO
@@ -43,7 +44,7 @@ class AdministratorComponent extends Component
         // So no more additional code :)
         // Check if all field exists
         if (!$this->email || !$this->username || !$this->password) {
-            
+
             // Error
             $this->notification([
                 'title'       => __('messages.t_error'),
@@ -52,7 +53,6 @@ class AdministratorComponent extends Component
             ]);
 
             return;
-
         }
 
         // create new account
@@ -66,5 +66,4 @@ class AdministratorComponent extends Component
         // Redirect to next step
         return redirect('install/crontab');
     }
-    
 }

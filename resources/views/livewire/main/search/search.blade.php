@@ -731,47 +731,6 @@
 
                 </div>
 
-                {{-- List of gigs --}}
-                <div class="lg:col-span-2 xl:col-span-3">
-                    <div class="grid grid-cols-12 md:gap-x-6 gap-y-6">
-
-                        @forelse ($gigs as $gig)
-
-                            {{-- Gig item --}}
-                            <div class="col-span-12 lg:col-span-6 md:col-span-6 sm:col-span-6 xl:col-span-4"
-                                wire:key="gigs-list-{{ $gig->uid }}">
-                                @livewire('main.cards.gig', ['gig' => $gig], key("gig-item-" . $gig->uid))
-                            </div>
-
-                        @empty
-
-                            <div class="col-span-12">
-                                <div class="py-14 px-6 text-center text-sm sm:px-14 border-dashed border-2">
-                                    <svg class="mx-auto h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                    </svg>
-                                    <p class="mt-4 font-semibold text-gray-900">{{ __('messages.no_results_found') }}</p>
-                                    <p class="mt-2 text-gray-500">{{ __('messages.t_we_couldnt_find_anthing_search_term') }}
-                                    </p>
-                                </div>
-                            </div>
-
-                        @endforelse
-
-                        {{-- Pages --}}
-                        @if ($gigs->hasPages())
-                            <div class="col-span-12">
-                                <div class="flex justify-center pt-12">
-                                    {!! $gigs->links('pagination::tailwind') !!}
-                                </div>
-                            </div>
-                        @endif
-
-                    </div>
-                </div>
-
             </div>
         </section>
     </main>

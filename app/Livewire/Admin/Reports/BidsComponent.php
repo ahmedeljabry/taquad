@@ -23,8 +23,8 @@ class BidsComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_reported_bids'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_reported_bids'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.reports.bids', [
             'reports' => $this->reports
@@ -52,7 +52,7 @@ class BidsComponent extends Component
     public function mark($id)
     {
         try {
-            
+
             // Update status
             ProjectReportedBid::where('id', $id)->where('is_seen', false)->update([
                 'is_seen' => true
@@ -60,20 +60,18 @@ class BidsComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
 
@@ -87,7 +85,7 @@ class BidsComponent extends Component
     public function details($id)
     {
         try {
-            
+
             // Get report
             $report  = ProjectReportedBid::where('id', $id)->firstOrFail();
 
@@ -96,7 +94,7 @@ class BidsComponent extends Component
 
             // Show dialog
             $this->dialog()->confirm([
-                'title'          => '<h1 class="text-base font-bold tracking-wide -mt-1 mb-4">'. __('messages.t_report_bid_' . $report->reason) .'</h1>',
+                'title'          => '<h1 class="text-base font-bold tracking-wide -mt-1 mb-4">' . __('messages.t_report_bid_' . $report->reason) . '</h1>',
                 'description'    => "<div class='leading-relaxed'>" . nl2br($details) . "</div>",
                 'icon'           => "clipboard-list",
                 'iconColor'      => "text-slate-500 dark:text-secondary-400 p-1",
@@ -109,17 +107,14 @@ class BidsComponent extends Component
                     'label'  => __('messages.t_cancel')
                 ],
             ]);
-            
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
-    
 }

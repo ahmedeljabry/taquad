@@ -30,6 +30,7 @@ class GeneralValidator
                 'announce_text'        => 'nullable|max:350',
                 'is_language_switcher' => 'boolean',
                 'default_language'     => 'required|max:2',
+                'free_plan_monthly_proposals' => 'nullable|integer|min:0|max:1000',
             ];
 
             // Set errors messages
@@ -53,6 +54,9 @@ class GeneralValidator
                 'is_language_switcher.boolean' => __('messages.t_validator_boolean'),
                 'default_language.required'    => __('messages.t_validator_required'),
                 'default_language.max'         => __('messages.t_validator_max', ['max' => 2]),
+                'free_plan_monthly_proposals.integer' => __('messages.t_validator_integer'),
+                'free_plan_monthly_proposals.min'     => __('messages.t_validator_min', ['min' => 0]),
+                'free_plan_monthly_proposals.max'     => __('messages.t_validator_max', ['max' => 1000]),
             ];
 
             // Set data to validate
@@ -67,7 +71,8 @@ class GeneralValidator
                 'announce_link'        => $request->announce_link,
                 'announce_text'        => $request->announce_text,
                 'is_language_switcher' => $request->is_language_switcher,
-                'default_language'     => $request->default_language
+                'default_language'     => $request->default_language,
+                'free_plan_monthly_proposals' => $request->free_plan_monthly_proposals
             ];
 
             // Validate data

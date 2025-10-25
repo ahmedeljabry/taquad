@@ -77,7 +77,7 @@
         
         <div class="w-full overflow-auto h-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-900 dark:scrollbar-track-zinc-600">
             <div class="space-y-2 py-6">
-                <?php $__currentLoopData = $notifications; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $n): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $notifications; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $n): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="px-6 pb-1 pt-2" wire:key="header-notifications-<?php echo e($n->uid, false); ?>">
                         <div class="flex items-center bg-slate-100 px-4 py-2 rounded dark:bg-zinc-600">
                             <div class="flex-shrink-0">
@@ -87,13 +87,13 @@
                             </div>
                             <div class="ltr:ml-3 rtl:mr-3 w-0 flex-1">
                                 <p class="dark:text-white text-[13px] font-normal text-slate-500 leading-relaxed">
-                                    <?php if($n->params): ?>
+                                    <!--[if BLOCK]><![endif]--><?php if($n->params): ?>
                                         <?php echo __('messages.' . $n->text, $n->params); ?>
 
                                     <?php else: ?>
                                         <?php echo __('messages.' . $n->text); ?>
 
-                                    <?php endif; ?>
+                                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                                 </p>
                                 <div class="mt-2 flex space-x-7 rtl:space-x-reverse">
 
@@ -113,7 +113,7 @@
                             </div>
                         </div>
                     </div>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
             </div>
         </div>
         

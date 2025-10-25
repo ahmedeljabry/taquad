@@ -125,7 +125,14 @@
     .display-area { scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth; }
 </style>
 <div class="relative bw-select bw-select-{{$input_name}} @if($add_clearing) @endif"
-     data-multiple="{{$multiple}}" data-type="{{ $data !== 'manual' ? 'dynamic' : 'manual'}}"
+     data-bw-select="{{ $input_name }}"
+     data-placeholder="{{ e($placeholder) }}"
+     data-component="{{ $componentId }}"
+     data-model="{{ ($data_serialize_as !== '') ? $data_serialize_as : $name }}"
+     data-disabled="{{ filter_var($disabled, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false' }}"
+     data-readonly="{{ filter_var($readonly, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false' }}"
+     data-multiple="{{ $multiple }}"
+     data-type="{{ $data !== 'manual' ? 'dynamic' : 'manual'}}"
      @if($data == 'manual' && $selected_value != '') data-selected-value="{{implode(',',$selected_value)}}" @endif>
 
     {{-- Label --}}
@@ -196,11 +203,47 @@
 
 @pushOnce('scripts')
     <script src="{{ asset('vendor/bladewind/js/select.js') }}"></script>
-@endPushOnce
-
-@push('scripts')
     <script>
-        const bw_{{ $input_name }} = new BladewindSelect('{{ $input_name }}', '{{ $placeholder }}', '{{ $componentId }}', '{{ $name }}');
-        @if(!$disabled && !$readonly) bw_{{ $input_name }}.activate(); @endif
+        (function () {
+            function initializeBladewindSelects() {
+                const nodes = document.querySelectorAll('[data-bw-select]');
+                if (!nodes.length) {
+                    return;
+                }
+
+                nodes.forEach((node) => {
+                    const name        = node.getAttribute('data-bw-select');
+                    const placeholder = node.getAttribute('data-placeholder') || 'Select One';
+                    const componentId = node.getAttribute('data-component') || null;
+                    const model       = node.getAttribute('data-model') || null;
+                    const disabled    = node.getAttribute('data-disabled') === 'true';
+
+                    if (!name) {
+                        return;
+                    }
+
+                    try {
+                        const instance = new BladewindSelect(name, placeholder, componentId, model);
+                        if (!disabled) {
+                            instance.activate();
+                        }
+                        node.__bladewindInstance = instance;
+                    } catch (error) {
+                        console.error('Bladewind select initialization error:', error);
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeBladewindSelects, { once: true });
+            } else {
+                queueMicrotask(initializeBladewindSelects);
+            }
+
+            if (window.Livewire && typeof window.Livewire.hook === 'function') {
+                window.Livewire.hook('message.processed', initializeBladewindSelects);
+                window.Livewire.on?.('refreshBladewindSelects', initializeBladewindSelects);
+            }
+        })();
     </script>
-@endpush
+@endPushOnce

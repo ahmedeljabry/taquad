@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Main\Cards;
 
 use App\Models\Admin;
@@ -6,6 +7,9 @@ use Livewire\Component;
 use App\Models\ProjectBid;
 use WireUi\Traits\Actions;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use App\Models\ProjectMilestone;
 use App\Models\ProjectReportedBid;
 use App\Notifications\Admin\BidReported;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
@@ -66,7 +70,6 @@ class Bid extends Component
             } else {
                 $chat = false;
             }
-            
         } else {
             $chat = true;
         }
@@ -133,20 +136,17 @@ class Bid extends Component
 
         // Check if admin authenticated
         if (auth('admin')->check()) {
-            
+
             // Can view it
             return true;
-
         } else if (auth()->check() && (auth()->id() == $this->project->user_id || auth()->id() == $this->freelancer->id)) {
-            
+
             // Can view it
             return true;
-
         } else {
 
             // Cannot see it
             return false;
-
         }
     }
 
@@ -204,7 +204,7 @@ class Bid extends Component
 
             // First user must be authenticated to report this bid
             if (!auth()->check()) {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -213,13 +213,12 @@ class Bid extends Component
                 ]);
 
                 return;
-
             }
 
             // So user is online, but we can't let him report his own bids
             // In frontend we don't allow that, but we have to be sure in backend as well
             if (auth()->id() == $bid->user->id) {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -228,18 +227,17 @@ class Bid extends Component
                 ]);
 
                 return;
-
             }
 
             // User is able to report this bid, but what if he already did that
             $already_reported = ProjectReportedBid::whereUserId(auth()->id())
-                                                  ->whereBidId($bid->id)
-                                                  ->whereIsSeen(false)
-                                                  ->first();
+                ->whereBidId($bid->id)
+                ->whereIsSeen(false)
+                ->first();
 
             // Let's check that
             if ($already_reported) {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -248,7 +246,6 @@ class Bid extends Component
                 ]);
 
                 return;
-
             }
 
             // Validate form
@@ -278,30 +275,27 @@ class Bid extends Component
                 'description' => __('messages.t_we_have_received_bid_report_success'),
                 'icon'        => 'success'
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
-        }   
+        }
     }
 
 
@@ -313,7 +307,7 @@ class Bid extends Component
     public function accept()
     {
         try {
-            
+
             // Check if user authenticated
             if (!auth()->check()) {
                 return;
@@ -330,7 +324,7 @@ class Bid extends Component
 
             // This user must have permissions to accept this offer first
             if ($project->user_id != $user_id) {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -339,13 +333,12 @@ class Bid extends Component
                 ]);
 
                 return;
-
             }
 
             // Check employer already awarded this project to a freelancer
             // And this freelancer accepted to work on it
             if ($project->awarded_bid_id != $bid->id && $bid->is_freelancer_accepted) {
-                
+
                 // Looks like you already awarded this project to another freelancer
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -354,12 +347,11 @@ class Bid extends Component
                 ]);
 
                 return;
-
             }
 
             // After that, we have to check if this bid is active
             if ($bid->status !== 'active') {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -368,12 +360,11 @@ class Bid extends Component
                 ]);
 
                 return;
-
             }
 
             // Now the project must be open
             if ($project->status !== 'active') {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -381,39 +372,95 @@ class Bid extends Component
                     'icon'        => 'error'
                 ]);
 
-                return;                
-
+                return;
             }
 
-            // Get awarded bid
-            $awarded_bid = ProjectBid::where('project_id', $project->id)
-                                        ->where('is_awarded', true)
-                                        ->where('id', '!=', $bid->id)
-                                        ->first();
+            $milestonesCreated = false;
 
-            // Check if an awarded bid already exists
-            if ($awarded_bid) {
-                
-                // Update this awarded bid
-                $awarded_bid->is_awarded             = false;
-                $awarded_bid->is_freelancer_accepted = false;
-                $awarded_bid->awarded_date           = null;
-                $awarded_bid->save();
+            DB::transaction(function () use ($bid, $project, &$milestonesCreated) {
+                $bid->refresh();
+                $project->refresh();
 
-                // Update awarded bid card
-                $this->dispatch('update-awarded-bid-card', $awarded_bid->uid);
+                $awarded_bid = ProjectBid::where('project_id', $project->id)
+                    ->where('is_awarded', true)
+                    ->where('id', '!=', $bid->id)
+                    ->lockForUpdate()
+                    ->first();
 
-            }
+                if ($awarded_bid) {
+                    $awarded_bid->is_awarded             = false;
+                    $awarded_bid->is_freelancer_accepted = false;
+                    $awarded_bid->awarded_date           = null;
+                    $awarded_bid->save();
 
-            // Update this bid's status
-            $bid->is_awarded   = true;
-            $bid->awarded_date = now();
-            $bid->save();
+                    $this->dispatch('update-awarded-bid-card', $awarded_bid->uid);
+                }
 
-            // Update project
-            $project->awarded_bid_id        = $bid->id;
-            $project->awarded_freelancer_id = $bid->user_id;
-            $project->save();
+                $bid->is_awarded   = true;
+                $bid->awarded_date = now();
+                $bid->save();
+
+                $project->awarded_bid_id        = $bid->id;
+                $project->awarded_freelancer_id = $bid->user_id;
+                $project->save();
+
+                if (
+                    $project->budget_type === 'fixed'
+                    && !empty($bid->milestone_plan)
+                    && !$bid->milestone_plan_applied_at
+                ) {
+                    $settingsProjects = settings('projects');
+
+                    foreach ($bid->milestone_plan as $entry) {
+                        $amount = (float) convertToNumber($entry['amount'] ?? 0);
+
+                        if ($amount <= 0) {
+                            continue;
+                        }
+
+                        $title = trim($entry['title'] ?? '');
+                        $due   = trim($entry['due_in'] ?? '');
+
+                        $description = $title !== '' ? $title : __('messages.t_milestones');
+                        if ($due !== '') {
+                            $description .= ' • ' . $due;
+                        }
+
+                        if ($settingsProjects->commission_type === 'fixed') {
+                            $freelancerCommission = (float) convertToNumber($settingsProjects->commission_from_freelancer);
+                            $employerCommission   = (float) convertToNumber($settingsProjects->commission_from_publisher);
+                        } else {
+                            $freelancerCommission = (float) ((convertToNumber($settingsProjects->commission_from_freelancer) / 100) * $amount);
+                            $employerCommission   = (float) ((convertToNumber($settingsProjects->commission_from_publisher) / 100) * $amount);
+                        }
+
+                        ProjectMilestone::create([
+                            'uid'                   => uid(),
+                            'project_id'            => $project->id,
+                            'created_by'            => 'freelancer',
+                            'freelancer_id'         => $bid->user_id,
+                            'employer_id'           => $project->user_id,
+                            'amount'                => $amount,
+                            'description'           => clean(Str::limit($description, 160, '')),
+                            'status'                => 'request',
+                            'employer_commission'   => $employerCommission,
+                            'freelancer_commission' => $freelancerCommission,
+                        ]);
+
+                        $milestonesCreated = true;
+                    }
+
+                    if ($milestonesCreated) {
+                        $bid->milestone_plan_applied_at = now();
+                        $bid->save();
+                    }
+                }
+            });
+
+            $bid->refresh();
+            $project->refresh();
+            $project->loadMissing('client', 'awarded_bid');
+            $this->view_data['project']['awarded'] = $project->awarded_bid;
 
             // Send notification to the freelancer (From website)
             notification([
@@ -436,16 +483,14 @@ class Bid extends Component
                 'description' => __('messages.t_u_have_accepted_this_bid_success'),
                 'icon'        => 'success'
             ]);
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
 
@@ -458,7 +503,7 @@ class Bid extends Component
     public function revoke()
     {
         try {
-            
+
             // Check if user authenticated
             if (!auth()->check()) {
                 return;
@@ -475,7 +520,7 @@ class Bid extends Component
 
             // This user must have permissions to accept this offer first
             if ($project->user_id != $user_id) {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -484,12 +529,11 @@ class Bid extends Component
                 ]);
 
                 return;
-
             }
 
             // After that, we have to check if this bid is active
             if ($bid->status !== 'active') {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -498,12 +542,11 @@ class Bid extends Component
                 ]);
 
                 return;
-
             }
 
             // Now the project must be open
             if ($project->status !== 'active') {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -511,13 +554,12 @@ class Bid extends Component
                     'icon'        => 'error'
                 ]);
 
-                return;                
-
+                return;
             }
 
             // This bid must be awarded so you can revoke it
             if (!$bid->is_awarded) {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -525,8 +567,7 @@ class Bid extends Component
                     'icon'        => 'error'
                 ]);
 
-                return;  
-
+                return;
             }
 
             // Update this bid's status
@@ -542,7 +583,6 @@ class Bid extends Component
                 'description' => __('messages.t_u_have_success_revoked_this_bid'),
                 'icon'        => 'success'
             ]);
-
         } catch (\Throwable $th) {
             throw $th;
         }

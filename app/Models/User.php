@@ -93,16 +93,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Get user sales
-     *
-     * @return object
-     */
-    public function sales()
-    {
-        return $this->hasMany(OrderItem::class, 'owner_id');
-    }
-
-    /**
      * Get user skills
      *
      * @return object

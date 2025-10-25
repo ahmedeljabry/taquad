@@ -38,7 +38,12 @@ class ProjectRequest extends FormRequest
             }) ],
             'salary_type' => 'required|in:hourly,fixed',
             'price_min'   => ['required', 'regex:/^([1-9][0-9]*|0)(\.[0-9]{1,2})?$/'],
-            'price_max'   => ['required', 'regex:/^([1-9][0-9]*|0)(\.[0-9]{1,2})?$/']
+            'price_max'   => ['required', 'regex:/^([1-9][0-9]*|0)(\.[0-9]{1,2})?$/'],
+            'attachments'     => 'nullable|array|max:5',
+            'attachments.*'   => 'file|max:25600|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,rar,7z,png,jpg,jpeg,webp,gif,mp3,wav,ogg,webm,mp4,m4a',
+            'questions'       => 'nullable|array|max:8',
+            'questions.*.text' => 'required|string|max:200',
+            'questions.*.is_required' => 'nullable|boolean'
         ];
     }
 
@@ -52,6 +57,8 @@ class ProjectRequest extends FormRequest
     {
         return [
             'title.required' => __('messages.t_validator_required'),
+            'attachments.*.max' => __('messages.t_validator_max_file_size', ['max' => '25MB']),
+            'attachments.*.mimes' => __('messages.t_validator_mimes'),
         ];
     }
 }

@@ -31,6 +31,7 @@ class GeneralComponent extends Component
     public $default_language;
     public $enable_multivendor;
     public $freelancer_requires_approval;
+    public $free_plan_monthly_proposals;
 
     /**
      * Initialize component
@@ -53,6 +54,7 @@ class GeneralComponent extends Component
             'default_language'             => $settings->default_language,
             'enable_multivendor'           => $settings->enable_multivendor ? 1 : 0,
             'freelancer_requires_approval' => $settings->freelancer_requires_approval ? 1 : 0,
+            'free_plan_monthly_proposals'  => $settings->free_plan_monthly_proposals,
         ]);
     }
 
@@ -151,6 +153,9 @@ class GeneralComponent extends Component
             $settings->default_language             = $this->default_language;
             $settings->enable_multivendor           = $this->enable_multivendor ? 1 : 0;
             $settings->freelancer_requires_approval = $this->freelancer_requires_approval ? 1 : 0;
+            $settings->free_plan_monthly_proposals  = $this->free_plan_monthly_proposals !== null
+                ? (int) $this->free_plan_monthly_proposals
+                : 0;
 
             // Save logo
             if($logo_id) {

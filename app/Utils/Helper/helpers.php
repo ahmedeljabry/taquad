@@ -1,7 +1,6 @@
 <?php
 
 use Carbon\Carbon;
-use App\Models\Gig;
 use App\Models\User;
 use App\Models\Level;
 use App\Models\Order;
@@ -10,7 +9,6 @@ use App\Models\Project;
 use App\Models\Language;
 use App\Models\ProjectBid;
 use App\Models\CustomOffer;
-use App\Models\ReportedGig;
 use App\Models\SettingsSeo;
 use App\Models\BlogSettings;
 use App\Models\Notification;
@@ -94,11 +92,11 @@ function format_date($timestamp, $format = 'ago')
     if ($format === 'ago') {
 
         return Carbon::createFromTimeStamp(strtotime($timestamp), config('app.timezone'))->diffForHumans();
-
     } else {
-        
-        return Carbon::create($timestamp)->setTimezone(config('app.timezone'))->translatedFormat($format);
-
+        if ($format) {
+            return Carbon::create($timestamp)->setTimezone(config('app.timezone'))->translatedFormat($format);
+        }
+        return $format;
     }
 }
 
@@ -132,21 +130,19 @@ function src($file)
 {
     // Check if file set
     if ($file) {
-        
+
         // Get file path
         $path = public_path('storage/' . $file->file_folder . '/' . $file->uid . "." . $file->file_extension);
 
         // Check if file exists
         if (File::exists($path)) {
-            
+
             // File exists, return url
             return url('public/storage/' . $file->file_folder . '/' . $file->uid . "." . $file->file_extension);
-
         }
 
         // File not found
         return placeholder_img();
-
     }
 
     // No file set
@@ -179,27 +175,24 @@ function admin_url($to = null, $params = null)
 function deleteModelFile($file)
 {
     try {
-        
+
         // Check if file set
         if ($file) {
-            
+
             // Get file path
             $path = public_path('storage/' . $file->file_folder . '/' . $file->uid . '.' . $file->file_extension);
-    
+
             // Check if file exists
             if (File::exists($path)) {
                 File::delete($path);
             }
-    
+
             // Now delete it from database
             $file->delete();
-    
         }
-
     } catch (\Throwable $th) {
 
         return;
-
     }
 }
 
@@ -218,669 +211,601 @@ function settings($settings, $updateCache = false)
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_currency');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_currency', function () {
                     return SettingsCurrency::first();
                 });
-
             }
 
-        break;
+            break;
 
         case 'publish':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_publish');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_publish', function () {
                     return SettingsPublish::first();
                 });
-
             }
 
-        break;
+            break;
 
         case 'commission':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_commission');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_commission', function () {
                     return SettingsCommission::first();
                 });
-
             }
 
-        break;
+            break;
 
         case 'media':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_media');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_media', function () {
                     return SettingsMedia::first();
                 });
-
             }
 
-        break;
+            break;
 
         case 'withdrawal':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_withdrawal');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_withdrawal', function () {
                     return SettingsWithdrawal::first();
                 });
-
             }
 
-        break;
+            break;
 
         case 'auth':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_auth');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_auth', function () {
                     return SettingsAuth::first();
                 });
-
             }
 
-        break;
+            break;
 
         case 'footer':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_footer');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_footer', function () {
                     return SettingsFooter::first();
                 });
-
             }
 
-        break;
+            break;
 
         case 'general':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_general');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_general', function () {
                     return SettingsGeneral::first();
                 });
-
             }
 
-        break;
+            break;
 
         case 'security':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_security');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_security', function () {
                     return SettingsSecurity::first();
                 });
-
             }
 
-        break;
+            break;
 
         case 'seo':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_seo');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_seo', function () {
                     return SettingsSeo::with('ogimage')->first();
                 });
-
             }
 
-        break;
+            break;
 
         case 'newsletter':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_newsletter');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_newsletter', function () {
                     return NewsletterSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Blog settings
         case 'blog':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_blog');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_blog', function () {
                     return BlogSettings::first();
                 });
-
             }
 
-        // Appearance settings
+            // Appearance settings
         case 'appearance':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_appearance');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_appearance', function () {
                     return SettingsAppearance::with('placeholder')->first();
                 });
-
             }
 
-        break;
+            break;
 
         // Offline payment settings
         case 'offline_payment':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_offline_payment');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_offline_payment', function () {
                     return OfflinePaymentSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Paystack payment settings
         case 'paystack':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_paystack');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_paystack', function () {
                     return PaystackSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Cashfree payment settings
         case 'cashfree':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_cashfree');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_cashfree', function () {
                     return CashfreeSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Xendit payment settings
         case 'xendit':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_xendit');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_xendit', function () {
                     return XenditSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Projects settings
         case 'projects':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_projects');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_projects', function () {
                     return ProjectSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Flutterwave settings
         case 'flutterwave':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_flutterwave');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_flutterwave', function () {
                     return FlutterwaveSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Vnpay settings
         case 'vnpay':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_vnpay');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_vnpay', function () {
                     return VNPaySettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Paymob settings
         case 'paymob':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_paymob');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_paymob', function () {
                     return PaymobSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Mercadopago settings
         case 'mercadopago':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_mercadopago');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_mercadopago', function () {
                     return MercadopagoSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Paytabs settings
         case 'paytabs':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_paytabs');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_paytabs', function () {
                     return PaytabsSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Razorpay settings
         case 'razorpay':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_razorpay');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_razorpay', function () {
                     return RazorpaySettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Youcanpay settings
         case 'youcanpay':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_youcanpay');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_youcanpay', function () {
                     return YoucanpaySettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Nowpayments settings
         case 'nowpayments':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_nowpayments');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_nowpayments', function () {
                     return NowpaymentsSettings::with('logo')->first();
                 });
-
             }
 
-        break;
+            break;
 
         // Jazzcash settings
         case 'jazzcash':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_jazzcash');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_jazzcash', function () {
                     return JazzcashSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Mollie settings
         case 'mollie':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_mollie');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_mollie', function () {
                     return MollieSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Paytr settings
         case 'paytr':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_paytr');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_paytr', function () {
                     return PaytrSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Paypal settings
         case 'paypal':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_paypal');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_paypal', function () {
                     return PayPalSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Stripe settings
         case 'stripe':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_stripe');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_stripe', function () {
                     return StripeSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Epoint settings
         case 'epoint':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_epoint');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_epoint', function () {
                     return EpointSettings::first();
                 });
-
             }
 
-        break;
+            break;
 
         // Hero settings
         case 'hero':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_hero');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_hero', function () {
                     return SettingsHero::with(['background_large', 'background_medium', 'background_small'])->first();
                 });
-
             }
 
-        break;
+            break;
 
         // Live chat settings
         case 'live_chat':
 
             // Check if want to update cache
             if ($updateCache) {
-                
+
                 // Remove it from cache
                 Cache::forget('settings_live_chat');
-
             } else {
 
                 // Return data
                 return Cache::rememberForever('settings_live_chat', function () {
                     return SettingsLiveChat::first();
                 });
-
             }
 
-        break;
-        
+            break;
+
         default:
             # code...
             break;
@@ -897,7 +822,7 @@ function settings($settings, $updateCache = false)
 function youtubeId($link)
 {
     try {
-        
+
         // Validate link
         if (preg_match("#(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=v\/)[^&\n]+(?=\?)|(?<=v=)[^&\n]+|(?<=youtu.be/)[^&\n]+#", $link, $matches)) {
             return isset($matches[0]) ? $matches[0] : null;
@@ -905,7 +830,6 @@ function youtubeId($link)
 
         // Not found
         return null;
-
     } catch (\Throwable $th) {
         // throw $th;
         return null;
@@ -963,7 +887,7 @@ function delivery_time_trans($time)
 function acceptableRequirementsMimeTypes()
 {
     try {
-        
+
         // Get allowed requirement files extensions
         $allowed_extensions = settings('media')->requirements_file_allowed_extensions;
 
@@ -979,18 +903,16 @@ function acceptableRequirementsMimeTypes()
 
         // Loop through allowed extensions
         foreach ($extensions as $ext) {
-            
+
             // Get extension mime type
             $mime_type = $mimes->getMimeType($ext);
 
             // Add mime type to list
             array_push($accepted, $mime_type);
-
         }
 
         // Convert this accepted array to string
         return implode(', ', $accepted);
-
     } catch (\Throwable $th) {
         throw $th;
     }
@@ -1005,7 +927,7 @@ function acceptableRequirementsMimeTypes()
 function getWebsiteFirstLetter($domain)
 {
     try {
-        
+
         // Remove www from domain
         $withoutWWW    = str_replace("www.", "", $domain);
 
@@ -1017,12 +939,10 @@ function getWebsiteFirstLetter($domain)
 
         // Return firt letter
         return $firstLetter;
-
     } catch (\Throwable $th) {
         // Something went wrong
         // Return default letter
         return "A";
-
     }
 }
 
@@ -1036,22 +956,21 @@ function getWebsiteFirstLetter($domain)
 function safeEncrypt($data)
 {
     $output         = false;
-  
+
     $encrypt_method = 'AES-256-CBC';
     $secret_key     = 'WU9AHAl#Ra--WWre';
     $secret_iv      = 'M43Sy96JuvJ5N6jY';
-  
+
     // hash
     $key            = hash('sha256', $secret_key);
-  
+
     // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
     $iv             = substr(hash('sha256', $secret_iv), 0, 16);
-  
+
     $output         = openssl_encrypt($data, $encrypt_method, $key, 0, $iv);
     $output         = base64_encode($output);
 
     return $output;
-
 }
 
 
@@ -1064,17 +983,17 @@ function safeEncrypt($data)
 function safeDecrypt($encrypted)
 {
     $output         = false;
-  
+
     $encrypt_method = 'AES-256-CBC';
     $secret_key     = 'WU9AHAl#Ra--WWre';
     $secret_iv      = 'M43Sy96JuvJ5N6jY';
-  
+
     // hash
     $key            = hash('sha256', $secret_key);
-  
+
     // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
     $iv             = substr(hash('sha256', $secret_iv), 0, 16);
-  
+
     $output         = openssl_decrypt(base64_decode($encrypted), $encrypt_method, $key, 0, $iv);
 
     return $output;
@@ -1091,7 +1010,7 @@ function supported_languages($clear_cache = false)
 {
     // Check if want to clear cache
     if ($clear_cache) {
-        
+
         // Clear old cache
         Cache::forget('supported_languages');
 
@@ -1099,14 +1018,12 @@ function supported_languages($clear_cache = false)
         return Cache::rememberForever('supported_languages', function () {
             return Language::where('is_active', true)->orderBy('name', 'asc')->get();
         });
-
     } else {
 
         // Return data
         return Cache::rememberForever('supported_languages', function () {
             return Language::where('is_active', true)->orderBy('name', 'asc')->get();
         });
-
     }
 }
 
@@ -1119,9 +1036,8 @@ function supported_languages($clear_cache = false)
 function clean($text)
 {
     try {
-        
-        return \Purify::clean($text);
 
+        return \Purify::clean($text);
     } catch (\Throwable $th) {
         return $text;
     }
@@ -1134,15 +1050,16 @@ function clean($text)
  * @param integer $precision
  * @return string
  */
-function human_filesize($size, $precision = 2) {
-    $units = array('B','KB','MB','GB','TB','PB','EB','ZB','YB');
+function human_filesize($size, $precision = 2)
+{
+    $units = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
     $step  = 1024;
     $i     = 0;
     while (($size / $step) > 0.9) {
         $size = $size / $step;
         $i++;
     }
-    return round($size, $precision). ' ' .$units[$i];
+    return round($size, $precision) . ' ' . $units[$i];
 }
 
 
@@ -1163,10 +1080,9 @@ function setSeoTitle($title, $isDashboard = false)
 
     // Check if want title for dashboard
     if ($isDashboard) {
-        
+
         // Return title
         return $title . " $separator " . __('messages.t_dashboard');
-
     }
 
     // Return titlte for main pages
@@ -1207,7 +1123,7 @@ function advertisements($name = null, $updateCache = false)
 {
     // Check if want to update cache
     if ($updateCache) {
-        
+
         // Clear old cache
         Cache::forget('advertisements');
 
@@ -1215,7 +1131,6 @@ function advertisements($name = null, $updateCache = false)
         Cache::rememberForever('advertisements', function () {
             return Advertisement::first();
         });
-
     } else {
 
         // Get ads
@@ -1225,7 +1140,6 @@ function advertisements($name = null, $updateCache = false)
 
         // Return ad
         return $ads->$name;
-
     }
 }
 
@@ -1246,7 +1160,6 @@ function isInstalled()
 
             // Installation not finished yet
             return false;
-
         }
 
         // Connect db
@@ -1259,12 +1172,10 @@ function isInstalled()
 
         // Application is live
         return true;
-
     } catch (\Exception $e) {
-        
+
         // Not connected
         return false;
-
     }
 }
 
@@ -1275,7 +1186,7 @@ function isInstalled()
  * @param integer $ladj
  * @return array
  */
-function hex2hsl($RGB, $ladj = 0) 
+function hex2hsl($RGB, $ladj = 0)
 {
     //have we got an RGB array or a string of hex RGB values (assume it is valid!)
     if (!is_array($RGB)) {
@@ -1286,57 +1197,55 @@ function hex2hsl($RGB, $ladj = 0)
         $R = hexdec($hexstr[0] . $hexstr[1]);
         $G = hexdec($hexstr[2] . $hexstr[3]);
         $B = hexdec($hexstr[4] . $hexstr[5]);
-        $RGB = array($R,$G,$B);
+        $RGB = array($R, $G, $B);
     }
 
     // scale the RGB values to 0 to 1 (percentages)
-    $r   = $RGB[0]/255;
-    $g   = $RGB[1]/255;
-    $b   = $RGB[2]/255;
-    $max = max( $r, $g, $b );
-    $min = min( $r, $g, $b );
+    $r   = $RGB[0] / 255;
+    $g   = $RGB[1] / 255;
+    $b   = $RGB[2] / 255;
+    $max = max($r, $g, $b);
+    $min = min($r, $g, $b);
 
     // lightness calculation. 0 to 1 value, scale to 0 to 100% at end
-    $l   = ( $max + $min ) / 2;
-            
+    $l   = ($max + $min) / 2;
+
     // saturation calculation. Also 0 to 1, scale to percent at end.
     $d   = $max - $min;
-    if( $d == 0 ){
+    if ($d == 0) {
 
         // achromatic (grey) so hue and saturation both zero
-        $h = $s = 0; 
-
+        $h = $s = 0;
     } else {
 
-        $s = $d / ( 1 - abs( (2 * $l) - 1 ) );
+        $s = $d / (1 - abs((2 * $l) - 1));
         // hue (if not grey) This is being calculated directly in degrees (0 to 360)
-        switch( $max ){
+        switch ($max) {
             case $r:
-                $h = 60 * fmod( ( ( $g - $b ) / $d ), 6 );
+                $h = 60 * fmod((($g - $b) / $d), 6);
                 if ($b > $g) { //will have given a negative value for $h
                     $h += 360;
                 }
                 break;
             case $g:
-                $h = 60 * ( ( $b - $r ) / $d + 2 );
+                $h = 60 * (($b - $r) / $d + 2);
                 break;
             case $b:
-                $h = 60 * ( ( $r - $g ) / $d + 4 );
+                $h = 60 * (($r - $g) / $d + 4);
                 break;
         }
-
     }
 
     // make any lightness adjustment required
     if ($ladj > 0) {
-        $l += (1 - $l) * $ladj/100;
+        $l += (1 - $l) * $ladj / 100;
     } elseif ($ladj < 0) {
-        $l += $l * $ladj/100;
+        $l += $l * $ladj / 100;
     }
 
     //put the values in an array and scale the saturation and lightness to be percentages
-    $hsl = array( round( $h), round( $s*100), round( $l*100) );
-    
+    $hsl = array(round($h), round($s * 100), round($l * 100));
+
     // Return array
     return $hsl;
 }
@@ -1351,17 +1260,15 @@ function hex2hsl($RGB, $ladj = 0)
 function _price($amount)
 {
     try {
-        
+
         // Get currency settings
         $currency = settings('currency');
 
         return money($amount, $currency->code, true);
-
     } catch (\Throwable $th) {
-        
+
         // Something went wrong
         return $amount;
-
     }
 }
 
@@ -1384,14 +1291,13 @@ function countryFlag($code)
 function is_localhost()
 {
     try {
-        
-        // check 
+
+        // check
         if (isset($_SERVER['REMOTE_ADDR'])) {
             return in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1')) ? true : false;
         }
 
         return true;
-
     } catch (\Throwable $th) {
         return true;
     }
@@ -1410,7 +1316,7 @@ function compute_hash($secret, $payload)
     $base64Hash = base64_encode(hex2bin($hexHash));
     return $base64Hash;
 }
- 
+
 /**
  * Verify Hash
  *
@@ -1422,7 +1328,7 @@ function compute_hash($secret, $payload)
 function hash_is_valid($secret, $payload, $verify)
 {
     $computed_hash = compute_hash($secret, $payload);
-    return hash_equals($verify,$computed_hash);
+    return hash_equals($verify, $computed_hash);
 }
 
 /**
@@ -1467,16 +1373,16 @@ function generate_jazzcash_hash($payload)
 function category_title($type, $category)
 {
     try {
-        
+
         // Get current locale
         $locale = strtolower(app()->getLocale());
 
         // Check type
         if ($type === 'projects') {
-            
+
             // Check if category has translations
             if ($category->translation()->count()) {
-                
+
                 // Get category translations
                 $trans = $category->translation;
 
@@ -1485,36 +1391,28 @@ function category_title($type, $category)
 
                 // Loop through translations
                 foreach ($trans as $t) {
-                    
+
                     // Check if there is translation for current locale
                     if (strtolower($t->language_code) == $locale) {
-                        
+
                         // Set name
                         $name = $t->language_value;
                         break;
-
                     }
-
                 }
 
                 // Return category name
                 return $name;
-
             } else {
 
                 // Has no translations
                 return $category->name;
-
             }
-
-
         }
-
     } catch (\Throwable $th) {
 
         // Something went wrong
         return $category->name;
-
     }
 }
 
@@ -1526,9 +1424,9 @@ function category_title($type, $category)
  * @param int $limit
  * @return string
  */
-function add_3_dots($string, $limit, $repl = "...") 
+function add_3_dots($string, $limit, $repl = "...")
 {
-    if(strlen($string) > $limit) {
+    if (strlen($string) > $limit) {
         return mb_strimwidth($string, 0, $limit, "...");
     } else {
         return $string;
@@ -1542,7 +1440,7 @@ function add_3_dots($string, $limit, $repl = "...")
  * @param integer $maxRating
  * @return string
  */
-function render_star_rating($rating, $width = "1rem", $height = "1rem", $empty_color = "#a6a6a6", $full_color = "#ffb322") 
+function render_star_rating($rating, $width = "1rem", $height = "1rem", $empty_color = "#a6a6a6", $full_color = "#ffb322")
 {
 
     // Full star
@@ -1558,13 +1456,13 @@ function render_star_rating($rating, $width = "1rem", $height = "1rem", $empty_c
     $rating    = $rating <= 5 ? $rating : 5;
 
     $fullStarCount  = (int)$rating;
-    $halfStarCount  = ceil((float)$rating)-$fullStarCount;
-    $emptyStarCount = 5 -$fullStarCount-$halfStarCount;
+    $halfStarCount  = ceil((float)$rating) - $fullStarCount;
+    $emptyStarCount = 5 - $fullStarCount - $halfStarCount;
 
-    $html  = str_repeat($fullStar,$fullStarCount);
-    $html .= str_repeat($halfStar,$halfStarCount);
-    $html .= str_repeat($emptyStar,$emptyStarCount);
-    $html  = '<ul class="flex space-x-1 rtl:space-x-reverse justify-center">'.$html.'</ul>';
+    $html  = str_repeat($fullStar, $fullStarCount);
+    $html .= str_repeat($halfStar, $halfStarCount);
+    $html .= str_repeat($emptyStar, $emptyStarCount);
+    $html  = '<ul class="flex space-x-1 rtl:space-x-reverse justify-center">' . $html . '</ul>';
     return $html;
 }
 
@@ -1576,39 +1474,34 @@ function render_star_rating($rating, $width = "1rem", $height = "1rem", $empty_c
 function placeholder_img()
 {
     try {
-        
+
         // Get appearance settings
         $settings = settings('appearance');
 
         // Check if has placeholder image
         if ($settings->placeholder) {
-            
+
             // Get image path
             $path = public_path('storage/' . $settings->placeholder->file_folder . '/' . $settings->placeholder->uid . '.' . $settings->placeholder->file_extension);
 
             // Check if this image exists
             if (File::exists($path)) {
-                
+
                 // Return this image
                 return url('public/storage/' . $settings->placeholder->file_folder . '/' . $settings->placeholder->uid . '.' . $settings->placeholder->file_extension);
-
             }
 
             // If does not exists return default image
-            return url('public/storage/default/default-placeholder.jpg');
-
+            return url('public/storage/default/default-placeholder.svg');
         } else {
 
             // Not found
-            return url('public/storage/default/default-placeholder.jpg');
-
+            return url('public/storage/default/default-placeholder.svg');
         }
-
     } catch (\Throwable $th) {
-        
-        // Something went wrong, return default image
-        return url('public/storage/default/default-placeholder.jpg');
 
+        // Something went wrong, return default image
+        return url('public/storage/default/default-placeholder.svg');
     }
 }
 
@@ -1620,11 +1513,10 @@ function placeholder_img()
 function livewire_asset_path()
 {
     try {
-        
+
         $manifest          = json_decode(file_get_contents(base_path('vendor/livewire/livewire/dist/manifest.json')), true);
         $versionedFileName = $manifest['/livewire.js'];
         return url("public/vendor/livewire{$versionedFileName}");
-
     } catch (\Throwable $th) {
         return null;
     }
@@ -1636,7 +1528,8 @@ function livewire_asset_path()
  * @param mixed $value
  * @return mixed
  */
-function convertToNumber($value) {
+function convertToNumber($value)
+{
     if (is_numeric($value)) {
         $int   = (int)$value;
         $float = (float)$value;
@@ -1658,7 +1551,7 @@ function convertToNumber($value) {
 function readable_number($n)
 {
     try {
-        
+
         if ($n >= 0 && $n < 1000) {
             // 1 - 999
             $n_format = floor($n);
@@ -1680,9 +1573,8 @@ function readable_number($n)
             $n_format = floor($n / 1000000000000);
             $suffix = 'T+';
         }
-    
-        return !empty($n_format . $suffix) ? $n_format . $suffix : 0;
 
+        return !empty($n_format . $suffix) ? $n_format . $suffix : 0;
     } catch (\Throwable $th) {
         return $n;
     }
@@ -1697,27 +1589,25 @@ function readable_number($n)
 function current_theme()
 {
     try {
-        
+
         // Get appearance settings
         $settings = settings('appearance');
 
         // Check if theme switcher enabled
         if ($settings->is_theme_switcher) {
-            
+
             // Get cookies
             $cookie = request()->get('theme') ?? Cookie::get('default_theme');
 
             // Check cookie
             if ($cookie && $cookie === 'light') {
-                
+
                 // Light mode
                 return "light";
-
             } else if ($cookie && $cookie === 'dark') {
 
                 // Dark mode
                 return 'dark';
-
             } else {
 
                 // Return default theme
@@ -1726,22 +1616,17 @@ function current_theme()
                 } else {
                     return 'light';
                 }
-
             }
-
         } else {
 
             // Return default theme
             return $settings->default_theme;
-
         }
-
     } catch (\Throwable $th) {
-        
+
         // Something went wrong
         return 'light';
-
-    }    
+    }
 }
 
 
@@ -1750,18 +1635,15 @@ function current_theme()
  *
  * @return array
  */
-function pending_admin_notifications():array
+function pending_admin_notifications(): array
 {
     try {
-        
+
         // Count pending users
         $count_pending_users                  = User::where('status', 'pending')->count();
 
         // Count pending deposit transactions
         $count_pending_deposit_transactions   = DepositTransaction::where('payment_method', 'offline')->where('status', 'pending')->count();
-
-        // Count pending gigs
-        $count_pending_gigs                   = Gig::where('status', 'pending')->count();
 
         // Count pending projects
         $count_pending_projects               = Project::where('status', 'pending_approval')->count();
@@ -1777,9 +1659,6 @@ function pending_admin_notifications():array
 
         // Count pending refunds
         $count_pending_refunds                = Refund::where('is_seen_by_admin', false)->whereIn('status', ['pending', 'rejected_by_seller'])->where('request_admin_intervention', true)->count();
-
-        // Count reported gigs
-        $count_reported_gigs                  = ReportedGig::where('status', 'pending')->count();
 
         // Count reported projects
         $count_reported_projects              = ReportedProject::where('is_seen', false)->count();
@@ -1809,19 +1688,17 @@ function pending_admin_notifications():array
         $count_pending_offers                 = CustomOffer::where('admin_status', 'pending')->count();
 
         // Count total pending notifications
-        $total                                = convertToNumber($count_pending_users) + convertToNumber($count_pending_deposit_transactions) + convertToNumber($count_pending_gigs) + convertToNumber($count_pending_projects) + convertToNumber($count_pending_bids_subscriptions) + convertToNumber($count_reported_bids) + convertToNumber($count_pending_projects_subscriptions) + convertToNumber($count_pending_refunds) + convertToNumber($count_reported_gigs) + convertToNumber($count_reported_projects) + convertToNumber($count_reported_users) + convertToNumber($count_new_support_messages) + convertToNumber($count_pending_payouts) + convertToNumber($count_pending_portfolio_projects) + convertToNumber($count_pending_verifications) + convertToNumber($count_pending_checkout_payments) + convertToNumber($count_pending_bids) + convertToNumber($count_pending_offers);
+        $total                                = convertToNumber($count_pending_users) + convertToNumber($count_pending_deposit_transactions) + convertToNumber($count_pending_projects) + convertToNumber($count_pending_bids_subscriptions) + convertToNumber($count_reported_bids) + convertToNumber($count_pending_projects_subscriptions) + convertToNumber($count_pending_refunds) + convertToNumber($count_reported_projects) + convertToNumber($count_reported_users) + convertToNumber($count_new_support_messages) + convertToNumber($count_pending_payouts) + convertToNumber($count_pending_portfolio_projects) + convertToNumber($count_pending_verifications) + convertToNumber($count_pending_checkout_payments) + convertToNumber($count_pending_bids) + convertToNumber($count_pending_offers);
 
         // Return data
         return [
             'count_pending_users'                  => $count_pending_users,
-            'count_pending_deposit_transactions'   => $count_pending_deposit_transactions,
-            'count_pending_gigs'                   => $count_pending_gigs,
+            'count_pending_deposit_transactions'   => $count_pending_deposit_transActions,
             'count_pending_projects'               => $count_pending_projects,
             'count_pending_bids_subscriptions'     => $count_pending_bids_subscriptions,
             'count_reported_bids'                  => $count_reported_bids,
             'count_pending_projects_subscriptions' => $count_pending_projects_subscriptions,
             'count_pending_refunds'                => $count_pending_refunds,
-            'count_reported_gigs'                  => $count_reported_gigs,
             'count_reported_projects'              => $count_reported_projects,
             'count_reported_users'                 => $count_reported_users,
             'count_new_support_messages'           => $count_new_support_messages,
@@ -1833,20 +1710,17 @@ function pending_admin_notifications():array
             'count_pending_offers'                 => $count_pending_offers,
             'total'                                => convertToNumber($total)
         ];
-
     } catch (\Throwable $th) {
-        
+
         // Error
         return [
             'count_pending_users'                  => 0,
             'count_pending_deposit_transactions'   => 0,
-            'count_pending_gigs'                   => 0,
             'count_pending_projects'               => 0,
             'count_pending_bids_subscriptions'     => 0,
             'count_reported_bids'                  => 0,
             'count_pending_projects_subscriptions' => 0,
             'count_pending_refunds'                => 0,
-            'count_reported_gigs'                  => 0,
             'count_reported_projects'              => 0,
             'count_reported_users'                 => 0,
             'count_new_support_messages'           => 0,
@@ -1858,7 +1732,6 @@ function pending_admin_notifications():array
             'count_pending_offers'                 => 0,
             'total'                                => 0
         ];
-
     }
 }
 
@@ -1872,18 +1745,16 @@ function pending_admin_notifications():array
 function check_user_level($user_id = null)
 {
     try {
-        
+
         // Check if a specific user id is set
         if ($user_id) {
 
             // Get user
             $user = User::find($user_id);
-
         } else {
 
             // Get current user
             $user = auth()->user();
-
         }
 
         // Get current level
@@ -1894,29 +1765,27 @@ function check_user_level($user_id = null)
 
         // Check account type
         if ($account_type === 'seller') {
-            
+
             // Get sales
             $sales_count = (int)$user->sales()->count();
 
             // Get next level
             $next_level  = Level::where('id', '!=', $current_level->id)
-                                ->where('account_type', 'seller')
-                                ->where(function ($query) use ($sales_count) {
-                                    $query->where('seller_sales_min', '<=', $sales_count);
-                                    $query->where('seller_sales_max', '>=', $sales_count);
-                                })
-                                ->latest('id')
-                                ->first();
+                ->where('account_type', 'seller')
+                ->where(function ($query) use ($sales_count) {
+                    $query->where('seller_sales_min', '<=', $sales_count);
+                    $query->where('seller_sales_max', '>=', $sales_count);
+                })
+                ->latest('id')
+                ->first();
 
             // Check if there is a new level
             if ($next_level) {
-                
+
                 // Update user's current level
                 $user->level_id = $next_level->id;
                 $user->save();
-
             }
-
         } else {
 
             // count total purchases
@@ -1924,30 +1793,26 @@ function check_user_level($user_id = null)
 
             // Get next level
             $next_level      = Level::where('id', '!=', $current_level->id)
-                                    ->where('account_type', 'buyer')
-                                    ->where(function ($query) use ($purchases_count) {
-                                        $query->where('buyer_purchases_min', '<=', $purchases_count);
-                                        $query->where('buyer_purchases_max', '>=', $purchases_count);
-                                    })
-                                    ->latest('id')
-                                    ->first();
+                ->where('account_type', 'buyer')
+                ->where(function ($query) use ($purchases_count) {
+                    $query->where('buyer_purchases_min', '<=', $purchases_count);
+                    $query->where('buyer_purchases_max', '>=', $purchases_count);
+                })
+                ->latest('id')
+                ->first();
 
             // Check if there is a new level
             if ($next_level) {
-                
+
                 // Update user's current level
                 $user->level_id = $next_level->id;
                 $user->save();
-
             }
-
         }
-
     } catch (\Throwable $th) {
-        
+
         // Something went wrong
         return;
-
     }
 }
 
@@ -1962,28 +1827,25 @@ function check_user_level($user_id = null)
 function payment_gateway($slug, $update = false, $is_offline = false)
 {
     try {
-        
+
         // Check if want to update cache
         if ($update) {
-                
+
             // Check if offline payment gateway
             if ($is_offline) {
-                
+
                 // Remove it from cache
                 Cache::forget('offline_payment_gateway_settings_' . $slug);
-
             } else {
 
                 // Remove it from cache
                 Cache::forget('automatic_payment_gateway_settings_' . $slug);
-
             }
-
         } else {
 
             // Check if offline payment gateway
             if ($is_offline) {
-                
+
                 // Return data
                 return Cache::rememberForever('offline_payment_gateway_settings_' . $slug, function () use ($slug) {
 
@@ -1992,19 +1854,15 @@ function payment_gateway($slug, $update = false, $is_offline = false)
 
                     // Check if exists
                     if ($gateway) {
-                        
+
                         // Return settings
                         return $gateway;
-
                     } else {
 
                         // Not found, return an empty object
                         return null;
-
                     }
-
                 });
-
             }
 
             // Return data
@@ -2015,27 +1873,21 @@ function payment_gateway($slug, $update = false, $is_offline = false)
 
                 // Check if exists
                 if ($gateway) {
-                    
+
                     // Return settings
                     return $gateway;
-
                 } else {
 
                     // Not found, return an empty object
                     return null;
-
                 }
-
             });
-
         }
-
     } catch (\Throwable $th) {
-        
+
         // Not found, return an empty object
         return null;
-
-    }    
+    }
 }
 
 /**
@@ -2052,7 +1904,7 @@ function livewire_alert_params($message, $type = "success")
 
         // Success
         case 'success':
-            
+
             // Return success message settings
             return [
                 'text'             => $message,
@@ -2068,11 +1920,11 @@ function livewire_alert_params($message, $type = "success")
                 ]
             ];
 
-        break;
+            break;
 
         // Error
         case 'error':
-            
+
             // Return error message settings
             return [
                 'text'             => $message,
@@ -2088,8 +1940,8 @@ function livewire_alert_params($message, $type = "success")
                 ]
             ];
 
-        break;
-        
+            break;
+
         default:
             return [];
             break;
@@ -2101,10 +1953,10 @@ function livewire_alert_params($message, $type = "success")
  *
  * @return boolean
  */
-function is_hero_section() : bool
+function is_hero_section(): bool
 {
     try {
-        
+
         // Set a default value
         $enabled = false;
 
@@ -2115,13 +1967,11 @@ function is_hero_section() : bool
 
         // Return value
         return $enabled;
-
     } catch (\Throwable $th) {
-        
+
         // Return a default value
         return false;
-
-    }    
+    }
 }
 
 /**
@@ -2129,7 +1979,7 @@ function is_hero_section() : bool
  *
  * @return integer
  */
-function getTextIndentValue() : int
+function getTextIndentValue(): int
 {
     // Get general settings
     $settings     = settings('general');
@@ -2142,10 +1992,9 @@ function getTextIndentValue() : int
 
     // Check if language exists
     if ($language) {
-        
+
         // Return the value of indentation
         return isset($language->params['i_will_indentation']) ? $language->params['i_will_indentation'] : 32;
-
     }
 
     // Not found, return default value
@@ -2158,29 +2007,26 @@ function getTextIndentValue() : int
  * @param string $string
  * @return string
  */
-function generate_slug($string) : string 
+function generate_slug($string): string
 {
     try {
-        
+
         // Set slug
         $slug = Str::slug($string);
 
         // Check if slug not empty
         if (!empty($slug)) {
-            
+
             // Return it
             return $slug;
-
         }
 
         // Something went wrong
         return strtolower(uid());
-
     } catch (\Throwable $th) {
-        
+
         // Something wrong, return a unique id
         return Str::uuid()->toString();
-
     }
 }
 
@@ -2192,15 +2038,14 @@ function generate_slug($string) : string
 function unseen_messages_count(): mixed
 {
     try {
-    
+
         $unseen = 0;
         if (auth()->check()) {
             $unseen = \App\Models\ChMessage::where('to_id', auth()->id())
-                                                ->where('seen', false)
-                                                ->count();     
+                ->where('seen', false)
+                ->count();
         }
         return $unseen;
-
     } catch (\Throwable $th) {
         return 0;
     }

@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Livewire\Main\Explore\Projects;
 
 use App\Models\Project;
 use Livewire\Component;
-use App\Models\Category;
+use App\Models\ProjectCategory;
 use WireUi\Traits\Actions;
 use App\Models\ProjectSkill;
 use Livewire\Attributes\Layout;
@@ -26,10 +27,10 @@ class CategoryComponent extends Component
         // Check if this section enabled
         if (!settings('projects')->is_enabled) {
             return redirect('/');
-        }   
+        }
 
         // Get category
-        $category       = Category::where('slug', $category_slug)->withTranslation()->firstOrFail();
+        $category       = ProjectCategory::where('slug', $category_slug)->firstOrFail();
 
         // Set category
         $this->category = $category;
@@ -48,26 +49,26 @@ class CategoryComponent extends Component
         $separator   = settings('general')->separator;
         $title       = category_title('projects', $this->category) . " $separator " . settings('general')->title;
         $description = $this->category->seo_desciption ?? settings('seo')->description;
-        $ogimage     = src( $this->category->ogimage ?? settings('seo')->ogimage );
+        $ogimage     = src($this->category->ogimage ?? settings('seo')->ogimage);
 
-        $this->seo()->setTitle( $title );
-        $this->seo()->setDescription( $description );
-        $this->seo()->setCanonical( url()->current() );
-        $this->seo()->opengraph()->setTitle( $title );
-        $this->seo()->opengraph()->setDescription( $description );
-        $this->seo()->opengraph()->setUrl( url()->current() );
+        $this->seo()->setTitle($title);
+        $this->seo()->setDescription($description);
+        $this->seo()->setCanonical(url()->current());
+        $this->seo()->opengraph()->setTitle($title);
+        $this->seo()->opengraph()->setDescription($description);
+        $this->seo()->opengraph()->setUrl(url()->current());
         $this->seo()->opengraph()->setType('website');
-        $this->seo()->opengraph()->addImage( $ogimage );
-        $this->seo()->twitter()->setImage( $ogimage );
-        $this->seo()->twitter()->setUrl( url()->current() );
-        $this->seo()->twitter()->setSite( "@" . settings('seo')->twitter_username );
+        $this->seo()->opengraph()->addImage($ogimage);
+        $this->seo()->twitter()->setImage($ogimage);
+        $this->seo()->twitter()->setUrl(url()->current());
+        $this->seo()->twitter()->setSite("@" . settings('seo')->twitter_username);
         $this->seo()->twitter()->addValue('card', 'summary_large_image');
         $this->seo()->metatags()->addMeta('fb:page_id', settings('seo')->facebook_page_id, 'property');
         $this->seo()->metatags()->addMeta('fb:app_id', settings('seo')->facebook_app_id, 'property');
         $this->seo()->metatags()->addMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'name');
-        $this->seo()->jsonLd()->setTitle( $title );
-        $this->seo()->jsonLd()->setDescription( $description );
-        $this->seo()->jsonLd()->setUrl( url()->current() );
+        $this->seo()->jsonLd()->setTitle($title);
+        $this->seo()->jsonLd()->setDescription($description);
+        $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
         return view('livewire.main.explore.projects.category', [
@@ -75,7 +76,7 @@ class CategoryComponent extends Component
             'projects' => $this->projects
         ]);
     }
-    
+
 
     /**
      * Get projects
@@ -89,9 +90,9 @@ class CategoryComponent extends Component
 
         // Return projects
         return Project::whereIn('status', $status)
-                        ->where('category_id', $this->category->id)
-                        ->latest()
-                        ->paginate(40);
+            ->where('category_id', $this->category->id)
+            ->latest()
+            ->paginate(40);
     }
 
 
@@ -104,5 +105,4 @@ class CategoryComponent extends Component
     {
         return ProjectSkill::where('category_id', $this->category->id)->get();
     }
-    
 }

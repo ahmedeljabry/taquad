@@ -40,7 +40,7 @@ class DatabaseComponent extends Component
      *
      * @return Illuminate\View\View
      */
-    #[Layout('components.layouts.install')] 
+    #[Layout('components.layouts.install')]
     public function render()
     {
         // SEO
@@ -58,7 +58,7 @@ class DatabaseComponent extends Component
     public function next()
     {
         try {
-            
+
             // Clear database cache
             DB::purge();
 
@@ -70,9 +70,8 @@ class DatabaseComponent extends Component
 
             // Set password if exists
             if ($this->password) {
-                
-                Config::write('database.connections.mysql.password', $this->password);
 
+                Config::write('database.connections.mysql.password', $this->password);
             }
 
             // Clear config
@@ -82,13 +81,13 @@ class DatabaseComponent extends Component
             DB::connection()->getPDO();
 
             // Check connection
-            if(DB::connection()->getDatabaseName()) {
-                
+            if (DB::connection()->getDatabaseName()) {
+
                 // Run migration
-                Artisan::call('migrate', [ '--force' => true ]);
+                Artisan::call('migrate', ['--force' => true]);
 
                 // After that we need to run seeder
-                Artisan::call('db:seed', [ '--force' => true ]);
+                Artisan::call('db:seed', ['--force' => true]);
 
                 // Edit session.php
                 Config::write('session.driver', 'database');
@@ -98,18 +97,14 @@ class DatabaseComponent extends Component
 
                 // Connected, create new admin account
                 return redirect('install/administrator');
-
             } else {
-                
+
                 // Not connected
                 $this->alert(
                     'error',
                     "We are unable to connect to this database. Please try again"
                 );
-
             }
-
-
         } catch (\Throwable $th) {
             throw $th;
             // Not connected
@@ -117,8 +112,6 @@ class DatabaseComponent extends Component
                 'error',
                 $th->getMessage()
             );
-
         }
     }
-    
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Projects\Skills;
 
 use Livewire\Component;
@@ -22,9 +23,9 @@ class SkillsComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_skills'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
-        
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_skills'), true));
+        $this->seo()->setDescription(settings('seo')->description);
+
         return view('livewire.admin.projects.skills.skills', [
             'skills' => $this->skills
         ]);
@@ -39,11 +40,11 @@ class SkillsComponent extends Component
     public function getSkillsProperty()
     {
         return ProjectSkill::whereHas('category')
-                            ->with('category')
-                            ->latest('id')
-                            ->paginate(40);
+            ->with('category')
+            ->latest('id')
+            ->paginate(40);
     }
-    
+
 
     /**
      * Delete skill
@@ -54,7 +55,7 @@ class SkillsComponent extends Component
     public function delete($id)
     {
         try {
-            
+
             // Get skill
             $skill = ProjectSkill::where('id', $id)->firstOrFail();
 
@@ -66,21 +67,18 @@ class SkillsComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
-
 }

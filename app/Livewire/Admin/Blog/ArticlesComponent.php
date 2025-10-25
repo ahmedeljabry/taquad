@@ -22,8 +22,8 @@ class ArticlesComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_articles'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_articles'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.blog.articles', [
             'articles' => $this->articles
@@ -39,10 +39,10 @@ class ArticlesComponent extends Component
     public function getArticlesProperty()
     {
         return Article::latest()
-                    ->withTranslation()
-                    ->withCount('comments')
-                    ->with('image')
-                    ->paginate(40); 
+            ->withTranslation()
+            ->withCount('comments')
+            ->with('image')
+            ->paginate(40);
     }
 
 
@@ -74,10 +74,9 @@ class ArticlesComponent extends Component
 
         // Success
         $this->alert(
-            'success', 
-            __('messages.t_success'), 
-            livewire_alert_params( __('messages.t_toast_operation_success') )
+            'success',
+            __('messages.t_success'),
+            livewire_alert_params(__('messages.t_toast_operation_success'))
         );
     }
-    
 }

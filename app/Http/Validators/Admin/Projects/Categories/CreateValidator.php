@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Validator;
 
 class CreateValidator
 {
-    
+
     /**
      * Validate form
      *

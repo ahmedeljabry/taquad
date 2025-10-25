@@ -42,8 +42,53 @@ class BidValidator
                 'bid_description' => $request->bid_description
             ];
 
+            $validator = Validator::make($data, $rules, $messages);
+
+            $validator->after(function ($validator) use ($request) {
+                if (($request->bid_plan_type ?? 'fixed') !== 'milestone') {
+                    return;
+                }
+
+                $milestones = collect($request->bid_milestones ?? [])
+                    ->map(function ($item) {
+                        return [
+                            'title'  => trim($item['title'] ?? ''),
+                            'amount' => trim($item['amount'] ?? ''),
+                            'due_in' => trim($item['due_in'] ?? ''),
+                        ];
+                    })
+                    ->filter(function ($item) {
+                        return $item['title'] !== '' || $item['amount'] !== '' || $item['due_in'] !== '';
+                    });
+
+                if ($milestones->isEmpty()) {
+                    $validator->errors()->add('bid_milestones', __('messages.t_bid_milestones_required'));
+                    return;
+                }
+
+                $hasError = false;
+
+                foreach ($milestones as $milestone) {
+                    if ($milestone['title'] === '' || $milestone['amount'] === '' || $milestone['due_in'] === '') {
+                        $validator->errors()->add('bid_milestones', __('messages.t_bid_milestones_required'));
+                        $hasError = true;
+                        break;
+                    }
+
+                    if (!is_numeric(str_replace(',', '', $milestone['amount']))) {
+                        $validator->errors()->add('bid_milestones', __('messages.t_validator_numeric'));
+                        $hasError = true;
+                        break;
+                    }
+                }
+
+                if (!$hasError) {
+                    $request->bid_milestones = $milestones->values()->toArray();
+                }
+            });
+
             // Validate data
-            Validator::make($data, $rules, $messages)->validate();
+            $validator->validate();
 
             // Reset validation
             $request->resetValidation();

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Main\Auth;
 
 use App\Models\User;
@@ -8,6 +9,7 @@ use WireUi\Traits\Actions;
 use Livewire\Attributes\Layout;
 use App\Models\EmailVerification;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Level;
 use App\Notifications\Admin\PendingUser;
 use App\Notifications\User\Everyone\Welcome;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
@@ -18,12 +20,14 @@ use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
 class RegisterComponent extends Component
 {
     use SEOToolsTrait, LivewireAlert, Actions;
-    
+
     public $email;
     public $username;
     public $password;
     public $fullname;
     public $recaptcha_token;
+    public $account_type = 'buyer';
+    public $intent;
 
     public $social_grid;
 
@@ -67,7 +71,6 @@ class RegisterComponent extends Component
 
         // Set grid
         $this->social_grid = $social_grid_counter;
-
     }
 
 
@@ -83,26 +86,26 @@ class RegisterComponent extends Component
         $separator   = settings('general')->separator;
         $title       = __('messages.t_signup') . " $separator " . settings('general')->title;
         $description = settings('seo')->description;
-        $ogimage     = src( settings('seo')->ogimage );
+        $ogimage     = src(settings('seo')->ogimage);
 
-        $this->seo()->setTitle( $title );
-        $this->seo()->setDescription( $description );
-        $this->seo()->setCanonical( url()->current() );
-        $this->seo()->opengraph()->setTitle( $title );
-        $this->seo()->opengraph()->setDescription( $description );
-        $this->seo()->opengraph()->setUrl( url()->current() );
+        $this->seo()->setTitle($title);
+        $this->seo()->setDescription($description);
+        $this->seo()->setCanonical(url()->current());
+        $this->seo()->opengraph()->setTitle($title);
+        $this->seo()->opengraph()->setDescription($description);
+        $this->seo()->opengraph()->setUrl(url()->current());
         $this->seo()->opengraph()->setType('website');
-        $this->seo()->opengraph()->addImage( $ogimage );
-        $this->seo()->twitter()->setImage( $ogimage );
-        $this->seo()->twitter()->setUrl( url()->current() );
-        $this->seo()->twitter()->setSite( "@" . settings('seo')->twitter_username );
+        $this->seo()->opengraph()->addImage($ogimage);
+        $this->seo()->twitter()->setImage($ogimage);
+        $this->seo()->twitter()->setUrl(url()->current());
+        $this->seo()->twitter()->setSite("@" . settings('seo')->twitter_username);
         $this->seo()->twitter()->addValue('card', 'summary_large_image');
         $this->seo()->metatags()->addMeta('fb:page_id', settings('seo')->facebook_page_id, 'property');
         $this->seo()->metatags()->addMeta('fb:app_id', settings('seo')->facebook_app_id, 'property');
         $this->seo()->metatags()->addMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'name');
-        $this->seo()->jsonLd()->setTitle( $title );
-        $this->seo()->jsonLd()->setDescription( $description );
-        $this->seo()->jsonLd()->setUrl( url()->current() );
+        $this->seo()->jsonLd()->setTitle($title);
+        $this->seo()->jsonLd()->setDescription($description);
+        $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
         return view('livewire.main.auth.register');
@@ -118,9 +121,9 @@ class RegisterComponent extends Component
     public function register($form)
     {
         try {
-            
+
             // Verify form first
-            if (!is_array($form) || !isset($form['email']) || !isset($form['password']) || !isset($form['fullname']) || !isset($form['username'])) {
+            if (!is_array($form) || !isset($form['email']) || !isset($form['password']) || !isset($form['fullname']) || !isset($form['username']) || !isset($form['account_type'])) {
                 return;
             }
 
@@ -130,6 +133,8 @@ class RegisterComponent extends Component
             $this->fullname        = $form['fullname'];
             $this->username        = $form['username'];
             $this->recaptcha_token = $form['recaptcha_token'];
+            $this->account_type    = in_array($form['account_type'], ['buyer', 'seller']) ? $form['account_type'] : 'buyer';
+            $this->intent          = $form['intent'] ?? null;
 
             // Validate form
             RegisterValidator::validate($this);
@@ -145,15 +150,19 @@ class RegisterComponent extends Component
             $user->username = clean($this->username);
             $user->password = Hash::make($this->password);
             $user->status   = $settings->verification_required ? 'pending' : 'active';
-            $user->level_id = 1;
+            $user->account_type = $this->account_type;
+
+            // Assign default level based on account type
+            $default_level = Level::where('account_type', $this->account_type)->oldest('id')->first();
+            $user->level_id = $default_level ? $default_level->id : 1;
             $user->save();
 
             // Check if user requires verification
             if ($settings->verification_required) {
-                
+
                 // Check if verification using email
                 if ($settings->verification_type === 'email') {
-                    
+
                     // Generate token
                     $token                    = uid(64);
 
@@ -161,25 +170,22 @@ class RegisterComponent extends Component
                     $verification             = new EmailVerification();
                     $verification->token      = $token;
                     $verification->email      = $this->email;
-                    $verification->expires_at = now()->addMinutes( $settings->verification_expiry_period );
+                    $verification->expires_at = now()->addMinutes($settings->verification_expiry_period);
                     $verification->save();
 
                     // Send notification to user
-                    $user->notify( (new VerifyEmail($verification))->locale(config('app.locale')) );
+                    $user->notify((new VerifyEmail($verification))->locale(config('app.locale')));
 
                     // Redirect to same page with success message
                     return redirect('auth/register')->with('success', __('messages.t_register_verification_email_sent', ['email' => $this->email, 'minutes' => $settings->verification_expiry_period]));
-
                 } else if ($settings->verification_type === 'admin') {
 
                     // Send notification to admin
-                    Admin::first()->notify( (new PendingUser($user))->locale(config('app.locale')) );
+                    Admin::first()->notify((new PendingUser($user))->locale(config('app.locale')));
 
                     // Redirect to same page with success
                     return redirect('auth/register')->with('success', __('messages.t_register_verification_admin_pending'));
-
                 }
-
             }
 
             // Send welcome message
@@ -188,29 +194,28 @@ class RegisterComponent extends Component
             // Now login
             auth()->login($user, true);
 
-            // Redirect to home
-            return redirect('/');
+            // Redirect according to role
+            $redirectTo = $this->account_type === 'seller' ? 'seller/home' : '/';
 
+            return redirect($redirectTo);
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
-            
+
             // Something went wrong
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
 }

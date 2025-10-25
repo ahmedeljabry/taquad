@@ -29,6 +29,7 @@ class SettingsGeneralTableSeeder extends Seeder
                 'header_announce_link' => NULL,
                 'is_language_switcher' => 1,
                 'default_language'     => 'en',
+                'free_plan_monthly_proposals' => 10,
             ),
         ));
         

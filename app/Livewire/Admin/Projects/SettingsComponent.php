@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Projects;
 
 use Livewire\Component;
@@ -61,8 +62,8 @@ class SettingsComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_projects_settings'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_projects_settings'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.projects.settings');
     }
@@ -76,10 +77,10 @@ class SettingsComponent extends Component
     public function update()
     {
         try {
-            
+
             // Validate form
             SettingsValidator::validate($this);
-            
+
             // Update settings
             ProjectSettings::where('id', 1)->update([
                 'is_enabled'                 => $this->is_enabled ? 1 : 0,
@@ -100,32 +101,28 @@ class SettingsComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
-    
 }

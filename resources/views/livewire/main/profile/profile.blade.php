@@ -24,34 +24,34 @@
         <div class="w-full">
 
             {{-- Profile header --}}
-            <div
-                class="bg-white shadow-sm shadow-gray-100 border border-slate-100 dark:border-transparent dark:shadow-none rounded-lg py-5 mb-6 dark:bg-zinc-800">
+            <div class="relative overflow-hidden rounded-3xl border border-transparent py-8 px-6 sm:px-10 mb-8 theme-surface">
+                <div class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-primary-500/12 via-transparent to-primary-700/10 dark:from-primary-500/20 dark:to-primary-700/15"></div>
 
-                <div
-                    class="mx-auto max-w-3xl px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
-                    <div class="flex items-center md:space-x-5 rtl:space-x-reverse flex-col md:flex-row">
+                <div class="mx-auto flex max-w-4xl flex-col gap-8 md:flex-row md:items-center md:justify-between">
+                    <div class="flex flex-col items-center gap-6 md:flex-row md:items-start md:gap-8">
 
                         {{-- Avatar --}}
-                        <div class="flex-shrink-0 mb-5 md:mb-0">
-                            <div class="inline-block relative">
+                        <div class="flex-shrink-0">
+                            <div class="relative inline-flex items-center justify-center">
+                                <span class="absolute inset-0 rounded-full bg-gradient-to-br from-primary-500/30 to-primary-500/0 blur-lg"></span>
                                 <img src="{{ placeholder_img() }}" data-src="{{ src($user->avatar) }}"
                                     alt="{{ $user->username }}"
-                                    class="inline-block w-16 h-16 rounded-full object-cover lazy">
+                                    class="relative inline-block h-24 w-24 rounded-full border-4 border-white object-cover shadow-lg shadow-primary-500/10 dark:border-zinc-800 lazy">
                             </div>
                         </div>
 
                         {{-- Name/Username --}}
-                        <div>
+                        <div class="text-center md:text-left space-y-3">
 
                             {{-- Firstname & Verification --}}
                             <div class="flex items-center mb-2 justify-center md:justify-normal">
 
                                 {{-- Firstname or username --}}
                                 @if ($user->fullname)
-                                    <h1 class="text-base font-extrabold text-gray-700 dark:text-zinc-100">
+                                    <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-zinc-50">
                                         {{ $user->fullname }}</h1>
                                 @else
-                                    <h1 class="text-base font-extrabold text-gray-700 dark:text-zinc-100">
+                                    <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-zinc-50">
                                         {{ $user->username }}</h1>
                                 @endif
 
@@ -342,30 +342,6 @@
                                 </li>
                             @endif
 
-                            {{-- Last delivery --}}
-                            @if ($user->account_type === 'seller' && $last_delivery)
-                                <li>
-                                    <div class="inline-flex items-start space-x-2 rtl:space-x-reverse">
-                                        <div>
-                                            <svg class="h-5 w-5" stroke="currentColor" fill="currentColor" stroke-width="0"
-                                                version="1" viewBox="0 0 48 48" enable-background="new 0 0 48 48"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path fill="#FFA000"
-                                                    d="M38,12H22l-4-4H8c-2.2,0-4,1.8-4,4v24c0,2.2,1.8,4,4,4h31c1.7,0,3-1.3,3-3V16C42,13.8,40.2,12,38,12z">
-                                                </path>
-                                                <path fill="#FFCA28"
-                                                    d="M42.2,18H15.3c-1.9,0-3.6,1.4-3.9,3.3L8,40h31.7c1.9,0,3.6-1.4,3.9-3.3l2.5-14C46.6,20.3,44.7,18,42.2,18z">
-                                                </path>
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <span>@lang('messages.t_last_delivery')</span>
-                                            {{ format_date($last_delivery) }}
-                                        </div>
-                                    </div>
-                                </li>
-                            @endif
-
                             {{-- Member since --}}
                             <li>
                                 <div class="inline-flex items-start space-x-2 rtl:space-x-reverse">
@@ -413,41 +389,6 @@
                         </ul>
 
                     </section>
-
-                    {{-- Seller loyalty --}}
-                    @if ($seller_loyalty)
-                        <div class="px-4 pt-8 flex items-center space-x-3 rtl:space-x-reverse">
-                            <div class="flex flex-shrink-0 h-16 items-center justify-center w-16">
-                                <img src="{{ url('public/img/svg/reward-icon.svg') }}" alt="{{ $user->username }}">
-                            </div>
-                            <div class="flex flex-col">
-                                <h5
-                                    class="flex items-center space-x-1 rtl:space-x-reverse text-[15px] font-medium text-zinc-700 dark:text-zinc-100">
-                                    <span>@lang('messages.t_people_keep_coming_back')</span>
-                                    <svg data-popover-target="popover-profile-seller-loyalty-{{ $user->uid }}"
-                                        data-popover-placement="bottom"
-                                        class="w-4.5 h-4.5 text-gray-500 dark:text-zinc-400 -mt-px" stroke="currentColor"
-                                        fill="currentColor" stroke-width="0" viewBox="0 0 512 512"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M256 56C145.72 56 56 145.72 56 256s89.72 200 200 200 200-89.72 200-200S366.28 56 256 56zm0 82a26 26 0 11-26 26 26 26 0 0126-26zm48 226h-88a16 16 0 010-32h28v-88h-16a16 16 0 010-32h32a16 16 0 0116 16v104h28a16 16 0 010 32z">
-                                        </path>
-                                    </svg>
-                                    <div data-popover id="popover-profile-seller-loyalty-{{ $user->uid }}" role="tooltip"
-                                        class="absolute z-50 invisible inline-block w-64 text-xs tracking-wide text-gray-600 transition-opacity duration-300 bg-gray-50 border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 leading-relaxed">
-                                        <div class="px-3 py-2">
-                                            <p>@lang('messages.t_people_keep_returning_to_username_tooltip', ['username' => $user->username])
-                                            </p>
-                                        </div>
-                                        <div data-popper-arrow></div>
-                                    </div>
-                                </h5>
-                                <p class="text-[13px] text-gray-400 dark:text-zinc-400 mt-1">
-                                    {{ $user->username }} @lang('messages.t_has_an_exceptional_number_of_repeat_buyers')
-                                </p>
-                            </div>
-                        </div>
-                    @endif
 
                     {{-- Verifications --}}
                     @if ($user->status === 'verified' || $user->email_verified_at)
@@ -935,153 +876,6 @@
                         </section>
                     @endif
 
-                    {{-- Recent services --}}
-                    @if ($gigs && $gigs->count())
-                        <section class="px-7 pt-8">
-
-                            {{-- Section title --}}
-                            <div class="mb-5">
-                                <h1 class="text-base font-extrabold text-zinc-800 tracking-wide dark:text-zinc-100">
-                                    @lang('messages.t_recent_gigs')</h1>
-                            </div>
-
-                            {{-- Section body --}}
-                            <div class="grid grid-cols-1 gap-4 lg:gap-8 divide-y dark:divide-zinc-700">
-                                @foreach ($gigs as $gig)
-                                    <div class="flex flex-col overflow-hidden [&:not(:first-child)]:pt-4 lg:[&:not(:first-child)]:pt-8"
-                                        wire:key="profile-gigs-{{ $gig->uid }}">
-                                        <div
-                                            class="flex flex-col grow md:flex-row md:space-x-6 md:space-y-0 rtl:space-x-reverse space-y-4 w-full">
-
-                                            {{-- Thumbnail --}}
-                                            <a href="{{ url('service', $gig->slug) }}"
-                                                class="flex-none md:w-32 h-min rounded-lg overflow-hidden">
-                                                <img src="{{ placeholder_img() }}" data-src="{{ src($gig->thumbnail) }}"
-                                                    alt="{{ $gig->title }}"
-                                                    class="rounded-lg object-cover w-full h-32 hover:origin-center hover:scale-110 hover:rotate-3 transition duration-500 lazy">
-                                            </a>
-
-                                            <div class="grow">
-
-                                                {{-- Title --}}
-                                                <a href="{{ url('service', $gig->slug) }}"
-                                                    class="block font-extrabold md:text-base text-black hover:text-gray-500 mb-2 dark:text-zinc-200 dark:hover:text-white">
-                                                    {{ $gig->title }}
-                                                </a>
-
-                                                {{-- Delivery time --}}
-                                                @if ($gig->delivery_time)
-                                                    <div
-                                                        class="flex items-center space-x-1 rtl:space-x-reverse text-xs mb-2 text-gray-500 dark:text-gray-400 tracking-wide font-medium lowercase">
-                                                        <svg class="w-4 h-4 text-gray-400 dark:text-gray-500 -mt-px"
-                                                            stroke="currentColor" fill="currentColor" stroke-width="0"
-                                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                            <path
-                                                                d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z">
-                                                            </path>
-                                                            <path
-                                                                d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z">
-                                                            </path>
-                                                        </svg>
-                                                        @if ($gig->delivery_time == 1)
-                                                            <span>{{ $gig->delivery_time }} @lang('messages.t_day_delivery')</span>
-                                                        @else
-                                                            <span>{{ $gig->delivery_time }} @lang('messages.t_days_delivery')</span>
-                                                        @endif
-                                                    </div>
-                                                @endif
-
-                                                {{-- Rating --}}
-                                                <div class="flex items-center space-x-2 rtl:space-x-reverse">
-                                                    {!! render_star_rating($gig->rating, "1rem", "1rem", "#cecece") !!}
-                                                    @if (convertToNumber($gig->rating) > 0)
-                                                        <div class="text-sm font-black text-amber-500">
-                                                            {{ $gig->rating }}
-                                                        </div>
-                                                    @endif
-                                                </div>
-
-                                                {{-- Total reviews --}}
-                                                <div class="text-[13px] text-gray-400 font-normal lowercase mt-2 italic">
-                                                    ( {{ $gig->counter_reviews }} )
-                                                    @if ($gig->counter_reviews == 0 || $gig->counter_reviews == 1)
-                                                        @lang('messages.t_review')
-                                                    @else
-                                                        @lang('messages.t_reviews')
-                                                    @endif
-                                                </div>
-
-                                            </div>
-
-                                            <div class="flex-none md:w-48 space-y-4 md:ltr:pr-1 md:rtl:pl-1">
-
-                                                {{-- Price --}}
-                                                <div
-                                                    class="bg-gray-100 flex flex-col items-center justify-center p-3 rounded-lg dark:bg-zinc-700">
-                                                    <span
-                                                        class="text-xs uppercase tracking-wider font-extralight text-gray-400 dark:text-zinc-300 pb-1">@lang('messages.t_starting_at')</span>
-                                                    <span
-                                                        class="text-base font-medium tracking-wide text-zinc-600 dark:text-zinc-200">{{ money($gig->price, settings('currency')->code, true) }}</span>
-                                                </div>
-
-                                                {{-- Get started button --}}
-                                                <div class="flex flex-col">
-                                                    <a href="{{ url('service', $gig->slug) }}" type="button"
-                                                        class="inline-flex justify-center items-center space-x-2 rtl:space-x-reverse border font-semibold focus:outline-none px-3 py-2 leading-6 rounded border-gray-300 bg-white text-gray-800 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 hover:shadow focus:ring focus:ring-gray-500 focus:ring-opacity-25 active:bg-white active:border-white active:shadow-none text-sm dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:border-zinc-900 dark:hover:text-zinc-300">
-                                                        <svg class="opacity-50 inline-block w-4.5 h-4.5" stroke="currentColor"
-                                                            fill="currentColor" stroke-width="0" viewBox="0 0 512 512"
-                                                            xmlns="http://www.w3.org/2000/svg">
-                                                            <path
-                                                                d="M477.64 38.26a4.75 4.75 0 00-3.55-3.66c-58.57-14.32-193.9 36.71-267.22 110a317 317 0 00-35.63 42.1c-22.61-2-45.22-.33-64.49 8.07C52.38 218.7 36.55 281.14 32.14 308a9.64 9.64 0 0010.55 11.2l87.31-9.63a194.1 194.1 0 001.19 19.7 19.53 19.53 0 005.7 12L170.7 375a19.59 19.59 0 0012 5.7 193.53 193.53 0 0019.59 1.19l-9.58 87.2a9.65 9.65 0 0011.2 10.55c26.81-4.3 89.36-20.13 113.15-74.5 8.4-19.27 10.12-41.77 8.18-64.27a317.66 317.66 0 0042.21-35.64C441 232.05 491.74 99.74 477.64 38.26zM294.07 217.93a48 48 0 1167.86 0 47.95 47.95 0 01-67.86 0z">
-                                                            </path>
-                                                            <path
-                                                                d="M168.4 399.43c-5.48 5.49-14.27 7.63-24.85 9.46-23.77 4.05-44.76-16.49-40.49-40.52 1.63-9.11 6.45-21.88 9.45-24.88a4.37 4.37 0 00-3.65-7.45 60 60 0 00-35.13 17.12C50.22 376.69 48 464 48 464s87.36-2.22 110.87-25.75A59.69 59.69 0 00176 403.09c.37-4.18-4.72-6.67-7.6-3.66z">
-                                                            </path>
-                                                        </svg>
-                                                        <span>
-                                                            @lang('messages.t_get_started')
-                                                        </span>
-                                                    </a>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-
-                            {{-- Section footer --}}
-                            @if ($gigs->total() && $gigs->count() < $gigs->total())
-                                <div class="mt-6">
-                                    <button type="button" wire:click="loadMoreGigs" wire:loading.attr="disabled"
-                                        wire:target="loadMoreGigs"
-                                        class="space-x-2 rtl:space-x-reverse rounded border font-semibold enabled:focus:outline-none px-3 py-2 leading-5 text-sm border-indigo-200 bg-indigo-200 text-indigo-700 enabled:hover:text-indigo-700 enabled:hover:bg-indigo-300 enabled:hover:border-indigo-300 enabled:focus:ring enabled:focus:ring-indigo-500 enabled:focus:ring-opacity-50 active:bg-indigo-200 active:border-indigo-200 block w-full disabled:bg-zinc-200 disabled:border-zinc-200 disabled:text-zinc-600 disabled:hover:bg-zinc-200 disabled:cursor-not-allowed">
-
-                                        {{-- Loading indicator --}}
-                                        <div wire:loading wire:target="loadMoreGigs">
-                                            <svg role="status" class="inline w-4 h-4 text-gray-700 animate-spin"
-                                                viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                                                    fill="#E5E7EB" />
-                                                <path
-                                                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                                                    fill="currentColor" />
-                                            </svg>
-                                        </div>
-
-                                        {{-- Button text --}}
-                                        <div wire:loading.remove wire:target="loadMoreGigs">
-                                            {{ htmlspecialchars_decode(__('messages.t_load_more')) }}
-                                        </div>
-
-                                    </button>
-                                </div>
-                            @endif
-
-                        </section>
-                    @endif
 
                     {{-- Portfolio --}}
                     @php

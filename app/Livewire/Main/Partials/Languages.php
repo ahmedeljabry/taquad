@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Main\Partials;
 
 use Livewire\Component;
@@ -9,7 +10,7 @@ use Jantinnerezo\LivewireAlert\LivewireAlert;
 class Languages extends Component
 {
     use Actions, LivewireAlert;
-    
+
     public $default_language_name;
     public $default_language_code;
     public $default_country_code;
@@ -29,19 +30,17 @@ class Languages extends Component
 
         // Check if language exists
         if ($language) {
-            
+
             // Set default language
             $this->default_language_name = $language->name;
             $this->default_language_code = $language->language_code;
             $this->default_country_code  = $language->country_code;
-
         } else {
 
             // Not found, set default
             $this->default_language_name = "English";
             $this->default_language_code = "en";
             $this->default_country_code  = "us";
-
         }
     }
 
@@ -69,7 +68,7 @@ class Languages extends Component
 
         // Check if language exists
         if (!$language) {
-            
+
             // Not found
             $this->notification([
                 'title'       => __('messages.t_error'),
@@ -78,7 +77,6 @@ class Languages extends Component
             ]);
 
             return;
-
         }
 
         // Set default language
@@ -87,5 +85,4 @@ class Languages extends Component
         // Refresh the page
         $this->dispatch('refresh');
     }
-    
 }

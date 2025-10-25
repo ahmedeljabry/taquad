@@ -42,7 +42,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('no action')->onDelete('no action');
-            $table->foreign('category_id')->references('id')->on('projects_categories')->onUpdate('no action')->onDelete('no action');
+            $table->foreign('category_id')->references('id')->on('projects_categories')->cascadeOnDelete();
         });
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Users;
 
 use App\Models\User;
@@ -23,8 +24,8 @@ class UsersComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_users'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_users'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.users.users', [
             'users' => $this->users
@@ -40,9 +41,9 @@ class UsersComponent extends Component
     public function getUsersProperty()
     {
         return User::latest()
-        ->whereHas('level')
-        ->with(['level', 'avatar', 'level.badge'])
-        ->paginate(42);
+            ->whereHas('level')
+            ->with(['level', 'avatar', 'level.badge'])
+            ->paginate(42);
     }
 
 
@@ -93,7 +94,7 @@ class UsersComponent extends Component
         $user = User::where('id', $id)->where('status', 'pending')->firstOrFail();
 
         // Send notification to user
-        $user->notify( (new AccountActivated)->locale(config('app.locale')) );
+        $user->notify((new AccountActivated)->locale(config('app.locale')));
 
         // Activate account
         $user->status = "active";
@@ -106,5 +107,4 @@ class UsersComponent extends Component
             'icon'        => 'success'
         ]);
     }
-    
 }

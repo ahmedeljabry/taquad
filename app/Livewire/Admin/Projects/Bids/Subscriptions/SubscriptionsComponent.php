@@ -22,8 +22,8 @@ class SubscriptionsComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_bids_subscriptions'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_bids_subscriptions'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.projects.bids.subscriptions.subscriptions', [
             'subscriptions' => $this->subscriptions
@@ -51,13 +51,13 @@ class SubscriptionsComponent extends Component
     public function approve($id)
     {
         try {
-            
+
             // Get subscription
             $subscription         = ProjectBidUpgrade::where('id', $id)
-                                                    ->where('payment_method', 'offline')
-                                                    ->where('status', 'pending')
-                                                    ->with('bid')
-                                                    ->firstOrFail();
+                ->where('payment_method', 'offline')
+                ->where('status', 'pending')
+                ->with('bid')
+                ->firstOrFail();
 
             // Set bid
             $bid                  = $subscription->bid;
@@ -68,11 +68,10 @@ class SubscriptionsComponent extends Component
 
             // Update bid status
             if ($bid->status === 'pending_payment') {
-                
+
                 // Mark it as active
                 $bid->status = "active";
                 $bid->save();
-
             }
 
             // Success
@@ -84,16 +83,14 @@ class SubscriptionsComponent extends Component
 
             // close modal
             $this->dispatchBrowserEvent('close-modal', 'modal-approve-payment-container-' . str_replace('-', '_', $subscription->uid));
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->notification([
                 'title'       => __('messages.t_error'),
                 'description' => $th->getMessage(),
                 'icon'        => 'error'
             ]);
-
         }
     }
 
@@ -107,13 +104,13 @@ class SubscriptionsComponent extends Component
     public function reject($id)
     {
         try {
-            
+
             // Get subscription
             $subscription         = ProjectBidUpgrade::where('id', $id)
-                                                    ->where('payment_method', 'offline')
-                                                    ->where('status', 'pending')
-                                                    ->with('bid')
-                                                    ->firstOrFail();
+                ->where('payment_method', 'offline')
+                ->where('status', 'pending')
+                ->with('bid')
+                ->firstOrFail();
 
             // Set bid
             $bid                  = $subscription->bid;
@@ -131,16 +128,14 @@ class SubscriptionsComponent extends Component
 
             // close modal
             $this->dispatchBrowserEvent('close-modal', 'modal-reject-payment-container-' . str_replace('-', '_', $subscription->uid));
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->notification([
                 'title'       => __('messages.t_error'),
                 'description' => $th->getMessage(),
                 'icon'        => 'error'
             ]);
-
         }
     }
 
@@ -154,7 +149,7 @@ class SubscriptionsComponent extends Component
     public function delete($id)
     {
         try {
-            
+
             // Get subscription
             $subscription = ProjectBidUpgrade::where('id', $id)->firstOrFail();
 
@@ -163,19 +158,17 @@ class SubscriptionsComponent extends Component
 
             // Check if this subscription not paid yet
             if ($subscription->status === 'pending') {
-                
+
                 // We have to update bid first
                 if ($bid->status === 'pending_payment') {
-                    
+
                     // Update this bid
                     $bid->is_sponsored = false;
                     $bid->is_sealed    = false;
                     $bid->is_highlight = false;
                     $bid->status       = settings('bids')->auto_approve_bids ? 'active' : 'pending_approval';
                     $bid->save();
-
                 }
-
             }
 
             // Delete subscription
@@ -190,17 +183,14 @@ class SubscriptionsComponent extends Component
                 'description' => __('messages.t_toast_operation_success'),
                 'icon'        => 'success'
             ]);
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->notification([
                 'title'       => __('messages.t_error'),
                 'description' => $th->getMessage(),
                 'icon'        => 'error'
             ]);
-
         }
     }
-    
 }

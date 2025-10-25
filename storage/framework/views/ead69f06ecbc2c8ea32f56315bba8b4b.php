@@ -19,7 +19,7 @@
         <div class="relative bg-white rounded-lg shadow dark:bg-zinc-700">
             
             
-            <?php if($title ?? null): ?>
+            <!--[if BLOCK]><![endif]--><?php if($title ?? null): ?>
                 <div class="flex justify-between items-center py-3 px-6 rounded-t-lg border-b border-gray-100 dark:border-zinc-600">
                     <h3 class="text-sm font-semibold text-slate-600 dark:text-white tracking-wide pt-px">
                         <?php echo e($title, false); ?>
@@ -29,7 +29,7 @@
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>  
                     </button>
                 </div>
-            <?php endif; ?>
+            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
             
             <div class="p-6 space-y-6 w-full overflow-y-auto max-h-[calc(100vh-15rem)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-900 dark:scrollbar-track-zinc-600 relative">
@@ -38,12 +38,12 @@
             </div>
             
             
-            <?php if($footer ?? null): ?>
+            <!--[if BLOCK]><![endif]--><?php if($footer ?? null): ?>
                 <div class="bg-gray-50 dark:bg-zinc-700/40 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse rounded-b-md">
                     <?php echo e($footer, false); ?>
 
                 </div>
-            <?php endif; ?>
+            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
         </div>
     </div>

@@ -1,10 +1,10 @@
 <div>
-    <?php if(isset($jsPath)): ?>
+    <!--[if BLOCK]><![endif]--><?php if(isset($jsPath)): ?>
         <script><?php echo file_get_contents($jsPath); ?></script>
-    <?php endif; ?>
-    <?php if(isset($cssPath)): ?>
+    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+    <!--[if BLOCK]><![endif]--><?php if(isset($cssPath)): ?>
         <style><?php echo file_get_contents($cssPath); ?></style>
-    <?php endif; ?>
+    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
     <div
             x-data="LivewireUIModal()"
@@ -45,7 +45,7 @@
                     x-trap.noscroll.inert="show && showActiveComponent"
                     aria-modal="true"
             >
-                <?php $__empty_1 = true; $__currentLoopData = $components; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $component): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <!--[if BLOCK]><![endif]--><?php $__empty_1 = true; $__currentLoopData = $components; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $component): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <div x-show.immediate="activeComponent == '<?php echo e($id, false); ?>'" x-ref="<?php echo e($id, false); ?>" wire:key="<?php echo e($id, false); ?>">
                         <?php
 $__split = function ($name, $params = []) {
@@ -65,7 +65,7 @@ if (isset($__slots)) unset($__slots);
 ?>
                     </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                <?php endif; ?>
+                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
             </div>
         </div>
     </div>

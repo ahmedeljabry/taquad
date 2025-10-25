@@ -190,8 +190,8 @@
 						<p>
 							<span
 								class="block text-xl font-bold text-white uppercase">{{ __('messages.t_4_sec') }}</span>
-							<span
-								class="mt-1 block text-base text-gray-300">{{ __('messages.t_a_gig_is_bought_every') }}</span>
+						<span
+							class="mt-1 block text-base text-gray-300">{{ __('messages.t_active_monthly_visits') }}</span>
 						</p>
 
 						{{-- Transactions --}}

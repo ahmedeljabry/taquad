@@ -1,3 +1,4 @@
+@import "./theme.css";
 @import "filepond/dist/filepond.min.css";
 @import "flatpickr/dist/flatpickr.min.css";
 @import "quill/dist/quill.snow.css";

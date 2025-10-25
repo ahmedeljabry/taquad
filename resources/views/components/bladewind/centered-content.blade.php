@@ -17,7 +17,7 @@
         dd('refer to centered-content/docs for approved sizes. https://bladewindui.com/component/centered-content');
     }
 @endphp
-<div class="max-w-md max-w-lg max-w-2xl max-w-3xl max-w-4xl max-w-6xl max-w-7xl "></div>
+<div class="max-w-md max-w-lg max-w-2xl max-w-3xl max-w-4xl max-w-4xl max-w-7xl "></div>
 <div {{ $attributes->merge(['class' => "max-w-$width[$size] mx-auto"]) }}>
     {{ $slot }}
 </div>

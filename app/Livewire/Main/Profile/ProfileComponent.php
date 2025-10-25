@@ -1,12 +1,11 @@
 <?php
+
 namespace App\Livewire\Main\Profile;
 
-use App\Models\Gig;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Order;
 use Livewire\Component;
-use App\Models\OrderItem;
 use WireUi\Traits\Actions;
 use App\Models\CustomOffer;
 use Illuminate\Support\Str;
@@ -30,9 +29,6 @@ class ProfileComponent extends Component
 
     public $user;
     public $reason;
-    public $last_delivery;
-    public $gigs_per_page      = 6;
-    public $seller_loyalty     = false;
     public $user_rating        = [
         'value'   => 0,
         'total'   => 0,
@@ -63,70 +59,17 @@ class ProfileComponent extends Component
         // Set user
         $this->user          = $user;
 
-        // Set last delivery date
-        $this->last_delivery = $this->getLastDelivery();
-
-        // Check if people keep coming to this freelancer
-        if ($user->account_type === 'seller') {
-            
-            // Checking
-            $seller_loyalty               = Order::whereHas('items', function($query) use ($user) {
-                                                        return $query->where('owner_id', $user->id);
-                                                    })
-                                                    ->selectRaw('count(`buyer_id`) as `buyers`')
-                                                    ->groupBy('buyer_id')
-                                                    ->having('buyers', '>', 1)
-                                                    ->count();
-
-            // Set seller loyalty
-            $this->seller_loyalty         = $seller_loyalty >= 1 ? true : false;
-
-            // Get user rating value
-            $user_rating_value            = $user->rating();
-
-            // Set new user rating query
-            $user_rating_query            = $user->reviews()
-                                                    ->where('status', 'active')
-                                                    ->select('rating',DB::raw('count(id)  as total_reviews'))
-                                                    ->groupBy('rating')
-                                                    ->get()
-                                                    ->toArray();
-
-            // Count total reviews
-            $user_total_reviews           = array_sum( array_column($user_rating_query, 'total_reviews') );
-
-            // Get stars keys
-            $stars_5_key                  = array_search(5, array_column($user_rating_query, "rating"));
-            $stars_4_key                  = array_search(4, array_column($user_rating_query, "rating"));
-            $stars_3_key                  = array_search(3, array_column($user_rating_query, "rating"));
-            $stars_2_key                  = array_search(2, array_column($user_rating_query, "rating"));
-            $stars_1_key                  = array_search(1, array_column($user_rating_query, "rating"));
-
-            // Set user rating values
-            $this->user_rating['value']   = $user_rating_value + 0;
-            $this->user_rating['total']   = $user_total_reviews;
-
-            $this->user_rating['stars_5'] =  $stars_5_key !== false && isset($user_rating_query[$stars_5_key]) ? $user_rating_query[$stars_5_key]['total_reviews'] : 0;
-            $this->user_rating['stars_4'] =  $stars_4_key !== false && isset($user_rating_query[$stars_4_key]) ? $user_rating_query[$stars_4_key]['total_reviews'] : 0;
-            $this->user_rating['stars_3'] =  $stars_3_key !== false && isset($user_rating_query[$stars_3_key]) ? $user_rating_query[$stars_3_key]['total_reviews'] : 0;
-            $this->user_rating['stars_2'] =  $stars_2_key !== false && isset($user_rating_query[$stars_2_key]) ? $user_rating_query[$stars_2_key]['total_reviews'] : 0;
-            $this->user_rating['stars_1'] =  $stars_1_key !== false && isset($user_rating_query[$stars_1_key]) ? $user_rating_query[$stars_1_key]['total_reviews'] : 0;
-
-        }
-
         // Get availability
         $availability = $user->availability()
-                            ->where('expected_available_date', '<=', now())
-                            ->first();
+            ->where('expected_available_date', '<=', now())
+            ->first();
 
         // Check if user is unavailable
         if ($availability) {
-            
+
             // Delete it
             $availability->delete();
-
         }
-
     }
 
 
@@ -142,51 +85,30 @@ class ProfileComponent extends Component
         $separator   = settings('general')->separator;
         $title       = $this->user->username . " $separator " . settings('general')->title;
         $description = settings('seo')->description;
-        $ogimage     = src( settings('seo')->ogimage );
+        $ogimage     = src(settings('seo')->ogimage);
 
-        $this->seo()->setTitle( $title );
-        $this->seo()->setDescription( $description );
-        $this->seo()->setCanonical( url()->current() );
-        $this->seo()->opengraph()->setTitle( $title );
-        $this->seo()->opengraph()->setDescription( $description );
-        $this->seo()->opengraph()->setUrl( url()->current() );
+        $this->seo()->setTitle($title);
+        $this->seo()->setDescription($description);
+        $this->seo()->setCanonical(url()->current());
+        $this->seo()->opengraph()->setTitle($title);
+        $this->seo()->opengraph()->setDescription($description);
+        $this->seo()->opengraph()->setUrl(url()->current());
         $this->seo()->opengraph()->setType('website');
-        $this->seo()->opengraph()->addImage( $ogimage );
-        $this->seo()->twitter()->setImage( $ogimage );
-        $this->seo()->twitter()->setUrl( url()->current() );
-        $this->seo()->twitter()->setSite( "@" . settings('seo')->twitter_username );
+        $this->seo()->opengraph()->addImage($ogimage);
+        $this->seo()->twitter()->setImage($ogimage);
+        $this->seo()->twitter()->setUrl(url()->current());
+        $this->seo()->twitter()->setSite("@" . settings('seo')->twitter_username);
         $this->seo()->twitter()->addValue('card', 'summary_large_image');
         $this->seo()->metatags()->addMeta('fb:page_id', settings('seo')->facebook_page_id, 'property');
         $this->seo()->metatags()->addMeta('fb:app_id', settings('seo')->facebook_app_id, 'property');
         $this->seo()->metatags()->addMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'name');
-        $this->seo()->jsonLd()->setTitle( $title );
-        $this->seo()->jsonLd()->setDescription( $description );
-        $this->seo()->jsonLd()->setUrl( url()->current() );
+        $this->seo()->jsonLd()->setTitle($title);
+        $this->seo()->jsonLd()->setDescription($description);
+        $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
-        return view('livewire.main.profile.profile', [
-            'gigs' => $this->gigs
-        ]);
+        return view('livewire.main.profile.profile');
     }
-
-
-    /**
-     * Get user's gigs
-     *
-     * @return object
-     */
-    public function getGigsProperty()
-    {
-        return Gig::where('user_id', $this->user->id)
-                    ->active()
-                    ->latest()
-                    ->select('id', 'uid', 'title', 'slug', 'delivery_time', 'counter_reviews', 'price', 'rating', 'image_thumb_id')
-                    ->with(['thumbnail' => function($query) {
-                        return $query->select('id', 'file_folder', 'uid', 'file_extension');
-                    }])
-                    ->paginate($this->gigs_per_page);
-    }
-
 
     /**
      * Report this profile
@@ -199,7 +121,7 @@ class ProfileComponent extends Component
 
             // User must be online
             if (auth()->guest()) {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_info'),
@@ -208,7 +130,6 @@ class ProfileComponent extends Component
                 ]);
 
                 return;
-
             }
 
             // Can't report your own profile
@@ -230,7 +151,7 @@ class ProfileComponent extends Component
             );
 
             // Send notification to admin
-            Admin::first()->notify( (new ProfileReported($this->user))->locale(config('app.locale')) );
+            Admin::first()->notify((new ProfileReported($this->user))->locale(config('app.locale')));
 
             // Reset reason
             $this->reset('reason');
@@ -244,63 +165,28 @@ class ProfileComponent extends Component
                 'description' => __('messages.t_profile_has_been_successfully_reported'),
                 'icon'        => 'success'
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
-
-
-    /**
-     * Get last delivered item
-     *
-     * @return mixed
-     */
-    public function getLastDelivery()
-    {
-        // Get last delivery item
-        $item = OrderItem::where('owner_id', $this->user->id)->where('status', 'delivered')->latest()->first();
-
-        // Check if user has item
-        if ($item) {
-            return $item->delivered_at;
-        }
-
-        // No item found
-        return null;
-    }
-
-
-    /**
-     * Get next page of gigs
-     *
-     * @return void
-     */
-    public function loadMoreGigs()
-    {
-        $this->gigs_per_page += 6;
-    }
-
 
     /**
      * Send a custom offer to the freelancer
@@ -315,7 +201,7 @@ class ProfileComponent extends Component
             if (!auth()->check()) {
                 return;
             }
-            
+
             // Get settings
             $settings = settings('publish');
 
@@ -329,7 +215,7 @@ class ProfileComponent extends Component
 
             // User must be a freelancer
             if ($this->user->account_type !== 'seller') {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -338,12 +224,11 @@ class ProfileComponent extends Component
                 ]);
 
                 return;
-
             }
 
             // Let's check if user available
             if ($this->user->availability) {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -352,53 +237,44 @@ class ProfileComponent extends Component
                 ]);
 
                 return;
-
             }
 
             // Get commission from the freelancer
             if ($settings->custom_offers_commission_value_freelancer > 0) {
-                
+
                 // Check commission type
                 if ($settings->custom_offers_commission_type === 'percentage') {
-                    
+
                     // Set commission
                     $budget_freelancer_fee = ($settings->custom_offers_commission_value_freelancer / 100) * convertToNumber($this->budget);
-
                 } else {
 
                     // Set commission
                     $budget_freelancer_fee = $settings->custom_offers_commission_value_freelancer;
-
                 }
-
             } else {
 
                 // No commission
                 $budget_freelancer_fee = 0;
-
             }
 
             // Get commission from the buyer
             if ($settings->custom_offers_commission_value_buyer > 0) {
-                
+
                 // Check commission type
                 if ($settings->custom_offers_commission_type === 'percentage') {
-                    
+
                     // Set commission
                     $budget_buyer_fee = ($settings->custom_offers_commission_value_buyer / 100) * convertToNumber($this->budget);
-
                 } else {
 
                     // Set commission
                     $budget_buyer_fee = $settings->custom_offers_commission_value_buyer;
-
                 }
-
             } else {
 
                 // No commission
                 $budget_buyer_fee = 0;
-
             }
 
             // Create a new offer
@@ -418,10 +294,10 @@ class ProfileComponent extends Component
 
             // Upload attachments
             if (count($this->attachments)) {
-                
+
                 // Loop through attachments
                 foreach ($this->attachments as $file) {
-                    
+
                     // Set attachment unique id
                     $attachment_uid            = Str::uuid();
 
@@ -443,21 +319,18 @@ class ProfileComponent extends Component
                     $offer_attachment->file_extension     = $file->extension();
                     $offer_attachment->file_mime          = $file->getMimeType();
                     $offer_attachment->save();
-
                 }
-
             }
 
 
             // Send email to admin if offer pending approval
             if ($offer->admin_status === 'pending') {
-                
+
                 // Send the notification
                 Admin::first()->notify(new NewCustomOfferPending($offer));
 
                 // Success message
                 $success_msg = __('messages.t_ur_custom_offer_has_been_sent_pending_admin_approval');
-
             } else {
 
                 // Set success message
@@ -472,7 +345,6 @@ class ProfileComponent extends Component
 
                 // Send a new notification via email
                 $this->user->notify(new NewOfferReceived($offer));
-
             }
 
             // Close modal
@@ -480,29 +352,24 @@ class ProfileComponent extends Component
 
             // Redirect to offers
             return redirect('account/offers')->with('success', $success_msg);
-
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
-            
+
             // Something went wrong
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
-    
 }

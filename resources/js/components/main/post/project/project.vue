@@ -70,8 +70,36 @@
 
                         </div>
 
-                        <!-- Hint -->
-                        <p class="mt-1.5 text-[13px] tracking-wide text-gray-400 font-normal ltr:pl-1 rtl:pr-1" v-text="__('t_post_project_description_hint')"></p>
+                        <!-- Guidance -->
+                        <div class="mt-3 space-y-3 rounded-xl border border-gray-200/70 bg-white/70 p-4 text-[13px] leading-relaxed text-gray-600 shadow-sm dark:border-zinc-700/70 dark:bg-zinc-800/40 dark:text-zinc-200">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <span class="font-semibold text-gray-700 dark:text-zinc-50" v-text="__('t_project_description_guidance_title')"></span>
+                                <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-zinc-300">
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-primary-50 px-3 py-1 font-semibold text-primary-700 dark:bg-primary-500/15 dark:text-primary-200">
+                                        <i class="ph ph-textbox text-sm"></i>
+                                        {{ descriptionLength }} / 1200
+                                    </span>
+                                    <span :class="descriptionQuality.class">{{ descriptionQuality.label }}</span>
+                                </div>
+                            </div>
+                            <p class="text-[12px] text-gray-500 dark:text-zinc-300" v-text="__('t_post_project_description_hint')"></p>
+                            <ul class="grid gap-3 md:grid-cols-3">
+                                <li v-for="tip in descriptionTips" :key="tip.title" class="rounded-lg bg-gray-100/70 p-3 text-[12px] text-gray-600 dark:bg-zinc-900/60 dark:text-zinc-200">
+                                    <div class="flex items-center gap-2 font-semibold text-gray-700 dark:text-zinc-100">
+                                        <i :class="tip.icon" class="text-base text-primary-500"></i>
+                                        <span>{{ tip.title }}</span>
+                                    </div>
+                                    <p class="mt-1.5 text-[11px] leading-relaxed text-gray-500 dark:text-zinc-300">{{ tip.body }}</p>
+                                </li>
+                            </ul>
+                            <div class="flex flex-wrap items-center gap-3 text-xs">
+                                <button type="button" class="inline-flex items-center gap-2 rounded-full border border-primary-200 px-4 py-2 font-semibold text-primary-600 transition hover:bg-primary-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 dark:border-primary-500/40 dark:text-primary-300 dark:hover:bg-primary-500/10" @click="injectSampleOutline">
+                                    <i class="ph ph-magic-wand text-sm"></i>
+                                    {{ __('t_project_description_template_action') }}
+                                </button>
+                                <span class="text-gray-500 dark:text-zinc-300" v-text="__('t_project_description_template_hint')"></span>
+                            </div>
+                        </div>
 
                         <!-- Error -->
                         <template v-if="hasError('description')">
@@ -83,6 +111,97 @@
                             <p class="mt-1.5 text-[13px] tracking-wide text-red-600 font-medium ltr:pl-1 rtl:pr-1">{{ error.$message }}</p>
                         </div>
 
+                    </div>
+
+                    <!-- Attachments -->
+                    <div class="col-span-12">
+                        <div class="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-5 py-6 text-sm text-gray-600 dark:border-zinc-600 dark:bg-zinc-700/20 dark:text-zinc-200">
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800 dark:text-zinc-100" v-text="__('t_project_upload_brief_title')"></p>
+                                    <p class="mt-1 text-[12px] text-gray-500 dark:text-zinc-300" v-text="__('t_project_upload_brief_subtitle')"></p>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button type="button" class="inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-primary-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-60" @click="$refs.projectAttachments.click()" :disabled="attachmentLimitReached">
+                                        <i class="ph ph-paperclip text-sm"></i>
+                                        {{ __('t_add_attachment') }}
+                                    </button>
+                                    <input ref="projectAttachments" type="file" class="hidden" multiple @change="handleAttachmentChange">
+                                </div>
+                            </div>
+
+                            <p class="mt-3 text-[11px] text-gray-500 dark:text-zinc-400">
+                                {{ __('t_project_attachment_limit_hint', { max: attachmentLimit, size: attachmentMaxLabel }) }}
+                            </p>
+
+                            <ul v-if="form.attachments.length" class="mt-4 space-y-3">
+                                <li v-for="(file, index) in form.attachments" :key="`attachment-${index}-${file.name}`" class="flex items-center justify-between rounded-lg bg-white px-3 py-2 text-xs shadow-sm dark:bg-zinc-800">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50 text-primary-600 dark:bg-primary-500/15">
+                                            <i class="ph ph-file-text text-base"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold text-gray-700 dark:text-zinc-50">{{ file.name }}</p>
+                                            <p class="text-[11px] text-gray-500 dark:text-zinc-300">{{ formatBytes(file.size) }}</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="text-xs font-semibold text-red-500 hover:text-red-600 focus:outline-none" @click="removeAttachment(index)">
+                                        {{ __('t_remove') }}
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <div v-else class="mt-4 rounded-lg border border-dashed border-gray-200 bg-white/60 p-5 text-center text-xs text-gray-400 dark:border-zinc-600 dark:bg-zinc-800/40 dark:text-zinc-300">
+                                {{ __('t_project_no_attachments_placeholder') }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Discovery questions -->
+                    <div class="col-span-12">
+                        <div class="rounded-xl border border-gray-200 bg-white px-5 py-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800 dark:text-zinc-100" v-text="__('t_project_discovery_questions_title')"></p>
+                                    <p class="text-[12px] text-gray-500 dark:text-zinc-300">
+                                        {{ __('t_project_discovery_questions_subtitle', { max: 8, remaining: remainingQuestionSlots }) }}
+                                    </p>
+                                </div>
+                                <button type="button" class="inline-flex items-center gap-2 rounded-full border border-primary-200 px-4 py-2 text-xs font-semibold text-primary-600 transition hover:bg-primary-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-primary-500/40 dark:text-primary-300 dark:hover:bg-primary-500/10" @click="addQuestion" :disabled="questionLimitReached">
+                                    <i class="ph ph-plus-circle text-sm"></i>
+                                    {{ __('t_add_question') }}
+                                </button>
+                            </div>
+
+                            <p v-if="questionLimitReached" class="mt-3 text-[11px] font-semibold text-amber-600 dark:text-amber-400" v-text="__('t_question_limit_reached')"></p>
+
+                            <div v-if="form.questions.length" class="mt-4 space-y-3">
+                                <div v-for="(question, index) in form.questions" :key="`question-${index}`" class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm shadow-sm dark:border-zinc-700 dark:bg-zinc-800/60">
+                                    <div class="flex items-start gap-3">
+                                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100 text-primary-600 dark:bg-primary-500/15 dark:text-primary-300">
+                                            {{ index + 1 }}
+                                        </div>
+                                        <div class="flex-1 space-y-3">
+                                            <input type="text" v-model="question.text" :placeholder="__('t_question_placeholder')" class="w-full rounded-md border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-zinc-600 dark:bg-zinc-700/40 dark:text-zinc-100" maxlength="200" data-question-input>
+                                            <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-zinc-300">
+                                                <label class="inline-flex items-center gap-2">
+                                                    <input type="checkbox" v-model="question.is_required" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-zinc-600 dark:bg-zinc-700/40">
+                                                    <span>{{ __('t_mark_question_required') }}</span>
+                                                </label>
+                                                <button type="button" class="inline-flex items-center gap-1 text-red-500 hover:text-red-600 focus:outline-none" @click="removeQuestion(index)">
+                                                    <i class="ph ph-trash text-sm"></i>
+                                                    {{ __('t_remove') }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div v-else class="mt-4 rounded-lg border border-dashed border-gray-200 bg-white/60 p-5 text-center text-xs text-gray-400 dark:border-zinc-600 dark:bg-zinc-800/40 dark:text-zinc-300">
+                                {{ __('t_project_discovery_questions_empty') }}
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Category -->
@@ -361,7 +480,9 @@
                     price_max      : null,
                     skills         : [],
                     plans          : [],
-                    recaptcha_token: null
+                    recaptcha_token: null,
+                    attachments    : [],
+                    questions      : [],
                 },
                 total   : 0,
                 currency: __var_currency_code,
@@ -371,6 +492,8 @@
                 },
                 skills : [],
                 errors : [],
+                attachmentLimit    : 5,
+                attachmentMaxBytes : 26214400,
             }
         },
 
@@ -431,20 +554,195 @@
             // Get settings
             settings() {
                 return JSON.parse(this._settings);
+            },
+
+            descriptionLength() {
+                return this.form.description ? this.form.description.length : 0;
+            },
+
+            descriptionQuality() {
+                const length = this.descriptionLength;
+
+                if (!length) {
+                    return {
+                        label: this.__('t_project_description_quality_empty'),
+                        class: 'inline-flex items-center gap-1 font-semibold text-gray-400 dark:text-zinc-400'
+                    };
+                }
+
+                if (length >= 600) {
+                    return {
+                        label: this.__('t_project_description_quality_excellent'),
+                        class: 'inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400'
+                    };
+                }
+
+                if (length >= 320) {
+                    return {
+                        label: this.__('t_project_description_quality_good'),
+                        class: 'inline-flex items-center gap-1 font-semibold text-primary-600 dark:text-primary-300'
+                    };
+                }
+
+                return {
+                    label: this.__('t_project_description_quality_basic'),
+                    class: 'inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400'
+                };
+            },
+
+            descriptionTips() {
+                return [
+                    {
+                        title: this.__('t_project_description_tip_scope_title'),
+                        body : this.__('t_project_description_tip_scope_body'),
+                        icon : 'ph ph-target'
+                    },
+                    {
+                        title: this.__('t_project_description_tip_deliverables_title'),
+                        body : this.__('t_project_description_tip_deliverables_body'),
+                        icon : 'ph ph-check-circle'
+                    },
+                    {
+                        title: this.__('t_project_description_tip_timeline_title'),
+                        body : this.__('t_project_description_tip_timeline_body'),
+                        icon : 'ph ph-clock'
+                    }
+                ];
+            },
+
+            attachmentLimitReached() {
+                return this.form.attachments.length >= this.attachmentLimit;
+            },
+
+            attachmentMaxLabel() {
+                return this.formatBytes(this.attachmentMaxBytes);
+            },
+
+            questionLimitReached() {
+                return this.form.questions.length >= 8;
+            },
+
+            remainingQuestionSlots() {
+                return Math.max(0, 8 - this.form.questions.length);
             }
 
         },
 
         methods: {
 
+            formatBytes(bytes) {
+                if (!bytes) {
+                    return '0 KB';
+                }
+
+                const units = ['B', 'KB', 'MB', 'GB'];
+                const exponent = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+                const size = bytes / Math.pow(1024, exponent);
+
+                return `${size.toFixed(exponent === 0 ? 0 : 1)} ${units[exponent]}`;
+            },
+
+            handleAttachmentChange(event) {
+                const files = Array.from(event.target.files || []);
+
+                if (!files.length) {
+                    return;
+                }
+
+                const accepted = [];
+
+                files.forEach((file) => {
+                    if (this.form.attachments.length + accepted.length >= this.attachmentLimit) {
+                        this.toast.error(this.__('t_project_attachment_limit_reached', { max: this.attachmentLimit }), { timeout: 5000 });
+                        return;
+                    }
+
+                    if (file.size > this.attachmentMaxBytes) {
+                        this.toast.error(this.__('t_project_attachment_file_too_large', { file: file.name, size: this.attachmentMaxLabel }), { timeout: 5000 });
+                        return;
+                    }
+
+                    accepted.push(file);
+                });
+
+                if (accepted.length) {
+                    this.form.attachments = [...this.form.attachments, ...accepted];
+                }
+
+                if (this.$refs.projectAttachments) {
+                    this.$refs.projectAttachments.value = null;
+                }
+            },
+
+            removeAttachment(index) {
+                this.form.attachments.splice(index, 1);
+            },
+
+            addQuestion() {
+                if (this.questionLimitReached) {
+                    return;
+                }
+
+                this.form.questions.push({
+                    text       : '',
+                    is_required: false,
+                });
+
+                this.$nextTick(() => {
+                    const inputs = document.querySelectorAll('[data-question-input]');
+                    if (inputs && inputs.length) {
+                        const target = inputs[inputs.length - 1];
+                        if (target) {
+                            target.focus();
+                        }
+                    }
+                });
+            },
+
+            removeQuestion(index) {
+                this.form.questions.splice(index, 1);
+            },
+
+            getNormalizedQuestions() {
+                if (!Array.isArray(this.form.questions)) {
+                    return [];
+                }
+
+                return this.form.questions
+                    .map((question, index) => ({
+                        text       : (question.text || '').trim(),
+                        is_required: Boolean(question.is_required),
+                        position   : index + 1
+                    }))
+                    .filter((question) => question.text.length);
+            },
+
+            injectSampleOutline() {
+                const template = this.__('t_project_description_template');
+
+                if (!template) {
+                    return;
+                }
+
+                if (!this.form.description || !this.form.description.trim().length) {
+                    this.form.description = template;
+                } else if (!this.form.description.includes(template)) {
+                    this.form.description = `${this.form.description.trim()}\n\n${template}`;
+                }
+            },
+
             // Translation
-            __(key) {
+            __(key, replacements = {}) {
 
-                // Decode translations
                 const trans = JSON.parse(this.translations);
+                let value = trans[key] ?? key;
 
-                // Return translation value
-                return trans[key];
+                Object.entries(replacements).forEach(([token, replacement]) => {
+                    const pattern = new RegExp(`:${token}`, 'g');
+                    value = value.replace(pattern, replacement);
+                });
+
+                return value;
 
             },
 
@@ -567,6 +865,40 @@
 
                 }
 
+                if (this.form.attachments.length > this.attachmentLimit) {
+                    return {
+                        status : 'failed',
+                        message: this.__('t_project_attachment_limit_reached', { max: this.attachmentLimit }),
+                        id     : '#section-main-details'
+                    }
+                }
+
+                const oversizeAttachment = this.form.attachments.find(file => file.size > this.attachmentMaxBytes);
+                if (oversizeAttachment) {
+                    return {
+                        status : 'failed',
+                        message: this.__('t_project_attachment_file_too_large', { file: oversizeAttachment.name, size: this.attachmentMaxLabel }),
+                        id     : '#section-main-details'
+                    }
+                }
+
+                const invalidRequiredQuestion = this.form.questions.find(question => question.is_required && !(question.text || '').trim().length);
+                if (invalidRequiredQuestion) {
+                    return {
+                        status : 'failed',
+                        message: this.__('t_project_question_required_needs_text'),
+                        id     : '#section-main-details'
+                    }
+                }
+
+                if (this.getNormalizedQuestions().length > 8) {
+                    return {
+                        status : 'failed',
+                        message: this.__('t_question_limit_reached'),
+                        id     : '#section-main-details'
+                    }
+                }
+
                 // Success
                 return {
                     status: 'success'
@@ -602,21 +934,38 @@
 
                     }
 
-                    // Set data
-                    const data = {
-                        title          : _this.form.title,
-                        description    : _this.form.description,
-                        category       : _this.form.category,
-                        skills         : _this.form.skills,
-                        plans          : _this.form.plans,
-                        salary_type    : _this.form.salary_type,
-                        price_min      : _this.form.price_min,
-                        price_max      : _this.form.price_max,
-                        recaptcha_token: _this.form.recaptcha_token
-                    };
+                    const normalizedQuestions = _this.getNormalizedQuestions();
+
+                    const formData = new FormData();
+                    formData.append('title', _this.form.title);
+                    formData.append('description', _this.form.description);
+                    formData.append('category', _this.form.category);
+                    formData.append('salary_type', _this.form.salary_type);
+                    formData.append('price_min', _this.form.price_min);
+                    formData.append('price_max', _this.form.price_max);
+
+                    if (_this.form.recaptcha_token) {
+                        formData.append('recaptcha_token', _this.form.recaptcha_token);
+                    }
+
+                    _this.form.skills.forEach((skill) => formData.append('skills[]', skill));
+                    _this.form.plans.forEach((plan) => formData.append('plans[]', plan));
+
+                    normalizedQuestions.forEach((question, index) => {
+                        formData.append(`questions[${index}][text]`, question.text);
+                        formData.append(`questions[${index}][is_required]`, question.is_required ? 1 : 0);
+                    });
+
+                    _this.form.attachments.forEach((file) => {
+                        formData.append('attachments[]', file);
+                    });
 
                     // Send request
-                    await axios.post('post/project', data)
+                    await axios.post('post/project', formData, {
+                                    headers: {
+                                        'Content-Type': 'multipart/form-data'
+                                    }
+                                })
                                 .then(function (response) {
 
                                     // Get response data
@@ -855,6 +1204,17 @@
                 this.v$.form.price_max.$model   = null;
                 this.form.skills                = [];
                 this.form.plans                 = [];
+                this.form.attachments           = [];
+                this.form.questions             = [];
+                this.form.recaptcha_token       = null;
+                this.total                      = 0;
+
+                if (this.$refs.projectAttachments) {
+                    this.$refs.projectAttachments.value = null;
+                }
+
+                $('#select2-categories').val(null).trigger('change');
+                $('#select2-skills').val([]).trigger('change');
             }
 
         },

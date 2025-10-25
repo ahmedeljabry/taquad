@@ -29,13 +29,7 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
 
     });
 
-    // Invoices
-    Route::namespace('Invoices')->prefix('invoices')->group(function() {
-
-        // Index
-        Route::get('/', InvoicesComponent::class);
-
-    });
+    // Invoices routes removed (legacy Gig order invoices)
 
     // Users
     Route::namespace('Users')->prefix('users')->group(function() {
@@ -111,34 +105,9 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
 
     });
 
-    // Gigs
-    Route::namespace('Gigs')->prefix('gigs')->group(function() {
+    // Gigs routes removed (legacy Gig feature)
 
-        // Gigs
-        Route::get('/', GigsComponent::class);
-
-        // Options
-        Route::namespace('Options')->group(function() {
-
-            // Edit
-            Route::get('edit/{id}', EditComponent::class);
-
-            // Analytics
-            Route::get('analytics/{id}', AnalyticsComponent::class);
-
-        });
-
-        // Trash
-        Route::namespace('Trash')->prefix('trash')->group(function() {
-
-            // Get trashed gigs
-            Route::get('/', TrashComponent::class);
-
-        });
-
-    });
-
-    // Packages
+    // Packages (legacy gig plans) - kept for other features if any
     Route::namespace('Packages')->prefix('packages')->group(function() {
 
         // All
@@ -176,21 +145,7 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
 
     });
 
-    // Orders
-    Route::namespace('Orders')->prefix('orders')->group(function() {
-
-        // Orders
-        Route::get('/', OrdersComponent::class);
-
-        // Options
-        Route::namespace('Options')->group(function() {
-
-            // Details
-            Route::get('details/{id}', DetailsComponent::class);
-
-        });
-
-    });
+    // Orders routes removed (legacy Gig orders)
 
     // Portfolios
     Route::namespace('Portfolios')->prefix('portfolios')->group(function() {
@@ -236,24 +191,7 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
 
         });
 
-        // Categories
-        Route::namespace('Categories')->prefix('categories')->group(function() {
-
-            // Categories
-            Route::get('/', CategoriesComponent::class);
-
-            // Options
-            Route::namespace('Options')->group(function() {
-
-                // Create
-                Route::get('create', CreateComponent::class);
-
-                // Edit
-                Route::get('edit/{id}', EditComponent::class);
-
-            });
-
-        });
+    // Categories routes removed (legacy Gig categories)
 
         // Skills
         Route::namespace('Skills')->prefix('skills')->group(function() {
@@ -308,79 +246,13 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
 
     });
 
-    // Categories
-    Route::namespace('Categories')->prefix('categories')->group(function() {
+    // Categories routes removed (legacy Gig categories)
 
-        // All
-        Route::get('/', CategoriesComponent::class);
+    // Subcategories routes removed (legacy Gig categories)
 
-        // Options
-        Route::namespace('Options')->group(function() {
+    // Childcategories routes removed (legacy Gig categories)
 
-            // Create
-            Route::get('create', CreateComponent::class);
-
-            // Edit
-            Route::get('edit/{id}', EditComponent::class);
-
-            // Delete
-            Route::get('delete/{id}', DeleteComponent::class);
-
-        });
-
-    });
-
-    // Subcategories
-    Route::namespace('Subcategories')->prefix('subcategories')->group(function() {
-
-        // All
-        Route::get('/', SubcategoriesComponent::class);
-
-        // Options
-        Route::namespace('Options')->group(function() {
-
-            // Create
-            Route::get('create', CreateComponent::class);
-
-            // Edit
-            Route::get('edit/{id}', EditComponent::class);
-
-            // Delete
-            Route::get('delete/{id}', DeleteComponent::class);
-
-        });
-
-    });
-
-    // Childcategories
-    Route::namespace('Childcategories')->prefix('childcategories')->group(function() {
-
-        // All
-        Route::get('/', ChildcategoriesComponent::class);
-
-        // Options
-        Route::namespace('Options')->group(function() {
-
-            // Create
-            Route::get('create', CreateComponent::class);
-
-            // Edit
-            Route::get('edit/{id}', EditComponent::class);
-
-            // Delete
-            Route::get('delete/{id}', DeleteComponent::class);
-
-        });
-
-    });
-
-    // Reviews
-    Route::namespace('Reviews')->prefix('reviews')->group(function() {
-
-        // Reviews
-        Route::get('/', ReviewsComponent::class);
-
-    });
+    // Reviews routes removed (legacy Gig reviews)
 
     // Reports
     Route::namespace('Reports')->prefix('reports')->group(function() {
@@ -388,8 +260,7 @@ Route::middleware(['web', 'auth:admin'])->group(function() {
         // Users
         Route::get('users', UsersComponent::class);
 
-        // Gigs
-        Route::get('gigs', GigsComponent::class);
+        // Gigs report removed
 
         // Projects
         Route::get('projects', ProjectsComponent::class);

@@ -38,7 +38,19 @@ class ProjectBid extends Model
         'freelancer_accepted_date',
         'admin_rejection_reason',
         'freelancer_rejection_reason',
-        'freelancer_rejected_date'
+        'freelancer_rejected_date',
+        'milestone_plan',
+        'milestone_plan_applied_at',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'milestone_plan'             => 'array',
+        'milestone_plan_applied_at'  => 'datetime',
     ];
 
     /**

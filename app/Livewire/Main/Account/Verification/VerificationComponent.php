@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Main\Account\Verification;
 
 use App\Models\Admin;
@@ -55,26 +56,26 @@ class VerificationComponent extends Component
         $separator   = settings('general')->separator;
         $title       = __('messages.t_verification_center') . " $separator " . settings('general')->title;
         $description = settings('seo')->description;
-        $ogimage     = src( settings('seo')->ogimage );
+        $ogimage     = src(settings('seo')->ogimage);
 
-        $this->seo()->setTitle( $title );
-        $this->seo()->setDescription( $description );
-        $this->seo()->setCanonical( url()->current() );
-        $this->seo()->opengraph()->setTitle( $title );
-        $this->seo()->opengraph()->setDescription( $description );
-        $this->seo()->opengraph()->setUrl( url()->current() );
+        $this->seo()->setTitle($title);
+        $this->seo()->setDescription($description);
+        $this->seo()->setCanonical(url()->current());
+        $this->seo()->opengraph()->setTitle($title);
+        $this->seo()->opengraph()->setDescription($description);
+        $this->seo()->opengraph()->setUrl(url()->current());
         $this->seo()->opengraph()->setType('website');
-        $this->seo()->opengraph()->addImage( $ogimage );
-        $this->seo()->twitter()->setImage( $ogimage );
-        $this->seo()->twitter()->setUrl( url()->current() );
-        $this->seo()->twitter()->setSite( "@" . settings('seo')->twitter_username );
+        $this->seo()->opengraph()->addImage($ogimage);
+        $this->seo()->twitter()->setImage($ogimage);
+        $this->seo()->twitter()->setUrl(url()->current());
+        $this->seo()->twitter()->setSite("@" . settings('seo')->twitter_username);
         $this->seo()->twitter()->addValue('card', 'summary_large_image');
         $this->seo()->metatags()->addMeta('fb:page_id', settings('seo')->facebook_page_id, 'property');
         $this->seo()->metatags()->addMeta('fb:app_id', settings('seo')->facebook_app_id, 'property');
         $this->seo()->metatags()->addMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'name');
-        $this->seo()->jsonLd()->setTitle( $title );
-        $this->seo()->jsonLd()->setDescription( $description );
-        $this->seo()->jsonLd()->setUrl( url()->current() );
+        $this->seo()->jsonLd()->setTitle($title);
+        $this->seo()->jsonLd()->setDescription($description);
+        $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
         return view('livewire.main.account.verification.verification');
@@ -90,7 +91,7 @@ class VerificationComponent extends Component
     {
         // Document type must be id, driver license or passport
         if (!in_array($this->document_type, ['id', 'driver_license', 'passport'])) {
-            
+
             // Error
             $this->notification([
                 'title'       => __('messages.t_error'),
@@ -99,7 +100,6 @@ class VerificationComponent extends Component
             ]);
 
             return;
-
         }
 
         // Go to next step
@@ -115,7 +115,7 @@ class VerificationComponent extends Component
     public function setDocumentFiles()
     {
         try {
-            
+
             // Validate files
             switch ($this->document_type) {
                 case 'id':
@@ -131,18 +131,16 @@ class VerificationComponent extends Component
 
             // Go to next step
             $this->currentStep = 3;
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -157,7 +155,7 @@ class VerificationComponent extends Component
     public function finish()
     {
         try {
-            
+
             // Validate selfie photo
             SelfieValidator::validate($this);
 
@@ -166,45 +164,42 @@ class VerificationComponent extends Component
 
             // Check if document (id)
             if ($this->document_type === 'id') {
-                
+
                 // Upload front side
                 $front_side_id = ImageUploader::make($this->doc_id['front'])
-                                              ->folder('verifications')
-                                              ->handle();
+                    ->folder('verifications')
+                    ->handle();
 
                 // Upload back side
                 $back_side_id  = ImageUploader::make($this->doc_id['back'])
-                                              ->folder('verifications')
-                                              ->handle();
-
+                    ->folder('verifications')
+                    ->handle();
             } elseif ($this->document_type === 'driver_license') {
-                
+
                 // Upload front side
                 $front_side_id = ImageUploader::make($this->doc_driver_license['front'])
-                                              ->folder('verifications')
-                                              ->handle();
+                    ->folder('verifications')
+                    ->handle();
 
                 // Upload back side
                 $back_side_id  = ImageUploader::make($this->doc_driver_license['back'])
-                                              ->folder('verifications')
-                                              ->handle();
-
+                    ->folder('verifications')
+                    ->handle();
             } elseif ($this->document_type === 'passport') {
-                
+
                 // Upload front side
                 $front_side_id = ImageUploader::make($this->doc_passport['front'])
-                                              ->folder('verifications')
-                                              ->handle();
+                    ->folder('verifications')
+                    ->handle();
 
                 // No back side for passport
                 $back_side_id  = null;
-
             }
 
             // Save selfie
             $selfie                        = ImageUploader::make($this->selfie)
-                                                            ->folder('verifications')
-                                                            ->handle();
+                ->folder('verifications')
+                ->handle();
 
             // Save verification
             $verification                  = new VerificationCenter();
@@ -221,18 +216,16 @@ class VerificationComponent extends Component
 
             // Success, now refresh page
             $this->dispatch('refresh');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -262,15 +255,12 @@ class VerificationComponent extends Component
     {
         // Check if verification already declined
         if ($this->verification && $this->verification->status === 'declined') {
-            
+
             // Delete verification
             $this->verification->delete();
 
             // Success, now refresh page
             $this->dispatch('refresh');
-
         }
-
     }
-    
 }

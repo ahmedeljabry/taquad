@@ -25,8 +25,8 @@ class CategoriesComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_projects_categories'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_projects_categories'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.projects.categories.categories', [
             'categories' => $this->categories
@@ -43,7 +43,7 @@ class CategoriesComponent extends Component
     {
         return ProjectCategory::latest()->paginate(40);
     }
-    
+
 
     /**
      * Delete category
@@ -54,16 +54,16 @@ class CategoriesComponent extends Component
     public function delete($id)
     {
         try {
-            
+
             // Get category
             $category = ProjectCategory::where('id', $id)->firstOrFail();
 
             // Check if this category has projects
             if ($category->projects()->count()) {
-                
+
                 // Check if an alternative category selected
                 if (!$this->alternative_category) {
-                    
+
                     // Error
                     $this->notification([
                         'title'       => __('messages.t_error'),
@@ -72,12 +72,11 @@ class CategoriesComponent extends Component
                     ]);
 
                     return;
-
                 }
 
                 // Check if this category exists
                 if (!ProjectCategory::where('id', $this->alternative_category)->where('id', '!=', $category->id)->first()) {
-                    
+
                     // Error
                     $this->notification([
                         'title'       => __('messages.t_error'),
@@ -86,10 +85,9 @@ class CategoriesComponent extends Component
                     ]);
 
                     return;
-
                 }
 
-                // Move projects 
+                // Move projects
                 Project::where('category_id', $category->id)->update([
                     'category_id' => $this->alternative_category
                 ]);
@@ -98,7 +96,6 @@ class CategoriesComponent extends Component
                 ProjectSkill::where('category_id', $id)->update([
                     'category_id' => $this->alternative_category
                 ]);
-
             }
 
             // Delete translations
@@ -119,21 +116,18 @@ class CategoriesComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
-
 }

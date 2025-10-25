@@ -1,5 +1,6 @@
 <?php
 
+use Composer\Semver\Constraint\Constraint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -13,9 +14,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('is_restricted')->default(false)->after('status');
-            $table->unsignedBigInteger('restriction_id')->nullable();
-
-            $table->foreign('restriction_id')->references('id')->on('user_restrictions')->onUpdate('no action')->onDelete('no action');
+            $table->foreignId('restriction_id')->constrained('user_restrictions');
         });
     }
 

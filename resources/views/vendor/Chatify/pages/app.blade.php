@@ -1,4 +1,4 @@
-@extends('livewire.main.layout.app' , ['disable_footer' => true , 'do_not_add_width' => true])
+@extends('livewire.main.layout.app' , ['disabeld_header' => true,'disable_footer' => true , 'do_not_add_width' => true])
 
 @push('styles')
     @include('Chatify::layouts.headLinks')
@@ -100,12 +100,12 @@
 
             </div>
         </div>
- 
+
 
         {{-- ----------------------Messaging side---------------------- --}}
         <div class="messenger-messagingView">
-                           
-       
+
+
             {{-- header title [conversation name] amd buttons --}}
             <div class="m-header m-header-messaging py-5 border-b dark:border-zinc-700 px-4" style="display: none">
                 <nav class="chatify-d-flex chatify-justify-content-between chatify-align-items-center">
@@ -166,7 +166,7 @@
                         </div>
                     </a>
                 @endisset
-                    
+
                 {{-- Internet connection --}}
                 <div class="internet-connection">
 

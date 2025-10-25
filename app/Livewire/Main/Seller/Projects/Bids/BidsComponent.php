@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Main\Seller\Projects\Bids;
 
 use Livewire\Component;
@@ -27,10 +28,9 @@ class BidsComponent extends Component
 
         // Check if this section enabled
         if (!$settings->is_enabled) {
-        
+
             // Redirect to home page
             return redirect('/');
-
         }
     }
 
@@ -47,26 +47,26 @@ class BidsComponent extends Component
         $separator   = settings('general')->separator;
         $title       = __('messages.t_submitted_proposals') . " $separator " . settings('general')->title;
         $description = settings('seo')->description;
-        $ogimage     = src( settings('seo')->ogimage );
+        $ogimage     = src(settings('seo')->ogimage);
 
-        $this->seo()->setTitle( $title );
-        $this->seo()->setDescription( $description );
-        $this->seo()->setCanonical( url()->current() );
-        $this->seo()->opengraph()->setTitle( $title );
-        $this->seo()->opengraph()->setDescription( $description );
-        $this->seo()->opengraph()->setUrl( url()->current() );
+        $this->seo()->setTitle($title);
+        $this->seo()->setDescription($description);
+        $this->seo()->setCanonical(url()->current());
+        $this->seo()->opengraph()->setTitle($title);
+        $this->seo()->opengraph()->setDescription($description);
+        $this->seo()->opengraph()->setUrl(url()->current());
         $this->seo()->opengraph()->setType('website');
-        $this->seo()->opengraph()->addImage( $ogimage );
-        $this->seo()->twitter()->setImage( $ogimage );
-        $this->seo()->twitter()->setUrl( url()->current() );
-        $this->seo()->twitter()->setSite( "@" . settings('seo')->twitter_username );
+        $this->seo()->opengraph()->addImage($ogimage);
+        $this->seo()->twitter()->setImage($ogimage);
+        $this->seo()->twitter()->setUrl(url()->current());
+        $this->seo()->twitter()->setSite("@" . settings('seo')->twitter_username);
         $this->seo()->twitter()->addValue('card', 'summary_large_image');
         $this->seo()->metatags()->addMeta('fb:page_id', settings('seo')->facebook_page_id, 'property');
         $this->seo()->metatags()->addMeta('fb:app_id', settings('seo')->facebook_app_id, 'property');
         $this->seo()->metatags()->addMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'name');
-        $this->seo()->jsonLd()->setTitle( $title );
-        $this->seo()->jsonLd()->setDescription( $description );
-        $this->seo()->jsonLd()->setUrl( url()->current() );
+        $this->seo()->jsonLd()->setTitle($title);
+        $this->seo()->jsonLd()->setDescription($description);
+        $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
         return view('livewire.main.seller.projects.bids.bids', [
@@ -83,11 +83,11 @@ class BidsComponent extends Component
     public function getBidsProperty()
     {
         return ProjectBid::where('user_id', auth()->id())
-        ->with(['project' => function($query) {
-            return $query->select('id', 'title', 'pid', 'slug', 'status', 'awarded_bid_id');
-        }])
-                                ->latest()
-                                ->paginate(42);
+            ->with(['project' => function ($query) {
+                return $query->select('id', 'title', 'pid', 'slug', 'status', 'awarded_bid_id');
+            }])
+            ->latest()
+            ->paginate(42);
     }
 
 
@@ -100,16 +100,16 @@ class BidsComponent extends Component
     public function confirmDelete($id)
     {
         try {
-            
+
             // Get bid
             $bid = ProjectBid::where('uid', $id)
-                            ->where('user_id', auth()->id())
-                            ->where('is_awarded', false)
-                            ->first();
+                ->where('user_id', auth()->id())
+                ->where('is_awarded', false)
+                ->first();
 
             // Check bid exists
             if (!$bid) {
-                
+
                 // Not found
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -118,7 +118,6 @@ class BidsComponent extends Component
                 ]);
 
                 return;
-
             }
 
             // Confirm dialog
@@ -135,17 +134,15 @@ class BidsComponent extends Component
                     'label'  => __('messages.t_cancel')
                 ],
             ]);
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
-        } 
+        }
     }
 
 
@@ -158,12 +155,12 @@ class BidsComponent extends Component
     public function delete($id)
     {
         try {
-            
+
             // Get bid
             $bid = ProjectBid::where('uid', $id)
-                            ->where('user_id', auth()->id())
-                            ->where('is_awarded', false)
-                            ->firstOrFail();
+                ->where('user_id', auth()->id())
+                ->where('is_awarded', false)
+                ->firstOrFail();
 
             // Delete all upgrades for this bid
             ProjectBidUpgrade::where('bid_id', $bid->id)->delete();
@@ -176,20 +173,18 @@ class BidsComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
 }

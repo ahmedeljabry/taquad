@@ -1,6 +1,7 @@
 class BladewindSelect {
     clickArea;
     rootElement;
+    rootNode;
     itemsContainer;
     filterInput;
     selectItems;
@@ -14,20 +15,41 @@ class BladewindSelect {
                this.placeholder              = placeholder || 'Select One';
                this.componentId              = componentId;
                this.rootElement              = `.bw-select-${name}`;
-               this.clickArea                = `${this.rootElement} .clickable`;
-               this.displayArea              = `${this.rootElement} .display-area`;
-               this.itemsContainer           = `${this.rootElement} .bw-select-items-container`;
-               this.filterInput              = `${this.itemsContainer} .bw_filter`;
-               this.selectItems              = `${this.itemsContainer} .bw-select-items .bw-select-item`;
-               this.isMultiple               = (dom_el(this.rootElement).getAttribute('data-multiple') === 'true');
-               this.formInput                = `input.bw-${this.name}`;
-        dom_el(this.displayArea).style.width = `${(dom_el(this.rootElement).offsetWidth-40)}px`;
+
+        this.setupDomReferences();
+    }
+    
+    setupDomReferences = () => {
+        this.rootNode = dom_el(this.rootElement);
+        if (!this.rootNode) {
+            this.initialized = false;
+            return false;
+        }
+        this.initialized = true;
+        this.clickArea      = `${this.rootElement} .clickable`;
+        this.displayArea    = `${this.rootElement} .display-area`;
+        this.itemsContainer = `${this.rootElement} .bw-select-items-container`;
+        this.filterInput    = `${this.itemsContainer} .bw_filter`;
+        this.selectItems    = `${this.itemsContainer} .bw-select-items .bw-select-item`;
+        this.isMultiple     = (this.rootNode.getAttribute('data-multiple') === 'true');
+        this.formInput      = `input.bw-${this.name}`;
+
+        const displayAreaEl = dom_el(this.displayArea);
+        if (displayAreaEl) displayAreaEl.style.width = `${(this.rootNode.offsetWidth-40)}px`;
+        return true;
     }
     
     activate = () => {
-        dom_el(this.clickArea).addEventListener('click', (e) => {
-            unhide(this.itemsContainer);
-        });
+        if (!this.initialized) {
+            // Attempt to locate the DOM once more in case we were instantiated before Livewire rendered the markup
+            if (!this.setupDomReferences()) {
+                requestAnimationFrame(() => this.activate());
+                return;
+            }
+        }
+        const clickAreaEl = dom_el(this.clickArea);
+        if (!clickAreaEl) return;
+        clickAreaEl.addEventListener('click', () => unhide(this.itemsContainer));
         this.hide();
         this.filter();
         this.manualModePreSelection();
@@ -35,14 +57,20 @@ class BladewindSelect {
     }
 
     hide = () => {
+        if (!this.initialized) return;
+        const itemsContainerEl = dom_el(this.itemsContainer);
+        if (!itemsContainerEl) return;
         document.addEventListener('mouseup', (e) => {
             let searchArea = dom_el(this.filterInput);
-            let container = dom_el((this.isMultiple) ? this.itemsContainer : this.clickArea);
-            if (searchArea !== null && !searchArea.contains(e.target) && ! container.contains(e.target)) hide(this.itemsContainer);
+            let container = dom_el((this.isMultiple) ? this.itemsContainer : this.clickArea) || itemsContainerEl;
+            if (searchArea !== null && !searchArea.contains(e.target) && !container.contains(e.target)) hide(this.itemsContainer);
         }); 
     }
 
     filter = () => {
+        if (!this.initialized) return;
+        const filterInputEl = dom_el(this.filterInput);
+        if (!filterInputEl) return;
         dom_el(this.filterInput).addEventListener('keyup', (e) => {
             let value = (dom_el(this.filterInput).value);
             dom_els(this.selectItems).forEach((el) => {
@@ -57,10 +85,13 @@ class BladewindSelect {
      * manually checking if each select-item should be selected or not.
      */
     manualModePreSelection = () => {
+        if (!this.initialized) return;
         let select_mode = dom_el(`${this.rootElement}`).getAttribute('data-type');
         let selected_value = dom_el(`${this.rootElement}`).getAttribute('data-selected-value');
         if(select_mode === 'manual' && selected_value !== null) {
-            dom_els(this.selectItems).forEach((el) => {
+            const items = dom_els(this.selectItems);
+            if(!items) return;
+            items.forEach((el) => {
                 let item_value = el.getAttribute('data-value');
                 if (item_value === selected_value) el.setAttribute('data-selected', true);
             });
@@ -68,7 +99,10 @@ class BladewindSelect {
     }
 
     selectItem = () => {
-        dom_els(this.selectItems).forEach((el) => {
+        if (!this.initialized) return;
+        const items = dom_els(this.selectItems);
+        if(!items) return;
+        items.forEach((el) => {
             let selected = (el.getAttribute('data-selected') !== null);
             let user_function = el.getAttribute('data-user-function');
             if(selected) this.setValue(el);
@@ -92,13 +126,7 @@ class BladewindSelect {
             changeCssForDomArray(`${this.selectItems} svg`, 'hidden');
             dom_el(this.displayArea).innerText = selectedLabel;
             dom_el(this.formInput).value       = selectedValue;
-            try {
-                if (this.componentId && window.Livewire) {
-                    window.Livewire.find(this.componentId).set(this.model, selectedValue);
-                }
-            } catch (error) {
-                console.error(error);
-            }
+            this.refreshModel();
             // unhide(`${this.clickArea} .reset`);
             unhide(svg, true);
             // dom_el(`${this.clickArea} .reset`).addEventListener('click', (e) => {
@@ -113,6 +141,7 @@ class BladewindSelect {
                 dom_el(this.formInput).value += `,${selectedValue}`;
                 dom_el(this.displayArea).innerHTML += this.labelTemplate(selectedLabel, selectedValue);
                 this.removeLabel(selectedValue);
+                this.refreshModel();
             }
             this.scrollers();
         }
@@ -127,11 +156,13 @@ class BladewindSelect {
             changeCssForDomArray(`${this.selectItems} svg`, 'hidden');
             dom_el(this.displayArea).innerText = '';
             dom_el(this.formInput).value = '';
+            this.refreshModel();
             hide(this.displayArea);
             // hide(`${this.clickArea} .reset`);
         } else {
             dom_el(this.formInput).value = dom_el(this.formInput).value.replace(`,${selectedValue}`,'');
             dom_el(`${this.displayArea} span.bw-sp-${selectedValue}`).remove();
+            this.refreshModel();
             if(dom_el(this.displayArea).innerText === '') {
                 unhide(`${this.rootElement} .placeholder`);
                 hide(this.displayArea);
@@ -141,14 +172,20 @@ class BladewindSelect {
     }
 
     scrollers = () => {
-        if(dom_el(this.displayArea).scrollWidth > dom_el(this.rootElement).clientWidth) {
+        if (!this.initialized) return;
+        const displayAreaEl = dom_el(this.displayArea);
+        const clickAreaEl = dom_el(this.clickArea);
+        if(!displayAreaEl || !clickAreaEl) return;
+        if(displayAreaEl.scrollWidth > this.rootNode.clientWidth) {
             unhide(`${this.clickArea} .scroll-left`);
             unhide(`${this.clickArea} .scroll-right`);
-            dom_el(`${this.clickArea} .scroll-right`).addEventListener('click', (e) => {
+            const scrollRight = dom_el(`${this.clickArea} .scroll-right`);
+            const scrollLeft  = dom_el(`${this.clickArea} .scroll-left`);
+            if(scrollRight) scrollRight.addEventListener('click', (e) => {
                 this.scroll(150);
                 e.stopImmediatePropagation();
             });
-            dom_el(`${this.clickArea} .scroll-left`).addEventListener('click', (e) => {
+            if(scrollLeft) scrollLeft.addEventListener('click', (e) => {
                 this.scroll(-150);
                 e.stopImmediatePropagation();
             });
@@ -159,10 +196,13 @@ class BladewindSelect {
     }
 
     scroll = (amount) => {  
-        dom_el(this.displayArea).scrollBy(amount,0);  
-        ((dom_el(this.displayArea).clientWidth + dom_el(this.displayArea).scrollLeft) >= 
-            dom_el(this.displayArea).scrollWidth) ? hide(`${this.clickArea} .scroll-right`) : unhide(`${this.clickArea} .scroll-right`);
-         (dom_el(this.displayArea).scrollLeft === 0) ? hide(`${this.clickArea} .scroll-left`) : unhide(`${this.clickArea} .scroll-left`);
+        if (!this.initialized) return;
+        const displayAreaEl = dom_el(this.displayArea);
+        if(!displayAreaEl) return;
+        displayAreaEl.scrollBy(amount,0);  
+        ((displayAreaEl.clientWidth + displayAreaEl.scrollLeft) >= 
+            displayAreaEl.scrollWidth) ? hide(`${this.clickArea} .scroll-right`) : unhide(`${this.clickArea} .scroll-right`);
+         (displayAreaEl.scrollLeft === 0) ? hide(`${this.clickArea} .scroll-left`) : unhide(`${this.clickArea} .scroll-left`);
     }
 
     labelTemplate = (label, value) => {
@@ -175,7 +215,10 @@ class BladewindSelect {
     }
 
     removeLabel = () => {
-        dom_els(`${this.displayArea} span svg`).forEach((el) => {
+        if (!this.initialized) return;
+        const labels = dom_els(`${this.displayArea} span svg`);
+        if(!labels) return;
+        labels.forEach((el) => {
             el.addEventListener('click', (e) => {
                 let value = el.getAttribute('data-value');
                 this.unsetValue(dom_el(`.bw-select-item[data-value="${value}"]`));
@@ -189,13 +232,41 @@ class BladewindSelect {
         });
     }
 
+    refreshModel = () => {
+        if (!this.initialized) return;
+        const element = dom_el(this.formInput);
+        if (!element) return;
+
+        try {
+            element.dispatchEvent(new Event('input', { bubbles: true }));
+            element.dispatchEvent(new Event('change', { bubbles: true }));
+        } catch (error) {
+            console.error(error);
+        }
+
+        if (this.componentId && this.model && window.Livewire && typeof window.Livewire.dispatch === 'function') {
+            try {
+                // Support older Bladewind behaviour while keeping Livewire 2 compatibility if available
+                const component = window.Livewire.find ? window.Livewire.find(this.componentId) : null;
+                if (component && typeof component.set === 'function') {
+                    component.set(this.model, element.value);
+                }
+            } catch (error) {
+                console.warn('Bladewind select fallback Livewire sync failed:', error);
+            }
+        }
+    }
+
     reset = () => {
-        dom_els(this.selectItems).forEach( (el) => { this.unsetValue(el); });
+        if (!this.initialized) return;
+        const items = dom_els(this.selectItems);
+        if(items) items.forEach( (el) => { this.unsetValue(el); });
         hide(this.displayArea);
         unhide(this.placeholder);
     }
 
     disable = () => {
+        if (!this.initialized) return;
         changeCss(this.clickArea, 'opacity-40, select-none, cursor-not-allowed');
         changeCss(this.clickArea, 'focus:border-blue-400, cursor-pointer', 'remove');
         // hide(`${this.clickArea} .reset`);
@@ -205,6 +276,7 @@ class BladewindSelect {
     }
 
     enable = () => {
+        if (!this.initialized) return;
         changeCss(this.clickArea, 'opacity-40, select-none, cursor-not-allowed', 'remove');
         changeCss(this.clickArea, 'focus:border-blue-400, cursor-pointer');
         dom_el(this.clickArea).addEventListener('click', (e) => {

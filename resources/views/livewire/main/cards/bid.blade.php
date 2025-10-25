@@ -1,4 +1,4 @@
-<div class="w-full relative">
+<div id="bid-{{ $view_data['bid']['id'] ?? $bid_id }}" class="w-full relative scroll-mt-24">
 
     {{-- Loading Indicator --}}
     <div wire:loading wire:loading.block>

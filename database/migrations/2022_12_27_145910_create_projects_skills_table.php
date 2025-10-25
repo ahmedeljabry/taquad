@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('slug', 120)->unique();
             $table->unsignedBigInteger('category_id')->index();
 
-            $table->foreign('category_id')->references('id')->on('projects_categories')->onUpdate('no action')->onDelete('no action');
+            $table->foreign('category_id')->references('id')->on('projects_categories')->cascadeOnDelete();
         });
     }
 

@@ -61,7 +61,7 @@
                         :url="!empty(settings('general')->logo) ? src(settings('general')->logo) : ''"
                         name="logo"
                         :placeholder="__('messages.t_site_logo')"
-                        accepted_file_types=".jpg,.png,.jpeg,.gif,.svg" />  
+                        accepted_file_types=".jpg,.png,.jpeg,.gif,.svg" />
                 </div>
 
                 {{-- Site Logo dark mode --}}
@@ -70,7 +70,7 @@
                         :url="!empty(settings('general')->logo_dark) ? src(settings('general')->logo_dark) : ''"
                         name="logo_dark"
                         :placeholder="__('messages.t_site_logo_dark_mode')"
-                        accepted_file_types=".jpg,.png,.jpeg,.gif,.svg" />  
+                        accepted_file_types=".jpg,.png,.jpeg,.gif,.svg" />
                 </div>
 
                 {{-- Site Logo transparent header --}}
@@ -79,7 +79,7 @@
                         :url="!empty(settings('general')->logo_transparent) ? src(settings('general')->logo_transparent) : ''"
                         name="logo_transparent"
                         :placeholder="__('dashboard.t_site_logo_transparent_header')"
-                        accepted_file_types=".jpg,.png,.jpeg,.gif,.svg" />  
+                        accepted_file_types=".jpg,.png,.jpeg,.gif,.svg" />
                 </div>
 
                 {{-- Site Favicon --}}
@@ -88,7 +88,7 @@
                         :url="!empty(settings('general')->favicon) ? src(settings('general')->favicon) : ''"
                         name="favicon"
                         :placeholder="__('messages.t_site_favicon')"
-                        accepted_file_types=".jpg,.png,.jpeg,.gif,.svg" />  
+                        accepted_file_types=".jpg,.png,.jpeg,.gif,.svg" />
                 </div>
 
                 {{-- Divider --}}
@@ -131,7 +131,7 @@
                             :label="__('messages.t_default_language')"
                             :placeholder="__('messages.t_choose_default_language')"
                             data="manual">
-                        
+
                             @foreach ($languages as $language)
                                 <x-bladewind.select-item :label="$language->name" :value="$language->language_code" />
                             @endforeach
@@ -139,10 +139,10 @@
                         </x-bladewind.select>
                     </div>
 
-                    {{-- Error --}}  
+                    {{-- Error --}}
                     @error('default_language')
                         <p class="mt-1 text-xs text-red-600 dark:text-red-500">{{ $errors->first('default_language') }}</p>
-                    @enderror 
+                    @enderror
 
                 </div>
 
@@ -169,6 +169,18 @@
                         label_position="right" />
                 </div>
 
+                {{-- Free plan monthly proposals --}}
+                <div class="col-span-12">
+                    <x-forms.text-input
+                        type="number"
+                        min="0"
+                        :label="__('messages.t_free_plan_monthly_proposals')"
+                        :placeholder="__('messages.t_enter_free_plan_monthly_proposals')"
+                        :hint="__('messages.t_free_plan_monthly_proposals_hint')"
+                        model="free_plan_monthly_proposals"
+                        icon="calendar-plus" />
+                </div>
+
             </div>
         </div>
 
@@ -178,6 +190,6 @@
                 @lang('messages.t_update')
             </x-bladewind.button>
         </div>
-            
+
 	</x-form>
 </div>

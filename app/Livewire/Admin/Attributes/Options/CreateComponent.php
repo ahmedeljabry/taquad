@@ -50,50 +50,6 @@ class CreateComponent extends Component
         ]);
     }
 
-
-    /**
-     * Get categories
-     *
-     * @return object
-     */
-    public function getCategoriesProperty() : object
-    {
-        return Category::latest()->withTranslation()->get();
-    }
-
-
-    /**
-     * Fetch subcategories
-     *
-     * @param integer $id
-     * @return void
-     */
-    public function updatedCategoryId($id) : void
-    {
-        // Fetch subcategories
-        $this->subcategories = Subcategory::where('parent_id', $id)
-                                            ->withTranslation()
-                                            ->latest()
-                                            ->get();
-    }
-
-
-    /**
-     * Fetch childcategories
-     *
-     * @param integer $id
-     * @return void
-     */
-    public function updatedSubcategoryId($id) : void
-    {
-        // Fetch childcategories
-        $this->childcategories = Childcategory::where('subcategory_id', $id)
-                                            ->withTranslation()
-                                            ->latest()
-                                            ->get();
-    }
-
-
     /**
      * Add new option
      *
@@ -103,7 +59,7 @@ class CreateComponent extends Component
     {
         // Check type of this attribute
         if ($this->type === 'select') {
-            
+
             // Create an option
             $option = [
                 'text'  => '',
@@ -115,8 +71,8 @@ class CreateComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
+                'success',
+                __('messages.t_success'),
                 livewire_alert_params( __('messages.t_toast_operation_success') )
             );
 
@@ -134,10 +90,10 @@ class CreateComponent extends Component
     {
         // Check type of this attribute
         if ($this->type === 'select') {
-            
+
             // Delete option from list
             if (isset($this->options[$key])) {
-                
+
                 // Delete it
                 unset($this->options[$key]);
 
@@ -148,8 +104,8 @@ class CreateComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
+                'success',
+                __('messages.t_success'),
                 livewire_alert_params( __('messages.t_toast_operation_success') )
             );
 
@@ -165,7 +121,7 @@ class CreateComponent extends Component
     public function create()
     {
         try {
-            
+
             // Validate form
             CreateValidator::validate($this);
 
@@ -187,17 +143,17 @@ class CreateComponent extends Component
                 $attribute->translateOrNew($language->language_code)->description = isset($this->description[$language->language_code]) && !empty($this->description[$language->language_code]) ? $this->description[$language->language_code] : null;
                 $attribute->translateOrNew($language->language_code)->hint        = isset($this->hint[$language->language_code]) && !empty($this->hint[$language->language_code]) ? $this->hint[$language->language_code] : null;
             }
-        
+
             // Save again
             $attribute->save();
 
             // Check if select attribute
             if ($this->type === 'select') {
-                
+
                 // Loop through options
                 foreach ($this->options as $key => $item) {
                     if (isset($item['text']) && isset($item['value'])) {
-                        
+
                         // Save new option
                         $option               = new AttributeOption();
                         $option->attribute_id = $attribute->id;
@@ -212,8 +168,8 @@ class CreateComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
+                'success',
+                __('messages.t_success'),
                 livewire_alert_params( __('messages.t_toast_operation_success') )
             );
 
@@ -221,11 +177,11 @@ class CreateComponent extends Component
             $this->dispatch('refresh');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            
+
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
+                'error',
+                __('messages.t_error'),
                 livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
             );
 
@@ -236,8 +192,8 @@ class CreateComponent extends Component
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
+                'error',
+                __('messages.t_error'),
                 livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
             );
 
@@ -246,5 +202,5 @@ class CreateComponent extends Component
 
         }
     }
-    
+
 }

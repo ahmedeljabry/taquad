@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('settings_publish', function (Blueprint $table) {
             $table->id();
-            $table->boolean('auto_approve_gigs')->default(false);
             $table->boolean('auto_approve_portfolio')->default(false);
             $table->integer('max_tags')->default(5);
             $table->boolean('is_video_enabled')->default(true);

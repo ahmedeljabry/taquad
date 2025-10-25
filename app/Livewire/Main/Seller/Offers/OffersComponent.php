@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Main\Seller\Offers;
 
 use Livewire\Component;
@@ -39,10 +40,9 @@ class OffersComponent extends Component
 
         // Check if this section enabled
         if (!$settings->enable_custom_offers) {
-        
+
             // Redirect to home page
             return redirect('seller/home');
-
         }
     }
 
@@ -59,26 +59,26 @@ class OffersComponent extends Component
         $separator   = settings('general')->separator;
         $title       = __('messages.t_received_offers') . " $separator " . settings('general')->title;
         $description = settings('seo')->description;
-        $ogimage     = src( settings('seo')->ogimage );
+        $ogimage     = src(settings('seo')->ogimage);
 
-        $this->seo()->setTitle( $title );
-        $this->seo()->setDescription( $description );
-        $this->seo()->setCanonical( url()->current() );
-        $this->seo()->opengraph()->setTitle( $title );
-        $this->seo()->opengraph()->setDescription( $description );
-        $this->seo()->opengraph()->setUrl( url()->current() );
+        $this->seo()->setTitle($title);
+        $this->seo()->setDescription($description);
+        $this->seo()->setCanonical(url()->current());
+        $this->seo()->opengraph()->setTitle($title);
+        $this->seo()->opengraph()->setDescription($description);
+        $this->seo()->opengraph()->setUrl(url()->current());
         $this->seo()->opengraph()->setType('website');
-        $this->seo()->opengraph()->addImage( $ogimage );
-        $this->seo()->twitter()->setImage( $ogimage );
-        $this->seo()->twitter()->setUrl( url()->current() );
-        $this->seo()->twitter()->setSite( "@" . settings('seo')->twitter_username );
+        $this->seo()->opengraph()->addImage($ogimage);
+        $this->seo()->twitter()->setImage($ogimage);
+        $this->seo()->twitter()->setUrl(url()->current());
+        $this->seo()->twitter()->setSite("@" . settings('seo')->twitter_username);
         $this->seo()->twitter()->addValue('card', 'summary_large_image');
         $this->seo()->metatags()->addMeta('fb:page_id', settings('seo')->facebook_page_id, 'property');
         $this->seo()->metatags()->addMeta('fb:app_id', settings('seo')->facebook_app_id, 'property');
         $this->seo()->metatags()->addMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'name');
-        $this->seo()->jsonLd()->setTitle( $title );
-        $this->seo()->jsonLd()->setDescription( $description );
-        $this->seo()->jsonLd()->setUrl( url()->current() );
+        $this->seo()->jsonLd()->setTitle($title);
+        $this->seo()->jsonLd()->setDescription($description);
+        $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
         return view('livewire.main.seller.offers.offers', [
@@ -95,10 +95,10 @@ class OffersComponent extends Component
     public function getOffersProperty()
     {
         return CustomOffer::where('freelancer_id', auth()->id())
-                            ->where('admin_status', 'approved')
-                            ->whereHas('freelancer')
-                            ->latest('updated_at')
-                            ->paginate(42);
+            ->where('admin_status', 'approved')
+            ->whereHas('freelancer')
+            ->latest('updated_at')
+            ->paginate(42);
     }
 
 
@@ -111,16 +111,16 @@ class OffersComponent extends Component
     public function reject($id)
     {
         try {
-            
+
             // Validate form
             RejectValidator::validate($this);
 
             // Get offer
             $offer = CustomOffer::where('freelancer_id', auth()->id())
-                                ->where('freelancer_status', 'pending')
-                                ->where('uid', $id)
-                                ->with('buyer')
-                                ->firstOrFail();
+                ->where('freelancer_status', 'pending')
+                ->where('uid', $id)
+                ->with('buyer')
+                ->firstOrFail();
 
             // Let's reject this offer
             $offer->freelancer_status           = 'rejected';
@@ -150,16 +150,14 @@ class OffersComponent extends Component
                 'description' => __('messages.t_freelancer_u_have_reject_this_offer_success'),
                 'icon'        => 'success'
             ]);
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
 
@@ -173,13 +171,13 @@ class OffersComponent extends Component
     public function accept($id)
     {
         try {
-            
+
             // Get offer
             $offer = CustomOffer::where('freelancer_id', auth()->id())
-                                ->where('freelancer_status', 'pending')
-                                ->where('uid', $id)
-                                ->with('buyer')
-                                ->firstOrFail();
+                ->where('freelancer_status', 'pending')
+                ->where('uid', $id)
+                ->with('buyer')
+                ->firstOrFail();
 
             // Let's accept this offer
             $offer->freelancer_status = 'approved';
@@ -205,22 +203,20 @@ class OffersComponent extends Component
                 'description' => __('messages.t_freelancer_u_have_accepted_this_offer_success'),
                 'icon'        => 'success'
             ]);
-            
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
 
 
     /**
-     * Send a file to this 
+     * Send a file to this
      *
      * @return void
      * @param string $id
@@ -231,11 +227,11 @@ class OffersComponent extends Component
 
             // Get offer
             $offer = CustomOffer::where('uid', $id)
-                                ->where('freelancer_id', auth()->id())
-                                ->whereIn('freelancer_status', ['completed', 'approved'])
-                                ->whereIn('payment_status', ['funded', 'released'])
-                                ->with('buyer')
-                                ->firstOrFail();
+                ->where('freelancer_id', auth()->id())
+                ->whereIn('freelancer_status', ['completed', 'approved'])
+                ->whereIn('payment_status', ['funded', 'released'])
+                ->with('buyer')
+                ->firstOrFail();
 
             // Validate form
             FileValidator::validate($this);
@@ -261,12 +257,11 @@ class OffersComponent extends Component
 
             // Check if this the final work
             if ($this->is_completed && $offer->freelancer_status !== 'completed') {
-                
+
                 // Mark offer as finished
                 $offer->freelancer_status = 'completed';
                 $offer->delivered_at      = now();
                 $offer->save();
-
             }
 
             // Send a notification to the employer via email
@@ -291,27 +286,24 @@ class OffersComponent extends Component
 
             // Refresh the page
             $this->dispatch('refresh');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
 
@@ -325,13 +317,13 @@ class OffersComponent extends Component
     public function confirmCancel($id)
     {
         try {
-            
+
             // Get offer
             $offer = CustomOffer::where('uid', $id)
-                                ->where('freelancer_id', auth()->id())
-                                ->where('freelancer_status', 'approved')
-                                ->whereIn('payment_status', ['pending', 'funded'])
-                                ->firstOrFail();
+                ->where('freelancer_id', auth()->id())
+                ->where('freelancer_status', 'approved')
+                ->whereIn('payment_status', ['pending', 'funded'])
+                ->firstOrFail();
 
             // Confirm cancel
             $this->dialog()->confirm([
@@ -347,16 +339,14 @@ class OffersComponent extends Component
                     'label'  => __('messages.t_cancel')
                 ],
             ]);
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
 
@@ -370,14 +360,14 @@ class OffersComponent extends Component
     public function cancel($id)
     {
         try {
-            
+
             // Get offer
             $offer = CustomOffer::where('uid', $id)
-                                ->where('freelancer_id', auth()->id())
-                                ->where('freelancer_status', 'approved')
-                                ->whereIn('payment_status', ['pending', 'funded'])
-                                ->with('buyer')
-                                ->firstOrFail();
+                ->where('freelancer_id', auth()->id())
+                ->where('freelancer_status', 'approved')
+                ->whereIn('payment_status', ['pending', 'funded'])
+                ->with('buyer')
+                ->firstOrFail();
 
             // Update offer
             $offer->freelancer_status = 'canceled';
@@ -386,12 +376,11 @@ class OffersComponent extends Component
 
             // Check if employer already funded money into this order
             if ($offer->payment_status === 'funded') {
-                
+
                 // In this case we have to refund the employer
                 $offer->buyer->update([
                     'balance_available' => convertToNumber($offer->buyer->balance_available) + convertToNumber($offer->budget_amount) + convertToNumber($offer->budget_buyer_fee)
                 ]);
-
             }
 
             // Now let's send the employer an email
@@ -406,21 +395,18 @@ class OffersComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
-    
 }

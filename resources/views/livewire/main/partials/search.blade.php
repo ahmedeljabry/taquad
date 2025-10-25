@@ -34,28 +34,8 @@
             </div>
       
             {{-- Results --}}
-            @if (count($gigs) || count($sellers) || count($tags))
+            @if (count($sellers) || count($tags))
                 <ul class="max-h-80 scroll-py-10 scroll-pb-2 space-y-4 overflow-y-auto p-4 pb-2" id="options" role="listbox">
-
-                    {{-- Gigs --}}
-                    @if ($gigs && count($gigs))
-                        <li>
-                            <h2 class="text-xs font-semibold text-gray-900">{{ __('messages.t_gigs') }}</h2>
-                            <ul class="-mx-4 mt-2 text-sm text-gray-700">
-
-                                {{-- List of gigs --}}
-                                @foreach ($gigs as $gig)
-                                    <li class="group flex cursor-default select-none items-center px-4 py-2">
-                                        <a href="{{ url('service', $gig->slug) }}" class="flex items-center">
-                                            <svg class="h-6 w-6 flex-none text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/> </svg>
-                                            <span class="ltr:ml-3 rtl:mr-3 flex-auto ext-ellipsis overflow-hidden">{{ $gig->title }}</span>
-                                        </a>
-                                    </li>
-                                @endforeach
-
-                            </ul>
-                        </li>
-                    @endif
                 
                     {{-- Sellers --}}
                     @if ($sellers && count($sellers))
@@ -102,7 +82,7 @@
             @endif
       
             {{-- No results --}}
-            @if (count($gigs) === 0 && count($sellers) === 0 && count($tags) === 0 && $q)
+            @if (count($sellers) === 0 && count($tags) === 0 && $q)
                 <div class="py-14 px-6 text-center text-sm sm:px-14">
                     <svg class="mx-auto h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/> </svg>
                     <p class="mt-4 font-semibold text-gray-900">{{ __('messages.no_results_found') }}</p>

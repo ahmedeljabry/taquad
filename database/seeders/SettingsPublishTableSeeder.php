@@ -14,12 +14,11 @@ class SettingsPublishTableSeeder extends Seeder
      */
     public function run()
     {
-        
+
         \DB::table('settings_publish')->insert(array (
-            0 => 
+            0 =>
             array (
                 'id'                                          => 1,
-                'auto_approve_gigs'                           => 0,
                 'auto_approve_portfolio'                      => 0,
                 'max_tags'                                    => 5,
                 'is_video_enabled'                            => 1,
@@ -40,7 +39,7 @@ class SettingsPublishTableSeeder extends Seeder
                 'custom_offer_attachment_max_files'           => 10,
             ),
         ));
-        
-        
+
+
     }
 }

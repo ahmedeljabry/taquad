@@ -1,6 +1,6 @@
 <div class="container mx-auto" x-data="window.eKJxLphGPLZqkwV">
     <div class="min-h-full bg-white dark:bg-zinc-800 shadow rounded-md">
-      
+
         {{-- Section heading --}}
         <header class="border-b-2 border-gray-100 dark:border-zinc-700 py-8 rounded-t-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:flex xl:items-center xl:justify-between">
@@ -48,7 +48,7 @@
                         {{-- Succeeded sales --}}
                         <div class="mt-2 flex items-center text-xs text-gray-500 font-medium">
                             <svg xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0 ltr:mr-1.5 rtl:ml-1.5 h-4 w-4 -mt-[2px] text-gray-400" viewBox="0 0 20 20" fill="currentColor"> <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/></svg>
-                            {{ __('messages.t_total_sales_number', ['number' => number_format(auth()->user()->sales->where('status', 'delivered')->where('is_finished', true)->count())]) }}
+                            {{ __('messages.t_total_sales_number', ['number'=> 0 ]) }}
                         </div>
 
                         {{-- Country --}}
@@ -64,7 +64,7 @@
                             <svg class="flex-shrink-0 ltr:mr-1.5 rtl:ml-1.5 h-4 w-4 -mt-[2px] text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"> <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/> </svg>
                             {{ __('messages.t_signed_up_on_date', ['date' => format_date(auth()->user()->created_at, config('carbon-formats.F_j,_Y'))]) }}
                         </div>
-                    
+
                     </div>
 
                 </div>
@@ -76,23 +76,23 @@
                             {{ __('messages.t_withdrawal_earnings') }}
                         </a>
                     </span>
-        
+
                     {{-- Publish new gig --}}
                     <span class="block ltr:mr-3 rtl:ml-4">
                         <a href="{{ url('create') }}" class="inline-flex items-center px-4 py-2 border border-primary-600 rounded-sm shadow-sm text-[13px] font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-50 focus:ring-primary-600">
                             {{ __('messages.t_publish_new_gig') }}
                         </a>
                     </span>
-                    
+
                 </div>
             </div>
         </header>
-      
+
         <main class="pb-12">
 
             {{-- Balance stats --}}
             <div class="mt-12 grid grid-cols-1 gap-y-12 gap-x-12 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 px-10">
-          
+
                 {{-- Net income --}}
                 <p class="text-center bg-gray-50 dark:bg-zinc-700 rounded-lg px-4 py-6">
                   <span class="block text-2xl font-bold text-gray-600 dark:text-gray-300">{{ money(auth()->user()->balance_net, settings('currency')->code, true) }}</span>
@@ -142,16 +142,16 @@
                         </span>
                     </span>
                 </p>
-              
+
             </div>
 
         </main>
-        
+
     </div>
 </div>
 
 @push('scripts')
-    
+
     {{-- AlpineJs --}}
     <script>
         function eKJxLphGPLZqkwV() {

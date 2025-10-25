@@ -40,14 +40,13 @@ class EditComponent extends Component
 
         // Loop through supported languages
         foreach (supported_languages() as $language) {
-            
+
             // Get translation
             $translation = $article->translate($language->language_code);
 
             // Fill translations
             $this->title[$language->language_code]   = !empty($translation) ? $translation->title : null;
             $this->content[$language->language_code] = !empty($translation) ? $translation->content : null;
-
         }
 
         // Fill form
@@ -70,8 +69,8 @@ class EditComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_edit_article'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_edit_article'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.blog.options.edit');
     }
@@ -91,16 +90,14 @@ class EditComponent extends Component
 
             // Check if want to change old image
             if ($this->image) {
-                
-                $image_id = ImageUploader::make($this->image)
-                                        ->deleteById($this->article->image_id)
-                                        ->folder('blog')
-                                        ->handle();
 
+                $image_id = ImageUploader::make($this->image)
+                    ->deleteById($this->article->image_id)
+                    ->folder('blog')
+                    ->handle();
             } else {
 
                 $image_id = $this->article->image_id;
-
             }
 
             // Update article
@@ -113,21 +110,20 @@ class EditComponent extends Component
                 $this->article->translateOrNew($language->language_code)->title   = isset($this->title[$language->language_code]) && !empty($this->title[$language->language_code]) ? $this->title[$language->language_code] : null;
                 $this->article->translateOrNew($language->language_code)->content = isset($this->content[$language->language_code]) && !empty($this->content[$language->language_code]) ? $this->content[$language->language_code] : null;
             }
-        
+
             // Save again
             $this->article->save();
 
             // Check if seo description exists in request
             if ($this->seo_description) {
-                
+
                 // Check if article already has seo
                 if ($this->article->seo) {
-                    
+
                     // Update seo
                     $this->article->seo()->update([
                         'description' => $this->seo_description
                     ]);
-
                 } else {
 
                     // Create new seo
@@ -135,41 +131,35 @@ class EditComponent extends Component
                     $seo->article_id  = $this->article->id;
                     $seo->description = $this->seo_description;
                     $seo->save();
-
                 }
-
             }
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
-        }   
+        }
     }
-    
 }

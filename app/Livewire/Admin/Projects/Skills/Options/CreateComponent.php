@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Projects\Skills\Options;
 
 use Livewire\Component;
@@ -29,8 +30,8 @@ class CreateComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_create_skills'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_create_skills'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.projects.skills.options.create', [
             'categories' => $this->categories
@@ -87,33 +88,29 @@ class CreateComponent extends Component
             $this->alert(
                 'success',
                 __('messages.t_success'),
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
 
             // Refresh the page
             $this->dispatch('refresh');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
                 'error',
                 __('messages.t_error'),
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
                 'error',
                 __('messages.t_error'),
-                livewire_alert_params( $th->getMessage(), 'error' )
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
-
 }

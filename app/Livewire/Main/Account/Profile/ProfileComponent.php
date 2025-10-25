@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Main\Account\Profile;
 
 use Carbon\Carbon;
@@ -101,26 +102,26 @@ class ProfileComponent extends Component
         $separator   = settings('general')->separator;
         $title       = __('messages.t_edit_profile') . " $separator " . settings('general')->title;
         $description = settings('seo')->description;
-        $ogimage     = src( settings('seo')->ogimage );
+        $ogimage     = src(settings('seo')->ogimage);
 
-        $this->seo()->setTitle( $title );
-        $this->seo()->setDescription( $description );
-        $this->seo()->setCanonical( url()->current() );
-        $this->seo()->opengraph()->setTitle( $title );
-        $this->seo()->opengraph()->setDescription( $description );
-        $this->seo()->opengraph()->setUrl( url()->current() );
+        $this->seo()->setTitle($title);
+        $this->seo()->setDescription($description);
+        $this->seo()->setCanonical(url()->current());
+        $this->seo()->opengraph()->setTitle($title);
+        $this->seo()->opengraph()->setDescription($description);
+        $this->seo()->opengraph()->setUrl(url()->current());
         $this->seo()->opengraph()->setType('website');
-        $this->seo()->opengraph()->addImage( $ogimage );
-        $this->seo()->twitter()->setImage( $ogimage );
-        $this->seo()->twitter()->setUrl( url()->current() );
-        $this->seo()->twitter()->setSite( "@" . settings('seo')->twitter_username );
+        $this->seo()->opengraph()->addImage($ogimage);
+        $this->seo()->twitter()->setImage($ogimage);
+        $this->seo()->twitter()->setUrl(url()->current());
+        $this->seo()->twitter()->setSite("@" . settings('seo')->twitter_username);
         $this->seo()->twitter()->addValue('card', 'summary_large_image');
         $this->seo()->metatags()->addMeta('fb:page_id', settings('seo')->facebook_page_id, 'property');
         $this->seo()->metatags()->addMeta('fb:app_id', settings('seo')->facebook_app_id, 'property');
         $this->seo()->metatags()->addMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'name');
-        $this->seo()->jsonLd()->setTitle( $title );
-        $this->seo()->jsonLd()->setDescription( $description );
-        $this->seo()->jsonLd()->setUrl( url()->current() );
+        $this->seo()->jsonLd()->setTitle($title);
+        $this->seo()->jsonLd()->setDescription($description);
+        $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
         return view('livewire.main.account.profile.profile');
@@ -141,10 +142,10 @@ class ProfileComponent extends Component
 
             // Upload avatar
             $avatar_id = ImageUploader::make($this->avatar)
-                                      ->deleteById(auth()->user()->avatar_id)
-                                      ->resize(100)
-                                      ->folder('avatars')
-                                      ->handle();
+                ->deleteById(auth()->user()->avatar_id)
+                ->resize(100)
+                ->folder('avatars')
+                ->handle();
 
             // Update user avatar
             auth()->user()->update([
@@ -157,29 +158,26 @@ class ProfileComponent extends Component
                 'description' => __('messages.t_avatar_updated_successfully'),
                 'icon'        => 'success'
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
 
@@ -210,29 +208,26 @@ class ProfileComponent extends Component
 
             // Profile updated
             $this->dispatch('profile-headline-updated');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
 
@@ -248,10 +243,10 @@ class ProfileComponent extends Component
 
             // Check if social media accounts enabled
             if (settings('security')->is_social_media_accounts) {
-                
+
                 // Validate form
                 SocialValidator::validate($this);
-    
+
                 // Update user headline
                 UserLinkedAccount::where('user_id', auth()->id())->update([
                     'facebook_profile'      => clean($this->facebook_profile),
@@ -262,39 +257,35 @@ class ProfileComponent extends Component
                     'youtube_profile'       => clean($this->youtube_profile),
                     'vimeo_profile'         => clean($this->vimeo_profile)
                 ]);
-    
+
                 // Success
                 $this->notification([
                     'title'       => __('messages.t_success'),
                     'description' => __('messages.t_linked_accounts_has_been_updated'),
                     'icon'        => 'success'
                 ]);
-
             }
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
-        } 
+        }
     }
 
 
@@ -314,17 +305,16 @@ class ProfileComponent extends Component
             $is_exists = UserSkill::where('user_id', auth()->id())->where('name', $this->add_skill['name'])->first();
 
             if ($is_exists) {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
                     'description' => __('messages.t_add_skill_already_exists'),
                     'icon'        => 'error'
                 ]);
-                
+
                 // Return
                 return;
-
             }
 
             // Add skill
@@ -347,29 +337,26 @@ class ProfileComponent extends Component
                 'description' => __('messages.t_skill_added_to_ur_profile'),
                 'icon'        => 'success'
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
 
@@ -432,22 +419,21 @@ class ProfileComponent extends Component
 
             // Check if skill already exists
             $is_exists = UserSkill::where('user_id', auth()->id())
-                                  ->where('name', $this->add_skill['name'])
-                                  ->where('id', '!=', $this->add_skill['id'])
-                                  ->first();
+                ->where('name', $this->add_skill['name'])
+                ->where('id', '!=', $this->add_skill['id'])
+                ->first();
 
             if ($is_exists) {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
                     'description' => __('messages.t_add_skill_already_exists'),
                     'icon'        => 'error'
                 ]);
-                
+
                 // Return
                 return;
-
             }
 
             // Update skill
@@ -473,29 +459,26 @@ class ProfileComponent extends Component
 
             // Close form
             $this->dispatch('close-edit-skill-form');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
 
@@ -516,17 +499,16 @@ class ProfileComponent extends Component
             $is_exists = UserLanguage::where('user_id', auth()->id())->where('name', $this->add_language['name'])->first();
 
             if ($is_exists) {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
                     'description' => __('messages.t_add_language_already_exists'),
                     'icon'        => 'error'
                 ]);
-                
+
                 // Return
                 return;
-
             }
 
             // Add language
@@ -548,29 +530,26 @@ class ProfileComponent extends Component
                 'description' => __('messages.t_language_added_to_ur_profile'),
                 'icon'        => 'success'
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
 
@@ -633,22 +612,21 @@ class ProfileComponent extends Component
 
             // Check if language already exists
             $is_exists = UserLanguage::where('user_id', auth()->id())
-                                  ->where('name', $this->add_language['name'])
-                                  ->where('id', '!=', $this->add_language['id'])
-                                  ->first();
+                ->where('name', $this->add_language['name'])
+                ->where('id', '!=', $this->add_language['id'])
+                ->first();
 
             if ($is_exists) {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
                     'description' => __('messages.t_add_language_already_exists'),
                     'icon'        => 'error'
                 ]);
-                
+
                 // Return
                 return;
-
             }
 
             // Update language
@@ -673,29 +651,26 @@ class ProfileComponent extends Component
 
             // Close form
             $this->dispatch('close-edit-language-form');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
 
@@ -726,29 +701,26 @@ class ProfileComponent extends Component
 
             // Close form
             $this->dispatch('close-description-edit-form');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
 
@@ -775,7 +747,7 @@ class ProfileComponent extends Component
 
             // Check if date in future
             if (!$availability_date->isFuture()) {
-                
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -784,7 +756,6 @@ class ProfileComponent extends Component
                 ]);
 
                 return;
-
             }
 
             // Delete old availability
@@ -809,18 +780,16 @@ class ProfileComponent extends Component
                 'description' => __('messages.t_ur_availability_settings_updated'),
                 'icon'        => 'success'
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Carbon\Exceptions\InvalidFormatException $e) {
 
             // Invalid date format
@@ -831,18 +800,16 @@ class ProfileComponent extends Component
             ]);
 
             return;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
 
@@ -861,5 +828,4 @@ class ProfileComponent extends Component
             $this->dispatch('refresh');
         }
     }
-    
 }

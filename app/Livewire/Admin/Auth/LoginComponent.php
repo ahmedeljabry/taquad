@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Auth;
 
 use Livewire\Component;
@@ -15,7 +16,7 @@ class LoginComponent extends Component
 {
 
     use SEOToolsTrait, LivewireAlert, Actions;
- 
+
     protected $attempts = 2;
     protected $retry    = 20;
 
@@ -52,12 +53,12 @@ class LoginComponent extends Component
      *
      * @return Illuminate\View\View
      */
-    #[Layout('components.layouts.admin-auth')] 
+    #[Layout('components.layouts.admin-auth')]
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_login'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_login'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.auth.login');
     }
@@ -93,7 +94,7 @@ class LoginComponent extends Component
                 'email'    => $this->email,
                 'password' => $this->password
             ];
-     
+
             if (Auth::guard('admin')->attempt($credentials, true)) {
 
                 // Successfull login
@@ -101,41 +102,37 @@ class LoginComponent extends Component
 
                 // Clear failed attempts
                 RateLimiter::clear($this->throttleKey());
-     
+
                 // Redirect to dashboard
                 return redirect()->intended(config('global.dashboard_prefix'));
-
             }
 
             // Failed login, set failed attempt
             RateLimiter::hit($this->throttleKey(), $this->retry);
-     
+
             // Invalid login data
             $this->message = __('messages.t_invalid_login_credentials_pls_try_again');
 
-            // Return 
+            // Return
             return;
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-            
         }
     }
 
@@ -153,7 +150,7 @@ class LoginComponent extends Component
         // Return key
         return "login_ip_address_banned_$ip";
     }
-    
+
 
     /**
      * Ensure the login request is not rate limited.
@@ -168,9 +165,8 @@ class LoginComponent extends Component
 
         // User reach limit attempts, ban his ip address
         BannedIp::updateOrCreate(['ip_address' => request()->ip()])->increment('attempts');
-        
+
         // Redirect to home page
         return redirect('/');
     }
-
 }

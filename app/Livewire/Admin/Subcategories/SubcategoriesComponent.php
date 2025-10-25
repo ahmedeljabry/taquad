@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Subcategories;
 
 use App\Models\Gig;
@@ -24,8 +25,8 @@ class SubcategoriesComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_subcategories'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_subcategories'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.subcategories.subcategories', [
             'subcategories' => $this->subcategories
@@ -41,12 +42,12 @@ class SubcategoriesComponent extends Component
     public function getSubcategoriesProperty()
     {
         return Subcategory::orderByDesc('id')
-                        ->with(['icon', 'parent' => function($query) {
-                            return $query->with('icon')->withTranslation();
-                        }])
-                        ->withCount(['gigs', 'projects'])
-                        ->withTranslation()
-                        ->paginate(42);
+            ->with(['icon', 'parent' => function ($query) {
+                return $query->with('icon')->withTranslation();
+            }])
+            ->withCount(['gigs', 'projects'])
+            ->withTranslation()
+            ->paginate(42);
     }
 
 
@@ -68,7 +69,7 @@ class SubcategoriesComponent extends Component
 
         // Check if category has any gig
         if ($gigs) {
-            
+
             // Error
             $this->notification([
                 'title'       => __('messages.t_error'),
@@ -77,7 +78,6 @@ class SubcategoriesComponent extends Component
             ]);
 
             return;
-
         }
 
         // Check if subcategory has icon
@@ -97,10 +97,9 @@ class SubcategoriesComponent extends Component
 
         // Success
         $this->alert(
-            'success', 
-            __('messages.t_success'), 
-            livewire_alert_params( __('messages.t_toast_operation_success') )
+            'success',
+            __('messages.t_success'),
+            livewire_alert_params(__('messages.t_toast_operation_success'))
         );
     }
-    
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Profile;
 
 use Livewire\Component;
@@ -12,7 +13,7 @@ use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
 class ProfileComponent extends Component
 {
     use SEOToolsTrait, LivewireAlert, Actions;
-    
+
     public $username;
     public $email;
     public $password;
@@ -46,12 +47,12 @@ class ProfileComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_edit_profile'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_edit_profile'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.profile.profile');
     }
-    
+
 
     /**
      * Update profile
@@ -70,7 +71,7 @@ class ProfileComponent extends Component
 
             // Verify current password
             if (!Hash::check($this->password, $admin->password)) {
-               
+
                 // Error
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -79,16 +80,14 @@ class ProfileComponent extends Component
                 ]);
 
                 return;
-
             }
 
             // Request password change?
             if ($this->new_password) {
-                
+
                 // Update admin password
                 $admin->password = Hash::make($this->new_password);
                 $admin->save();
-
             }
 
             // Update details
@@ -102,30 +101,26 @@ class ProfileComponent extends Component
                 'description' => __('messages.t_admin_profile_updated'),
                 'icon'        => 'success'
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
-
 }

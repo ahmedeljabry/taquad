@@ -43,6 +43,10 @@ class Project extends Model implements Sitemapable
         'is_urgent',
         'is_highlighted',
         'is_alert',
+        'requires_nda',
+        'nda_path',
+        'nda_term_months',
+        'nda_scope',
         'expiry_date_featured',
         'expiry_date_urgent',
         'expiry_date_highlight',
@@ -131,6 +135,22 @@ class Project extends Model implements Sitemapable
     public function shared_files()
     {
         return $this->hasMany(ProjectSharedFile::class, 'project_id');
+    }
+
+    /**
+     * Get project brief questions.
+     */
+    public function brief_questions()
+    {
+        return $this->hasMany(ProjectBriefQuestion::class, 'project_id')->orderBy('position');
+    }
+
+    /**
+     * Get project brief attachments.
+     */
+    public function brief_attachments()
+    {
+        return $this->hasMany(ProjectBriefAttachment::class, 'project_id');
     }
 
     /**

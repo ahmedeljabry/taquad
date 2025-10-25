@@ -145,4 +145,53 @@
         </main>
     </div>
 
+    <x-forms.modal id="modal-confirm-withdrawal" target="manual-withdraw-confirm-trigger" uid="modal_confirm_withdrawal" placement="center-center" size="max-w-lg">
+        <x-slot name="title">{{ __('messages.t_withdraw_funds') }}</x-slot>
+        <x-slot name="content">
+            <div class="space-y-4">
+                <p class="text-sm text-slate-600 dark:text-zinc-300">
+                    {{ __('messages.t_pls_review_ur_withdrawal_details') }}
+                </p>
+                <div class="rounded-lg border border-slate-200 dark:border-secondary-600 overflow-hidden">
+                    <dl class="divide-y divide-slate-200 dark:divide-secondary-600">
+                        <div class="grid grid-cols-3 gap-4 py-3 px-4">
+                            <dt class="text-sm font-medium text-slate-500 dark:text-secondary-500 ltr:text-left rtl:text-right">
+                                {{ __('messages.t_requested_amount') }}
+                            </dt>
+                            <dd class="col-span-2 text-sm font-semibold text-zinc-900 dark:text-secondary-200 ltr:text-right rtl:text-left">
+                                {{ money($confirmation_amount, settings('currency')->code, true) }}
+                            </dd>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 py-3 px-4">
+                            <dt class="text-sm font-medium text-slate-500 dark:text-secondary-500 ltr:text-left rtl:text-right">
+                                {{ __('messages.t_withdrawal_fee') }}
+                            </dt>
+                            <dd class="col-span-2 text-sm font-semibold text-rose-600 dark:text-secondary-300 ltr:text-right rtl:text-left">
+                                - {{ money($confirmation_commission, settings('currency')->code, true) }}
+                            </dd>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 py-3 px-4 bg-slate-50/70 dark:bg-secondary-700">
+                            <dt class="text-sm font-medium text-slate-500 dark:text-secondary-400 ltr:text-left rtl:text-right">
+                                {{ __('messages.t_u_will_get') }}
+                            </dt>
+                            <dd class="col-span-2 text-sm font-semibold text-zinc-900 dark:text-secondary-100 ltr:text-right rtl:text-left">
+                                {{ money(max($confirmation_net, 0), settings('currency')->code, true) }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </x-slot>
+        <x-slot name="footer">
+            <div class="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <button type="button" wire:click="cancelConfirmation" class="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary-200 hover:text-primary-600 dark:border-secondary-600 dark:text-secondary-200 dark:hover:border-primary-400 dark:hover:text-primary-200">
+                    {{ __('messages.t_cancel') }}
+                </button>
+                <button type="button" wire:click="withdraw" class="inline-flex items-center justify-center rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2">
+                    {{ __('messages.t_confirm') }}
+                </button>
+            </div>
+        </x-slot>
+    </x-forms.modal>
+
 </div>

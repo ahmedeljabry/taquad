@@ -55,8 +55,63 @@
             </div>
         @endif
 
+        {{-- Utility ribbon --}}
+        <div class="hidden lg:flex items-center justify-between px-4 sm:px-6 lg:px-8 py-2 text-xs font-semibold text-slate-500 dark:text-zinc-300">
+            <div class="flex items-center gap-6">
+                <span class="inline-flex items-center gap-2">
+                    <i class="ph-duotone ph-shield-star text-primary-500 text-base"></i>
+                    حماية دفع مضمونة وتقارير تنفيذ لحظية
+                </span>
+                <span class="inline-flex items-center gap-2">
+                    <i class="ph-duotone ph-lightning text-amber-500 text-base"></i>
+                    متوسط زمن الرد على المشاريع أقل من ٦ ساعات
+                </span>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="relative" x-data="themeToggle()">
+                    <button type="button"
+                        class="inline-flex items-center gap-2 rounded-full border border-slate-300/60 px-4 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-primary-400 hover:text-primary-600 dark:border-zinc-600 dark:text-zinc-200 dark:hover:border-primary-400 dark:hover:text-primary-200"
+                        @click="open = !open"
+                        @keydown.escape.window="open = false"
+                        :aria-expanded="open">
+                        <i :class="`ph ${currentIcon()} text-base`"></i>
+                        <span class="hidden sm:inline-flex" x-text="currentLabel()"></span>
+                    </button>
+                    <div x-cloak x-show="open"
+                        x-transition.origin.top.right
+                        @click.outside="open = false"
+                        class="absolute z-30 mt-2 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl shadow-slate-900/5 dark:border-zinc-700 dark:bg-zinc-800">
+                        <ul class="py-1 text-xs font-semibold text-slate-600 dark:text-zinc-300">
+                            <template x-for="option in options" :key="option.value">
+                                <li>
+                                    <button type="button"
+                                        class="flex w-full items-center gap-3 px-4 py-2 text-left transition hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-primary-500/10 dark:hover:text-primary-200"
+                                        @click="setTheme(option.value)">
+                                        <i :class="`ph ${option.icon} text-base`"></i>
+                                        <div class="flex flex-col">
+                                            <span x-text="option.label"></span>
+                                            <span x-show="preference === option.value" class="text-[10px] font-medium text-primary-500 dark:text-primary-300">الوضع الحالي</span>
+                                        </div>
+                                    </button>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+                <a href="{{ url('help/contact') }}" class="inline-flex items-center gap-2 rounded-full border border-slate-300/60 px-4 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-primary-400 hover:text-primary-600 dark:border-zinc-600 dark:text-zinc-200 dark:hover:border-primary-400 dark:hover:text-primary-300">
+                    <i class="ph ph-headset"></i>
+                    دعم العملاء
+                </a>
+                <a href="{{ url('explore/projects') }}" class="inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm shadow-primary-500/30 transition hover:-translate-y-0.5 hover:bg-primary-700">
+                    استكشاف الفرص
+                    <i class="ph ph-arrow-line-up-right text-sm"></i>
+                </a>
+            </div>
+        </div>
+
         {{-- Primary navbar --}}
-        <nav class="relative container max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 justify-between items-center h-20 flex">
+        <nav class="relative container max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between gap-4 rounded-full border border-white/60 bg-white/85 px-4 sm:px-6 py-2 shadow-[0_18px_45px_-22px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-white/10 dark:bg-[#0e1629]/80">
 
             {{-- Logo / Search --}}
             <div class="inline-flex items-center min-w-fit">
@@ -82,7 +137,7 @@
                 <div class="main-search-box hidden {{ request()->is('/') && auth()->guest() ? 'hidden' : 'lg:block' }}" x-data="{ open: false }">
 
                     {{-- Search input container --}}
-                    <div class="border dark:border-zinc-700 rounded-full flex items-center w-full py-0.5 px-6 mx-4" id="search-input-container">
+                    <div class="flex items-center w-full py-1.5 px-6 mx-4 rounded-full border border-slate-200 bg-white/90 shadow-[0_12px_30px_-18px_rgba(15,23,42,0.45)] transition focus-within:border-primary-400 focus-within:shadow-[0_15px_35px_-18px_rgba(59,130,246,0.55)] dark:border-zinc-700 dark:bg-zinc-900/70" id="search-input-container">
                         {{-- Search input --}}
                         <input wire:model.live.debounce.500ms="q" wire:keydown.enter="enter" x-ref="search" x-on:click="open = true" placeholder="{{ __('messages.t_what_service_are_u_looking_for_today') }}" class="w-full text-xs+ outline-none focus:outline-none bg-transparent border-none focus:ring-0 ltr:pl-4 rtl:pr-4 placeholder:text-gray-400 dark:placeholder:text-zinc-500 placeholder-shown:truncate dark:text-zinc-200">
 
@@ -507,16 +562,9 @@
                         </div>
                     @endauth
 
-                    {{-- Apply as freelancer --}}
-                    @guest
-                        <a href="{{ url('start_selling') }}" class="leading-5 font-semibold pt-2 pb-[9px] text-xs+ main-header-link-item dark:text-zinc-300 dark:hover:text-zinc-100">
-                            @lang('messages.t_apply_as_freelancer')
-                        </a>
-                    @endguest
-
                     {{-- Login --}}
                     @guest
-                        <a href="{{ url('auth/login') }}" class="leading-5 font-semibold pt-2 pb-[9px] text-xs+ main-header-link-item dark:text-zinc-300 dark:hover:text-zinc-100">
+                        <a href="{{ url('auth/login') }}" class="inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm shadow-primary-500/30 transition hover:-translate-y-0.5 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400">
                             @lang('messages.t_login')
                         </a>
                     @endguest
@@ -551,66 +599,7 @@
                 </div>
 
             </div>
-
         </nav>
-
-        {{-- Categories --}}
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 hidden">
-
-            {{-- Parent categories --}}
-            <ul class="relative flex items-center justify-between overflow-y-auto transition-colors duration-300 space-x-5 rtl:space-x-reverse scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-zinc-600 scrollbar-track-gray-50 dark:scrollbar-track-zinc-400">
-                @foreach ($categories as $category)
-                    <li class="inline-block flex-shrink-0 border-b-2 border-transparent hover:border-primary-600 focus:outline-none focus:ring-0 relative">
-
-                        {{-- Check if category has subcategories --}}
-                        @if (count($category->subcategories))
-                        <button data-popover-target="popover-subcategories-{{ $category->uid }}" data-popover-placement="bottom" class="block text-[13px] font-medium text-gray-700 dark:text-gray-300 dark:group-hover:text-white group-hover:text-primary-600 py-2 focus:outline-none focus:ring-0">
-                            {{ $category->name }}
-                        </button>
-                        @else
-                            <a href="{{ url('categories', $category->slug) }}" class="block text-[13px] font-medium text-gray-700 dark:text-gray-300 dark:group-hover:text-white group-hover:text-primary-600 py-2 focus:outline-none focus:ring-0">
-                                {{ $category->name }}
-                            </a>
-                        @endif
-
-                    </li>
-                @endforeach
-            </ul>
-
-            {{-- Subcategories --}}
-            @foreach ($categories as $category)
-                @if (count($category->subcategories))
-                    <div data-popover role="tooltip" id="popover-subcategories-{{ $category->uid }}" class="absolute z-10 invisible inline-block w-64 text-sm font-light text-gray-500 transition-opacity duration-300 bg-white rounded-md shadow-xl opacity-0 dark:text-zinc-400 dark:bg-zinc-800">
-                        <ul class="max-h-96 !overflow-y-auto scrollbar-thin scrollbar-thumb-primary-600 scrollbar-track-white dark:scrollbar-track-zinc-800">
-
-                            @foreach ($category->subcategories as $sub)
-                                <li class="first:rounded-t-md">
-                                    <a href="{{ url('categories/' . $category->slug . '/' . $sub->slug) }}" class="flex items-center py-2 px-3 hover:bg-gray-50 dark:hover:bg-zinc-700" style="border-radius: inherit">
-                                        @if ($sub->icon)
-                                            <div class="flex-shrink-0 ltr:mr-2 rtl:ml-2">
-                                                <img class="w-7 h-7 lazy" src="{{ placeholder_img() }}" data-src="{{ src($sub->icon) }}" alt="{{ $sub->name }}">
-                                            </div>
-                                        @endif
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-[13px] font-semibold text-gray-700 truncate dark:text-zinc-200 group-hover:text-primary-600">
-                                                {{ $sub->name }}
-                                            </p>
-                                        </div>
-                                    </a>
-                                </li>
-                            @endforeach
-
-                        </ul>
-                        <div class="bg-gray-50 dark:bg-zinc-700 rounded-b-md text-center">
-                            <a href="{{ url('categories', $category->slug) }}" class="block px-1 py-4 text-gray-500 dark:text-zinc-300 hover:text-primary-600 hover:underline text-xs tracking-wide font-semibold">
-                                {{ __('messages.t_browse_parent_category', ['category' => $category->name]) }}
-                            </a>
-                        </div>
-                    </div>
-                @endif
-            @endforeach
-
-        </div>
 
         {{-- Mobile menu --}}
         <div x-show="mobile_menu" style="display: none" class="fixed inset-0 flex z-40 lg:hidden" x-ref="mobile_menu">
@@ -648,21 +637,6 @@
                 <div @class(['w-full overflow-auto h-full', 'pt-5' => auth()->check()])>
 
                     <div class="flex items-center justify-center">
-
-                        {{-- Received orders --}}
-                        @auth
-                            @if (auth()->user()->account_type === 'seller')
-                                <a href="{{ url('seller/orders') }}" class="text-gray-500 hover:text-primary-600 dark:text-gray-100 dark:hover:text-white transition-colors duration-300 py-2 mx-4 relative md:hidden">
-                                    <svg class="text-gray-400 hover:text-gray-700 h-6 w-6 dark:text-gray-100 dark:hover:text-white" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 22h14c1.103 0 2-.897 2-2V9a1 1 0 0 0-1-1h-3V7c0-2.757-2.243-5-5-5S7 4.243 7 7v1H4a1 1 0 0 0-1 1v11c0 1.103.897 2 2 2zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v1H9V7zm-4 3h2v2h2v-2h6v2h2v-2h2l.002 10H5V10z"></path></svg>
-                                    @if (auth()->user()->sales->where('status', 'pending')->count())
-                                        <span class="flex absolute h-2 w-2 top-0 ltr:right-0 rtl:left-0 mt-0 ltr:-mr-1 rtl:-ml-1">
-                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-                                            <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
-                                        </span>
-                                    @endif
-                                </a>
-                            @endif
-                        @endauth
 
                         {{-- Notifications --}}
                         @auth
@@ -704,80 +678,13 @@
                             @lang('messages.t_become_a_seller')
                         </a>
                     @endif
-                    
+
                     {{-- Explore projects --}}
                     @if (settings('projects')->is_enabled)
                         <a href="{{ url('explore/projects') }}" class="py-2 px-5 block text-gray-500 dark:text-gray-200 font-semibold text-sm">
                             @lang('messages.t_explore_projects')
                         </a>
                     @endif
-
-                    {{-- Categories --}}
-                    <div x-data="{ open: false }" class="space-y-1">
-
-                        {{-- Browse link --}}
-                        <a href="javascript:void(0)" class="py-2 px-5 text-gray-500 dark:text-gray-200 font-semibold text-sm flex items-center space-x-3 rtl:space-x-reverse relative z-1" x-on:click="open = !open">
-                            <span class="grow">
-                                @lang('messages.t_browse_categories')
-                            </span>
-                            <span x-bind:class="{ 'rotate-90': !open, 'rotate-0': open }" class="transform transition ease-out duration-150 opacity-75 rotate-0">
-                                <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" class="hi-solid hi-chevron-down inline-block w-4 h-4"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                            </span>
-                        </a>
-
-                        {{-- List of categories --}}
-                        <div
-                            x-show="open"
-                            style="display: none"
-                            x-transition:enter="transition ease-out duration-100"
-                            x-transition:enter-start="transform -translate-y-6 opacity-0"
-                            x-transition:enter-end="transform translate-y-0 opacity-100"
-                            x-transition:leave="transition ease-in duration-100 bg-transparent"
-                            x-transition:leave-start="transform translate-y-0 opacity-100"
-                            x-transition:leave-end="transform -translate-y-6 opacity-0"
-                            class="relative z-0">
-
-                            @foreach ($categories as $category)
-                                <details class="group ltr:ml-4 rtl:mr-4" wire:key="header-categories-{{ $category->uid }}">
-
-                                    {{-- Parent category --}}
-                                    <summary class="flex items-center text-gray-500 dark:text-gray-300 py-2 px-5">
-
-                                        {{-- Category icon --}}
-                                        <img src="{{ placeholder_img() }}" data-src="{{ src($category->icon) }}" alt="{{ $category->name }}" class="lazy h-6 w-6 rounded-full object-contain">
-
-                                        {{-- Category name --}}
-                                        <span class="ltr:ml-3 rtl:mr-3 text-[13px] font-medium"> {{ $category->name }} </span>
-
-                                        {{-- Arrow --}}
-                                        <span class="ltr:ml-auto rtl:mr-auto transition duration-300 shrink-0 group-open:-rotate-180">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"> <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path> </svg>
-                                        </span>
-
-                                    </summary>
-
-                                    {{-- Subcategories --}}
-                                    <nav class="mt-1.5 ltr:ml-8 rtl:mr-8 flex flex-col">
-
-                                        {{-- Open parent category --}}
-                                        <a href="{{ url('categories/' . $category->slug) }}" class="flex items-center px-4 py-2 text-gray-800 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-700 hover:text-gray-700 dark:hover:text-gray-200">
-                                            <span class="ltr:ml-3 rtl:mr-3 text-xs font-medium"> {{ __('messages.t_browse_parent_category', ['category' => $category->name]) }} </span>
-                                        </a>
-
-                                        {{-- List of subcategories --}}
-                                        @foreach ($category->subcategories as $sub)
-                                            <a href="{{ url('categories/' . $category->slug . '/' . $sub->slug) }}" class="flex items-center px-4 py-2 text-gray-500 dark:text-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700">
-                                                <span class="ltr:ml-3 rtl:mr-3 text-xs font-medium"> {{ $sub->name }} </span>
-                                            </a>
-                                        @endforeach
-
-                                    </nav>
-
-                                </details>
-                            @endforeach
-
-                        </div>
-                    </div>
 
                     {{-- Divider --}}
                     <div class="w-full h-px bg-gray-100 dark:bg-zinc-600 my-3"></div>

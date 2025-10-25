@@ -8,13 +8,13 @@
   ),
   'akcybex/laravel-jazzcash' => 
   array (
-    'providers' => 
-    array (
-      0 => 'AKCybex\\JazzCash\\AKJazzCashServiceProvider',
-    ),
     'aliases' => 
     array (
       'JazzCash' => 'AKCybex\\JazzCash\\Facades\\JazzCash',
+    ),
+    'providers' => 
+    array (
+      0 => 'AKCybex\\JazzCash\\AKJazzCashServiceProvider',
     ),
   ),
   'artesaos/seotools' => 
@@ -59,13 +59,13 @@
   ),
   'cartalyst/stripe-laravel' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Cartalyst\\Stripe\\Laravel\\StripeServiceProvider',
-    ),
     'aliases' => 
     array (
       'Stripe' => 'Cartalyst\\Stripe\\Laravel\\Facades\\Stripe',
+    ),
+    'providers' => 
+    array (
+      0 => 'Cartalyst\\Stripe\\Laravel\\StripeServiceProvider',
     ),
   ),
   'cloudinary-labs/cloudinary-laravel' => 
@@ -88,24 +88,24 @@
   ),
   'edwardhendrix/log-viewer' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Opcodes\\LogViewer\\LogViewerServiceProvider',
-    ),
     'aliases' => 
     array (
       'LogViewer' => 'Opcodes\\LogViewer\\Facades\\LogViewer',
     ),
+    'providers' => 
+    array (
+      0 => 'Opcodes\\LogViewer\\LogViewerServiceProvider',
+    ),
   ),
   'intervention/image' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Intervention\\Image\\ImageServiceProvider',
-    ),
     'aliases' => 
     array (
       'Image' => 'Intervention\\Image\\Facades\\Image',
+    ),
+    'providers' => 
+    array (
+      0 => 'Intervention\\Image\\ImageServiceProvider',
     ),
   ),
   'jantinnerezo/livewire-alert' => 
@@ -121,13 +121,13 @@
   ),
   'jenssegers/agent' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Jenssegers\\Agent\\AgentServiceProvider',
-    ),
     'aliases' => 
     array (
       'Agent' => 'Jenssegers\\Agent\\Facades\\Agent',
+    ),
+    'providers' => 
+    array (
+      0 => 'Jenssegers\\Agent\\AgentServiceProvider',
     ),
   ),
   'laravel/sail' => 
@@ -200,13 +200,13 @@
   ),
   'mollie/laravel-mollie' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Mollie\\Laravel\\MollieServiceProvider',
-    ),
     'aliases' => 
     array (
       'Mollie' => 'Mollie\\Laravel\\Facades\\Mollie',
+    ),
+    'providers' => 
+    array (
+      0 => 'Mollie\\Laravel\\MollieServiceProvider',
     ),
   ),
   'munafio/chatify' => 
@@ -257,13 +257,13 @@
   ),
   'rawilk/laravel-form-components' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Rawilk\\FormComponents\\FormComponentsServiceProvider',
-    ),
     'aliases' => 
     array (
       'FormComponents' => 'Rawilk\\FormComponents\\Facades\\FormComponents',
+    ),
+    'providers' => 
+    array (
+      0 => 'Rawilk\\FormComponents\\FormComponentsServiceProvider',
     ),
   ),
   'rtconner/laravel-tagging' => 
@@ -275,13 +275,13 @@
   ),
   'simplesoftwareio/simple-qrcode' => 
   array (
-    'providers' => 
-    array (
-      0 => 'SimpleSoftwareIO\\QrCode\\QrCodeServiceProvider',
-    ),
     'aliases' => 
     array (
       'QrCode' => 'SimpleSoftwareIO\\QrCode\\Facades\\QrCode',
+    ),
+    'providers' => 
+    array (
+      0 => 'SimpleSoftwareIO\\QrCode\\QrCodeServiceProvider',
     ),
   ),
   'socialiteproviders/manager' => 

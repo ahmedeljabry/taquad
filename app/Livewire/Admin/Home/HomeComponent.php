@@ -2,12 +2,9 @@
 
 namespace App\Livewire\Admin\Home;
 
-use App\Models\Gig;
 use App\Models\User;
-use App\Models\Order;
 use Livewire\Component;
-use App\Models\GigVisit;
-use App\Models\OrderItem;
+use App\Models\Invoice;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\DB;
 use App\Models\ConversationMessage;
@@ -25,7 +22,6 @@ class HomeComponent extends Component
     use SEOToolsTrait;
 
     public Collection $recent_users;
-    public Collection $recent_gigs;
     public Collection $recent_projects;
     public Collection $tracker_map;
     public Collection $tracker_referers;
@@ -38,7 +34,6 @@ class HomeComponent extends Component
     public $income_from_commission;
     public $withdrawn_money;
     public $total_sales;
-    public $total_gigs;
     public $total_users;
     public $total_messages;
     public $visits_by_countries;
@@ -62,12 +57,7 @@ class HomeComponent extends Component
                                         ->take(10)
                                         ->get();
 
-        // Get recent gigs
-        $this->recent_gigs = Gig::latest()
-                                        ->select('id', 'image_thumb_id', 'title', 'created_at', 'status')
-                                        ->with('thumbnail')
-                                        ->take(10)
-                                        ->get();
+        // Recent gigs removed (legacy) — projects-only dashboard
 
         // Set tracker map
         $this->tracker_map  = TrackerGeoip::whereNotNull('country_code')
@@ -109,25 +99,18 @@ class HomeComponent extends Component
                                                 ->take(5)
                                                 ->get();
 
-        // Calculate net income
-        $this->net_income = Order::whereHas('items', function($query) {
-            return $query->whereIn('status', ['pending', 'proceeded', 'delivered']);
-        })->sum('total_value');
+        // Calculate net income (paid invoices)
+        $this->net_income = Invoice::where('status', 'paid')->sum('total_amount');
 
-        // Calculate income from taxes
-        $this->income_from_taxes = Order::sum('taxes_value');
-
-        // Calculate income from commission
-        $this->income_from_commission = OrderItem::where('is_finished', true)->where('status', 'delivered')->sum('commission_value');
+        // Legacy taxes/commission removed; set to 0 or compute if applicable
+        $this->income_from_taxes = 0;
+        $this->income_from_commission = 0;
 
         // Caluclate withdrawn money
         $this->withdrawn_money = UserWithdrawalHistory::where('status', 'paid')->sum('amount');
 
-        // Calculate total sales
-        $this->total_sales = OrderItem::where('status', 'delivered')->where('is_finished', true)->count();
-
-        // Calculate total gigs
-        $this->total_gigs = Gig::count();
+        // Calculate total paid invoices as sales
+        $this->total_sales = Invoice::where('status', 'paid')->count();
 
         // Caluclate total users
         $this->total_users = User::count();
@@ -135,36 +118,12 @@ class HomeComponent extends Component
         // Calculate users messages
         $this->total_messages = ConversationMessage::count();
 
-        // Get visits by countries
-        $this->visits_by_countries = GigVisit::whereNotNull('country_code')
-                                            ->select('country_code',DB::raw('COUNT(country_code) as count'))
-                                            ->groupBy('country_code')
-                                            ->orderBy('count', 'desc')
-                                            ->get();
+        // Legacy GigVisit metrics removed; tracker_map already provides geo info
 
         // Get latest 10 users
         $this->latest_users = User::latest()->take(10)->get();
 
-        // Get top browsers
-        $this->browsers  = GigVisit::whereNotNull('browser_name')
-                            ->select('browser_name',DB::raw('COUNT(browser_name) as count'))
-                            ->groupBy('browser_name')
-                            ->orderBy('count', 'desc')
-                            ->get();
-
-        // Get top os
-        $this->os  = GigVisit::whereNotNull('os_name')
-                            ->select('os_name',DB::raw('COUNT(os_name) as count'))
-                            ->groupBy('os_name')
-                            ->orderBy('count', 'desc')
-                            ->get();
-
-        // Get top devices
-        $this->devices  = GigVisit::whereNotNull('device_type')
-                            ->select('device_type',DB::raw('COUNT(device_type) as count'))
-                            ->groupBy('device_type')
-                            ->orderBy('count', 'desc')
-                            ->get();
+        // Legacy browser/os/device metrics via GigVisit removed; use Tracker* properties already populated
 
 
     }

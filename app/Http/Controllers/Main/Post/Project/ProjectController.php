@@ -10,9 +10,12 @@ use Illuminate\Http\Request;
 use App\Models\ProjectCategory;
 use App\Models\ProjectSettings;
 use App\Models\ProjectSubscription;
+use App\Models\ProjectBriefQuestion;
+use App\Models\ProjectBriefAttachment;
 use App\Http\Controllers\Controller;
 use App\Models\ProjectRequiredSkill;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Main\Post\ProjectRequest;
 use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
 
@@ -221,6 +224,51 @@ class ProjectController extends Controller
                     $skill->skill_id   = $s;
                     $skill->save();
 
+                }
+
+                // Save project brief questions
+                $questions = $request->get('questions', []);
+                if (is_array($questions) && count($questions)) {
+                    foreach ($questions as $index => $question) {
+                        $text = trim($question['text'] ?? '');
+
+                        if (empty($text)) {
+                            continue;
+                        }
+
+                        ProjectBriefQuestion::create([
+                            'uid'         => Str::uuid()->toString(),
+                            'project_id'  => $project->id,
+                            'question'    => clean($text),
+                            'is_required' => (bool) ($question['is_required'] ?? false),
+                            'position'    => $index + 1,
+                        ]);
+                    }
+                }
+
+                // Save project brief attachments
+                if ($request->hasFile('attachments')) {
+                    foreach ((array) $request->file('attachments') as $uploadedFile) {
+                        if (!$uploadedFile) {
+                            continue;
+                        }
+
+                        $storedName = Str::uuid()->toString() . '.' . strtolower($uploadedFile->getClientOriginalExtension());
+                        $disk       = 'public';
+                        $directory  = 'projects/briefs/' . $project->uid;
+                        $path       = $uploadedFile->storeAs($directory, $storedName, $disk);
+
+                        ProjectBriefAttachment::create([
+                            'uid'           => Str::uuid()->toString(),
+                            'project_id'    => $project->id,
+                            'original_name' => $uploadedFile->getClientOriginalName(),
+                            'stored_name'   => $storedName,
+                            'disk'          => $disk,
+                            'path'          => $path,
+                            'size'          => $uploadedFile->getSize(),
+                            'mime_type'     => $uploadedFile->getMimeType(),
+                        ]);
+                    }
                 }
 
                 // Check if payment required, redirect to payment link

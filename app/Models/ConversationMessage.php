@@ -34,7 +34,20 @@ class ConversationMessage extends Model
         'message_from',
         'message_to',
         'message',
+        'type',
+        'attachment_path',
+        'attachment_disk',
+        'attachment_duration',
         'is_seen'
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'attachment_duration' => 'integer',
     ];
 
     /**

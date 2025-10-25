@@ -41,7 +41,8 @@ class SettingsGeneral extends Model
         'is_language_switcher',
         'default_language',
         'enable_multivendor',
-        'freelancer_requires_approval'
+        'freelancer_requires_approval',
+        'free_plan_monthly_proposals'
     ];
 
     /**

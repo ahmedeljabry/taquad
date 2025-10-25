@@ -24,8 +24,8 @@ class ConversationsComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_conversations'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_conversations'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.conversations.conversations', [
             'messages' => $this->messages
@@ -41,10 +41,10 @@ class ConversationsComponent extends Component
     public function getMessagesProperty()
     {
         return ChMessage::whereHas('from')
-                        ->whereHas('to')
-                        ->with(['to', 'from'])
-                        ->latest()
-                        ->paginate(42);
+            ->whereHas('to')
+            ->with(['to', 'from'])
+            ->latest()
+            ->paginate(42);
     }
 
 
@@ -57,7 +57,7 @@ class ConversationsComponent extends Component
     public function confirmDelete($id)
     {
         try {
-            
+
             // Get message
             $message = ChMessage::where('id', $id)->firstOrFail();
 
@@ -75,17 +75,15 @@ class ConversationsComponent extends Component
                     'label'  => __('messages.t_cancel')
                 ],
             ]);
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
-        }    
+        }
     }
 
 
@@ -98,13 +96,13 @@ class ConversationsComponent extends Component
     public function delete($id)
     {
         try {
-            
+
             // Get message
             $message = ChMessage::where('id', $id)->firstOrFail();
 
             // Check if message has attachment
             if ($message->attachment) {
-                
+
                 // Decode attachment
                 $attachment   = json_decode($message->attachment);
 
@@ -113,12 +111,10 @@ class ConversationsComponent extends Component
 
                 // Check if file exists
                 if (Storage::disk(config('chatify.storage_disk_name'))->exists($path)) {
-                    
+
                     // Delete
                     Storage::disk(config('chatify.storage_disk_name'))->delete($path);
-
                 }
-
             }
 
             // Delete message
@@ -126,21 +122,18 @@ class ConversationsComponent extends Component
 
             // Success
             $this->alert(
-                'success', 
-                __('messages.t_success'), 
-                livewire_alert_params( __('messages.t_toast_operation_success') )
+                'success',
+                __('messages.t_success'),
+                livewire_alert_params(__('messages.t_toast_operation_success'))
             );
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
-        }    
+        }
     }
-    
 }

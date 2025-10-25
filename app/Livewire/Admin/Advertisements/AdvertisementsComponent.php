@@ -44,8 +44,8 @@ class AdvertisementsComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_advertisements'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_advertisements'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.advertisements.advertisements');
     }
@@ -70,10 +70,9 @@ class AdvertisementsComponent extends Component
 
         // Success
         $this->alert(
-            'success', 
-            __('messages.t_success'), 
-            livewire_alert_params( __('messages.t_ads_has_updated_successfully') )
+            'success',
+            __('messages.t_success'),
+            livewire_alert_params(__('messages.t_ads_has_updated_successfully'))
         );
     }
-    
 }

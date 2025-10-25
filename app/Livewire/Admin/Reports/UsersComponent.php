@@ -37,8 +37,8 @@ class UsersComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_reported_users'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_reported_users'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.reports.users', [
             'reports' => $this->reports
@@ -100,5 +100,4 @@ class UsersComponent extends Component
             'icon'        => 'success'
         ]);
     }
-    
 }

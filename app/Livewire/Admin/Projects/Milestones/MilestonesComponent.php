@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Projects\Milestones;
 
 use Carbon\Carbon;
@@ -30,11 +31,11 @@ class MilestonesComponent extends Component
     {
         // Get project
         $project                    = Project::where('uid', $id)
-                                                ->with('milestones', function($query) {
-                                                    return $query->latest();
-                                                })
-                                                ->whereHas('milestones')
-                                                ->firstOrFail();
+            ->with('milestones', function ($query) {
+                return $query->latest();
+            })
+            ->whereHas('milestones')
+            ->firstOrFail();
 
         // Set project
         $this->project              = $project;
@@ -56,12 +57,10 @@ class MilestonesComponent extends Component
 
             // Set expected delivery time
             $this->expected_delivery_date = $format_date->addDays($awarded_bid->days);
-
         } catch (\Throwable $th) {
-            
+
             // Something went wrong
             $this->expected_delivery_date = null;
-
         }
     }
 
@@ -75,8 +74,8 @@ class MilestonesComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('messages.t_milestones'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('messages.t_milestones'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         return view('livewire.admin.projects.milestones.milestones');
     }
@@ -91,12 +90,12 @@ class MilestonesComponent extends Component
     public function confirmDeposit($id)
     {
         try {
-            
+
             // Get milestone payment
             $payment         = ProjectMilestone::where('project_id', $this->project->id)
-                                                ->where('status', 'request')
-                                                ->where('uid', $id)
-                                                ->firstOrFail();
+                ->where('status', 'request')
+                ->where('uid', $id)
+                ->firstOrFail();
 
             // Get cilent
             $employer        = $this->project->client;
@@ -115,7 +114,7 @@ class MilestonesComponent extends Component
 
             // Check if employer has money to be funded
             if ($total > $available_funds) {
-                
+
                 // Employer does not have money
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -124,27 +123,26 @@ class MilestonesComponent extends Component
                 ]);
 
                 return;
-
             }
 
             // Confirm fund
             $this->dialog()->confirm([
-                'title'          => '<h1 class="text-base font-bold tracking-wide">'. __('messages.t_confirm_deposit') .'</h1>',
+                'title'          => '<h1 class="text-base font-bold tracking-wide">' . __('messages.t_confirm_deposit') . '</h1>',
                 'description'    => "<div class='leading-relaxed'>" . __('messages.t_confirm_deposit_milestone_subtitle_admin') . "<br></div>
                 <div class='rounded border dark:border-secondary-600 my-8'>
                 <dl class='divide-y divide-gray-200 dark:divide-gray-600'>
                     <div class='grid grid-cols-3 gap-4 py-3 px-4'>
-                        <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>". __('messages.t_requested_amount') ."</dt>
-                        <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>". money($amount, settings('currency')->code, true) ."</dd>
-                    </div>  
+                        <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>" . __('messages.t_requested_amount') . "</dt>
+                        <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>" . money($amount, settings('currency')->code, true) . "</dd>
+                    </div>
                     <div class='grid grid-cols-3 gap-4 py-3 px-4'>
-                        <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>". __('messages.t_milestone_employer_fee_name') ."</dt>
-                        <dd class='text-sm font-semibold text-green-600 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>+ ". money($commission, settings('currency')->code, true) ."</dd>
-                    </div>  
+                        <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>" . __('messages.t_milestone_employer_fee_name') . "</dt>
+                        <dd class='text-sm font-semibold text-green-600 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>+ " . money($commission, settings('currency')->code, true) . "</dd>
+                    </div>
                     <div class='grid grid-cols-3 gap-4 py-3 px-4 bg-gray-100/60 dark:bg-secondary-700 rounded-b'>
-                        <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-400 ltr:text-left rtl:text-right'>". __('messages.t_total') ."</dt>
-                        <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>". money($total, settings('currency')->code, true) ."</dd>
-                    </div>  
+                        <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-400 ltr:text-left rtl:text-right'>" . __('messages.t_total') . "</dt>
+                        <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>" . money($total, settings('currency')->code, true) . "</dd>
+                    </div>
                 </dl>
                 </div>
                 ",
@@ -161,16 +159,14 @@ class MilestonesComponent extends Component
                     'label'  => __('messages.t_cancel')
                 ],
             ]);
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
 
@@ -184,12 +180,12 @@ class MilestonesComponent extends Component
     public function deposit($id)
     {
         try {
-            
+
             // Get milestone payment
             $payment         = ProjectMilestone::where('project_id', $this->project->id)
-                                                ->where('status', 'request')
-                                                ->where('uid', $id)
-                                                ->firstOrFail();
+                ->where('status', 'request')
+                ->where('uid', $id)
+                ->firstOrFail();
 
             // Get cilent
             $employer        = $this->project->client;
@@ -208,7 +204,7 @@ class MilestonesComponent extends Component
 
             // Check if employer has money to be funded
             if ($total > $available_funds) {
-                
+
                 // Employer does not have money
                 $this->notification([
                     'title'       => __('messages.t_error'),
@@ -217,7 +213,6 @@ class MilestonesComponent extends Component
                 ]);
 
                 return;
-
             }
 
             // Update milestone status
@@ -230,13 +225,13 @@ class MilestonesComponent extends Component
 
             // Calculate paid amount
             $this->paid_amount           = ProjectMilestone::where('project_id', $this->project->id)
-                                                            ->where('status', 'paid')
-                                                            ->sum('amount');
+                ->where('status', 'paid')
+                ->sum('amount');
 
             // Calculate payments in progress
             $this->payments_in_progress  = ProjectMilestone::where('project_id', $this->project->id)
-                                                            ->whereIn('status', ['funded', 'request'])
-                                                            ->sum('amount');
+                ->whereIn('status', ['funded', 'request'])
+                ->sum('amount');
 
             // Success
             $this->notification([
@@ -244,16 +239,14 @@ class MilestonesComponent extends Component
                 'description' => __('messages.t_amount_has_been_deposit_milestone_success'),
                 'icon'        => 'success'
             ]);
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
 
@@ -267,16 +260,16 @@ class MilestonesComponent extends Component
     public function confirmRelease($id)
     {
         try {
-            
+
             // Get milestone payment
             $payment         = ProjectMilestone::where('project_id', $this->project->id)
-                                                ->where('status', 'funded')
-                                                ->where('uid', $id)
-                                                ->firstOrFail();
+                ->where('status', 'funded')
+                ->where('uid', $id)
+                ->firstOrFail();
 
             // Confirm fund
             $this->dialog()->confirm([
-                'title'          => '<h1 class="text-base font-bold tracking-wide">'. __('messages.t_confirm_release_of_amount') .'</h1>',
+                'title'          => '<h1 class="text-base font-bold tracking-wide">' . __('messages.t_confirm_release_of_amount') . '</h1>',
                 'description'    => "<div class='leading-relaxed'>" . __('messages.t_confirm_release_milestone_payment') . "</div>",
                 'icon'           => "credit-card",
                 'iconColor'      => "text-slate-500 dark:text-secondary-400 p-1",
@@ -291,16 +284,14 @@ class MilestonesComponent extends Component
                     'label'  => __('messages.t_cancel')
                 ],
             ]);
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
 
@@ -314,12 +305,12 @@ class MilestonesComponent extends Component
     public function release($id)
     {
         try {
-            
+
             // Get milestone payment
             $payment         = ProjectMilestone::where('project_id', $this->project->id)
-                                                ->where('status', 'funded')
-                                                ->where('uid', $id)
-                                                ->firstOrFail();
+                ->where('status', 'funded')
+                ->where('uid', $id)
+                ->firstOrFail();
 
             // Get project employer
             $employer        = $this->project->client;
@@ -330,17 +321,17 @@ class MilestonesComponent extends Component
 
             // Calculate paid amount
             $this->paid_amount          = ProjectMilestone::where('project_id', $this->project->id)
-                                                            ->where('status', 'paid')
-                                                            ->sum('amount');
+                ->where('status', 'paid')
+                ->sum('amount');
 
             // Calculate payments in progress
             $this->payments_in_progress = ProjectMilestone::where('project_id', $this->project->id)
-                                                            ->whereIn('status', ['funded', 'request'])
-                                                            ->sum('amount');
+                ->whereIn('status', ['funded', 'request'])
+                ->sum('amount');
 
             // Mark project as completed if project budget is paid
             if (convertToNumber($this->paid_amount) >= convertToNumber($this->project->awarded_bid->amount)) {
-                
+
                 // Project is completed
                 $this->project->status = 'completed';
                 $this->project->save();
@@ -350,14 +341,13 @@ class MilestonesComponent extends Component
 
                 // Send a message to the employer
                 $employer->notify(new ProjectCompleted($this->project));
-                
+
                 // Send a notification to the freelancer
                 notification([
                     'text'    => 't_congts_freelancer_ur_project_completed',
                     'action'  => url('seller/projects/milestones', $this->project->uid),
                     'user_id' => $this->project->awarded_freelancer_id
                 ]);
-
             }
 
             // Success
@@ -366,17 +356,14 @@ class MilestonesComponent extends Component
                 'description' => __('messages.t_amount_has_been_released_milestone_success'),
                 'icon'        => 'success'
             ]);
-
         } catch (\Throwable $th) {
-            
+
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
-
         }
     }
-    
 }

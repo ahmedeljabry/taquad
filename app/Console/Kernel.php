@@ -16,11 +16,12 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('sitemap:generate')->everyMinute();
-        $schedule->command('orders:complete')->daily();
         $schedule->command('sellers:unavailable')->daily();
         $schedule->command('expired:bids')->daily();
         $schedule->command('expired:projects')->daily();
         $schedule->command('app:upgrade-user-level')->twiceDaily(1, 13);
+        // Generate hourly invoices every Monday at 00:05
+        $schedule->command('hourly:generate-weekly-invoices')->weeklyOn(1, '0:05');
     }
 
     /**

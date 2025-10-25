@@ -39,7 +39,7 @@
         "matomo/device-detector": "^6.1",
         "mercadopago/dx-php": "^3.0.0",
         "mews/paytr": "^0.3.4",
-        "mkocansey/bladewind": "^2.3",
+        "mkocansey/bladewind": "^3.1",
         "mollie/laravel-mollie": "^2.25",
         "munafio/chatify": "^1.6",
         "orangehill/iseed": "^3.0",
@@ -65,7 +65,7 @@
         "wire-elements/modal": "^2.0",
         "wire-elements/spotlight": "^2.0",
         "wireui/heroicons": "^2.4",
-        "wireui/wireui": "^1.18"
+        "wireui/wireui": "1.18"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",

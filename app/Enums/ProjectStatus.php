@@ -4,11 +4,12 @@ namespace App\Enums;
 
 enum ProjectStatus: string
 {
-    case Active    = 'active';
-    case Completed = 'completed';
-
-    public static function values(): array
-    {
-        return array_map(fn (self $s) => $s->value, self::cases());
-    }
+    case Draft       = 'draft';
+    case Open        = 'open';
+    case Closed      = 'closed';
+    case InProgress  = 'in_progress';
+    case Completed   = 'completed';
+    case Cancelled   = 'cancelled';
+    case Active     = 'active';
 }
+

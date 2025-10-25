@@ -41,26 +41,26 @@ class EditComponent extends Component
         $separator   = settings('general')->separator;
         $title       = __('messages.t_edit_project') . " $separator " . settings('general')->title;
         $description = settings('seo')->description;
-        $ogimage     = src( settings('seo')->ogimage );
+        $ogimage     = src(settings('seo')->ogimage);
 
-        $this->seo()->setTitle( $title );
-        $this->seo()->setDescription( $description );
-        $this->seo()->setCanonical( url()->current() );
-        $this->seo()->opengraph()->setTitle( $title );
-        $this->seo()->opengraph()->setDescription( $description );
-        $this->seo()->opengraph()->setUrl( url()->current() );
+        $this->seo()->setTitle($title);
+        $this->seo()->setDescription($description);
+        $this->seo()->setCanonical(url()->current());
+        $this->seo()->opengraph()->setTitle($title);
+        $this->seo()->opengraph()->setDescription($description);
+        $this->seo()->opengraph()->setUrl(url()->current());
         $this->seo()->opengraph()->setType('website');
-        $this->seo()->opengraph()->addImage( $ogimage );
-        $this->seo()->twitter()->setImage( $ogimage );
-        $this->seo()->twitter()->setUrl( url()->current() );
-        $this->seo()->twitter()->setSite( "@" . settings('seo')->twitter_username );
+        $this->seo()->opengraph()->addImage($ogimage);
+        $this->seo()->twitter()->setImage($ogimage);
+        $this->seo()->twitter()->setUrl(url()->current());
+        $this->seo()->twitter()->setSite("@" . settings('seo')->twitter_username);
         $this->seo()->twitter()->addValue('card', 'summary_large_image');
         $this->seo()->metatags()->addMeta('fb:page_id', settings('seo')->facebook_page_id, 'property');
         $this->seo()->metatags()->addMeta('fb:app_id', settings('seo')->facebook_app_id, 'property');
         $this->seo()->metatags()->addMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'name');
-        $this->seo()->jsonLd()->setTitle( $title );
-        $this->seo()->jsonLd()->setDescription( $description );
-        $this->seo()->jsonLd()->setUrl( url()->current() );
+        $this->seo()->jsonLd()->setTitle($title);
+        $this->seo()->jsonLd()->setDescription($description);
+        $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
         // Get project
@@ -108,16 +108,16 @@ class EditComponent extends Component
             // Check if user want to update project thumbnail
             if ($this->thumbnail) {
                 $thumb_id = ImageUploader::make($this->thumbnail)
-                                        ->deleteById($project->thumb_id)
-                                        ->resize(1000)
-                                        ->folder('seller/projects/thumbnails')
-                                        ->handle();
+                    ->deleteById($project->thumb_id)
+                    ->resize(1000)
+                    ->folder('seller/projects/thumbnails')
+                    ->handle();
             } else {
                 $thumb_id = $project->thumb_id;
             }
 
             // Generate slug
-            $slug = substr( Str::slug($this->title), 0, 138 ) . '-' . $project->uid;
+            $slug = substr(Str::slug($this->title), 0, 138) . '-' . $project->uid;
 
             // Update project
             $project->update([
@@ -138,52 +138,48 @@ class EditComponent extends Component
 
                 // Upload new images
                 foreach ($this->images as $img) {
-                    
+
                     // Save image locally
                     $image_id           = ImageUploader::make($img)
-                                                        ->resize(1000)
-                                                        ->folder('seller/projects/gallery')
-                                                        ->handle();
-    
+                        ->resize(1000)
+                        ->folder('seller/projects/gallery')
+                        ->handle();
+
                     // Save image in database
                     $image              = new UserPortfolioGallery();
                     $image->project_id  = $project->id;
                     $image->image_id    = $image_id;
                     $image->save();
-    
                 }
             }
 
             // Send notification to admin if project status pending
             if (!settings('publish')->auto_approve_portfolio) {
-                Admin::first()->notify( (new PendingPortfolio($project))->locale(config('app.locale')) );
+                Admin::first()->notify((new PendingPortfolio($project))->locale(config('app.locale')));
             }
 
             // Redirect to projects with success
             return redirect('seller/portfolio')->with('success', __('messages.t_ur_project_updated_successfully'));
-
         } catch (\Illuminate\Validation\ValidationException $e) {
 
             // Validation error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_form_validation_error'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
             );
 
             throw $e;
-
         } catch (\Throwable $th) {
 
             // Error
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( __('messages.t_toast_something_went_wrong'), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
             );
 
             throw $th;
-
         }
     }
 
@@ -201,7 +197,7 @@ class EditComponent extends Component
 
         // Loop though images
         foreach ($images as $img) {
-            
+
             // Get image
             $image = $img?->image;
 
@@ -210,8 +206,6 @@ class EditComponent extends Component
 
             // Delete image from database
             $img->delete();
-
         }
     }
-    
 }

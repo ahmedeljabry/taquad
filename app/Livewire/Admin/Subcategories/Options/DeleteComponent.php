@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin\Subcategories\Options;
 
 use App\Models\Gig;
@@ -46,8 +47,8 @@ class DeleteComponent extends Component
     public function render()
     {
         // Seo
-        $this->seo()->setTitle( setSeoTitle(__('dashboard.t_delete_subcategory'), true) );
-        $this->seo()->setDescription( settings('seo')->description );
+        $this->seo()->setTitle(setSeoTitle(__('dashboard.t_delete_subcategory'), true));
+        $this->seo()->setDescription(settings('seo')->description);
 
         // Show view
         return view('livewire.admin.subcategories.options.delete', [
@@ -64,8 +65,8 @@ class DeleteComponent extends Component
     public function getCategoriesProperty()
     {
         return Category::orderBy('id')
-                        ->withTranslation()
-                        ->get();
+            ->withTranslation()
+            ->get();
     }
 
 
@@ -77,10 +78,10 @@ class DeleteComponent extends Component
     public function updatedCategoryId($id)
     {
         $this->subcategories = Subcategory::orderBy('id')
-                                            ->where('parent_id', $id)
-                                            ->where('id', '!=', $this->subcategory->id)
-                                            ->withTranslation()
-                                            ->get();
+            ->where('parent_id', $id)
+            ->where('id', '!=', $this->subcategory->id)
+            ->withTranslation()
+            ->get();
     }
 
 
@@ -92,10 +93,10 @@ class DeleteComponent extends Component
     public function updatedSubcategoryId($id)
     {
         $this->childcategories = Childcategory::orderBy('id')
-                                            ->where('parent_id', $this->category_id)
-                                            ->where('subcategory_id', '!=', $this->subcategory->id)
-                                            ->withTranslation()
-                                            ->get();
+            ->where('parent_id', $this->category_id)
+            ->where('subcategory_id', '!=', $this->subcategory->id)
+            ->withTranslation()
+            ->get();
     }
 
 
@@ -107,7 +108,7 @@ class DeleteComponent extends Component
     public function delete()
     {
         try {
-            
+
             // Update gigs
             Gig::where('subcategory_id', $this->subcategory->id)
                 ->update([
@@ -118,18 +119,18 @@ class DeleteComponent extends Component
 
             // Update projects
             Project::where('subcategory_id', $this->subcategory->id)
-                    ->update([
-                        'category_id'      => $this->category_id,
-                        'subcategory_id'   => $this->subcategory_id,
-                        'childcategory_id' => $this->childcategory_id
-                    ]);
+                ->update([
+                    'category_id'      => $this->category_id,
+                    'subcategory_id'   => $this->subcategory_id,
+                    'childcategory_id' => $this->childcategory_id
+                ]);
 
             // Update childcategories
             Childcategory::where('subcategory_id', $this->subcategory->id)
-                        ->update([
-                            'parent_id'      => $this->category_id,
-                            'subcategory_id' => $this->subcategory_id
-                        ]);
+                ->update([
+                    'parent_id'      => $this->category_id,
+                    'subcategory_id' => $this->subcategory_id
+                ]);
 
             // delete all translations
             $this->subcategory->deleteTranslations();
@@ -141,18 +142,15 @@ class DeleteComponent extends Component
             session()->flash('success', __('messages.t_toast_operation_success'));
 
             // Go back
-            return $this->redirect( admin_url('subcategories') );
-
+            return $this->redirect(admin_url('subcategories'));
         } catch (\Throwable $th) {
-            
+
             // Somthing went wrong
             $this->alert(
-                'error', 
-                __('messages.t_error'), 
-                livewire_alert_params( $th->getMessage(), 'error' )
+                'error',
+                __('messages.t_error'),
+                livewire_alert_params($th->getMessage(), 'error')
             );
-
         }
     }
-    
 }
