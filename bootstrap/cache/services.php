@@ -71,10 +71,11 @@
     67 => 'Unicodeveloper\\Paystack\\PaystackServiceProvider',
     68 => 'LoveyCom\\CashFree\\CashFreeServiceProvider',
     69 => 'Paytabscom\\Laravel_paytabs\\PaypageServiceProvider',
-    70 => 'App\\Providers\\AppServiceProvider',
-    71 => 'App\\Providers\\AuthServiceProvider',
-    72 => 'App\\Providers\\EventServiceProvider',
-    73 => 'App\\Providers\\RouteServiceProvider',
+    70 => 'WireUi\\Providers\\WireUiServiceProvider',
+    71 => 'App\\Providers\\AppServiceProvider',
+    72 => 'App\\Providers\\AuthServiceProvider',
+    73 => 'App\\Providers\\EventServiceProvider',
+    74 => 'App\\Providers\\RouteServiceProvider',
   ),
   'eager' => 
   array (
@@ -131,10 +132,11 @@
     50 => 'Unicodeveloper\\Paystack\\PaystackServiceProvider',
     51 => 'LoveyCom\\CashFree\\CashFreeServiceProvider',
     52 => 'Paytabscom\\Laravel_paytabs\\PaypageServiceProvider',
-    53 => 'App\\Providers\\AppServiceProvider',
-    54 => 'App\\Providers\\AuthServiceProvider',
-    55 => 'App\\Providers\\EventServiceProvider',
-    56 => 'App\\Providers\\RouteServiceProvider',
+    53 => 'WireUi\\Providers\\WireUiServiceProvider',
+    54 => 'App\\Providers\\AppServiceProvider',
+    55 => 'App\\Providers\\AuthServiceProvider',
+    56 => 'App\\Providers\\EventServiceProvider',
+    57 => 'App\\Providers\\RouteServiceProvider',
   ),
   'deferred' => 
   array (

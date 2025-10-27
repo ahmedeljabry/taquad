@@ -5,7 +5,6 @@ namespace App\Livewire\Main\Account\Projects\Options;
 use App\Models\Project;
 use Livewire\Component;
 use App\Models\Category;
-use WireUi\Traits\Actions;
 use App\Models\ProjectPlan;
 use App\Models\Subcategory;
 use Illuminate\Support\Str;
@@ -22,7 +21,7 @@ use App\Http\Validators\Main\Account\Projects\EditValidator;
 
 class EditComponent extends Component
 {
-    use SEOToolsTrait, LivewireAlert, Actions;
+    use SEOToolsTrait, LivewireAlert;
 
     public Project $project;
     public $title;
@@ -40,6 +39,8 @@ class EditComponent extends Component
     public $subcategories   = [];
     public $childcategories = [];
     public $skills          = [];
+
+    protected bool $hasShownHourlyNotice = false;
 
     #[Locked]
     public $promoting_total = 0;
@@ -97,6 +98,11 @@ class EditComponent extends Component
             'salary_type'   => $project->budget_type
         ]);
 
+        if ($project->budget_type !== 'fixed') {
+            $this->salary_type = 'fixed';
+            $this->showHourlyNotice();
+        }
+
         // Set subcategories
         $this->subcategories = Subcategory::where('parent_id', $project->category_id)
             ->select('id', 'uid', 'created_at')
@@ -114,6 +120,29 @@ class EditComponent extends Component
             ->withTranslation()
             ->latest()
             ->get();
+    }
+
+    public function updatedSalaryType($value): void
+    {
+        if ($value !== 'fixed') {
+            $this->salary_type = 'fixed';
+            $this->showHourlyNotice();
+        }
+    }
+
+    protected function showHourlyNotice(): void
+    {
+        if ($this->hasShownHourlyNotice) {
+            return;
+        }
+
+        $this->hasShownHourlyNotice = true;
+
+        $this->alert('info', __('messages.t_attention_needed'), [
+            'text'     => __('messages.t_hourly_projects_coming_soon'),
+            'toast'    => true,
+            'position' => 'top-end',
+        ]);
     }
 
 
@@ -394,16 +423,9 @@ class EditComponent extends Component
             }
 
             // Check if user didn't select salary type
-            if (!in_array($this->salary_type, ['fixed', 'hourly'])) {
-
-                // Error
-                $this->alert(
-                    'error',
-                    __('messages.t_error'),
-                    livewire_alert_params(__('messages.t_pls_choose_how_do_u_want_to_pay_salary'), 'error')
-                );
-
-                return;
+            if ($this->salary_type !== 'fixed') {
+                $this->salary_type = 'fixed';
+                $this->showHourlyNotice();
             }
 
             // Validate form

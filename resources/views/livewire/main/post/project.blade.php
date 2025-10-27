@@ -765,20 +765,21 @@
                                     </span>
                                 </label>
                                 <label
-                                    class="relative flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-4 transition hover:border-primary-200 hover:bg-primary-50/30 dark:border-zinc-600 dark:hover:border-primary-400"
-                                    :class="{ 'border-primary-500 bg-primary-50/60 dark:border-primary-400/70 dark:bg-primary-500/10': $wire.salary_type === 'hourly' }">
-                                    <input type="radio" id="post-project-salary-type-hourly" name="salary_type"
-                                        wire:model="salary_type" value="hourly" class="hidden">
+                                    class="relative flex cursor-not-allowed items-center gap-3 rounded-2xl border px-4 py-4 opacity-70 dark:border-zinc-600">
+                                    <span class="absolute top-3 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-slate-600 rtl:right-4 ltr:left-4 dark:bg-zinc-700 dark:text-zinc-200">
+                                        @lang('messages.t_coming_soon')
+                                    </span>
+                                    <input type="radio" id="post-project-salary-type-hourly" name="salary_type" class="hidden" disabled>
                                     <span
                                         class="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-primary-600/10 text-primary-600 dark:bg-primary-500/15 dark:text-primary-200">
                                         <i class="ph-duotone ph-clock text-xl"></i>
                                     </span>
                                     <span class="flex flex-col">
-                                        <span class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
+                                        <span class="text-sm font-semibold text-slate-500 dark:text-zinc-400">
                                             @lang('messages.t_hourly_price')
                                         </span>
                                         <span class="text-[12.5px] text-slate-500 dark:text-zinc-400">
-                                            مناسب للدعم المستمر أو التطوير المتكرر.
+                                            @lang('messages.t_hourly_projects_coming_soon')
                                         </span>
                                     </span>
                                 </label>

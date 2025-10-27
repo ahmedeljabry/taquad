@@ -292,6 +292,7 @@
 
         {{-- Wire UI --}}
         <wireui:scripts />
+        @include('components.wireui.basepath')
 
         {{-- Core --}}
         <script defer src="{{ mix('js/app.js') }}"></script>

@@ -30,7 +30,7 @@ class ProjectValidator
                 'skills.*'      => [ Rule::exists('projects_skills', 'id')->where(function($query) use ($request) {
                     return $query->where('category_id', $request->category);
                 }) ],
-                'salary_type'   => 'required|in:hourly,fixed',
+                'salary_type'   => 'required|in:fixed',
                 'min_price'     => ['required', 'regex:/^([1-9][0-9]*|0)(\.[0-9]{1,2})?$/'],
                 'max_price'     => ['required', 'regex:/^([1-9][0-9]*|0)(\.[0-9]{1,2})?$/'],
                 'attachments'   => 'nullable|array|max:5',

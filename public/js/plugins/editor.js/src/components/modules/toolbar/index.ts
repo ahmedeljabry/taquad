@@ -350,7 +350,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     this.nodes.plusButton = $.make("div", this.CSS.plusButton, {
       innerHTML: IconPlus,
     });
-    $.append(this.nodes.WireUiActions, this.nodes.plusButton);
+    $.append(this.nodes.Actions, this.nodes.plusButton);
 
     this.readOnlyMutableListeners.on(
       this.nodes.plusButton,
@@ -390,7 +390,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       innerHTML: IconMenu,
     });
 
-    $.append(this.nodes.WireUiActions, this.nodes.settingsToggler);
+    $.append(this.nodes.Actions, this.nodes.settingsToggler);
 
     this.tooltip.onHover(
       this.nodes.settingsToggler,
@@ -403,8 +403,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Appending Toolbar components to itself
      */
-    $.append(this.nodes.WireUiActions, this.makeToolbox());
-    $.append(this.nodes.WireUiActions, this.Editor.BlockSettings.getElement());
+    $.append(this.nodes.Actions, this.makeToolbox());
+    $.append(this.nodes.Actions, this.Editor.BlockSettings.getElement());
 
     /**
      * Append toolbar to the Editor

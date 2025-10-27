@@ -77,7 +77,7 @@ return [
             'name'           => 'لوحة تحليلات تنفيذية',
             'headline'       => 'بناء لوحة تحليلات لحظية للقيادة التنفيذية',
             'category_hint'  => 'تحليل البيانات',
-            'salary_type'    => 'hourly',
+            'salary_type'    => 'fixed',
             'budget'         => [
                 'min' => 45,
                 'max' => 65,

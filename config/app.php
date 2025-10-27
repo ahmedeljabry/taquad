@@ -191,6 +191,7 @@ return [
         Unicodeveloper\Paystack\PaystackServiceProvider::class,
         LoveyCom\CashFree\CashFreeServiceProvider::class,
         Paytabscom\Laravel_paytabs\PaypageServiceProvider::class,
+        WireUi\Providers\WireUiServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -199,6 +200,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        
 
     ],
 
@@ -222,6 +224,6 @@ return [
     /**
      * Mix base url
      */
-    'mix_url' => 'http://localhost/riverr/public'
+    'mix_url' => 'http://localhost/taquad/public'
 
 ];

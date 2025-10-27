@@ -315,15 +315,15 @@
                                         <td class="px-5 py-3 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md text-center">
                                             <div class="flex items-center justify-center space-x-2 rtl:space-x-reverse">
 
-                                                {{-- Details --}}
-                                                <button wire:click="details('{{ $p->uid }}')" type="button" class="inline-flex justify-center items-center border font-semibold focus:outline-none w-8 h-8 text-sm rounded border-gray-300 bg-white text-gray-600 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 hover:shadow focus:ring focus:ring-gray-500 focus:ring-opacity-25 active:bg-white active:border-white active:shadow-none dark:bg-zinc-700 dark:border-transparent dark:text-zinc-200 dark:hover:bg-zinc-600" data-tooltip-target="tooltip-actions-details-{{ $p->uid }}">
+                                            {{-- Details --}}
+                                            <button wire:click="details('{{ $p->uid }}')" type="button" aria-label="{{ __('messages.t_details') }}" class="inline-flex justify-center items-center border font-semibold focus:outline-none w-8 h-8 text-sm rounded border-gray-300 bg-white text-gray-600 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 hover:shadow focus:ring focus:ring-gray-500 focus:ring-opacity-25 active:bg-white active:border-white active:shadow-none transition-all duration-200 dark:bg-zinc-700 dark:border-transparent dark:text-zinc-200 dark:hover:bg-zinc-600" data-tooltip-target="tooltip-actions-details-{{ $p->uid }}">
                                                     <svg class="h-4.5 w-4.5 mt-px" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h3v3.767L13.277 18H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zm0 14h-7.277L9 18.233V16H4V4h16v12z"></path><path d="M7 7h10v2H7zm0 4h7v2H7z"></path></svg>
                                                 </button>
                                                 <x-forms.tooltip id="tooltip-actions-details-{{ $p->uid }}" :text="__('messages.t_details')" />
 
                                                 {{-- Pay --}}
                                                 @if ($p->status === 'request')
-                                                    <button wire:click="confirmPay('{{ $p->uid }}')" type="button" class="inline-flex justify-center items-center border font-semibold focus:outline-none w-8 h-8 text-sm rounded border-gray-300 bg-white text-gray-600 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 hover:shadow focus:ring focus:ring-gray-500 focus:ring-opacity-25 active:bg-white active:border-white active:shadow-none dark:bg-zinc-700 dark:border-transparent dark:text-zinc-200 dark:hover:bg-zinc-600" data-tooltip-target="tooltip-actions-pay-{{ $p->uid }}">
+                                                    <button wire:click="confirmPay('{{ $p->uid }}')" type="button" aria-label="{{ __('messages.t_deposit_funds') }}" class="inline-flex justify-center items-center border font-semibold focus:outline-none w-8 h-8 text-sm rounded border-gray-300 bg-white text-gray-600 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 hover:shadow focus:ring focus:ring-gray-500 focus:ring-opacity-25 active:bg-white active:border-white active:shadow-none transition-all duration-200 dark:bg-zinc-700 dark:border-transparent dark:text-zinc-200 dark:hover:bg-zinc-600" data-tooltip-target="tooltip-actions-pay-{{ $p->uid }}">
                                                         <svg class="h-4.5 w-4.5 mt-px" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 15c-1.84 0-2-.86-2-1H8c0 .92.66 2.55 3 2.92V18h2v-1.08c2-.34 3-1.63 3-2.92 0-1.12-.52-3-4-3-2 0-2-.63-2-1s.7-1 2-1 1.39.64 1.4 1h2A3 3 0 0 0 13 7.12V6h-2v1.09C9 7.42 8 8.71 8 10c0 1.12.52 3 4 3 2 0 2 .68 2 1s-.62 1-2 1z"></path><path d="M5 2H2v2h2v17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4h2V2H5zm13 18H6V4h12z"></path></svg>
                                                     </button>
                                                     <x-forms.tooltip id="tooltip-actions-pay-{{ $p->uid }}" :text="__('messages.t_deposit_funds')" />
@@ -551,5 +551,141 @@
 
         </x-forms.modal>
     @endif
+
+    <x-forms.modal id="modal-milestone-confirm" target="modal-milestone-confirm-trigger" uid="modal_milestone_confirm" placement="center-center" size="max-w-md">
+        @php
+            $confirmData = $confirmDialog ?? [];
+            $confirmIcon = data_get($confirmData, 'icon');
+            $confirmIconWrapper = data_get($confirmData, 'icon_wrapper', 'bg-slate-100 rounded-full p-3 dark:bg-secondary-700');
+            $confirmIconClasses = data_get($confirmData, 'icon_classes', 'text-primary-600 dark:text-primary-300');
+            $confirmTitle = data_get($confirmData, 'title', __('messages.t_confirm'));
+            $confirmDescription = data_get($confirmData, 'description', '<p class="text-slate-500">'.__('messages.t_are_u_sure').'</p>');
+            $confirmLabel = data_get($confirmData, 'confirm_label', __('messages.t_confirm'));
+            $confirmClass = data_get($confirmData, 'confirm_class', 'inline-flex justify-center items-center rounded border font-semibold focus:outline-none px-3 py-2 leading-5 text-xs tracking-wide border-transparent bg-primary-600 text-white hover:bg-primary-700 focus:ring focus:ring-primary-500 focus:ring-opacity-25 disabled:opacity-60 disabled:cursor-not-allowed transition');
+            $confirmMethod = data_get($confirmData, 'confirm_method');
+            $showCancel = data_get($confirmData, 'show_cancel', true);
+        @endphp
+
+        <x-slot name="title">
+            <div class="flex items-center gap-3">
+                <span class="{{ $confirmIconWrapper }}">
+                    <i class="{{ $confirmIcon ?: 'ph-duotone ph-question text-xl' }} {{ $confirmIconClasses }}"></i>
+                </span>
+                <span class="text-sm font-semibold text-slate-700 dark:text-zinc-100">{!! $confirmTitle !!}</span>
+            </div>
+        </x-slot>
+
+        <x-slot name="content">
+            <div class="space-y-4 text-sm leading-6 text-slate-600 dark:text-zinc-300">
+                {!! $confirmDescription !!}
+            </div>
+        </x-slot>
+
+        <x-slot name="footer">
+            <div class="flex w-full justify-between gap-2">
+                @if ($showCancel)
+                    <button type="button" wire:click="cancelConfirmDialog" class="inline-flex justify-center items-center space-x-2 rounded border font-semibold focus:outline-none px-3 py-2 leading-5 text-xs tracking-wide border-gray-200 bg-white text-gray-700 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 focus:ring focus:ring-gray-500 focus:ring-opacity-25 transition dark:bg-zinc-700 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-zinc-600">
+                        @lang('messages.t_cancel')
+                    </button>
+                @endif
+
+                <button type="button"
+                        wire:click="submitConfirmDialog"
+                        @disabled(empty($confirmMethod))
+                        class="{{ $confirmClass }}">
+                    {{ $confirmLabel }}
+                </button>
+            </div>
+        </x-slot>
+    </x-forms.modal>
+
+    <x-forms.modal id="modal-milestone-details" target="modal-milestone-details-trigger" uid="modal_milestone_details" placement="center-center" size="max-w-lg">
+        @php
+            $detailData = $milestoneDetails ?? [];
+            $detailStatus = data_get($detailData, 'status');
+            $detailStatusKey = data_get($detailData, 'status_key');
+            $statusPalette = [
+                'request'   => 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-200',
+                'funded'    => 'bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-200',
+                'paid'      => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-200',
+                'cancelled' => 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-200',
+                'canceled'  => 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-200',
+            ];
+            $statusClasses = $statusPalette[$detailStatusKey] ?? 'bg-slate-200 text-slate-700 dark:bg-zinc-600/40 dark:text-zinc-200';
+        @endphp
+
+        <x-slot name="title">
+            <div class="flex items-center gap-3">
+                <span class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-300">
+                    <i class="ph-duotone ph-textbox text-xl"></i>
+                </span>
+                <span class="text-sm font-semibold text-slate-700 dark:text-zinc-100">
+                    {{ data_get($detailData, 'title', __('messages.t_milestone_payment_details')) }}
+                </span>
+            </div>
+        </x-slot>
+
+        <x-slot name="content">
+            <div class="space-y-6 text-sm leading-6 text-slate-600 dark:text-zinc-300">
+                <div class="grid gap-3">
+                    <div class="flex items-center justify-between rounded border border-slate-100 bg-slate-50 px-4 py-3 dark:border-zinc-600 dark:bg-zinc-800/60">
+                        <span class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-zinc-400">@lang('messages.t_status')</span>
+                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold {{ $statusClasses }}">
+                            {{ $detailStatus ?? '—' }}
+                        </span>
+                    </div>
+                    <div class="grid gap-2 rounded border border-slate-100 bg-white px-4 py-3 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-zinc-400">@lang('messages.t_amount')</span>
+                            <span class="font-semibold text-slate-800 dark:text-zinc-100">{{ data_get($detailData, 'amount', '—') }}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
+                            <span>@lang('messages.t_milestone_employer_fee_name')</span>
+                            <span class="font-medium text-slate-600 dark:text-zinc-200">{{ data_get($detailData, 'employer_fee', '—') }}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
+                            <span>@lang('messages.t_milestone_freelancer_fee_name')</span>
+                            <span class="font-medium text-slate-600 dark:text-zinc-200">{{ data_get($detailData, 'freelancer_fee', '—') }}</span>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-dashed border-slate-200 pt-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-zinc-700 dark:text-zinc-300">
+                            <span>@lang('messages.t_total')</span>
+                            <span class="text-sm text-slate-800 dark:text-zinc-100">{{ data_get($detailData, 'total', '—') }}</span>
+                        </div>
+                    </div>
+                    <div class="grid gap-2 rounded border border-slate-100 bg-white px-4 py-3 text-xs text-slate-500 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                        <div class="flex items-center justify-between">
+                            <span>@lang('messages.t_id')</span>
+                            <span class="font-semibold text-slate-700 dark:text-zinc-100">{{ data_get($detailData, 'uid', '—') }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>@lang('messages.t_created_at')</span>
+                            <span class="font-semibold text-slate-700 dark:text-zinc-100">{{ data_get($detailData, 'created_at', '—') }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>@lang('messages.t_updated_at')</span>
+                            <span class="font-semibold text-slate-700 dark:text-zinc-100">{{ data_get($detailData, 'updated_at', '—') }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-lg border border-slate-100 bg-white px-4 py-3 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-zinc-400 mb-2">
+                        @lang('messages.t_description')
+                    </p>
+                    <div class="prose prose-sm max-w-none text-slate-600 dark:prose-invert dark:text-zinc-200">
+                        {!! data_get($detailData, 'description') ?: '<span class="text-slate-400 dark:text-zinc-500">'.__('messages.t_no_data_to_show_now').'</span>' !!}
+                    </div>
+                </div>
+            </div>
+        </x-slot>
+
+        <x-slot name="footer">
+            <div class="flex w-full justify-end">
+                <button type="button" wire:click="closeDetailsModal" class="inline-flex justify-center items-center rounded border font-semibold focus:outline-none px-3 py-2 leading-5 text-xs tracking-wide border-gray-200 bg-white text-gray-700 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 focus:ring focus:ring-gray-500 focus:ring-opacity-25 transition dark:bg-zinc-700 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-zinc-600">
+                    @lang('messages.t_close')
+                </button>
+            </div>
+        </x-slot>
+    </x-forms.modal>
 
 </div>

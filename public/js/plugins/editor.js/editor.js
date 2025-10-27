@@ -5532,7 +5532,7 @@
                             { innerHTML: y.IconPlus }
                           )),
                           f.default.append(
-                            this.nodes.WireUiActions,
+                            this.nodes.Actions,
                             this.nodes.plusButton
                           ),
                           this.readOnlyMutableListeners.on(
@@ -5566,7 +5566,7 @@
                             { innerHTML: y.IconMenu }
                           )),
                           f.default.append(
-                            this.nodes.WireUiActions,
+                            this.nodes.Actions,
                             this.nodes.settingsToggler
                           ),
                           this.tooltip.onHover(
@@ -5578,11 +5578,11 @@
                             { hidingDelay: 400 }
                           ),
                           f.default.append(
-                            this.nodes.WireUiActions,
+                            this.nodes.Actions,
                             this.makeToolbox()
                           ),
                           f.default.append(
-                            this.nodes.WireUiActions,
+                            this.nodes.Actions,
                             this.Editor.BlockSettings.getElement()
                           ),
                           f.default.append(

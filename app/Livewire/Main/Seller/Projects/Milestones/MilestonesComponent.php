@@ -5,7 +5,6 @@ namespace App\Livewire\Main\Seller\Projects\Milestones;
 use Carbon\Carbon;
 use App\Models\Project;
 use Livewire\Component;
-use WireUi\Traits\Actions;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use App\Models\ProjectMilestone;
@@ -16,16 +15,17 @@ use App\Http\Validators\Main\Seller\Projects\Milestones\RequestValidator;
 
 class MilestonesComponent extends Component
 {
-    use WithPagination, SEOToolsTrait, Actions, LivewireAlert;
+    use WithPagination, SEOToolsTrait, LivewireAlert;
 
     public $project;
     public $paid_amount;
     public $payments_in_progress;
     public $expected_delivery_date;
 
-    // Request milestone payment form
     public $amount;
     public $description;
+
+    public $confirmSummary = [];
 
 
     /**
@@ -164,10 +164,10 @@ class MilestonesComponent extends Component
             if (convertToNumber($this->amount) + convertToNumber($total_amount) > convertToNumber($bid_amount)) {
 
                 // Error
-                $this->notification([
-                    'title'       => __('messages.t_error'),
-                    'description' => __('messages.t_u_exceeded_amount_agreed_with_employer_milestone'),
-                    'icon'        => 'error'
+                $this->alert('error', __('messages.t_error'), [
+                    'text'     => __('messages.t_u_exceeded_amount_agreed_with_employer_milestone'),
+                    'toast'    => true,
+                    'position' => 'top-end',
                 ]);
 
                 return;
@@ -187,55 +187,25 @@ class MilestonesComponent extends Component
                 $freelancer_commission = (convertToNumber($settings->commission_from_freelancer) / 100) * convertToNumber($this->amount);
             }
 
-            // Close dialog
+            // Close form modal and prepare confirmation state
             $this->dispatch('close-modal', 'modal-request-milestone-container');
 
-            // Show a confirmation dialog to the freelancer
-            $this->dialog()->confirm([
-                'title'          => '<h1 class="text-base font-bold tracking-wide">' . __('messages.t_confirm_milestone_payment') . '</h1>',
-                'description'    => "<div class='leading-relaxed'>" . __('messages.t_pls_review_ur_milestone_payment_details') . "<br></div>
-                <div class='rounded border dark:border-secondary-600 my-8'>
-                <dl class='divide-y divide-gray-200 dark:divide-gray-600'>
-                    <div class='grid grid-cols-3 gap-4 py-3 px-4'>
-                        <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>" . __('messages.t_requested_amount') . "</dt>
-                        <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>" . money(convertToNumber($this->amount), settings('currency')->code, true) . "</dd>
-                    </div>
-                    <div class='grid grid-cols-3 gap-4 py-3 px-4'>
-                        <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>" . __('messages.t_milestone_freelancer_fee_name') . "</dt>
-                        <dd class='text-sm font-semibold text-red-600 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>- " . money(convertToNumber($freelancer_commission), settings('currency')->code, true) . "</dd>
-                    </div>
-                    <div class='grid grid-cols-3 gap-4 py-3 px-4 bg-gray-100/60 dark:bg-secondary-700 rounded-b'>
-                        <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-400 ltr:text-left rtl:text-right'>" . __('messages.t_u_will_get') . "</dt>
-                        <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>" . money(convertToNumber($this->amount) - convertToNumber($freelancer_commission), settings('currency')->code, true) . "</dd>
-                    </div>
-                </dl>
-                </div>
-                ",
-                'icon'           => "shield-check",
-                'iconColor'      => "text-slate-500 dark:text-secondary-400 p-1",
-                'iconBackground' => "bg-slate-100 rounded-full p-3 dark:bg-secondary-700",
-                'accept'   => [
-                    'label'  => __('messages.t_confirm'),
-                    'method' => 'request',
-                    'color'  => 'secondary'
-                ],
-                'reject' => [
-                    'label'  => __('messages.t_cancel'),
-                    'method' => 'cancel'
-                ],
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->confirmSummary = [
+                'requested_amount'      => convertToNumber($this->amount),
+                'freelancer_commission' => convertToNumber($freelancer_commission),
+            ];
 
+            $this->dispatch('open-modal', 'modal-confirm-request');
+        } catch (\Illuminate\Validation\ValidationException $e) {
             // Validation error
             $this->alert(
                 'error',
                 __('messages.t_error'),
-                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
+                livewire_alert_params($e->getMessage(), 'error')
             );
 
             throw $e;
         } catch (\Throwable $th) {
-
             // Error
             $this->alert(
                 'error',
@@ -245,6 +215,18 @@ class MilestonesComponent extends Component
         }
     }
 
+
+    /**
+     * Allow freelancer to review data again before confirming
+     *
+     * @return void
+     */
+    public function cancelConfirmation(): void
+    {
+        $this->dispatch('close-modal', 'modal-confirm-request');
+        $this->dispatch('open-modal', 'modal-request-milestone-container');
+        $this->confirmSummary = [];
+    }
 
     /**
      * Now let's handle this milestone payment request
@@ -273,10 +255,10 @@ class MilestonesComponent extends Component
             if (convertToNumber($this->amount) + convertToNumber($total_amount) > convertToNumber($bid_amount)) {
 
                 // Error
-                $this->notification([
-                    'title'       => __('messages.t_error'),
-                    'description' => __('messages.t_u_exceeded_amount_agreed_with_employer_milestone'),
-                    'icon'        => 'error'
+                $this->alert('error', __('messages.t_error'), [
+                    'text'     => __('messages.t_u_exceeded_amount_agreed_with_employer_milestone'),
+                    'toast'    => true,
+                    'position' => 'top-end',
                 ]);
 
                 return;
@@ -339,6 +321,9 @@ class MilestonesComponent extends Component
                 'action'  => url('account/projects/milestones', $this->project->uid),
                 'user_id' => $this->project->user_id
             ]);
+
+            $this->dispatch('close-modal', 'modal-confirm-request');
+            $this->confirmSummary = [];
 
             // Refresh the page
             return redirect('seller/projects/milestones/' . $this->project->uid);

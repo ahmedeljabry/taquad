@@ -346,7 +346,73 @@
             </x-slot>
         
         </x-forms.modal>
+
+        <x-forms.modal id="modal-confirm-request" target="modal-confirm-request-trigger" uid="modal_confirm_request_{{ uid() }}" placement="center-center" size="max-w-lg">
+
+            <x-slot name="title">{{ __('messages.t_confirm_milestone_payment') }}</x-slot>
+
+            <x-slot name="content">
+                <div class='leading-relaxed'>
+                    {{ __('messages.t_pls_review_ur_milestone_payment_details') }}
+                </div>
+
+                <div class='rounded border dark:border-secondary-600 my-8'>
+                    <dl class='divide-y divide-gray-200 dark:divide-gray-600'>
+                        <div class='grid grid-cols-3 gap-4 py-3 px-4'>
+                            <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>{{ __('messages.t_requested_amount') }}</dt>
+                            <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>
+                                {{ money(data_get($confirmSummary, 'requested_amount', 0), settings('currency')->code, true) }}
+                            </dd>
+                        </div>
+                        <div class='grid grid-cols-3 gap-4 py-3 px-4'>
+                            <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>{{ __('messages.t_milestone_freelancer_fee_name') }}</dt>
+                            <dd class='text-sm font-semibold text-red-600 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>
+                                - {{ money(data_get($confirmSummary, 'freelancer_commission', 0), settings('currency')->code, true) }}
+                            </dd>
+                        </div>
+                        <div class='grid grid-cols-3 gap-4 py-3 px-4 bg-gray-100/60 dark:bg-secondary-700 rounded-b'>
+                            <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-400 ltr:text-left rtl:text-right'>{{ __('messages.t_u_will_get') }}</dt>
+                            <dd class='text-sm font-semibold text-zinc-900 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>
+                                {{ money(data_get($confirmSummary, 'requested_amount', 0) - data_get($confirmSummary, 'freelancer_commission', 0), settings('currency')->code, true) }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </x-slot>
+
+            <x-slot name="footer">
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 sm:space-x-reverse w-full">
+                    <button
+                        type="button"
+                        wire:click="cancelConfirmation"
+                        wire:loading.attr="disabled"
+                        wire:target="request"
+                        class="inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:text-zinc-200 dark:bg-zinc-700 dark:border-zinc-600 dark:hover:bg-zinc-600 dark:focus:ring-offset-zinc-800">
+                        {{ __('messages.t_cancel') }}
+                    </button>
+
+                    <x-forms.button action="request" text="{{ __('messages.t_confirm') }}" :block="0" />
+                </div>
+            </x-slot>
+
+        </x-forms.modal>
     @endif
+
+    <x-forms.modal id="modal-read-description" target="modal-read-description-trigger" uid="modal_read_description" placement="center-center" size="max-w-2xl">
+
+        <x-slot name="title">{{ __('messages.t_read_more') }}</x-slot>
+
+        <x-slot name="content">
+            <div id="modal-read-description-text" class="text-sm leading-relaxed text-slate-600 dark:text-zinc-200 whitespace-pre-wrap"></div>
+        </x-slot>
+
+        <x-slot name="footer">
+            <button type="button" x-on:click="close" class="inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:text-zinc-200 dark:bg-zinc-700 dark:border-zinc-600 dark:hover:bg-zinc-600 dark:focus:ring-offset-zinc-800">
+                {{ __('messages.t_close') }}
+            </button>
+        </x-slot>
+
+    </x-forms.modal>
 
 </div>
 
@@ -357,11 +423,17 @@
 
                 // Read description
                 description(text) {
-                    window.$wireui.notify({
-                        title      : "{{ __('messages.t_read_more') }}",
-                        description: text,
-                        icon       : 'success'
-                    })
+                    const container = document.getElementById('modal-read-description-text');
+
+                    if (container) {
+                        container.textContent = text;
+                    }
+
+                    if (window.modal_read_description && window.modal_read_description.modal) {
+                        window.modal_read_description.modal.show();
+                    } else {
+                        alert(text);
+                    }
                 }
 
             }

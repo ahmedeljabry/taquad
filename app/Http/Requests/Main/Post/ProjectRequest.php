@@ -36,7 +36,7 @@ class ProjectRequest extends FormRequest
             'skills.*'    => [ Rule::exists('projects_skills', 'id')->where(function($query) {
                 return $query->where('category_id', $this->request->get('category'));
             }) ],
-            'salary_type' => 'required|in:hourly,fixed',
+            'salary_type' => 'required|in:fixed',
             'price_min'   => ['required', 'regex:/^([1-9][0-9]*|0)(\.[0-9]{1,2})?$/'],
             'price_max'   => ['required', 'regex:/^([1-9][0-9]*|0)(\.[0-9]{1,2})?$/'],
             'attachments'     => 'nullable|array|max:5',

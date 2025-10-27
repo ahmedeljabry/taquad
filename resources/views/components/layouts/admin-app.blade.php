@@ -19,6 +19,7 @@
         @vite('resources/css/app.css')
 
         <wireui:scripts />
+        @include('components.wireui.basepath')
 
         {{-- Css styles --}}
         <link href="{{ asset('vendor/bladewind/css/animate.min.css') }}" rel="stylesheet" />

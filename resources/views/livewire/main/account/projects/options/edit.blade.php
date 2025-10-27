@@ -221,17 +221,29 @@
 
                             {{-- Hourly price --}}
                             <li>
-                                <input type="radio" id="post-project-salary-type-hourly" name="salary_type" wire:model="salary_type" value="hourly" class="hidden peer">
-                                <label for="post-project-salary-type-hourly" class="inline-flex items-center justify-between w-full p-4 text-gray-500 bg-white border shadow-sm border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-zinc-700 dark:peer-checked:text-primary-600 peer-checked:border-primary-600 peer-checked:text-primary-600 hover:text-gray-600 hover:bg-gray-100 dark:text-zinc-400 dark:bg-zinc-800 dark:hover:bg-zinc-700">
+                                <input type="radio" id="post-project-salary-type-hourly" name="salary_type" class="hidden" disabled>
+                                <label for="post-project-salary-type-hourly" class="relative inline-flex items-center justify-between w-full p-4 text-gray-500 bg-white border shadow-sm border-gray-200 rounded-lg cursor-not-allowed opacity-70 dark:border-zinc-700 dark:text-zinc-400 dark:bg-zinc-800">
                                     <div class="block">
-                                        <div class="w-full text-xs+ tracking-wide font-semibold">
+                                        <div class="w-full text-xs+ tracking-wide font-semibold text-slate-500 dark:text-zinc-400">
                                             @lang('messages.t_hourly_price')
                                         </div>
+                                        <p class="mt-1 text-[11px] text-slate-500 dark:text-zinc-400">
+                                            @lang('messages.t_hourly_projects_coming_soon')
+                                        </p>
                                     </div>
+                                    <span class="absolute rtl:right-4 ltr:left-4 -top-2 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-slate-600 dark:bg-zinc-700 dark:text-zinc-200">
+                                        @lang('messages.t_coming_soon')
+                                    </span>
                                     <i class="ph-duotone ph-clock text-2xl opacity-60"></i>
                                 </label>
                             </li>
                         </ul>
+
+                        @if (!empty($project) && $project->budget_type === 'hourly')
+                            <div class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-[12px] font-semibold text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
+                                @lang('messages.t_hourly_projects_edit_notice')
+                            </div>
+                        @endif
                     </div>
 
                     {{-- Min price --}}

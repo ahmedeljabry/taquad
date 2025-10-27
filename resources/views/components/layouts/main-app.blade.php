@@ -95,6 +95,7 @@
         @endif
 
         <wireui:scripts />
+        @include('components.wireui.basepath')
 
         @vite(['resources/css/app.css','resources/js/app.js'])
 

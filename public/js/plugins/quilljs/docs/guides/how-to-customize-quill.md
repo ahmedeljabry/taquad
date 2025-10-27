@@ -20,7 +20,7 @@ Two of the most powerful options is `modules` and `theme`. You can drastically c
 
 Quill officially supports a standard toolbar theme [Snow](/docs/themes/#snow) and a floating tooltip theme [Bubble](/docs/themes/#bubble). Since Quill is not confined within an iframe like many legacy editors, many visual modifications can be made with just CSS, using one of the existing themes.
 
-If you would like to drastically change UI interWireUiActions, you can omit the `theme` configuration option, which will give you an unstyled Quill editor. You do still need to include a minimal stylesheet that, for example, makes sure spaces render in all browsers and ordered lists are appropriately numbered.
+If you would like to drastically change UI interActions, you can omit the `theme` configuration option, which will give you an unstyled Quill editor. You do still need to include a minimal stylesheet that, for example, makes sure spaces render in all browsers and ordered lists are appropriately numbered.
 
 ```html
 <link

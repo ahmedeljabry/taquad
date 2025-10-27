@@ -3,7 +3,6 @@
 namespace App\Livewire\Main\Post;
 
 use Livewire\Component;
-use WireUi\Traits\Actions;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -20,7 +19,7 @@ use Illuminate\Support\Facades\Session;
 
 class ProjectComponent extends Component
 {
-    use SEOToolsTrait, LivewireAlert, Actions, WithFileUploads;
+    use SEOToolsTrait, LivewireAlert, WithFileUploads;
 
     public $title;
     public $description;
@@ -51,6 +50,8 @@ class ProjectComponent extends Component
     public array $templateMatches = [];
     public string $templateMessage = '';
 
+    protected bool $hasShownHourlyNotice = false;
+
     #[Locked]
     public $promoting_total = 0;
     public int $step = 0;
@@ -73,6 +74,14 @@ class ProjectComponent extends Component
         $this->resetValidation();
         $this->syncSelectedSkillLabels();
         $this->dispatch('project-form-reset');
+    }
+
+    public function updatedSalaryType($value): void
+    {
+        if ($value !== 'fixed') {
+            $this->salary_type = 'fixed';
+            $this->showHourlyNotice();
+        }
     }
 
     protected function clearWizardState(): void
@@ -98,6 +107,7 @@ class ProjectComponent extends Component
         $this->promoting_total     = 0;
         $this->skills              = [];
         $this->step                = 0;
+        $this->hasShownHourlyNotice = false;
 
         $initialTemplates = array_values($this->templateLibrary);
         $this->templateMatches = array_map(
@@ -114,6 +124,21 @@ class ProjectComponent extends Component
         ];
     }
 
+    protected function showHourlyNotice(): void
+    {
+        if ($this->hasShownHourlyNotice) {
+            return;
+        }
+
+        $this->hasShownHourlyNotice = true;
+
+        $this->alert('info', __('messages.t_attention_needed'), [
+            'text'     => __('messages.t_hourly_projects_coming_soon'),
+            'toast'    => true,
+            'position' => 'top-end',
+        ]);
+    }
+
 
     private function rulesFor(int $step): array
     {
@@ -127,7 +152,7 @@ class ProjectComponent extends Component
                 'required_skills' => 'array|min:1',
             ],
             2 => [
-                'salary_type'      => 'required|in:fixed,hourly',
+                'salary_type'      => 'required|in:fixed',
                 'min_price'        => 'required|numeric|min:0',
                 'max_price'        => 'required|numeric|gt:min_price',
                 'requires_nda'     => 'boolean',
@@ -969,7 +994,12 @@ class ProjectComponent extends Component
         $this->description = $this->buildTemplateDescription($template);
 
         if (!empty($template['salary_type'])) {
-            $this->salary_type = $template['salary_type'];
+            if ($template['salary_type'] === 'hourly') {
+                $this->salary_type = 'fixed';
+                $this->showHourlyNotice();
+            } else {
+                $this->salary_type = $template['salary_type'];
+            }
         }
 
         if (!empty($template['budget']['min'])) {
@@ -1291,16 +1321,9 @@ class ProjectComponent extends Component
             }
 
             // Check if user didn't select salary type
-            if (!in_array($this->salary_type, ['fixed', 'hourly'])) {
-
-                // Error
-                $this->alert(
-                    'error',
-                    __('messages.t_error'),
-                    livewire_alert_params(__('messages.t_pls_choose_how_do_u_want_to_pay_salary'), 'error')
-                );
-
-                return;
+            if ($this->salary_type !== 'fixed') {
+                $this->salary_type = 'fixed';
+                $this->showHourlyNotice();
             }
 
             // Validate form
