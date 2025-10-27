@@ -44,27 +44,36 @@
                 @forelse ($projects as $project)
                     <div class="col-span-12 lg:col-span-6">
                         <a href="{{ url('profile/' . $project->user->username . '/portfolio/' . $project->slug) }}"
-                            class="relative block p-8 overflow-hidden rounded-lg bg-white dark:bg-zinc-800">
+                            class="relative block overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-zinc-700 dark:bg-zinc-800">
 
-                            <span
-                                class="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-green-300 via-blue-500 to-purple-600"></span>
-
-                            <div class="justify-between sm:flex">
-                                <div>
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="space-y-2">
                                     <h5 class="text-base font-bold text-gray-900 dark:text-white">
                                         {{ $project->title }}
                                     </h5>
                                     @if ($project->project_link)
-                                        <p class="mt-1 text-xs font-normal text-gray-400 dark:text-gray-300 italic">
-                                            {{ $project->project_link }}</p>
+                                        <p class="mt-1 text-xs font-medium text-primary-600 dark:text-primary-300 underline underline-offset-2">
+                                            {{ parse_url($project->project_link, PHP_URL_HOST) ?? $project->project_link }}
+                                        </p>
                                     @endif
                                 </div>
 
-                                <div class="flex-shrink-0 hidden ltr:ml-3 rtl:mr-3 sm:block">
-                                    <img class="object-cover w-16 h-16 rounded-lg shadow-sm lazy"
+                                <div class="flex-shrink-0">
+                                    <img class="lazy h-16 w-16 rounded-lg object-cover shadow-sm"
                                         src="{{ placeholder_img() }}" data-src="{{ src($project->thumbnail) }}"
                                         alt="{{ $project->title }}" />
                                 </div>
+                            </div>
+
+                            <div class="mt-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-zinc-400">
+                                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-600 dark:bg-zinc-700 dark:text-zinc-200">
+                                    <i class="ph-duotone ph-eye text-base"></i>
+                                    {{ number_format($project->views_count) }}
+                                </span>
+                                <span class="inline-flex items-center gap-2 rounded-full bg-rose-50 px-3 py-1 text-[11px] font-semibold text-rose-500 dark:bg-rose-500/15 dark:text-rose-300">
+                                    <i class="ph-duotone ph-heart text-base"></i>
+                                    {{ number_format($project->likes_count) }}
+                                </span>
                             </div>
                         </a>
                     </div>

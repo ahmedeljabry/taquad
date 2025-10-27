@@ -227,6 +227,13 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted'])->group(functio
             });
         });
 
+        // Reviews
+        Route::namespace('Reviews')->prefix('reviews')->group(function () {
+
+            // Index
+            Route::get('/', ReviewsComponent::class);
+        });
+
         // Earnings
         Route::namespace('Earnings')->prefix('earnings')->group(function () {
 

@@ -29,6 +29,8 @@ class ProjectMilestone extends Model
         'employer_id',
         'amount',
         'description',
+        'parent_milestone_id',
+        'is_follow_up',
         'status',
         'employer_commission',
         'freelancer_commission'
@@ -62,5 +64,20 @@ class ProjectMilestone extends Model
     public function employer()
     {
         return $this->belongsTo(User::class, 'employer_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(self::class, 'parent_milestone_id');
+    }
+
+    public function followUps()
+    {
+        return $this->hasMany(self::class, 'parent_milestone_id');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(ProjectReview::class, 'milestone_id');
     }
 }

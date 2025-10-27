@@ -1,172 +1,249 @@
 <div class="w-full">
-    
-    {{-- Heading --}}
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 mb-16">
-        <div class="mx-auto max-w-7xl">
-            <div class="lg:flex lg:items-center lg:justify-between">
-    
-                <div class="min-w-0 flex-1">
-    
-                    {{-- Section heading --}}
-                    <h2 class="text-lg font-bold leading-7 text-zinc-700 dark:text-gray-50 sm:truncate sm:text-xl sm:tracking-tight">
-                        @lang('messages.my_portfolio')
-                    </h2>
-    
-                    {{-- Breadcrumbs --}}
-                    <div class="mt-3 flex flex-col sm:flex-row sm:flex-wrap sm:space-x-6 rtl:space-x-reverse">
-                        <ol class="inline-flex items-center mb-3 space-x-1 md:space-x-3 md:rtl:space-x-reverse sm:mb-0">
 
-                            {{-- Main home --}}
-                            <li>
-                                <div class="flex items-center">
-                                    <a href="{{ url('/') }}" class="text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-zinc-300 dark:hover:text-white">
-                                        @lang('messages.t_home')
-                                    </a>
-                                </div>
-                            </li>
-            
-                            {{-- My dashboard --}}
-                            <li aria-current="page">
-                                <div class="flex items-center">
-                                    <svg aria-hidden="true" class="w-4 h-4 text-gray-400 rtl:rotate-180" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                                    <a href="{{ url('seller/home') }}" class="ltr:ml-1 rtl:mr-1 text-sm font-medium text-gray-700 hover:text-primary-600 md:ltr:ml-2 md:rtl:mr-2 dark:text-zinc-300 dark:hover:text-white">
-                                        @lang('messages.t_my_dashboard')
-                                    </a>
-                                </div>
-                            </li>
-            
-                            {{-- My projects --}}
-                            <li aria-current="page">
-                                <div class="flex items-center">
-                                    <svg aria-hidden="true" class="w-4 h-4 text-gray-400 rtl:rotate-180" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                                    <span class="mx-1 text-sm font-medium text-gray-400 md:mx-2 dark:text-zinc-400">
-                                        @lang('messages.t_my_projects')
-                                    </span>
-                                </div>
-                            </li>
-            
-                        </ol>
+    <div class="max-w-7xl mx-auto space-y-12 px-4 sm:px-6 lg:px-8">
+
+
+
+
+        {{-- Overview --}}
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-start">
+            @if (!$projects->count() >= 2)
+                <div class="rounded-3xl border border-transparent bg-gradient-to-br from-primary-600 via-primary-500 to-primary-700 px-8 py-10 text-white shadow-xl dark:from-primary-500 dark:via-primary-600 dark:to-primary-700">
+                    <div class="flex flex-wrap items-start justify-between gap-6">
+                        <div class="max-w-2xl">
+                            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">
+                                @lang('messages.t_portfolio')
+                            </p>
+                            <h1 class="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+                                @lang('messages.t_portfolio_progress_title')
+                            </h1>
+                            <p class="mt-3 text-sm leading-relaxed text-white/80">
+                                {{ __('messages.t_portfolio_progress_subtitle', ['count' => $metrics['required_min']]) }}
+                            </p>
+                        </div>
+
+                        @if ($metrics['pending'] > 0)
+                            <p class="mt-2 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white/80">
+                                <i class="ph-duotone ph-hourglass-medium text-base"></i>
+                                {{ __('messages.t_portfolio_pending_badge', ['count' => number_format($metrics['pending'])]) }}
+                            </p>
+                        @endif
+
+                        <a href="{{ url('seller/portfolio/create') }}"
+                        class="inline-flex items-center justify-center rounded-full bg-white/15 px-5 py-2 text-sm font-semibold tracking-wide text-white transition hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white/40">
+                            <i class="ph-duotone ph-plus-circle mr-2 text-base"></i>
+                            @lang('messages.t_add_new_work')
+                        </a>
                     </div>
-                    
-                </div>
-    
-                {{-- Actions --}}
-                <div class="mt-5 flex lg:mt-0 lg:ltr::ml-4 lg:rtl:mr-4">
-        
-                {{-- Switch to buying --}}
-                <span class="block">
-                    <a href="{{ url('/') }}" class="inline-flex items-center rounded-sm border border-gray-300 bg-white px-4 py-2 text-[13px] font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 dark:bg-zinc-800 dark:border-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-900 dark:focus:ring-offset-zinc-900 dark:focus:ring-zinc-900">
-                        @lang('messages.t_switch_to_buying')
-                    </a>
-                </span>
-        
-                </div>
-    
-            </div>
-        </div>
-    </div>
-    
-    {{-- Content --}}
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
 
-        {{-- Projects --}}
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+                    @php
+                        $progressPercent = (int) round($metrics['progress'] * 100);
+                    @endphp
 
-            {{-- Loop through projects --}}
-            @foreach ($projects as $project)                                        
-                <div class="relative flex flex-col break-words rounded-xl shadow-sm" wire:key="freelancer-portfolio-{{ $project->uid }}">
+                    <div class="mt-8 space-y-3">
+                        <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-white/70">
+                            <span>{{ $progressPercent }}% @lang('messages.t_completed')</span>
 
-                    {{-- Thumbnail --}}
-                    <img class="h-72 w-full rounded-lg object-cover object-center" src="{{ src($project->thumbnail) }}" alt="{{ $project->title }}">
+                            @if ($metrics['requirement_met'])
+                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-emerald-100">
+                                    <i class="ph-duotone ph-check-circle text-base"></i>
+                                    @lang('messages.t_portfolio_progress_completed_badge')
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 rounded-full bg-amber-500/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-amber-100">
+                                    <i class="ph-duotone ph-rocket-launch text-base"></i>
+                                    {{ __('messages.t_portfolio_progress_missing_badge', ['count' => $metrics['remaining_needed']]) }}
+                                </span>
+                            @endif
+                        </div>
 
-                    {{-- Card content --}}
-                    <div class="absolute inset-0 flex h-full w-full flex-col justify-end">
-                        <div class="space-y-1.5 rounded-lg bg-gradient-to-t from-[#00000091] via-[#000000cc] to-transparent px-4 pb-3 pt-12">
-
-                            {{-- Project title --}}
-                            <div class="line-clamp-2">
-                                <a href="{{ url('profile/' . $project->user->username . '/portfolio/' . $project->slug) }}" target="_blank" class="text-base font-medium text-white">
-                                    {{ $project->title }}
-                                </a>
-                            </div>
-
-                            {{-- Footer actions --}}
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center text-xs text-slate-200">
-
-                                    {{-- Status --}}
-                                    @if ($project->status === 'pending')
-                                        <span class="inline-flex items-center rounded-full text-xs font-medium text-amber-300">
-                                            {{ __('messages.t_pending') }}
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center rounded-full text-xs font-medium text-green-400">
-                                            {{ __('messages.t_active') }}
-                                        </span>
-                                    @endif
-
-                                    {{-- Created at --}}
-                                    <div class="mx-3 my-0.5 w-px self-stretch bg-white/20"></div>
-                                        <p class="shrink-0 text-xs font-normal tracking-wide">
-                                            {{ format_date($project->created_at) }}
-                                        </p>
-                                    </div>
-
-                                {{-- Actions --}}
-                                <div class="ltr:-mr-1.5 rtl:-ml-1.5 flex space-x-2 rtl:space-x-reverse">
-
-                                    {{-- Edit --}}
-                                    <a href="{{ url('seller/portfolio/edit', $project->uid) }}" class="h-7 w-7 rounded-full p-0 hover:bg-slate-300/20 flex items-center justify-center">
-                                        <svg class="w-4 h-4 text-slate-100" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.045 7.401c.378-.378.586-.88.586-1.414s-.208-1.036-.586-1.414l-1.586-1.586c-.378-.378-.88-.586-1.414-.586s-1.036.208-1.413.585L4 13.585V18h4.413L19.045 7.401zm-3-3 1.587 1.585-1.59 1.584-1.586-1.585 1.589-1.584zM6 16v-1.585l7.04-7.018 1.586 1.586L7.587 16H6zm-2 4h16v2H4z"></path></svg>
-                                    </a>
-
-                                    {{-- Delete --}}
-                                    <button 
-                                        x-on:click="confirm('{{ __('messages.t_are_u_sure_u_want_to_delete_project') }}') ? $wire.delete('{{ $project->uid }}') : ''" 
-                                        wire:loading.attr="disabled" 
-                                        wire:target="delete('{{ $project->uid }}')"
-                                        type="button" 
-                                        class="h-7 w-7 rounded-full p-0 hover:bg-slate-300/20 flex items-center justify-center disabled:cursor-not-allowed disabled:bg-slate-400">
-
-                                        {{-- Loading indicator --}}
-                                        <div wire:loading wire:target="delete('{{ $project->uid }}')">
-                                            <svg role="status" class="w-4 h-4 text-gray-500 animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/>
-                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"/>
-                                            </svg>
-                                        </div>
-
-                                        {{-- Icon --}}
-                                        <div wire:loading.remove wire:target="delete('{{ $project->uid }}')">
-                                            <svg class="w-4 h-4 text-slate-100" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 20a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8h2V6h-4V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H3v2h2zM9 4h6v2H9zM8 8h9v12H7V8z"></path><path d="M9 10h2v8H9zm4 0h2v8h-2z"></path></svg>
-                                        </div>
-
-                                    </button>
-                                    
-                                </div>
-
-                            </div>
-
+                        <div class="h-3 w-full overflow-hidden rounded-full bg-white/20">
+                            <div class="h-full rounded-full bg-white transition-all duration-500 ease-out" style="width: {{ max($metrics['progress'] > 0 ? 6 : 0, $progressPercent) }}%"></div>
                         </div>
                     </div>
-
                 </div>
-            @endforeach
+            @endif
+            {{-- Metrics --}}
+            @php
+                $metricCards = [
+                    [
+                        'label' => __('messages.t_portfolio_metric_total'),
+                        'value' => number_format($metrics['total']),
+                        'icon'  => 'ph-duotone ph-folders',
+                        'bg'    => 'bg-slate-900 text-white',
+                    ],
+                    [
+                        'label' => __('messages.t_portfolio_metric_active'),
+                        'value' => number_format($metrics['active']),
+                        'icon'  => 'ph-duotone ph-rocket-launch',
+                        'bg'    => 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
+                    ],
+                    [
+                        'label' => __('messages.t_portfolio_metric_views'),
+                        'value' => number_format($metrics['views']),
+                        'icon'  => 'ph-duotone ph-eye',
+                        'bg'    => 'bg-blue-500/15 text-blue-600 dark:text-blue-400',
+                    ],
+                    [
+                        'label' => __('messages.t_portfolio_metric_likes'),
+                        'value' => number_format($metrics['likes']),
+                        'icon'  => 'ph-duotone ph-heart',
+                        'bg'    => 'bg-rose-500/15 text-rose-600 dark:text-rose-400',
+                    ],
+                ];
+            @endphp
 
-            {{-- Add new work --}}
-            <a href="{{ url('seller/portfolio/create') }}" class="h-72 rounded-xl border-dashed border-2 border-slate-200 bg-opacity-20 bg-slate-100 hover:bg-opacity-100 dark:border-zinc-600 dark:bg-zinc-800 dark:hover:bg-zinc-700 flex items-center justify-center flex-col">
-                <svg class="h-14 w-14 text-slate-300 dark:text-zinc-500" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd"></path></svg>
-            </a>
-
+            <div class="grid w-full gap-4 sm:grid-cols-2 lg:w-96">
+                @foreach ($metricCards as $metric)
+                    <div class="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm transition hover:border-primary-200 hover:shadow-md dark:border-zinc-700 dark:bg-zinc-800">
+                        <div class="flex items-center justify-between">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-xl {{ $metric['bg'] }} text-lg">
+                                <i class="{{ $metric['icon'] }}"></i>
+                            </div>
+                            <span class="text-2xl font-bold text-slate-900 dark:text-white">{{ $metric['value'] }}</span>
+                        </div>
+                        <p class="mt-5 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-zinc-400">
+                            {{ $metric['label'] }}
+                        </p>
+                    </div>
+                @endforeach
+            </div>
         </div>
 
-        {{-- Pages --}}
-        @if ($projects->hasPages())
-            <div class="flex justify-center pt-12">
-                {!! $projects->links('pagination::tailwind') !!}
+        {{-- Collection --}}
+        <div class="space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.4em] text-slate-400 dark:text-zinc-500">
+                        @lang('messages.t_portfolio')
+                    </p>
+                    <h2 class="mt-2 text-lg font-semibold text-slate-800 dark:text-zinc-100">
+                        @lang('messages.t_portfolio_showcase')
+                    </h2>
+                </div>
+                <a href="{{ url('/') }}" class="hidden items-center text-sm font-semibold tracking-wide text-primary-600 hover:text-primary-700 dark:text-primary-300 lg:inline-flex">
+                    <i class="ph-duotone ph-storefront mr-2 text-base"></i>
+                    @lang('messages.t_switch_to_buying')
+                </a>
             </div>
-        @endif
 
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+
+                {{-- Add new --}}
+                <a href="{{ url('seller/portfolio/create') }}" class="group relative flex h-[20rem] flex-col justify-between overflow-hidden rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-8 text-slate-500 transition hover:border-primary-200 hover:bg-primary-50 dark:border-zinc-600 dark:bg-zinc-900">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-primary-600 shadow-sm transition group-hover:bg-primary-600 group-hover:text-white dark:bg-zinc-800 dark:text-primary-300">
+                        <i class="ph-duotone ph-folder-plus text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-slate-700 transition group-hover:text-primary-700 dark:text-zinc-100 dark:group-hover:text-primary-200">
+                            @lang('messages.t_add_portfolio_item')
+                        </h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-500 dark:text-zinc-400">
+                            @lang('messages.t_add_portfolio_item_hint')
+                        </p>
+                    </div>
+                </a>
+
+                @forelse ($projects as $project)
+                    @php
+                        $statusStyles = [
+                            'active'   => ['bg' => 'bg-emerald-500/90', 'text' => 'text-white', 'icon' => 'ph-duotone ph-check-circle'],
+                            'pending'  => ['bg' => 'bg-amber-500/95',   'text' => 'text-white', 'icon' => 'ph-duotone ph-hourglass'],
+                            'rejected' => ['bg' => 'bg-rose-500/95',    'text' => 'text-white', 'icon' => 'ph-duotone ph-x-circle'],
+                        ];
+                        $style = $statusStyles[$project->status] ?? ['bg' => 'bg-slate-500/90', 'text' => 'text-white', 'icon' => 'ph-duotone ph-circle'];
+                    @endphp
+
+                    <article class="group relative flex h-[20rem] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl dark:border-zinc-700 dark:bg-zinc-900" wire:key="freelancer-portfolio-{{ $project->uid }}">
+                        <div class="absolute inset-0">
+                            <img src="{{ src($project->thumbnail) }}" alt="{{ $project->title }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/45 to-black/5 transition duration-500 group-hover:from-black/85 group-hover:via-black/55"></div>
+                        </div>
+
+                        <div class="relative z-10 flex flex-1 flex-col justify-between p-6">
+                            <div class="flex items-start justify-between">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-white/80">
+                                    {{ format_date($project->created_at) }}
+                                </p>
+                                <span class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide {{ $style['bg'] }} {{ $style['text'] }}">
+                                    <i class="{{ $style['icon'] }} text-sm"></i>
+                                    @lang('messages.t_' . $project->status)
+                                </span>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div>
+                                    <a href="{{ url('profile/' . $project->user->username . '/portfolio/' . $project->slug) }}"
+                                       target="_blank"
+                                       class="block text-lg font-semibold text-white transition hover:text-primary-200">
+                                        {{ $project->title }}
+                                    </a>
+
+                                    @if ($project->project_link)
+                                        <a href="{{ $project->project_link }}" target="_blank" class="mt-2 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-white/70 hover:text-white transition">
+                                            <i class="ph-duotone ph-link-simple text-sm"></i>
+                                            @lang('messages.t_view_project')
+                                        </a>
+                                    @endif
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <a href="{{ url('profile/' . $project->user->username . '/portfolio/' . $project->slug) }}" target="_blank"
+                                           class="inline-flex h-9 items-center gap-2 rounded-full bg-white/15 px-4 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-white/25">
+                                            <i class="ph-duotone ph-eye text-sm"></i>
+                                            @lang('messages.t_view')
+                                        </a>
+                                        <a href="{{ url('seller/portfolio/edit', $project->uid) }}"
+                                           class="inline-flex h-9 items-center gap-2 rounded-full bg-white/15 px-4 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-white/25">
+                                            <i class="ph-duotone ph-pencil text-sm"></i>
+                                            @lang('messages.t_edit')
+                                        </a>
+                                    </div>
+
+                                    <button type="button"
+                                            wire:click="delete('{{ $project->uid }}')"
+                                            wire:loading.attr="disabled"
+                                            class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-rose-500/90">
+                                        <span wire:loading wire:target="delete('{{ $project->uid }}')" class="animate-spin">
+                                            <svg class="h-4 w-4" stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v2m0 12v2m8-8h-2M6 12H4m13.657-6.343l-1.414 1.414M7.757 16.243l-1.414 1.414m0-12.728l1.414 1.414m9.9 9.9l1.414 1.414"/>
+                                            </svg>
+                                        </span>
+                                        <span wire:loading.remove wire:target="delete('{{ $project->uid }}')">
+                                            <i class="ph-duotone ph-trash text-lg"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                @empty
+                    <div class="col-span-full flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white p-12 text-center dark:border-zinc-700 dark:bg-zinc-900">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-primary-500/10 text-primary-600 dark:text-primary-300">
+                            <i class="ph-duotone ph-images text-3xl"></i>
+                        </div>
+                        <h3 class="mt-6 text-xl font-semibold text-slate-700 dark:text-zinc-100">
+                            @lang('messages.t_portfolio_empty_title')
+                        </h3>
+                        <p class="mt-2 max-w-md text-sm leading-relaxed text-slate-500 dark:text-zinc-400">
+                            @lang('messages.t_portfolio_empty_subtitle')
+                        </p>
+                        <a href="{{ url('seller/portfolio/create') }}"
+                           class="mt-6 inline-flex items-center justify-center rounded-full bg-primary-600 px-6 py-2 text-sm font-semibold tracking-wide text-white shadow-sm transition hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900">
+                            <i class="ph-duotone ph-plus-circle mr-2 text-base"></i>
+                            @lang('messages.t_add_new_work')
+                        </a>
+                    </div>
+                @endforelse
+            </div>
+
+            @if ($projects->hasPages())
+                <div class="flex justify-center pt-4">
+                    {!! $projects->links('pagination::tailwind') !!}
+                </div>
+            @endif
+        </div>
     </div>
 
 </div>

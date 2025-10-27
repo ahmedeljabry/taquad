@@ -23,6 +23,19 @@
                             @lang('messages.t_verified_account')
                         </span>
                     @endif
+                    @if (auth()->user()->freelancerProjectLevel)
+                        <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1">
+                            <i class="ph ph-medal"></i>
+                            {{ auth()->user()->freelancerProjectLevel->label }}
+                        </span>
+                    @endif
+                    @if ((int) auth()->user()->project_rating_count > 0)
+                        <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1">
+                            <i class="ph ph-star"></i>
+                            {{ number_format(auth()->user()->project_rating_avg, 1) }} ·
+                            {{ __('messages.t_number_reviews', ['number' => auth()->user()->project_rating_count]) }}
+                        </span>
+                    @endif
                     <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1">
                         <i class="ph ph-wallet"></i>
                         {{ money(auth()->user()->balance_available, settings('currency')->code, true) }}

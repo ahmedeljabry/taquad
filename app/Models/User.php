@@ -161,6 +161,56 @@ class User extends Authenticatable
         return $this->hasMany(Review::class, 'seller_id');
     }
 
+    public function projectReviewsGiven()
+    {
+        return $this->hasMany(ProjectReview::class, 'reviewer_id');
+    }
+
+    public function projectReviewsReceived()
+    {
+        return $this->hasMany(ProjectReview::class, 'reviewee_id');
+    }
+
+    public function freelancerProjectLevel()
+    {
+        return $this->belongsTo(ProjectLevel::class, 'freelancer_project_level_id');
+    }
+
+    public function clientProjectLevel()
+    {
+        return $this->belongsTo(ProjectLevel::class, 'client_project_level_id');
+    }
+
+    public function getFreelancerLevelBadgeAttribute(): ?array
+    {
+        $level = $this->freelancerProjectLevel;
+
+        if (!$level) {
+            return null;
+        }
+
+        return [
+            'label'       => $level->label,
+            'badge_color' => $level->badge_color,
+            'text_color'  => $level->text_color,
+        ];
+    }
+
+    public function getClientLevelBadgeAttribute(): ?array
+    {
+        $level = $this->clientProjectLevel;
+
+        if (!$level) {
+            return null;
+        }
+
+        return [
+            'label'       => $level->label,
+            'badge_color' => $level->badge_color,
+            'text_color'  => $level->text_color,
+        ];
+    }
+
     /**
      * Get seller rating
      *
@@ -189,6 +239,16 @@ class User extends Authenticatable
         } catch (\Throwable $th) {
             return 0;
         }
+    }
+
+    public function projectRating(): float
+    {
+        return round((float) $this->project_rating_avg, 2);
+    }
+
+    public function clientRating(): float
+    {
+        return round((float) $this->client_rating_avg, 2);
     }
 
     /**

@@ -670,6 +670,21 @@ class ProjectComponent extends Component
                 return;
             }
 
+            // Require portfolio presence before bidding
+            $portfolioCount = auth()->user()->projects()
+                ->where('status', 'active')
+                ->count();
+
+            if ($portfolioCount < 2) {
+                $this->notification([
+                    'title'       => __('messages.t_attention_needed'),
+                    'description' => __('messages.t_bid_requires_portfolio', ['count' => 2]),
+                    'icon'        => 'warning',
+                ]);
+
+                return redirect('seller/portfolio/create');
+            }
+
             // Check if first step
             if ($this->bid_current_step === 1) {
 

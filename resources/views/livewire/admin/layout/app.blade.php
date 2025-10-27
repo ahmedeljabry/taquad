@@ -22,6 +22,9 @@
         {{-- Livewire styles --}}
         @livewireStyles
 
+        {{-- Icon set --}}
+        @include('components.phosphor.styles')
+
         {{-- Styles --}}
         <link rel="preload" href="{{ mix('css/app.css') }}" as="style">
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
@@ -63,6 +66,12 @@
 
     <body class="antialiased bg-[#f8fafc] text-gray-600 min-h-full flex flex-col application application-ltr overflow-x-hidden overflow-y-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-900 dark:scrollbar-track-zinc-600" x-data="window.QCwuToAKMICZSdT">
 
+        @php
+            $isRtl                      = config()->get('direction') === 'rtl';
+            $notificationsPlacement     = $isRtl ? 'left' : 'right';
+            $notificationsHideTransform = $isRtl ? '-translate-x-full' : 'translate-x-full';
+        @endphp
+
         {{-- Notification --}}
         <x-notifications position="top-center" z-index="z-[60]" />
 
@@ -70,7 +79,12 @@
         <x-dialog z-index="z-50" blur="sm" />
 
         {{-- Notifications drawer --}}
-        <div id="notifications-drawer" class="fixed top-0 right-0 z-40 h-screen px-6 py-4 overflow-y-auto transition-transform translate-x-full bg-white w-96 dark:bg-gray-800 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-900 dark:scrollbar-track-zinc-600" tabindex="-1" aria-labelledby="notifications-drawer-label">
+        <div
+            id="notifications-drawer"
+            class="fixed top-0 {{ $isRtl ? 'left-0' : 'right-0' }} z-40 h-screen px-6 py-4 overflow-y-auto transition-transform {{ $notificationsHideTransform }} bg-white w-96 dark:bg-gray-800 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-900 dark:scrollbar-track-zinc-600"
+            data-drawer-placement="{{ $notificationsPlacement }}"
+            tabindex="-1"
+            aria-labelledby="notifications-drawer-label">
             <div class="h-screen">
 
                 {{-- Get notifications --}}

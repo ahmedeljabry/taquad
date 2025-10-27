@@ -60,6 +60,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AutomaticPaymentGatewaysTableSeeder::class);
         $this->call(OfflinePaymentGatewaysTableSeeder::class);
         $this->call(CoreContentSeeder::class);
+        $this->call(ProjectLevelSeeder::class);
         $this->call(DemoUsersSeeder::class);
         $this->call(DemoProjectsSeeder::class);
     }

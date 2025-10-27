@@ -172,4 +172,9 @@ class Project extends Model implements Sitemapable
     {
         return $this->hasMany(ProjectSubscription::class, 'project_id');
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(ProjectReview::class);
+    }
 }

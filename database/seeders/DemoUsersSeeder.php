@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Country;
 use App\Models\Level;
+use App\Models\ProjectLevel;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -18,6 +19,9 @@ class DemoUsersSeeder extends Seeder
     {
         $countries = Country::query()->pluck('id')->all();
         $levels    = Level::query()->pluck('id')->all();
+        $freelancerLevels = ProjectLevel::forAccountType('seller')->pluck('id', 'slug')->toArray();
+        $clientLevels     = ProjectLevel::forAccountType('buyer')->pluck('id', 'slug')->toArray();
+        $defaultClientLevel = $clientLevels['client_newcomer'] ?? null;
 
         $profiles = [
             ['fullname' => 'أحمد السالم', 'username' => 'ahmad-salem', 'email' => 'ahmad.salem@example.com', 'headline' => 'قائد التحول الرقمي في الشركات المتوسطة'],
@@ -46,7 +50,7 @@ class DemoUsersSeeder extends Seeder
             $email    = $profile['email'];
             $username = Str::slug($profile['username'], '_');
 
-            User::firstOrCreate(
+            $user = User::firstOrCreate(
                 ['email' => $email],
                 [
                     'uid'              => uid(),
@@ -60,8 +64,85 @@ class DemoUsersSeeder extends Seeder
                     'password'         => Hash::make('Password123!'),
                     'country_id'       => $this->randomValue($countries),
                     'level_id'         => $this->randomValue($levels),
+                    'client_project_level_id' => $defaultClientLevel,
                 ]
             );
+
+            if ($defaultClientLevel && !$user->client_project_level_id) {
+                $user->client_project_level_id = $defaultClientLevel;
+                $user->save();
+            }
+        }
+
+        $sellerProfiles = [
+            [
+                'fullname'   => 'ليث الزهراني',
+                'username'   => 'laith-zahrani',
+                'email'      => 'laith.zahrani@example.com',
+                'headline'   => 'مصمم منتجات رقمية يقود التجارب العربية',
+                'level_slug' => 'freelancer_top_rated',
+                'rating_avg' => 4.9,
+                'rating_count' => 22,
+            ],
+            [
+                'fullname'   => 'أروى الناصر',
+                'username'   => 'arwa-nasser',
+                'email'      => 'arwa.nasser@example.com',
+                'headline'   => 'مديرة مشاريع تقنية في الشركات الناشئة',
+                'level_slug' => 'freelancer_elite',
+                'rating_avg' => 4.95,
+                'rating_count' => 30,
+            ],
+            [
+                'fullname'   => 'رامي البوعينين',
+                'username'   => 'rami-buainain',
+                'email'      => 'rami.buainain@example.com',
+                'headline'   => 'مهندس برمجيات سحابي لخدمات الأعمال',
+                'level_slug' => 'freelancer_rising',
+                'rating_avg' => 4.6,
+                'rating_count' => 12,
+            ],
+        ];
+
+        foreach ($sellerProfiles as $profile) {
+            $email          = $profile['email'];
+            $username       = Str::slug($profile['username'], '_');
+            $ratingCount    = (int) $profile['rating_count'];
+            $ratingAverage  = (float) $profile['rating_avg'];
+            $ratingSum      = $ratingCount > 0 ? (int) round($ratingAverage * $ratingCount) : 0;
+
+            $user = User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'uid'                         => uid(),
+                    'username'                    => $this->uniqueUsername($username),
+                    'fullname'                    => $profile['fullname'],
+                    'headline'                    => $profile['headline'],
+                    'description'                 => $this->composeBio($bioFragments),
+                    'account_type'                => 'seller',
+                    'status'                      => 'active',
+                    'email_verified_at'           => now(),
+                    'password'                    => Hash::make('Password123!'),
+                    'country_id'                  => $this->randomValue($countries),
+                    'level_id'                    => $this->randomValue($levels),
+                    'client_project_level_id'     => $defaultClientLevel,
+                    'freelancer_project_level_id' => $freelancerLevels[$profile['level_slug']] ?? null,
+                    'project_rating_count'        => $ratingCount,
+                    'project_rating_sum'          => $ratingSum,
+                    'project_rating_avg'          => $ratingCount > 0 ? round($ratingAverage, 2) : 0,
+                    'last_project_review_at'      => $ratingCount > 0 ? now()->subDays(random_int(5, 45)) : null,
+                ]
+            );
+
+            if (!$user->freelancer_project_level_id && isset($freelancerLevels[$profile['level_slug']])) {
+                $user->freelancer_project_level_id = $freelancerLevels[$profile['level_slug']];
+                $user->save();
+            }
+
+            if ($defaultClientLevel && !$user->client_project_level_id) {
+                $user->client_project_level_id = $defaultClientLevel;
+                $user->save();
+            }
         }
     }
 

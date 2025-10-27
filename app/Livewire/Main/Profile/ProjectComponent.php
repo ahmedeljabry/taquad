@@ -7,7 +7,10 @@ use Livewire\Component;
 use WireUi\Traits\Actions;
 use Livewire\WithPagination;
 use App\Models\UserPortfolio;
+use App\Models\UserPortfolioLike;
+use App\Models\UserPortfolioVisit;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\DB;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
 
@@ -16,6 +19,10 @@ class ProjectComponent extends Component
     use WithPagination, SEOToolsTrait, Actions, LivewireAlert;
 
     public $project;
+    public bool $liked = false;
+    public bool $canLike = false;
+    public int $likesCount = 0;
+    public int $viewsCount = 0;
 
 
     /**
@@ -31,7 +38,10 @@ class ProjectComponent extends Component
         $user    = User::where('username', $username)->whereIn('status', ['verified', 'active'])->firstOrFail();
 
         // Get project
-        $project = UserPortfolio::where('user_id', $user->id)->where('slug', $slug)->firstOrFail();
+        $project = UserPortfolio::where('user_id', $user->id)
+            ->where('slug', $slug)
+            ->with(['gallery', 'user'])
+            ->firstOrFail();
 
         // Check if portfolio is pending approval
         if ($project->status === 'pending') {
@@ -55,6 +65,8 @@ class ProjectComponent extends Component
             // Set project
             $this->project = $project;
         }
+
+        $this->initialiseEngagementState();
     }
 
 
@@ -93,5 +105,94 @@ class ProjectComponent extends Component
         $this->seo()->jsonLd()->setType('WebSite');
 
         return view('livewire.main.profile.project');
+    }
+
+    protected function initialiseEngagementState(): void
+    {
+        $this->likesCount = (int) $this->project->likes_count;
+        $this->viewsCount = (int) $this->project->views_count;
+
+        $this->canLike = auth()->check() && auth()->id() !== $this->project->user_id;
+
+        if ($this->canLike) {
+            $this->liked = $this->project->likes()->where('user_id', auth()->id())->exists();
+        }
+
+        $this->recordVisit();
+    }
+
+    protected function recordVisit(): void
+    {
+        if (auth()->check() && auth()->id() === $this->project->user_id) {
+            return;
+        }
+
+        $hashSource = auth()->check()
+            ? 'user:' . auth()->id()
+            : 'guest:' . hash('sha256', (string) request()->ip() . '|' . (string) request()->userAgent());
+
+        $visitorHash = substr($hashSource, 0, 64);
+
+        $visit = UserPortfolioVisit::firstOrCreate(
+            [
+                'portfolio_id' => $this->project->id,
+                'visitor_hash' => $visitorHash,
+            ],
+            [
+                'user_id' => auth()->id(),
+            ]
+        );
+
+        if ($visit->wasRecentlyCreated) {
+            $this->project->increment('views_count');
+            $this->project->refresh();
+        }
+
+        $this->viewsCount = (int) $this->project->views_count;
+    }
+
+    public function toggleLove(): void
+    {
+        if (!auth()->check()) {
+            $this->notification([
+                'title'       => __('messages.t_login_required'),
+                'description' => __('messages.t_login_to_love_project'),
+                'icon'        => 'warning',
+            ]);
+
+            return;
+        }
+
+        if (auth()->id() === $this->project->user_id) {
+            $this->notification([
+                'title'       => __('messages.t_action_not_allowed'),
+                'description' => __('messages.t_cannot_love_own_project'),
+                'icon'        => 'warning',
+            ]);
+
+            return;
+        }
+
+        DB::transaction(function () {
+            $like = UserPortfolioLike::where('portfolio_id', $this->project->id)
+                ->where('user_id', auth()->id())
+                ->first();
+
+            if ($like) {
+                $like->delete();
+                $this->project->decrement('likes_count');
+                $this->liked = false;
+            } else {
+                UserPortfolioLike::create([
+                    'portfolio_id' => $this->project->id,
+                    'user_id'      => auth()->id(),
+                ]);
+                $this->project->increment('likes_count');
+                $this->liked = true;
+            }
+
+            $this->project->refresh();
+            $this->likesCount = (int) $this->project->likes_count;
+        });
     }
 }

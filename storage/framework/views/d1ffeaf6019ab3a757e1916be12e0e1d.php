@@ -61,12 +61,13 @@
 
 
         
+        <?php echo $__env->make('components.phosphor.styles', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
+        
         <?php if(settings('appearance')->custom_code_head_admin_layout): ?>
             <?php echo settings('appearance')->custom_code_head_admin_layout; ?>
 
         <?php endif; ?>
-
-        <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
         
         
         <?php echo app('Illuminate\Foundation\Vite')(['resources/js/app.js']); ?>

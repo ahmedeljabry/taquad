@@ -58,6 +58,7 @@ class ProfileComponent extends Component
 
         // Set user
         $this->user          = $user;
+        $this->user->loadMissing(['freelancerProjectLevel', 'clientProjectLevel', 'avatar']);
 
         // Get availability
         $availability = $user->availability()
@@ -107,7 +108,42 @@ class ProfileComponent extends Component
         $this->seo()->jsonLd()->setUrl(url()->current());
         $this->seo()->jsonLd()->setType('WebSite');
 
-        return view('livewire.main.profile.profile');
+        return view('livewire.main.profile.profile', [
+            'projectReputation' => $this->prepareProjectReputationData(),
+            'projectReviews'    => $this->projectReviews(),
+        ]);
+    }
+
+    private function prepareProjectReputationData(): array
+    {
+        $user  = $this->user->loadMissing('freelancerProjectLevel');
+        $badge = $user->freelancer_level_badge;
+
+        return [
+            'avg'            => round((float) $user->project_rating_avg, 2),
+            'count'          => (int) $user->project_rating_count,
+            'badge'          => $badge,
+            'level'          => $badge['label'] ?? null,
+            'last_review_at' => $user->last_project_review_at,
+        ];
+    }
+
+    private function projectReviews()
+    {
+        return $this->user->projectReviewsReceived()
+            ->where('is_skipped', false)
+            ->with([
+                'reviewer' => function ($query) {
+                    $query->select('id', 'uid', 'username', 'fullname', 'avatar_id');
+                },
+                'reviewer.avatar',
+                'project' => function ($query) {
+                    $query->select('id', 'uid', 'pid', 'slug', 'title');
+                },
+            ])
+            ->latest('submitted_at')
+            ->limit(10)
+            ->get();
     }
 
     /**

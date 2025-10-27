@@ -30,7 +30,14 @@ class UserPortfolio extends Model
         'thumb_id',
         'project_link',
         'project_video',
-        'status'
+        'status',
+        'views_count',
+        'likes_count',
+    ];
+
+    protected $casts = [
+        'views_count' => 'integer',
+        'likes_count' => 'integer',
     ];
 
     /**
@@ -61,5 +68,20 @@ class UserPortfolio extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id')->withTrashed();
+    }
+
+    public function visits()
+    {
+        return $this->hasMany(UserPortfolioVisit::class, 'portfolio_id');
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(UserPortfolioLike::class, 'portfolio_id');
+    }
+
+    public function likedUsers()
+    {
+        return $this->belongsToMany(User::class, 'user_portfolio_likes', 'portfolio_id', 'user_id');
     }
 }

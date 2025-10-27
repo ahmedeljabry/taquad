@@ -47,6 +47,9 @@
             {!! settings('appearance')->custom_code_head_admin_layout !!}
         @endif
 
+        {{-- Icon set --}}
+        @include('components.phosphor.styles')
+
         {{-- Livewire styles --}}
         @livewireStyles
         

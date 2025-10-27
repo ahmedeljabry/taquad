@@ -91,6 +91,9 @@
         {{-- Livewire styles --}}
         @livewireStyles
 
+        {{-- Icon set --}}
+        @include('components.phosphor.styles')
+
 		{{-- Custom css --}}
         <style>
             :root {

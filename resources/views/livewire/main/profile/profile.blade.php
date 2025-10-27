@@ -143,6 +143,35 @@
 
                             </div>
 
+                            @if (($projectReputation['level'] ?? null) || ($projectReputation['count'] ?? 0) > 0)
+                                <div class="mt-4 flex flex-wrap items-center justify-center gap-3 md:justify-start">
+                                    @if (!empty($projectReputation['badge']))
+                                        <span
+                                            class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold shadow-sm"
+                                            style="background-color: {{ $projectReputation['badge']['badge_color'] ?? '#e2e8f0' }}; color: {{ $projectReputation['badge']['text_color'] ?? '#1f2937' }};">
+                                            <i class="ph-duotone ph-medal text-sm"></i>
+                                            {{ $projectReputation['badge']['label'] ?? $projectReputation['level'] }}
+                                        </span>
+                                    @endif
+
+                                    @if (($projectReputation['count'] ?? 0) > 0)
+                                        <span class="inline-flex items-center gap-2 rounded-full bg-amber-100/80 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-500/10 dark:text-amber-200">
+                                            <i class="ph-duotone ph-star text-sm"></i>
+                                            {{ number_format($projectReputation['avg'] ?? 0, 1) }}
+                                            <span class="text-[11px] font-medium">
+                                                @lang('messages.t_number_reviews', ['number' => $projectReputation['count']])
+                                            </span>
+                                        </span>
+                                    @endif
+
+                                    @if (!empty($projectReputation['last_review_at']))
+                                        <span class="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-400 dark:text-zinc-500">
+                                            @lang('messages.t_last_review') {{ format_date($projectReputation['last_review_at'], 'ago') }}
+                                        </span>
+                                    @endif
+                                </div>
+                            @endif
+
                         </div>
 
                     </div>
@@ -712,7 +741,89 @@
                     @endif
 
                     {{-- Reviews --}}
-                    @if ($user->account_type === 'seller' && $user_rating['total'] > 0)
+                    @if ($user->account_type === 'seller' && ($projectReputation['count'] ?? 0) > 0)
+                        <section class="px-5 py-8 space-y-6">
+
+                            {{-- Section title --}}
+                            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <h1 class="text-base font-extrabold text-zinc-800 tracking-wide dark:text-zinc-100">
+                                        @lang('messages.t_reviews')
+                                    </h1>
+                                    <p class="text-sm text-slate-500 dark:text-zinc-400">
+                                        @lang('messages.t_based_on_number_reviews', ['number' => $projectReputation['count']])
+                                    </p>
+                                </div>
+
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex items-center gap-2 rounded-full bg-amber-100/80 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-500/10 dark:text-amber-200">
+                                        <i class="ph-duotone ph-star text-sm"></i>
+                                        {{ number_format($projectReputation['avg'], 1) }}
+                                        <span class="text-[11px] font-medium uppercase tracking-[0.2em] text-amber-700/70 dark:text-amber-300/80">
+                                            @lang('messages.t_out_of_5')
+                                        </span>
+                                    </span>
+
+                                    @if (!empty($projectReputation['badge']))
+                                        <span
+                                            class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold shadow-sm"
+                                            style="background-color: {{ $projectReputation['badge']['badge_color'] ?? '#e2e8f0' }}; color: {{ $projectReputation['badge']['text_color'] ?? '#1f2937' }};">
+                                            <i class="ph-duotone ph-shield-check text-sm"></i>
+                                            {{ $projectReputation['badge']['label'] ?? $projectReputation['level'] }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            {{-- Reviews list --}}
+                            <div class="space-y-4">
+                                @foreach ($projectReviews as $review)
+                                    <article class="rounded-xl border border-slate-100 bg-white p-5 shadow-sm transition hover:border-primary-100 hover:shadow-lg dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-primary-400/60">
+                                        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                                            <div class="flex items-center gap-3">
+                                                <img class="h-10 w-10 rounded-full object-cover shadow-sm"
+                                                    src="{{ placeholder_img() }}"
+                                                    data-src="{{ src($review->reviewer?->avatar) }}"
+                                                    alt="{{ $review->reviewer?->username }}">
+                                                <div>
+                                                    <p class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
+                                                        {{ $review->reviewer?->fullname ?? $review->reviewer?->username }}
+                                                    </p>
+                                                    <p class="text-xs text-slate-500 dark:text-zinc-400">
+                                                        {{ format_date($review->submitted_at, 'ago') }}
+                                                        @if ($review->project)
+                                                            · <a href="{{ url('project/' . $review->project->pid . '/' . $review->project->slug) }}" class="text-primary-600 hover:underline dark:text-primary-400">
+                                                                {{ $review->project->title }}
+                                                            </a>
+                                                        @endif
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex items-center gap-1 text-amber-500">
+                                                @if ($review->score)
+                                                    {!! render_star_rating($review->score, '1rem', '1rem', '#d1d5db') !!}
+                                                    <span class="ml-2 text-sm font-semibold text-amber-600 dark:text-amber-400">
+                                                        {{ number_format($review->score, 1) }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400 dark:text-zinc-500">
+                                                        @lang('messages.t_rating_skipped_badge')
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        @if ($review->comment)
+                                            <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-zinc-300">
+                                                {{ $review->comment }}
+                                            </p>
+                                        @endif
+                                    </article>
+                                @endforeach
+                            </div>
+                        </section>
+                    @elseif ($user->account_type === 'seller' && $user_rating['total'] > 0)
                         <section class="px-5 py-8">
 
                             {{-- Section title --}}

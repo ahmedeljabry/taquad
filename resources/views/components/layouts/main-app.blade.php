@@ -55,6 +55,9 @@
         {{-- Livewire styles --}}
         @livewireStyles
 
+        {{-- Icon set --}}
+        @include('components.phosphor.styles')
+
 		{{-- Custom css --}}
         <style>
             :root {
@@ -344,8 +347,6 @@
                     </span>`,
 
                 inboxLink = document.querySelector('a[href="{{ url("inbox") }}"]');
-                console.log('inboxLink', inboxLink);
-
                 const addBadge = () => {
                         if (!document.getElementById('nav-badge')) {
                             inboxLink.insertAdjacentHTML('beforeend', badgeHTML);

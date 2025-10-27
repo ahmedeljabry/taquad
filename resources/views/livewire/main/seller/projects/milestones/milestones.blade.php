@@ -71,6 +71,24 @@
                             </button>
                         </span>
                     @endif
+
+                    @if ($canRateClient)
+                        <span class="block sm:ltr:ml-3 sm:rtl:mr-3">
+                            <button type="button"
+                                wire:click="openRatingModal"
+                                class="inline-flex items-center rounded-sm border border-transparent bg-emerald-600 px-4 py-2 text-[13px] font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                                <i class="ph-duotone ph-star text-base ltr:mr-2 rtl:ml-2"></i>
+                                @lang('messages.t_rate_client')
+                            </button>
+                        </span>
+                    @elseif ($freelancerReview)
+                        <span class="block sm:ltr:ml-3 sm:rtl:mr-3">
+                            <span class="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+                                <i class="ph-duotone {{ $freelancerReview->is_skipped ? 'ph-arrow-bend-up-left' : 'ph-check-circle' }} text-sm"></i>
+                                {{ $freelancerReview->is_skipped ? __('messages.t_rating_skipped_badge') : __('messages.t_rating_submitted_badge') }}
+                            </span>
+                        </span>
+                    @endif
         
                 </div>
     
@@ -186,7 +204,151 @@
 
     {{-- Content --}}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
-        <div class="mt-8 overflow-x-auto overflow-y-hidden sm:mt-0 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-800 dark:scrollbar-track-zinc-600">
+        {{-- Timeline --}}
+        <div class="mt-8 space-y-10">
+            @forelse ($timeline as $entry)
+                @php
+                    $milestone       = $entry['milestone'];
+                    $meta            = $entry['meta'];
+                    $excerpt         = \Illuminate\Support\Str::limit(strip_tags($milestone->description ?? ''), 200);
+                @endphp
+
+                <div class="relative ltr:pl-14 rtl:pr-14" wire:key="seller-timeline-root-{{ $milestone->uid }}">
+                    @if (! $loop->last)
+                        <span class="absolute top-12 bottom-0 ltr:left-6 rtl:right-6 w-px bg-slate-200 dark:bg-zinc-700"></span>
+                    @endif
+
+                    <span class="absolute top-1.5 flex h-11 w-11 items-center justify-center rounded-full text-white {{ $meta['badge_color'] }} ring-4 {{ $meta['ring_color'] }} shadow-sm dark:ring-1 dark:ring-zinc-700/70 ltr:left-4 rtl:right-4">
+                        <i class="{{ $meta['icon'] }} text-lg"></i>
+                    </span>
+
+                    <div class="rounded-2xl border border-slate-200/80 bg-white px-6 py-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white {{ $meta['badge_color'] }}">
+                                    {{ $meta['status_label'] }}
+                                </span>
+
+                                @if ($milestone->is_follow_up)
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-primary-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-200">
+                                        <i class="ph-duotone ph-repeat text-sm"></i>
+                                        @lang('messages.t_follow_up_badge')
+                                    </span>
+                                @endif
+                            </div>
+
+                            <span class="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                                {{ format_date($milestone->created_at) }}
+                            </span>
+                        </div>
+
+                        <p class="mt-4 text-sm leading-relaxed text-slate-600 dark:text-zinc-200">
+                            {{ $excerpt ?: __('messages.t_no_data_to_show_now') }}
+                            @if (strlen($milestone->description ?? '') > 200)
+                                <button
+                                    type="button"
+                                    class="ml-2 text-xs font-semibold uppercase tracking-wide text-primary-600 hover:text-primary-500 dark:text-primary-200"
+                                    x-on:click="description('{{ str_replace(["'", "\n", "\r", "\r\n"], " ", $milestone->description) }}')">
+                                    @lang('messages.t_read_more')
+                                </button>
+                            @endif
+                        </p>
+
+                        <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-sm">
+                            <div>
+                                <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-zinc-500">@lang('messages.t_amount')</p>
+                                <p class="mt-1 font-semibold text-slate-800 dark:text-zinc-100">{{ money(convertToNumber($milestone->amount), settings('currency')->code, true) }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-zinc-500">@lang('messages.t_milestone_freelancer_fee_name')</p>
+                                <p class="mt-1 font-semibold text-slate-800 dark:text-zinc-100">{{ money(convertToNumber($milestone->freelancer_commission), settings('currency')->code, true) }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-zinc-500">@lang('messages.t_paid_to_you')</p>
+                                <p class="mt-1 font-semibold text-slate-800 dark:text-zinc-100">{{ money(convertToNumber($milestone->amount) - convertToNumber($milestone->freelancer_commission), settings('currency')->code, true) }}</p>
+                            </div>
+                            <div class="lg:text-right rtl:lg:text-left">
+                                <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-zinc-500">@lang('messages.t_id')</p>
+                                <p class="mt-1 font-semibold text-slate-800 dark:text-zinc-100">{{ $milestone->uid }}</p>
+                            </div>
+                        </div>
+
+                        @if ($entry['children']->isNotEmpty())
+                            <div class="mt-7 space-y-6 border-l border-dashed border-slate-200/80 ltr:pl-8 rtl:pr-8 dark:border-zinc-600/70">
+                                @foreach ($entry['children'] as $childEntry)
+                                    @php
+                                        $child        = $childEntry['milestone'];
+                                        $childMeta    = $childEntry['meta'];
+                                        $childExcerpt = \Illuminate\Support\Str::limit(strip_tags($child->description ?? ''), 180);
+                                    @endphp
+
+                                    <div class="relative ltr:pl-10 rtl:pr-10" wire:key="seller-timeline-child-{{ $child->uid }}">
+                                        <span class="absolute top-1 flex h-8 w-8 items-center justify-center rounded-full text-white {{ $childMeta['badge_color'] }} ring-4 {{ $childMeta['ring_color'] }} shadow-sm dark:ring-1 dark:ring-zinc-700/70 ltr:-left-4 rtl:-right-4">
+                                            <i class="{{ $childMeta['icon'] }} text-base"></i>
+                                        </span>
+
+                                        <div class="rounded-xl border border-slate-200/80 bg-slate-50 px-5 py-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/60">
+                                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white {{ $childMeta['badge_color'] }}">
+                                                        {{ $childMeta['status_label'] }}
+                                                    </span>
+                                                    <span class="inline-flex items-center gap-1 rounded-full bg-primary-500/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-200">
+                                                        <i class="ph-duotone ph-repeat text-xs"></i>
+                                                        @lang('messages.t_follow_up_badge')
+                                                    </span>
+                                                </div>
+
+                                                <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                                                    {{ format_date($child->created_at) }}
+                                                </span>
+                                            </div>
+
+                                            <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-zinc-200">
+                                                {{ $childExcerpt ?: __('messages.t_no_data_to_show_now') }}
+                                                @if (strlen($child->description ?? '') > 180)
+                                                    <button
+                                                        type="button"
+                                                        class="ml-2 text-xs font-semibold uppercase tracking-wide text-primary-600 hover:text-primary-500 dark:text-primary-200"
+                                                        x-on:click="description('{{ str_replace(["'", "\n", "\r", "\r\n"], " ", $child->description) }}')">
+                                                        @lang('messages.t_read_more')
+                                                    </button>
+                                                @endif
+                                            </p>
+
+                                            <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 text-sm">
+                                                <div>
+                                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-zinc-500">@lang('messages.t_amount')</p>
+                                                    <p class="mt-1 font-semibold text-slate-800 dark:text-zinc-100">{{ money(convertToNumber($child->amount), settings('currency')->code, true) }}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-zinc-500">@lang('messages.t_milestone_freelancer_fee_name')</p>
+                                                    <p class="mt-1 font-semibold text-slate-800 dark:text-zinc-100">{{ money(convertToNumber($child->freelancer_commission), settings('currency')->code, true) }}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-zinc-500">@lang('messages.t_paid_to_you')</p>
+                                                    <p class="mt-1 font-semibold text-slate-800 dark:text-zinc-100">{{ money(convertToNumber($child->amount) - convertToNumber($child->freelancer_commission), settings('currency')->code, true) }}</p>
+                                                </div>
+                                                <div class="lg:text-right rtl:lg:text-left">
+                                                    <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-zinc-500">@lang('messages.t_id')</p>
+                                                    <p class="mt-1 font-semibold text-slate-800 dark:text-zinc-100">{{ $child->uid }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @empty
+                <div class="rounded-2xl border border-dashed border-slate-200/80 bg-white px-6 py-16 text-center text-sm font-medium text-slate-400 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                    @lang('messages.t_no_milestone_payments_created_yet')
+                </div>
+            @endforelse
+        </div>
+
+        <div class="hidden mt-8 overflow-x-auto overflow-y-hidden sm:mt-0 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-800 dark:scrollbar-track-zinc-600">
             <table class="w-full text-left border-spacing-y-[10px] border-separate -mt-2">
                 <thead class="">
                     <tr class="bg-slate-200 dark:bg-zinc-600">
@@ -345,6 +507,77 @@
                 <x-forms.button action="confirmRequest" text="{{ __('messages.t_continue') }}" :block="0"  />
             </x-slot>
         
+        </x-forms.modal>
+
+        <x-forms.modal id="modal-project-feedback" target="modal-project-feedback-trigger" uid="modal_project_feedback" placement="center-center" size="max-w-xl">
+
+            <x-slot name="title">
+                <div class="space-y-1">
+                    <h2 class="text-base font-bold tracking-wide text-slate-800 dark:text-zinc-100">
+                        @lang('messages.t_rate_client_title', ['name' => $project->client?->fullname ?: $project->client?->username])
+                    </h2>
+                    <p class="text-sm text-slate-500 dark:text-zinc-300">@lang('messages.t_rate_client_subtitle')</p>
+                </div>
+            </x-slot>
+
+            <x-slot name="content">
+                <div class="space-y-6">
+                    <div>
+                        <p class="text-sm font-semibold text-slate-600 dark:text-zinc-200 mb-3">@lang('messages.t_select_rating_label')</p>
+                        <div class="flex items-center justify-center gap-2">
+                            @for ($i = 1; $i <= 5; $i++)
+                                <label class="cursor-pointer">
+                                    <input type="radio" class="sr-only" name="sellerRatingScore" value="{{ $i }}" wire:model="ratingScore">
+                                    <i class="ph-duotone ph-star text-3xl transition-colors duration-150 {{ $ratingScore >= $i ? 'text-emerald-400' : 'text-slate-300 dark:text-zinc-600' }}"></i>
+                                </label>
+                            @endfor
+                        </div>
+                        @error('ratingScore')
+                            <p class="mt-3 text-sm font-medium text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="seller-project-review-comment" class="block text-sm font-semibold text-slate-600 dark:text-zinc-200 mb-2">
+                            @lang('messages.t_optional_feedback_label')
+                        </label>
+                        <textarea id="seller-project-review-comment" rows="4" wire:model.defer="ratingComment" class="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm transition focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-40 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100" placeholder="{{ __('messages.t_optional_feedback_placeholder') }}"></textarea>
+                        <p class="mt-2 text-xs text-slate-400 dark:text-zinc-400">@lang('messages.t_optional_feedback_hint')</p>
+                        @error('ratingComment')
+                            <p class="mt-2 text-sm font-medium text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+            </x-slot>
+
+            <x-slot name="footer">
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 sm:space-x-reverse w-full">
+                    <button type="button"
+                        wire:click="skipRating"
+                        wire:loading.attr="disabled"
+                        wire:target="skipRating,submitRating"
+                        class="inline-flex justify-center items-center rounded border font-semibold focus:outline-none px-3 py-2 leading-5 text-xs tracking-wide border-slate-200 bg-white text-slate-600 shadow-sm hover:text-slate-800 hover:bg-slate-100 hover:border-slate-300 focus:ring focus:ring-slate-300 focus:ring-opacity-25 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-600">
+                        @lang('messages.t_skip_for_now')
+                    </button>
+
+                    <button type="button"
+                        wire:click="submitRating"
+                        wire:loading.attr="disabled"
+                        wire:target="submitRating"
+                        class="inline-flex justify-center items-center rounded border font-semibold focus:outline-none px-4 py-2 leading-5 text-xs tracking-wide border-transparent bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 focus:ring focus:ring-emerald-500 focus:ring-opacity-25 disabled:opacity-60 disabled:cursor-not-allowed">
+                        <div wire:loading wire:target="submitRating">
+                            <svg role="status" class="inline w-4 h-4 animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/>
+                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="#059669"/>
+                            </svg>
+                        </div>
+                        <span wire:loading.remove wire:target="submitRating">
+                            @lang('messages.t_submit_ur_review')
+                        </span>
+                    </button>
+                </div>
+            </x-slot>
+
         </x-forms.modal>
 
         <x-forms.modal id="modal-confirm-request" target="modal-confirm-request-trigger" uid="modal_confirm_request_{{ uid() }}" placement="center-center" size="max-w-lg">

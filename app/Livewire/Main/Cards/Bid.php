@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\ProjectMilestone;
 use App\Models\ProjectReportedBid;
 use App\Notifications\Admin\BidReported;
+use App\Notifications\User\Freelancer\ProposalViewed;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use App\Http\Validators\Main\Bid\ReportValidator;
 use App\Notifications\User\Freelancer\ProjectAwarded;
@@ -25,6 +26,7 @@ class Bid extends Component
     protected $bid;
     protected $project;
     public $view_data = [];
+    public bool $viewRecorded = false;
 
     // Report form
     public $report_reason;
@@ -96,7 +98,8 @@ class Bid extends Component
             'amount'       => $can_view ? $bid->amount : null,
             'days'         => $can_view ? $bid->days : null,
             'message'      => $can_view ? $bid->message : null,
-            'date'         => $bid->created_at
+            'date'         => $bid->created_at,
+            'last_viewed_at' => $bid->last_viewed_at,
         ];
 
         // Set project for the view
@@ -106,6 +109,12 @@ class Bid extends Component
             'status'      => $project->status,
             'awarded'     => $project->awarded_bid
         ];
+
+        $this->viewRecorded = !is_null($bid->last_viewed_at);
+
+        if (auth()->check() && auth()->id() === $project->user_id && !$this->viewRecorded) {
+            $this->recordView($bid);
+        }
     }
 
 
@@ -118,6 +127,38 @@ class Bid extends Component
     public function render()
     {
         return view('livewire.main.cards.bid');
+    }
+
+    private function recordView(ProjectBid $bid): void
+    {
+        if (!auth()->check()) {
+            return;
+        }
+
+        if (auth()->id() !== $this->project->user_id) {
+            return;
+        }
+
+        if ($bid->user_id === auth()->id()) {
+            return;
+        }
+
+        $bid->forceFill(['last_viewed_at' => now()])->save();
+
+        $this->viewRecorded = true;
+        $this->view_data['bid']['last_viewed_at'] = $bid->last_viewed_at;
+
+        notification([
+            'text'    => 't_notification_proposal_viewed',
+            'action'  => url('seller/projects/bids'),
+            'user_id' => $bid->user_id,
+            'params'  => [
+                'project'  => $this->project->title,
+                'username' => auth()->user()->username,
+            ],
+        ]);
+
+        $bid->user->notify(new ProposalViewed($this->project, $bid, auth()->user()));
     }
 
 

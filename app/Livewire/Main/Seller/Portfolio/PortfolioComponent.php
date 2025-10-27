@@ -49,7 +49,8 @@ class PortfolioComponent extends Component
         $this->seo()->jsonLd()->setType('WebSite');
 
         return view('livewire.main.seller.portfolio.portfolio', [
-            'projects' => $this->projects
+            'projects' => $this->projects,
+            'metrics'  => $this->metrics,
         ]);
     }
 
@@ -66,6 +67,33 @@ class PortfolioComponent extends Component
 
         // Return projects
         return $projects;
+    }
+
+    public function getMetricsProperty(): array
+    {
+        $baseQuery = UserPortfolio::query()->where('user_id', auth()->id());
+
+        $total    = (clone $baseQuery)->count();
+        $active   = (clone $baseQuery)->where('status', 'active')->count();
+        $pending  = (clone $baseQuery)->where('status', 'pending')->count();
+        $totalViews = (clone $baseQuery)->sum('views_count');
+        $totalLikes = (clone $baseQuery)->sum('likes_count');
+
+        $requiredMin  = 2;
+        $progress     = $requiredMin > 0 ? min(1, $active / $requiredMin) : 1;
+        $remaining    = max(0, $requiredMin - $active);
+
+        return [
+            'total'            => $total,
+            'active'           => $active,
+            'pending'          => $pending,
+            'views'            => $totalViews,
+            'likes'            => $totalLikes,
+            'required_min'     => $requiredMin,
+            'remaining_needed' => $remaining,
+            'progress'         => $progress,
+            'requirement_met'  => $remaining <= 0,
+        ];
     }
 
 

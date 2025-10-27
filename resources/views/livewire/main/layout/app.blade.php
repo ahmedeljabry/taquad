@@ -87,6 +87,9 @@
         {{-- Livewire styles --}}
         @livewireStyles
 
+        {{-- Icon set --}}
+        @include('components.phosphor.styles')
+
         {{-- Styles --}}
         <link rel="preload" href="{{ mix('css/app.css') }}" as="style">
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">

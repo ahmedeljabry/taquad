@@ -41,6 +41,7 @@ class ProjectBid extends Model
         'freelancer_rejected_date',
         'milestone_plan',
         'milestone_plan_applied_at',
+        'last_viewed_at',
     ];
 
     /**
@@ -51,6 +52,7 @@ class ProjectBid extends Model
     protected $casts = [
         'milestone_plan'             => 'array',
         'milestone_plan_applied_at'  => 'datetime',
+        'last_viewed_at'             => 'datetime',
     ];
 
     /**

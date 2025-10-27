@@ -102,29 +102,46 @@
                         }
     
                         // Listent when want to close modal
-                        window.Livewire.find('<?php echo e($_instance->getId(), false); ?>').on('close-modal', (event) => {
+                        const handleClose = (payload) => {
 
                             // Get requested modal id
-                            var id = event[0];
+                            var id = Array.isArray(payload) ? payload[0] : (payload?.id ?? payload);
 
                             // Check if id same as this modal
                             if (id === <?php echo \Illuminate\Support\Js::from($id)->toHtml() ?>) {
                                 modal.hide();
                             }
+                        };
 
-                        });
-    
-                        // Listen when want to open modal
-                        window.Livewire.find('<?php echo e($_instance->getId(), false); ?>').on('open-modal', (event) => {
+                        const handleOpen = (payload) => {
 
                             // Get requested modal id
-                            var id = event[0];
+                            var id = Array.isArray(payload) ? payload[0] : (payload?.id ?? payload);
 
                             // Check if id same as this modal
                             if (id === <?php echo \Illuminate\Support\Js::from($id)->toHtml() ?>) {
                                 modal.show();
                             }
+                        };
 
+                        window.Livewire.find('<?php echo e($_instance->getId(), false); ?>').on('close-modal', handleClose);
+
+                        // Listen when want to open modal
+                        window.Livewire.find('<?php echo e($_instance->getId(), false); ?>').on('open-modal', handleOpen);
+
+                        if (window.Livewire?.on) {
+                            Livewire.on('open-modal', handleOpen);
+                            Livewire.on('close-modal', handleClose);
+                            Livewire.on('modal:open', handleOpen);
+                            Livewire.on('modal:close', handleClose);
+                        }
+
+                        window.addEventListener('modal:open', (event) => {
+                            handleOpen(event.detail);
+                        });
+
+                        window.addEventListener('modal:close', (event) => {
+                            handleClose(event.detail);
                         });
 
                     }
@@ -139,4 +156,5 @@
         }
         window.<?php echo e(str_replace(['.', '-', "'", '"'], "_", $uid), false); ?> = <?php echo e(str_replace(['.', '-', "'", '"'], "_", $uid), false); ?>();
     </script>
-<?php $__env->stopPush(); ?><?php /**PATH C:\xampp\htdocs\taquad\resources\views/components/forms/modal.blade.php ENDPATH**/ ?>
+<?php $__env->stopPush(); ?>
+<?php /**PATH C:\xampp\htdocs\taquad\resources\views/components/forms/modal.blade.php ENDPATH**/ ?>

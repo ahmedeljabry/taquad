@@ -33,6 +33,7 @@ class HomeComponent extends Component
     public function mount(): void
     {
         try {
+            auth()->user()->loadMissing('freelancerProjectLevel');
             $userId = auth()->id();
 
             $earningsFromProjectsTotal = ProjectMilestone::where('freelancer_id', $userId)

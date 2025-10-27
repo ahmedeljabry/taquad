@@ -75,8 +75,11 @@ class Search extends Component
                         ->orWhere('headline', 'LIKE', "%{$keyword}%")
                         ->orWhere('description', 'LIKE', "%{$keyword}%");
                 })
-                ->select('id', 'username', 'avatar_id', 'status', 'headline', 'fullname', 'description', 'account_type')
-                ->with('avatar')
+                ->select('id', 'username', 'avatar_id', 'status', 'headline', 'fullname', 'description', 'account_type', 'project_rating_avg', 'project_rating_count', 'freelancer_project_level_id')
+                ->with([
+                    'avatar',
+                    'freelancerProjectLevel:id,label,badge_color,text_color'
+                ])
                 ->limit(10)
                 ->get();
 

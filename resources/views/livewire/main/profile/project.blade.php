@@ -18,6 +18,36 @@
         </div>
         <div
             class="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3 rtl:space-x-reverse lg:rtl:!-ml-[5px]">
+            <div class="flex items-center gap-3 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-zinc-400">
+                <span class="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700 dark:bg-zinc-700 dark:text-zinc-200">
+                    <i class="ph-duotone ph-eye text-base"></i>
+                    {{ number_format($viewsCount) }}
+                </span>
+
+                @if ($canLike)
+                    <button
+                        wire:click="toggleLove"
+                        wire:loading.attr="disabled"
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold transition {{ $liked ? 'bg-rose-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-rose-50 hover:text-rose-500 dark:bg-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-600' }}">
+                        <span wire:loading wire:target="toggleLove" class="flex items-center">
+                            <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a12 12 0 00-12 12h4z"></path>
+                            </svg>
+                        </span>
+                        <span wire:loading.remove wire:target="toggleLove" class="flex items-center gap-2">
+                            <i class="ph-duotone ph-heart {{ $liked ? 'text-white' : 'text-rose-500 dark:text-rose-400' }} text-base"></i>
+                            {{ number_format($likesCount) }}
+                        </span>
+                    </button>
+                @else
+                    <span class="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700 dark:bg-zinc-700 dark:text-zinc-200">
+                        <i class="ph-duotone ph-heart text-base text-rose-500 dark:text-rose-400"></i>
+                        {{ number_format($likesCount) }}
+                    </span>
+                @endif
+            </div>
 
             {{-- Video --}}
             @if ($project->project_video)

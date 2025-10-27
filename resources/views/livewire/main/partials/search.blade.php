@@ -11,7 +11,7 @@
         <div class="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" aria-hidden="true" x-transition:enter="ease-out duration-300"></div>
 
         <div class="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all" @click.away="close()"
-            
+
         >
 
             {{-- Search input --}}
@@ -32,11 +32,11 @@
                 </div>
 
             </div>
-      
+
             {{-- Results --}}
             @if (count($sellers) || count($tags))
                 <ul class="max-h-80 scroll-py-10 scroll-pb-2 space-y-4 overflow-y-auto p-4 pb-2" id="options" role="listbox">
-                
+
                     {{-- Sellers --}}
                     @if ($sellers && count($sellers))
                         <li>
@@ -45,10 +45,37 @@
                             {{-- List of sellers --}}
                             <ul class="-mx-4 mt-2 text-sm text-gray-700">
                                 @foreach ($sellers as $seller)
-                                    <li class="group flex cursor-default select-none items-center px-4 py-2">
-                                        <a href="{{ url('profile', $seller->username) }}" class="flex items-center">
-                                            <img src="{{ placeholder_img() }}" data-src="{{ src($seller->avatar) }}" alt="{{ $seller->username }}" class="lazy h-6 w-6 flex-none rounded-full object-cover">
-                                            <span class="ltr:ml-3 rtl:mr-3 flex-auto truncate">{{ $seller->username }}</span>
+                                    @php
+                                        $level = $seller->freelancer_level_badge;
+                                        $ratingValue = $seller->projectRating();
+                                    @endphp
+                                    <li class="group flex cursor-default select-none px-4 py-3 transition hover:bg-slate-50 dark:hover:bg-zinc-700/60">
+                                        <a href="{{ url('profile', $seller->username) }}" class="flex w-full items-center gap-3">
+                                            <img src="{{ placeholder_img() }}" data-src="{{ src($seller->avatar) }}" alt="{{ $seller->username }}" class="lazy h-10 w-10 flex-none rounded-full object-cover ring-2 ring-slate-100 dark:ring-zinc-600">
+
+                                            <div class="min-w-0 flex-1">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="truncate text-sm font-semibold text-slate-700 dark:text-zinc-100">
+                                                        {{ $seller->fullname ?: $seller->username }}
+                                                    </span>
+
+                                                    @if ($level)
+                                                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold" style="background-color: {{ $level['badge_color'] ?? '#e5e7eb' }}; color: {{ $level['text_color'] ?? '#1f2937' }};">
+                                                            {{ $level['label'] }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+
+                                                <div class="mt-1 flex items-center gap-2">
+                                                    <span class="flex items-center gap-1 text-xs font-semibold text-amber-500 dark:text-amber-400">
+                                                        <i class="ph-duotone ph-star text-sm"></i>
+                                                        {{ number_format($ratingValue, 1) }}
+                                                    </span>
+                                                    <span class="text-[11px] text-slate-500 dark:text-zinc-300">
+                                                        ({{ $seller->project_rating_count }})
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </a>
                                     </li>
                                 @endforeach
@@ -80,7 +107,7 @@
 
                 </ul>
             @endif
-      
+
             {{-- No results --}}
             @if (count($sellers) === 0 && count($tags) === 0 && $q)
                 <div class="py-14 px-6 text-center text-sm sm:px-14">
@@ -89,7 +116,7 @@
                     <p class="mt-2 text-gray-500">{{ __('messages.t_we_couldnt_find_anthing_search_term') }}</p>
                 </div>
             @endif
-      
+
             {{-- Footer --}}
             <div class="flex flex-wrap items-center bg-gray-50 py-2.5 px-4 text-xs text-gray-700">
                 {!! __('messages.t_press_enter_to_search_deeply') !!}
@@ -222,7 +249,7 @@
                     return t;
                 }
             }
-            
+
         }
         window.jDxKFKNiKkfxISD = jDxKFKNiKkfxISD();
     </script>

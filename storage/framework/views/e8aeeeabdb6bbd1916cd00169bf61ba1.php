@@ -59,6 +59,9 @@
         <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::styles(); ?>
 
 
+        
+        <?php echo $__env->make('components.phosphor.styles', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
 		
         <style>
             :root {
@@ -513,8 +516,6 @@ if (isset($__slots)) unset($__slots);
                     </span>`,
 
                 inboxLink = document.querySelector('a[href="<?php echo e(url("inbox"), false); ?>"]');
-                console.log('inboxLink', inboxLink);
-
                 const addBadge = () => {
                         if (!document.getElementById('nav-badge')) {
                             inboxLink.insertAdjacentHTML('beforeend', badgeHTML);

@@ -8,11 +8,16 @@ use App\Models\Project;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\ProjectMilestone;
+use App\Models\ProjectReview;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
+use App\Services\ProjectReputationService;
 use App\Notifications\User\Freelancer\EmployerFundedMilestone;
 use App\Notifications\User\Freelancer\EmployerReleasedMilestone;
+use App\Notifications\User\Freelancer\ProjectReviewReceived as FreelancerProjectReviewReceived;
 use App\Http\Validators\Main\Account\Projects\Employer\MilestoneValidator;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class MilestonesComponent extends Component
 {
@@ -27,6 +32,13 @@ class MilestonesComponent extends Component
     public $milestone_description;
     public ?array $confirmDialog = null;
     public ?array $milestoneDetails = null;
+    public ?int $followUpSourceId = null;
+    public bool $canRateFreelancer = false;
+    public bool $ratingModalOpen = false;
+    public int $ratingScore = 5;
+    public string $ratingComment = '';
+    public bool $hasPaidMilestones = false;
+    public ?ProjectReview $clientReview = null;
 
     protected function showConfirmDialog(array $options): void
     {
@@ -126,6 +138,225 @@ class MilestonesComponent extends Component
         };
     }
 
+    protected function syncReviewState(): void
+    {
+        $this->hasPaidMilestones = $this->project->milestones()
+            ->where('status', 'paid')
+            ->exists();
+
+        $existingReview = ProjectReview::query()
+            ->where('project_id', $this->project->id)
+            ->where('reviewer_id', auth()->id())
+            ->where('reviewer_role', 'client')
+            ->first();
+
+        $this->clientReview = $existingReview;
+
+        $this->canRateFreelancer = in_array($this->project->status, ['completed', 'pending_final_review'], true)
+            && $this->hasPaidMilestones
+            && is_null($existingReview);
+    }
+
+    protected function resetMilestoneForm(): void
+    {
+        $this->reset(['milestone_amount', 'milestone_description']);
+        $this->followUpSourceId = null;
+    }
+
+    public function prepareStandardMilestone(): void
+    {
+        $this->resetMilestoneForm();
+        $modalId = 'modal-create-milestone-container-' . $this->project->uid;
+        $this->dispatch('open-modal', $modalId);
+        $this->dispatch('modal:open', id: $modalId);
+    }
+
+    protected function validateFollowUpSelection(): ?ProjectMilestone
+    {
+        if (is_null($this->followUpSourceId)) {
+            return null;
+        }
+
+        return ProjectMilestone::query()
+            ->where('project_id', $this->project->id)
+            ->where('id', $this->followUpSourceId)
+            ->where('status', 'paid')
+            ->first();
+    }
+
+    public function openFollowUp(string $uid): void
+    {
+        $milestone = ProjectMilestone::where('project_id', $this->project->id)
+            ->where('uid', $uid)
+            ->firstOrFail();
+
+        if ($milestone->status !== 'paid') {
+            $this->alert(
+                'error',
+                __('messages.t_error'),
+                [
+                    'text'     => __('messages.t_follow_up_milestone_only_after_payment'),
+                    'toast'    => true,
+                    'position' => 'top-end',
+                ]
+            );
+
+            return;
+        }
+
+        $this->followUpSourceId = $milestone->id;
+        $preview = Str::limit(strip_tags($milestone->description ?? __('messages.t_milestone')), 80);
+        $this->milestone_description = __('messages.t_follow_up_milestone_default', ['label' => $preview]);
+        $this->milestone_amount = '';
+
+        $modalId = 'modal-create-milestone-container-' . $this->project->uid;
+        $this->dispatch('open-modal', $modalId);
+        $this->dispatch('modal:open', id: $modalId);
+    }
+
+    public function openRatingModal(): void
+    {
+        if (!$this->canRateFreelancer) {
+            return;
+        }
+
+        $this->ratingScore = 5;
+        $this->ratingComment = '';
+        $this->resetValidation(['ratingScore', 'ratingComment']);
+        $this->ratingModalOpen = true;
+        $modalId = 'modal-project-review';
+        $this->dispatch('open-modal', $modalId);
+        $this->dispatch('modal:open', id: $modalId);
+    }
+
+    public function closeRatingModal(): void
+    {
+        $this->ratingModalOpen = false;
+        $this->resetValidation(['ratingScore', 'ratingComment']);
+        $modalId = 'modal-project-review';
+        $this->dispatch('close-modal', $modalId);
+        $this->dispatch('modal:close', id: $modalId);
+    }
+
+    public function submitRating(): void
+    {
+        if (!$this->canRateFreelancer) {
+            return;
+        }
+
+        Validator::make(
+            [
+                'ratingScore'    => $this->ratingScore,
+                'ratingComment'  => $this->ratingComment,
+            ],
+            [
+                'ratingScore'   => ['required', 'integer', 'min:1', 'max:5'],
+                'ratingComment' => ['nullable', 'string', 'max:600'],
+            ],
+            [
+                'ratingScore.required' => __('messages.t_project_rating_required'),
+                'ratingScore.integer'  => __('messages.t_project_rating_required'),
+                'ratingScore.min'      => __('messages.t_project_rating_required'),
+                'ratingScore.max'      => __('messages.t_project_rating_required'),
+                'ratingComment.max'    => __('messages.t_validator_max', ['max' => 600]),
+            ]
+        )->validate();
+
+        $review = ProjectReview::updateOrCreate(
+            [
+                'project_id'    => $this->project->id,
+                'reviewer_id'   => auth()->id(),
+                'reviewer_role' => 'client',
+            ],
+            [
+                'uid'          => ProjectReview::where('project_id', $this->project->id)
+                    ->where('reviewer_id', auth()->id())
+                    ->where('reviewer_role', 'client')
+                    ->value('uid') ?? uid(),
+                'reviewee_id'  => $this->project->awarded_freelancer_id,
+                'score'        => $this->ratingScore,
+                'comment'      => $this->ratingComment ? clean($this->ratingComment) : null,
+                'is_skipped'   => false,
+                'submitted_at' => now(),
+            ]
+        );
+
+        if ($review->reviewee) {
+            ProjectReputationService::refreshFor($review->reviewee);
+
+            notification([
+                'text'    => 't_notification_project_review_freelancer',
+                'action'  => url('seller/projects/milestones', $this->project->uid),
+                'user_id' => $review->reviewee_id,
+                'params'  => [
+                    'username' => auth()->user()->username,
+                    'project'  => $this->project->title,
+                    'rating'   => $this->ratingScore ? number_format((float) $this->ratingScore, 1) : null,
+                ],
+            ]);
+
+            $review->reviewee->notify(new FreelancerProjectReviewReceived($this->project, $review, auth()->user()));
+        }
+
+        $this->resetValidation(['ratingScore', 'ratingComment']);
+        $this->closeRatingModal();
+        $this->syncReviewState();
+
+        $this->alert(
+            'success',
+            __('messages.t_success'),
+            [
+                'text'     => __('messages.t_project_review_saved'),
+                'toast'    => true,
+                'position' => 'top-end',
+            ]
+        );
+    }
+
+    public function skipRating(): void
+    {
+        if (!$this->canRateFreelancer) {
+            return;
+        }
+
+        $review = ProjectReview::updateOrCreate(
+            [
+                'project_id'    => $this->project->id,
+                'reviewer_id'   => auth()->id(),
+                'reviewer_role' => 'client',
+            ],
+            [
+                'uid'          => ProjectReview::where('project_id', $this->project->id)
+                    ->where('reviewer_id', auth()->id())
+                    ->where('reviewer_role', 'client')
+                    ->value('uid') ?? uid(),
+                'reviewee_id'  => $this->project->awarded_freelancer_id,
+                'score'        => null,
+                'comment'      => null,
+                'is_skipped'   => true,
+                'submitted_at' => now(),
+            ]
+        );
+
+        if ($review->reviewee) {
+            ProjectReputationService::refreshFor($review->reviewee);
+        }
+
+        $this->resetValidation(['ratingScore', 'ratingComment']);
+        $this->closeRatingModal();
+        $this->syncReviewState();
+
+        $this->alert(
+            'info',
+            __('messages.t_noted'),
+            [
+                'text'     => __('messages.t_project_review_skipped'),
+                'toast'    => true,
+                'position' => 'top-end',
+            ]
+        );
+    }
+
     /**
      * Init component
      *
@@ -168,6 +399,8 @@ class MilestonesComponent extends Component
             // Something went wrong
             $this->expected_delivery_date = null;
         }
+
+        $this->syncReviewState();
     }
 
 
@@ -206,7 +439,8 @@ class MilestonesComponent extends Component
         $this->seo()->jsonLd()->setType('WebSite');
 
         return view('livewire.main.account.projects.options.milestones', [
-            'payments' => $this->payments
+            'payments' => $this->payments,
+            'timeline' => $this->timeline,
         ]);
     }
 
@@ -221,6 +455,62 @@ class MilestonesComponent extends Component
         return ProjectMilestone::where('project_id', $this->project->id)
             ->latest()
             ->paginate(42);
+    }
+
+    public function getTimelineProperty()
+    {
+        $milestones = $this->project
+            ->milestones()
+            ->with(['followUps' => function ($query) {
+                $query->orderBy('created_at');
+            }])
+            ->orderBy('created_at')
+            ->get();
+
+        $roots = $milestones->whereNull('parent_milestone_id');
+
+        $childrenGroups = $milestones
+            ->whereNotNull('parent_milestone_id')
+            ->groupBy('parent_milestone_id');
+
+        return $roots->map(function (ProjectMilestone $milestone) use ($childrenGroups) {
+            $children = $childrenGroups
+                ->get($milestone->id, collect())
+                ->map(function (ProjectMilestone $child) {
+                    return [
+                        'milestone' => $child,
+                        'meta'      => $this->timelineMeta($child),
+                    ];
+                });
+
+            return [
+                'milestone' => $milestone,
+                'children'  => $children,
+                'meta'      => $this->timelineMeta($milestone),
+            ];
+        });
+    }
+
+    protected function timelineMeta(ProjectMilestone $milestone): array
+    {
+        $status = $milestone->status;
+
+        $statuses = [
+            'request'   => ['color' => 'bg-amber-500', 'ring' => 'ring-amber-200/60', 'icon' => 'ph-duotone ph-hourglass'],
+            'funded'    => ['color' => 'bg-sky-500', 'ring' => 'ring-sky-200/60', 'icon' => 'ph-duotone ph-bank'],
+            'paid'      => ['color' => 'bg-emerald-500', 'ring' => 'ring-emerald-200/60', 'icon' => 'ph-duotone ph-check-circle'],
+            'cancelled' => ['color' => 'bg-rose-500', 'ring' => 'ring-rose-200/60', 'icon' => 'ph-duotone ph-x-circle'],
+            'canceled'  => ['color' => 'bg-rose-500', 'ring' => 'ring-rose-200/60', 'icon' => 'ph-duotone ph-x-circle'],
+        ];
+
+        $style = $statuses[$status] ?? ['color' => 'bg-slate-400', 'ring' => 'ring-slate-200/60', 'icon' => 'ph-duotone ph-circle'];
+
+        return [
+            'status_label' => $this->milestoneStatusLabel($status),
+            'badge_color'  => $style['color'],
+            'ring_color'   => $style['ring'],
+            'icon'         => $style['icon'],
+        ];
     }
 
 
@@ -276,8 +566,13 @@ class MilestonesComponent extends Component
             // Validate form
             MilestoneValidator::validate($this);
 
-            // Project must be active
-            if (!in_array($this->project->status, ['active', 'under_development', 'pending_final_review'])) {
+            $isFollowUp = !is_null($this->followUpSourceId);
+
+            // Project must be active unless creating a follow-up after completion
+            if (
+                !in_array($this->project->status, ['active', 'under_development', 'pending_final_review'])
+                && !($isFollowUp && $this->project->status === 'completed')
+            ) {
 
                 // Error
                 $this->alert(
@@ -291,6 +586,28 @@ class MilestonesComponent extends Component
                 );
 
                 return;
+            }
+
+            $parentMilestone = null;
+            if ($isFollowUp) {
+                $parentMilestone = $this->validateFollowUpSelection();
+
+                if (!$parentMilestone) {
+                    $this->alert(
+                        'error',
+                        __('messages.t_error'),
+                        [
+                            'text'     => __('messages.t_follow_up_milestone_only_after_payment'),
+                            'toast'    => true,
+                            'position' => 'top-end',
+                        ]
+                    );
+
+                    $this->resetMilestoneForm();
+                    $this->dispatch('close-modal', 'modal-create-milestone-container-' . $this->project->uid);
+
+                    return;
+                }
             }
 
             // Check if employer has this money
@@ -314,7 +631,7 @@ class MilestonesComponent extends Component
                 ]);
 
                 // Reset form
-                $this->reset(['milestone_amount', 'milestone_description']);
+                $this->resetMilestoneForm();
 
                 // Close modal
                 $this->dispatch('close-modal', 'modal-create-milestone-container-' . $this->project->uid);
@@ -332,11 +649,13 @@ class MilestonesComponent extends Component
             if ($settings->commission_type === 'fixed') {
 
                 // Set employer commission
-                $employer_commission = convertToNumber($settings->commission_from_publisher);
+                $employer_commission   = convertToNumber($settings->commission_from_publisher);
+                $freelancer_commission = convertToNumber($settings->commission_from_freelancer);
             } else {
 
                 // Calculate commission
-                $employer_commission = (convertToNumber($settings->commission_from_publisher) / 100) * $milestone_amount;
+                $employer_commission   = (convertToNumber($settings->commission_from_publisher) / 100) * $milestone_amount;
+                $freelancer_commission = (convertToNumber($settings->commission_from_freelancer) / 100) * $milestone_amount;
             }
 
             // Show confirmation dialog
@@ -352,6 +671,10 @@ class MilestonesComponent extends Component
                     <div class='grid grid-cols-3 gap-4 py-3 px-4'>
                         <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>" . __('messages.t_milestone_employer_fee_name') . "</dt>
                         <dd class='text-sm font-semibold text-green-600 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>+ " . money(convertToNumber($employer_commission), settings('currency')->code, true) . "</dd>
+                    </div>
+                    <div class='grid grid-cols-3 gap-4 py-3 px-4'>
+                        <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-500 ltr:text-left rtl:text-right'>" . __('messages.t_milestone_freelancer_fee_name') . "</dt>
+                        <dd class='text-sm font-semibold text-red-500 dark:text-secondary-400 col-span-2 mt-0 ltr:text-right rtl:text-left'>- " . money(convertToNumber($freelancer_commission), settings('currency')->code, true) . "</dd>
                     </div>
                     <div class='grid grid-cols-3 gap-4 py-3 px-4 bg-gray-100/60 dark:bg-secondary-700 rounded-b'>
                         <dt class='text-sm font-medium whitespace-nowrap text-gray-500 dark:text-secondary-400 ltr:text-left rtl:text-right'>" . __('messages.t_total') . "</dt>
@@ -409,8 +732,13 @@ class MilestonesComponent extends Component
             // Validate form
             MilestoneValidator::validate($this);
 
-            // Project must be active
-            if (!in_array($this->project->status, ['active', 'under_development', 'pending_final_review'])) {
+            $isFollowUp = !is_null($this->followUpSourceId);
+
+            // Project must be active unless creating a follow-up after completion
+            if (
+                !in_array($this->project->status, ['active', 'under_development', 'pending_final_review']) &&
+                !($isFollowUp && $this->project->status === 'completed')
+            ) {
 
                 // Error
             $this->alert(
@@ -424,6 +752,28 @@ class MilestonesComponent extends Component
             );
 
                 return;
+            }
+
+            $parentMilestone = null;
+            if ($isFollowUp) {
+                $parentMilestone = $this->validateFollowUpSelection();
+
+                if (!$parentMilestone) {
+                    $this->alert(
+                        'error',
+                        __('messages.t_error'),
+                        [
+                            'text'     => __('messages.t_follow_up_milestone_only_after_payment'),
+                            'toast'    => true,
+                            'position' => 'top-end',
+                        ]
+                    );
+
+                    $this->resetMilestoneForm();
+                    $this->dispatch('close-modal', 'modal-create-milestone-container-' . $this->project->uid);
+
+                    return;
+                }
             }
 
             // Check if employer has this money
@@ -447,7 +797,7 @@ class MilestonesComponent extends Component
                 ]);
 
                 // Reset form
-                $this->reset(['milestone_amount', 'milestone_description']);
+                $this->resetMilestoneForm();
 
                 // Close modal
                 $this->dispatch('close-modal', 'modal-create-milestone-container-' . $this->project->uid);
@@ -493,6 +843,8 @@ class MilestonesComponent extends Component
             $milestone->freelancer_commission = $freelancer_commission;
             $milestone->description           = clean($this->milestone_description);
             $milestone->status                = 'funded';
+            $milestone->is_follow_up          = $isFollowUp;
+            $milestone->parent_milestone_id   = $parentMilestone?->id;
             $milestone->save();
 
             // Let's update user available balance
@@ -508,21 +860,25 @@ class MilestonesComponent extends Component
             $this->calculatePaidFunds();
 
             // Mark project as pending final reviews
-            if ($this->payments_in_progress >= convertToNumber($this->project->awarded_bid->amount)) {
+            if (!$isFollowUp && $this->payments_in_progress >= convertToNumber($this->project->awarded_bid->amount)) {
 
                 // Update project
                 $this->project->status = 'pending_final_review';
                 $this->project->save();
+            } elseif ($isFollowUp && $this->project->status === 'completed') {
+                $this->project->status = 'under_development';
+                $this->project->save();
             }
 
             // Reset form
-            $this->reset(['milestone_amount', 'milestone_description']);
+            $this->resetMilestoneForm();
 
             // Close modal
             $this->dispatch('close-modal', 'modal-create-milestone-container-' . $this->project->uid);
 
             // Refresh project
             $this->project->refresh();
+            $this->syncReviewState();
 
             // Success
             $this->alert(
@@ -700,6 +1056,7 @@ class MilestonesComponent extends Component
 
             // Refresh project
             $this->project->refresh();
+            $this->syncReviewState();
 
             // Success
             $this->alert(
@@ -824,6 +1181,7 @@ class MilestonesComponent extends Component
 
             // Refresh project
             $this->project->refresh();
+            $this->syncReviewState();
 
             // Success
             $this->alert(

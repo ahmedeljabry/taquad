@@ -87,29 +87,46 @@
                         }
     
                         // Listent when want to close modal
-                        @this.on('close-modal', (event) => {
+                        const handleClose = (payload) => {
 
                             // Get requested modal id
-                            var id = event[0];
+                            var id = Array.isArray(payload) ? payload[0] : (payload?.id ?? payload);
 
                             // Check if id same as this modal
                             if (id === @js($id)) {
                                 modal.hide();
                             }
+                        };
 
-                        });
-    
-                        // Listen when want to open modal
-                        @this.on('open-modal', (event) => {
+                        const handleOpen = (payload) => {
 
                             // Get requested modal id
-                            var id = event[0];
+                            var id = Array.isArray(payload) ? payload[0] : (payload?.id ?? payload);
 
                             // Check if id same as this modal
                             if (id === @js($id)) {
                                 modal.show();
                             }
+                        };
 
+                        @this.on('close-modal', handleClose);
+
+                        // Listen when want to open modal
+                        @this.on('open-modal', handleOpen);
+
+                        if (window.Livewire?.on) {
+                            Livewire.on('open-modal', handleOpen);
+                            Livewire.on('close-modal', handleClose);
+                            Livewire.on('modal:open', handleOpen);
+                            Livewire.on('modal:close', handleClose);
+                        }
+
+                        window.addEventListener('modal:open', (event) => {
+                            handleOpen(event.detail);
+                        });
+
+                        window.addEventListener('modal:close', (event) => {
+                            handleClose(event.detail);
                         });
 
                     }
