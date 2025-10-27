@@ -193,11 +193,17 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted'])->group(functio
         });
     });
 
-    // Start selling
-    Route::namespace('Become')->prefix('start_selling')->group(function () {
+// Start selling
+Route::namespace('Become')->prefix('start_selling')->group(function () {
 
-        // Become seller
-        Route::get('/', SellerComponent::class);
+    // Become seller
+    Route::get('/', SellerComponent::class);
+});
+
+    // Ta'aquad SPA landing page
+    Route::namespace('Landing')->prefix('taaquad')->group(function () {
+
+        Route::get('/', \App\Livewire\Main\Landing\TaaquadComponent::class);
     });
 
     // Seller dashboard

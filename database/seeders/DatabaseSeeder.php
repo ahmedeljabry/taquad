@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SettingsPublishTableSeeder::class);
         $this->call(SettingsSecurityTableSeeder::class);
         $this->call(SettingsSeoTableSeeder::class);
+        $this->call(TaaquadSeoSeeder::class);
         $this->call(SettingsWithdrawalTableSeeder::class);
         $this->call(SettingsAppearanceTableSeeder::class);
         $this->call(BlogSettingsTableSeeder::class);
