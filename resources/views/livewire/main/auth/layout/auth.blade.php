@@ -6,6 +6,8 @@
 <html lang="{{ app()->getLocale() }}" dir="{{ config()->get('direction') }}"
     data-theme-preference="{{ $authPreference }}"
     data-theme="{{ $authTheme === 'dark' ? 'dark' : 'light' }}"
+    data-theme-endpoint="{{ url('theme/preference') }}"
+    data-theme-auth="{{ auth()->check() ? 'true' : 'false' }}"
     data-theme-label-light="{{ __('messages.t_theme_light') }}"
     data-theme-label-dark="{{ __('messages.t_theme_dark') }}"
     data-theme-label-system="{{ __('messages.t_theme_system') }}"

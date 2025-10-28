@@ -20,7 +20,7 @@ class MilestoneValidator
             // Set rules
             $rules    = [
                 'milestone_amount'      => 'required|regex:/^\d+(\.\d{1,2})?$/|max:10',
-                'milestone_description' => 'required|string|max:220'
+                'milestone_description' => 'required|string|max:500'
             ];
 
             // Set errors messages
@@ -30,7 +30,7 @@ class MilestoneValidator
                 'milestone_amount.max'           => __('messages.t_validator_max', ['max' => 10]),
                 'milestone_description.required' => __('messages.t_validator_required'),
                 'milestone_description.string'   => __('messages.t_validator_string'),
-                'milestone_description.max'      => __('messages.t_validator_max', ['max' => 220])
+                'milestone_description.max'      => __('messages.t_validator_max', ['max' => 500])
             ];
 
             // Set data to validate

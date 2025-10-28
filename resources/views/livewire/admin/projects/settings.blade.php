@@ -77,6 +77,22 @@
                         label_position="right" />
                 </div>
 
+                {{-- Enable send offer --}}
+                <div class="col-span-12">
+                    <div class="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/60 p-4 dark:border-zinc-700 dark:bg-zinc-800/40">
+                        <div class="flex items-start justify-between gap-4">
+                            <x-bladewind.toggle
+                                :checked="$enable_custom_offers"
+                                name="enable_custom_offers"
+                                :label="__('messages.t_enable_send_offer')"
+                                label_position="right" />
+                        </div>
+                        <p class="text-xs font-medium leading-relaxed text-slate-500 dark:text-zinc-400">
+                            {{ __('messages.t_enable_send_offer_hint') }}
+                        </p>
+                    </div>
+                </div>
+
                 {{-- Divider --}}
                 <div class="col-span-12 -mx-10">
                     <div class="h-px w-full bg-zinc-200 dark:bg-zinc-700 block"></div>

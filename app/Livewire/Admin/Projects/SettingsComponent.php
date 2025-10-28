@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Projects;
 use Livewire\Component;
 use WireUi\Traits\Actions;
 use App\Models\ProjectSettings;
+use App\Models\SettingsPublish;
 use Livewire\Attributes\Layout;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
@@ -25,6 +26,7 @@ class SettingsComponent extends Component
     public $commission_from_publisher;
     public $who_can_post;
     public $max_skills;
+    public $enable_custom_offers;
 
     /**
      * Initialize component
@@ -35,6 +37,7 @@ class SettingsComponent extends Component
     {
         // Get settings
         $settings = settings('projects');
+        $publish  = settings('publish');
 
         // Fill default settings
         $this->fill([
@@ -48,7 +51,8 @@ class SettingsComponent extends Component
             'commission_from_freelancer' => $settings->commission_from_freelancer,
             'commission_from_publisher'  => $settings->commission_from_publisher,
             'who_can_post'               => $settings->who_can_post,
-            'max_skills'                 => $settings->max_skills
+            'max_skills'                 => $settings->max_skills,
+            'enable_custom_offers'       => $publish->enable_custom_offers ? 1 : 0,
         ]);
     }
 
@@ -96,8 +100,13 @@ class SettingsComponent extends Component
                 'max_skills'                 => $this->max_skills
             ]);
 
+            SettingsPublish::first()->update([
+                'enable_custom_offers' => $this->enable_custom_offers ? 1 : 0,
+            ]);
+
             // Refresh data from cache
             settings('projects', true);
+            settings('publish', true);
 
             // Success
             $this->alert(

@@ -112,7 +112,7 @@ class ProjectsComponent extends Component
                 });
             })
             ->latest()
-            ->cursorPaginate(15);
+            ->paginate(15);
     }
 
     /**

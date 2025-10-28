@@ -1526,7 +1526,7 @@ class ProjectComponent extends Component
             $this->alert(
                 'error',
                 __('messages.t_error'),
-                livewire_alert_params(__('messages.t_toast_form_validation_error'), 'error')
+                livewire_alert_params($e->getMessage(), 'error')
             );
 
             throw $e;
@@ -1536,7 +1536,7 @@ class ProjectComponent extends Component
             $this->alert(
                 'error',
                 __('messages.t_error'),
-                livewire_alert_params(__('messages.t_toast_something_went_wrong'), 'error')
+                livewire_alert_params($e->getMessage(), 'error')
             );
         }
     }

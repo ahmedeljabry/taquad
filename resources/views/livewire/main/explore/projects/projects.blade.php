@@ -1,8 +1,8 @@
-﻿<div class="max-w-[1400px] mx-auto">
+﻿<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
     <section
         class="relative overflow-hidden bg-gradient-to-b from-primary-50 via-white to-white dark:from-[#0f172a] dark:via-[#0b1220] dark:to-[#080d17]">
 
- 
+
 
         <div class="grid grid-cols-1 gap-8 lg:grid-cols-4" id="projects-filters">
             {{-- Sidebar: Categories --}}

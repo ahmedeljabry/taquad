@@ -23,6 +23,7 @@ class Project extends Component
     public $urgent;
     public $category = [];
     public $skills   = [];
+    public bool $hasSubmittedBid = false;
 
     /**
      * Init component
@@ -60,6 +61,13 @@ class Project extends Component
         $this->budget_min        = money($project->budget_min, settings('currency')->code, true)->format();
         $this->budget_max        = money($project->budget_max, settings('currency')->code, true)->format();
         $this->urgent            = $project->is_urgent;
+
+        if (auth()->check() && auth()->user()->account_type === 'seller') {
+            $this->hasSubmittedBid = $project->bids()
+                ->where('user_id', auth()->id())
+                ->whereNotIn('status', ['cancelled', 'canceled', 'declined', 'rejected'])
+                ->exists();
+        }
 
     }
 

@@ -2,12 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Project;
-use App\Models\ProjectLevel;
-use App\Models\ProjectReview;
-use App\Models\User;
+use App\Models\{Project,ProjectLevel,ProjectReview,User};
 
-class ProjectReputationService
+final class ProjectReputationService
 {
     public static function refreshFor(User $user): void
     {

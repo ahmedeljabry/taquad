@@ -1,6 +1,9 @@
 const THEME_STORAGE_KEY = 'taquad-theme-preference';
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 const rootElement = document.documentElement;
+const themeEndpoint = rootElement.dataset.themeEndpoint || '';
+const csrfToken = document.head.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+const isAuthenticated = rootElement.dataset.themeAuth === 'true';
 
 const themeLabels = {
     light: rootElement.dataset.themeLabelLight || 'Light mode',
@@ -11,6 +14,10 @@ const themeLabels = {
 
 const ThemeManager = {
     preference: rootElement.dataset.themePreference || localStorage.getItem(THEME_STORAGE_KEY) || 'system',
+    endpoint: themeEndpoint,
+    csrfToken,
+    isAuthenticated,
+    abortController: null,
     get effectiveTheme() {
         if (this.preference === 'system') {
             return prefersDark.matches ? 'dark' : 'light';
@@ -29,12 +36,7 @@ const ThemeManager = {
 
         root.classList.toggle('dark', effective === 'dark');
 
-        if (persist) {
-            try {
-                localStorage.setItem(THEME_STORAGE_KEY, theme);
-            } catch (_) {
-            }
-        }
+        if (persist) {\n            try {\n                localStorage.setItem(THEME_STORAGE_KEY, theme);\n            } catch (_) {\n            }\n\n            this.persistPreference(theme);\n        }
 
         document.dispatchEvent(new CustomEvent('theme:changed', {
             detail: {
@@ -42,6 +44,55 @@ const ThemeManager = {
                 effective,
             },
         }));
+    },
+    persistPreference(theme) {
+        this.syncCookie(theme);
+
+        if (!this.endpoint || !this.csrfToken || !this.isAuthenticated || typeof fetch === 'undefined') {
+            return;
+        }
+
+        if (this.abortController && typeof this.abortController.abort === 'function') {
+            this.abortController.abort();
+        }
+
+        const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        this.abortController = controller;
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': this.csrfToken,
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ theme }),
+            credentials: 'same-origin',
+        };
+
+        if (controller) {
+            options.signal = controller.signal;
+        }
+
+        fetch(this.endpoint, options)
+            .catch(() => {})
+            .finally(() => {
+                if (this.abortController === controller) {
+                    this.abortController = null;
+                }
+            });
+    },
+    syncCookie(theme) {
+        try {
+            if (theme === 'system') {
+                document.cookie = 'default_theme=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+                return;
+            }
+
+            const maxAge = 60 * 60 * 24 * 365;
+            document.cookie = `default_theme=${encodeURIComponent(theme)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+        } catch (_) {
+        }
     },
     init() {
         this.apply(this.preference, false);
@@ -92,3 +143,4 @@ window.themeToggle = function themeToggle() {
         },
     };
 };
+

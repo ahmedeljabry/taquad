@@ -231,7 +231,7 @@
                             </button>
 
                             {{-- Create milestone --}}
-                            @if (in_array($project->status, ['active', 'under_development', 'pending_final_review', 'completed']))
+                            @if (in_array($project->status, ['active', 'under_development', 'pending_final_review']))
                                 <button
                                     type="button"
                                     wire:click.prevent="prepareStandardMilestone"
@@ -745,7 +745,7 @@
     </x-forms.modal>
 
     {{-- Create milestone --}}
-    @if (in_array($project->status, ['active', 'under_development', 'pending_final_review']))
+    @if (in_array($project->status, ['active', 'under_development', 'pending_final_review', 'completed']))
         <x-forms.modal id="modal-create-milestone-container-{{ $project->uid }}" target="modal-create-milestone-button-{{ $project->uid }}" uid="modal_create_milestone_{{ $project->uid }}" placement="center-center" size="max-w-md">
 
             {{-- Modal heading --}}

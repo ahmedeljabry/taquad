@@ -187,10 +187,12 @@
                         
                         <!--[if BLOCK]><![endif]--><?php if(auth()->guard()->check()): ?>
                             <!--[if BLOCK]><![endif]--><?php if(settings('publish')->enable_custom_offers && auth()->id() != $user->id && $user->account_type === 'seller'): ?>
-                                <button type="button" id="modal-send-custom-offer-button"
-                                    class="border border-gray-200 bg-white py-1.5 text-gray-500 hover:bg-gray-50 focus:ring-0 focus:outline-none dark:text-zinc-300 dark:hover:text-zinc-400 px-4 dark:hover:bg-zinc-600 dark:bg-zinc-700 dark:border-transparent cursor-pointer rounded text-[13px] font-medium tracking-wide h-9 flex items-center justify-center">
-                                    <span class="whitespace-nowrap pt-px"><?php echo app('translator')->get('messages.t_send_an_offer'); ?></span>
-                                </button>
+                                <a href="<?php echo e(route('invite.freelancer', ['username' => $user->username]), false); ?>"
+                                    class="inline-flex items-center gap-2 rounded-full border border-primary-500/30 bg-primary-500/10 px-4 py-1.5 text-sm font-semibold text-primary-700 transition hover:bg-primary-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/40 dark:border-primary-500/40 dark:bg-primary-500/15 dark:text-primary-100 dark:hover:bg-primary-500">
+                                    <i class="ph-duotone ph-paper-plane-tilt text-base"></i>
+                                    <?php echo e(__('messages.t_send_offer'), false); ?>
+
+                                </a>
                             <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                         <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 

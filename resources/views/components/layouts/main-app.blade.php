@@ -6,6 +6,8 @@
       dir="{{ config()->get('direction') }}"
       data-theme-preference="{{ $initialThemePreference }}"
       data-theme="{{ $initialThemePreference }}"
+      data-theme-endpoint="{{ url('theme/preference') }}"
+      data-theme-auth="{{ auth()->check() ? 'true' : 'false' }}"
       @class(['dark' => current_theme() === 'dark'])>
 
     <head>

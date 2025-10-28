@@ -46,6 +46,13 @@
                             مشروع مفتوح للعروض
                         </span>
                     @endif
+
+                    @if ($hasSubmittedBid)
+                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-300">
+                            <i class="ph ph-paper-plane-tilt"></i>
+                            {{ __('messages.t_you_submitted_proposal') }}
+                        </span>
+                    @endif
                 </div>
             </div>
 

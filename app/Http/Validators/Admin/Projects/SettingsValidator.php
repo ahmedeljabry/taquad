@@ -24,6 +24,7 @@ class SettingsValidator
                 'is_free_posting'            => 'boolean',
                 'is_premium_posting'         => 'boolean',
                 'commission_type'            => 'required|in:fixed,percentage',
+                'enable_custom_offers'       => 'boolean',
                 'commission_from_freelancer' => 'required|numeric',
                 'commission_from_publisher'  => 'required|numeric',
                 'who_can_post'               => 'required|in:seller,buyer,both',
@@ -38,6 +39,7 @@ class SettingsValidator
                 'is_premium_posting.boolean'          => __('messages.t_validator_boolean'),
                 'commission_type.required'            => __('messages.t_validator_required'),
                 'commission_type.in'                  => __('messages.t_validator_in'),
+                'enable_custom_offers.boolean'        => __('messages.t_validator_boolean'),
                 'commission_from_freelancer.required' => __('messages.t_validator_required'),
                 'commission_from_freelancer.numeric'  => __('messages.t_validator_numeric'),
                 'commission_from_publisher.required'  => __('messages.t_validator_required'),
@@ -58,7 +60,8 @@ class SettingsValidator
                 'commission_from_freelancer' => $request->commission_from_freelancer,
                 'commission_from_publisher'  => $request->commission_from_publisher,
                 'who_can_post'               => $request->who_can_post,
-                'max_skills'                 => $request->max_skills
+                'max_skills'                 => $request->max_skills,
+                'enable_custom_offers'       => $request->enable_custom_offers,
             ];
 
             // Validate data

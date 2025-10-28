@@ -4,6 +4,8 @@ use Livewire\Livewire;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\SupportWidgetController;
+use App\Http\Controllers\Theme\PreferenceController;
+use App\Livewire\Main\Project\InviteComponent;
 
 // Update route for livewire
 Livewire::setUpdateRoute(function ($handle) {
@@ -33,6 +35,9 @@ Route::prefix('tasks')->group(function () {
 
 // Support widget
 Route::post('support/widget', SupportWidgetController::class)->name('support.widget.store');
+
+// Theme preference
+Route::post('theme/preference', PreferenceController::class)->name('theme.preference');
 
 
 // Main (Livewire)
@@ -75,6 +80,8 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted'])->group(functio
     // Project
     Route::namespace('Project')->prefix('project')->group(function () {
 
+        Route::get('invite/{username}', InviteComponent::class)->middleware('auth')->name('invite.freelancer');
+
         // Project
         Route::get('{pid}/{slug}', ProjectComponent::class);
     });
@@ -93,7 +100,7 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted'])->group(functio
     Route::namespace('Sellers')->prefix('sellers')->group(function () {
 
         // Index
-        Route::get('/', SellersComponent::class);
+        Route::get('/', BrowseComponent::class);
     });
 
     // Redirect

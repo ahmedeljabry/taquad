@@ -298,6 +298,20 @@ class MilestonesComponent extends Component
             $review->reviewee->notify(new FreelancerProjectReviewReceived($this->project, $review, auth()->user()));
         }
 
+        $revieweeUsername = optional($review->reviewee)->username ?? $this->project->awarded_bid?->user?->username;
+        $ratingValue      = $this->ratingScore ? number_format((float) $this->ratingScore, 1) : '--';
+
+        notification([
+            'text'    => 't_notification_project_review_confirmation',
+            'action'  => url('account/projects/milestones', $this->project->uid),
+            'user_id' => auth()->id(),
+            'params'  => [
+                'username' => $revieweeUsername,
+                'project'  => $this->project->title,
+                'rating'   => $ratingValue,
+            ],
+        ]);
+
         $this->resetValidation(['ratingScore', 'ratingComment']);
         $this->closeRatingModal();
         $this->syncReviewState();
