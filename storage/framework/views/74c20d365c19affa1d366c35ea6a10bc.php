@@ -6,26 +6,27 @@
     ?>
 
     
-    <aside class="z-20 w-full overflow-y-auto bg-white dark:bg-zinc-900 flex-shrink-0 ltr:border-r rtl:border-l border-slate-200 fixed h-[calc(100%-64px)] scrollbar-thin scrollbar-thumb-transparent  group-hover:scrollbar-thumb-gray-300 scrollbar-track-transparent transition-all duration-200 group-hover:scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-800 dark:scrollbar-track-zinc-600 border-t border-t-gray-50 dark:border-transparent">
+    <aside class="z-20 w-full overflow-y-auto bg-white dark:bg-zinc-900 flex-shrink-0 ltr:border-r rtl:border-l border-slate-200 fixed h-[calc(100%-64px)] scrollbar-thin scrollbar-thumb-transparent  group-hover:scrollbar-thumb-gray-300 scrollbar-track-transparent transition-all duration-200 group-hover:scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-800 dark:scrollbar-track-zinc-600 border-t border-t-gray-50 dark:border-transparent" style="z-index: 3;">
         <div class="py-4 text-gray-400 dark:text-gray-400">
             <ul class="space-y-2">
 
                 <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $links; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $link): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    
+
                     
                     <!--[if BLOCK]><![endif]--><?php if(!$link['childs']): ?>
 
                         <li class="relative px-4 flex items-center group">
                             <a href="<?php echo e($link['href'], false); ?>" class="inline-flex items-center w-full text-slate-600 hover:text-slate-800 dark:text-zinc-200 rounded outline-none transition-colors duration-200 hover:bg-slate-100 dark:hover:bg-zinc-700 px-2 py-2 <?php echo e($current_path == $link['path'] ? 'bg-slate-50 dark:bg-zinc-800' : '', false); ?>">
-        
+
                                 
                                 <i class="dark:text-zinc-300 flex h-5 items-center justify-center text-slate-400 text-xl w-5 ph-duotone ph-<?php echo e($link['icon'], false); ?>"></i>
-        
+
                                 
                                 <span class="ltr:ml-4 rtl:mr-4 text-xs tracking-wide font-bold text-slate-500 group-hover:text-gray-900 dark:text-zinc-300 dark:group-hover:text-zinc-100">
-                                    <?php echo e($link['text'], false); ?>    
+                                    <?php echo e($link['text'], false); ?>
+
                                 </span>
-                        
+
                             </a>
                         </li>
 
@@ -61,7 +62,7 @@
                                             <a class="w-full block font-medium" href="<?php echo e($child['href'], false); ?>"><?php echo e($child['text'], false); ?></a>
                                         </li>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
-                                    
+
                                 </ul>
                             </template>
                         </li>
@@ -69,9 +70,10 @@
                     <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
-                
+
             </ul>
         </div>
     </aside>
 
-</div><?php /**PATH C:\xampp\htdocs\taquad\resources\views/livewire/admin/includes/sidebar.blade.php ENDPATH**/ ?>
+</div>
+<?php /**PATH C:\xampp\htdocs\taquad\resources\views/livewire/admin/includes/sidebar.blade.php ENDPATH**/ ?>

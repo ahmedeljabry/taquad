@@ -80,12 +80,15 @@
                         <label class="text-sm font-semibold text-slate-700 dark:text-zinc-200">
                             {{ __('messages.t_invite_freelancer_attachments') }}
                         </label>
-                        <x-forms.filepond
+                        <x-forms.uploader
                             wire:model="attachments"
+                            id="{{ $freelancer->id }}"
+                            extensions="{{ settings('publish')->custom_offer_attachments_allowed_extensions }}"
                             allow-multiple="true"
-                            :accepted-file-types="settings('publish')->custom_offer_attachments_allowed_extensions"
-                            :max-files="settings('publish')->custom_offer_attachment_max_files"
-                            :max-size="settings('publish')->custom_offer_attachment_max_size"
+                            :accept="settings('publish')->custom_offer_attachments_allowed_extensions"
+                            :max="settings('publish')->custom_offer_attachment_max_files"
+                            :size="settings('publish')->custom_offer_attachment_max_size"
+                            model="null"
                             label-id="invite-attachments"
                             class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 dark:border-white/10 dark:bg-white/5" />
                         @error('attachments')

@@ -41,6 +41,10 @@ class ProjectBid extends Model
         'freelancer_rejected_date',
         'milestone_plan',
         'milestone_plan_applied_at',
+        'compliance_answers',
+        'nda_signed_at',
+        'nda_signature',
+        'nda_signature_meta',
         'last_viewed_at',
     ];
 
@@ -52,6 +56,9 @@ class ProjectBid extends Model
     protected $casts = [
         'milestone_plan'             => 'array',
         'milestone_plan_applied_at'  => 'datetime',
+        'compliance_answers'         => 'array',
+        'nda_signed_at'              => 'datetime',
+        'nda_signature_meta'         => 'array',
         'last_viewed_at'             => 'datetime',
     ];
 

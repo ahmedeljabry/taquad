@@ -21,6 +21,7 @@ class SettingsValidator
             $rules    = [
                 'is_enabled'                 => 'boolean',
                 'auto_approve_projects'      => 'boolean',
+                'auto_approve_bids'          => 'boolean',
                 'is_free_posting'            => 'boolean',
                 'is_premium_posting'         => 'boolean',
                 'commission_type'            => 'required|in:fixed,percentage',
@@ -35,6 +36,7 @@ class SettingsValidator
             $messages = [
                 'is_enabled.boolean'                  => __('messages.t_validator_boolean'),
                 'auto_approve_projects.boolean'       => __('messages.t_validator_boolean'),
+                'auto_approve_bids.boolean'           => __('messages.t_validator_boolean'),
                 'is_free_posting.boolean'             => __('messages.t_validator_boolean'),
                 'is_premium_posting.boolean'          => __('messages.t_validator_boolean'),
                 'commission_type.required'            => __('messages.t_validator_required'),
@@ -54,6 +56,7 @@ class SettingsValidator
             $data     = [
                 'is_enabled'                 => $request->is_enabled,
                 'auto_approve_projects'      => $request->auto_approve_projects,
+                'auto_approve_bids'          => $request->auto_approve_bids,
                 'is_free_posting'            => $request->is_free_posting,
                 'is_premium_posting'         => $request->is_premium_posting,
                 'commission_type'            => $request->commission_type,

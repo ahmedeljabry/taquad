@@ -100,9 +100,11 @@ class SettingsComponent extends Component
                 'max_skills'                 => $this->max_skills
             ]);
 
-            SettingsPublish::first()->update([
-                'enable_custom_offers' => $this->enable_custom_offers ? 1 : 0,
-            ]);
+            if ($publishSettings = SettingsPublish::first()) {
+                $publishSettings->update([
+                    'enable_custom_offers' => $this->enable_custom_offers ? 1 : 0,
+                ]);
+            }
 
             // Refresh data from cache
             settings('projects', true);

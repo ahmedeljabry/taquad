@@ -16,28 +16,30 @@
     </div>
 
     <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-
-        
-        <div class="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-primary-600 via-primary-500 to-amber-400 px-6 py-10 sm:px-10 sm:py-12 text-white shadow-2xl">
-            <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                <div class="space-y-3 text-right lg:text-right">
-                    <p class="text-xs font-semibold uppercase tracking-[0.4em] text-white/80">جاهز للخطوة التالية؟</p>
-                    <h2 class="text-2xl font-bold sm:text-3xl">ابنِ مشروعك مع فريق محترف يدعمه الذكاء الاصطناعي</h2>
-                    <p class="text-sm text-white/80 max-w-2xl lg:ml-auto">
-                        أطلق المشروع، تابع تنفيذه بدقة، واحصل على توصيات ذكية في كل مرحلة. نحن نجمع أفضل الخبرات في مكان واحد لتسريع نمو أعمالك.
-                    </p>
-                </div>
-                <div class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-                    <a href="<?php echo e(url('post/project'), false); ?>" class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-primary-600 shadow-lg shadow-black/20 transition hover:-translate-y-0.5">
-                        أضف مشروعاً جديداً
-                        <i class="ph ph-arrow-up-right"></i>
-                    </a>
-                    <a href="<?php echo e(url('explore/projects'), false); ?>" class="inline-flex items-center justify-center gap-2 rounded-full border border-white/60 px-6 py-3 text-sm font-semibold text-white/90 backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/10">
-                        استكشف المشاريع الجاهزة
-                    </a>
+        <!--[if BLOCK]><![endif]--><?php if(auth()->guard()->guest()): ?>
+            
+            <div class="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-primary-600 via-primary-500 to-amber-400 px-6 py-10 sm:px-10 sm:py-12 text-white shadow-2xl">
+                <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                    <div class="space-y-3 text-right lg:text-right">
+                        <p class="text-xs font-semibold uppercase tracking-[0.4em] text-white/80">جاهز للخطوة التالية؟</p>
+                        <h2 class="text-2xl font-bold sm:text-3xl">ابنِ مشروعك مع فريق محترف يدعمه الذكاء الاصطناعي</h2>
+                        <p class="text-sm text-white/80 max-w-2xl lg:ml-auto">
+                            أطلق المشروع، تابع تنفيذه بدقة، واحصل على توصيات ذكية في كل مرحلة. نحن نجمع أفضل الخبرات في مكان واحد لتسريع نمو أعمالك.
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+                        <a href="<?php echo e(url('post/project'), false); ?>" class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-primary-600 shadow-lg shadow-black/20 transition hover:-translate-y-0.5">
+                            أضف مشروعاً جديداً
+                            <i class="ph ph-arrow-up-right"></i>
+                        </a>
+                        <a href="<?php echo e(url('explore/projects'), false); ?>" class="inline-flex items-center justify-center gap-2 rounded-full border border-white/60 px-6 py-3 text-sm font-semibold text-white/90 backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/10">
+                            استكشف المشاريع الجاهزة
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
+        <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+
 
         
         <div class="mt-14 grid gap-10 lg:grid-cols-5">

@@ -68,17 +68,6 @@ class Sidebar extends Component
                 ],
             ],
 
-            // Gigs
-            [
-                'icon'   => 'images',
-                'href'   => null,
-                'path'   => config('global.dashboard_prefix') . "/gigs",
-                'text'   => __('messages.t_gigs'),
-                'childs' => [
-                    [ 'text' => __('messages.t_browse_all'), 'href' => "$dashboard/gigs" ]
-                ],
-            ],
-
             // Packages
             [
                 'icon'   => 'table',
@@ -184,7 +173,6 @@ class Sidebar extends Component
                 'text'   => __('messages.t_reports'),
                 'childs' => [
                     [ 'text' => __('messages.t_users'), 'href' => "$dashboard/reports/users" ],
-                    [ 'text' => __('messages.t_gigs'), 'href' => "$dashboard/reports/gigs" ],
                     [ 'text' => __('messages.t_projects'), 'href' => "$dashboard/reports/projects" ],
                     [ 'text' => __('messages.t_bids'), 'href' => "$dashboard/reports/bids" ],
                 ],

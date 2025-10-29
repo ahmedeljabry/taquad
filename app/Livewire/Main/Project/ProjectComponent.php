@@ -46,10 +46,15 @@ class ProjectComponent extends Component
     public $bid_current_step = 1;
     public string $bid_plan_type = 'fixed';
     public array $bid_milestones = [];
+    public array $brief_responses = [];
+    public bool $nda_confirmed = false;
+    public ?string $nda_signature = null;
 
     // Report form
     public $report_reason;
     public $report_description;
+
+    protected array $pendingCompliance = [];
 
 
     /**
@@ -70,7 +75,14 @@ class ProjectComponent extends Component
         // Get project
         $project = Project::where('pid', $pid)
             ->where('slug', $slug)
-            ->with(['client.country', 'client.billing'])
+            ->with([
+                'client.country',
+                'client.billing',
+                'brief_questions' => fn ($query) => $query->orderBy('position'),
+                'brief_attachments',
+                'skills.skill',
+                'category',
+            ])
             ->withCount(['bids' => function ($query) {
                 return $query->where('status', 'active');
             }])
@@ -98,6 +110,8 @@ class ProjectComponent extends Component
             // Set the project
             $this->project = $project;
         }
+
+        $this->initializeComplianceState();
 
         // Track this visit
         Track::dispatch([
@@ -439,6 +453,109 @@ class ProjectComponent extends Component
         ];
     }
 
+    protected function initializeComplianceState(): void
+    {
+        $questions = collect($this->project->brief_questions ?? []);
+
+        $this->brief_responses = $questions->mapWithKeys(
+            fn ($question) => [$question->uid => $this->brief_responses[$question->uid] ?? '']
+        )->toArray();
+    }
+
+    protected function resetComplianceState(): void
+    {
+        $questions = collect($this->project->brief_questions ?? []);
+
+        $this->brief_responses = $questions->mapWithKeys(
+            fn ($question) => [$question->uid => '']
+        )->toArray();
+
+        $this->nda_confirmed     = false;
+        $this->nda_signature     = null;
+        $this->pendingCompliance = [];
+    }
+
+    protected function requiresCompliance(): bool
+    {
+        if (!$this->project) {
+            return false;
+        }
+
+        $hasQuestions = collect($this->project->brief_questions)->isNotEmpty();
+
+        return (bool) $this->project->requires_nda || $hasQuestions;
+    }
+
+    protected function validateCompliance(): ?array
+    {
+        $this->resetErrorBag(['brief_responses', 'nda_confirmed', 'nda_signature']);
+
+        $questions = collect($this->project->brief_questions ?? []);
+        $answers   = [];
+        $errors    = 0;
+
+        foreach ($questions as $question) {
+            $key    = $question->uid;
+            $raw    = $this->brief_responses[$key] ?? '';
+            $answer = trim((string) $raw);
+
+            if ($question->is_required && $answer === '') {
+                $this->addError("brief_responses.$key", __('messages.t_project_required_question_missing'));
+                $errors++;
+            }
+
+            $answers[] = [
+                'question_uid' => $question->uid,
+                'question'     => $question->question,
+                'answer'       => $answer === '' ? null : clean($answer),
+                'is_required'  => (bool) $question->is_required,
+            ];
+        }
+
+        $ndaPayload = null;
+
+        if ($this->project->requires_nda) {
+            if (!$this->nda_confirmed) {
+                $this->addError('nda_confirmed', __('messages.t_project_nda_must_be_confirmed'));
+                $errors++;
+            }
+
+            $signature = trim((string) $this->nda_signature);
+
+            if ($signature === '') {
+                $this->addError('nda_signature', __('messages.t_project_nda_signature_required'));
+                $errors++;
+            } elseif (mb_strlen($signature) < 3) {
+                $this->addError('nda_signature', __('messages.t_project_nda_signature_length'));
+                $errors++;
+            }
+
+            if ($errors === 0) {
+                $ndaPayload = [
+                    'signature'  => $signature,
+                    'signed_at'  => now()->toIso8601String(),
+                    'ip'         => request()->ip(),
+                    'user_agent' => Str::limit((string) request()->userAgent(), 255, ''),
+                ];
+            }
+        }
+
+        if ($errors > 0) {
+            $this->notification([
+                'title'       => __('messages.t_attention_needed'),
+                'description' => __('messages.t_project_compliance_requirements_missing'),
+                'icon'        => 'warning',
+            ]);
+
+            return null;
+        }
+
+        return [
+            'answers' => $questions->isEmpty() ? [] : $answers,
+            'nda'     => $ndaPayload,
+        ];
+    }
+
     public function updatedBidPlanType($value): void
     {
         $this->bid_plan_type = $value === 'milestone' ? 'milestone' : 'fixed';
@@ -704,6 +821,14 @@ class ProjectComponent extends Component
                     return;
                 }
 
+                $compliancePayload = $this->validateCompliance();
+
+                if ($compliancePayload === null) {
+                    return;
+                }
+
+                $this->pendingCompliance = $compliancePayload;
+
                 // Form is valid, we have to check if promoting bids allowed
                 if (settings('projects')->is_premium_bidding) {
 
@@ -714,7 +839,7 @@ class ProjectComponent extends Component
                 } else {
 
                     // Create new bid
-                    $response = $this->bid();
+                    $response = $this->bid($this->pendingCompliance);
 
                     // Reset bidding form
                     $this->reset([
@@ -734,6 +859,7 @@ class ProjectComponent extends Component
                     $this->bid_milestones   = [
                         ['title' => '', 'amount' => '', 'due_in' => '']
                     ];
+                    $this->resetComplianceState();
 
                     // Close modal
                     $this->dispatch('close-modal', 'modal-bid-container');
@@ -788,7 +914,7 @@ class ProjectComponent extends Component
             // Check second step
             if ($this->bid_current_step === 2) {
 
-                $response = $this->bid();
+                $response = $this->bid($this->pendingCompliance);
 
                 // Reset bidding form
                 $this->reset([
@@ -808,6 +934,7 @@ class ProjectComponent extends Component
                 $this->bid_milestones   = [
                     ['title' => '', 'amount' => '', 'due_in' => '']
                 ];
+                $this->resetComplianceState();
 
                 // Close modal
                 $this->dispatch('close-modal', 'modal-bid-container');
@@ -902,13 +1029,14 @@ class ProjectComponent extends Component
      *
      * @return void
      */
-    private function bid()
+    private function bid(?array $compliancePayload = null)
     {
         try {
 
             // Get settings
             $settings        = settings('projects');
             $normalizedPlan  = [];
+            $complianceData  = $compliancePayload ?? $this->pendingCompliance;
 
             if ($this->bid_plan_type === 'milestone') {
                 $normalizedPlan = $this->prepareMilestonePlanForStorage();
@@ -958,6 +1086,20 @@ class ProjectComponent extends Component
                     ];
                 }
             }
+
+            if ($this->requiresCompliance() && empty($complianceData)) {
+                $complianceData = $this->validateCompliance();
+
+                if ($complianceData === null) {
+                    return [
+                        'success' => false,
+                        'status'  => 'error',
+                        'message' => __('messages.t_project_compliance_requirements_missing'),
+                    ];
+                }
+            }
+
+            $this->pendingCompliance = $complianceData ?? [];
 
             // Check if promoting bids enabled
             if ($settings->is_premium_bidding) {
@@ -1030,6 +1172,19 @@ class ProjectComponent extends Component
             $bid->is_highlight = $upgrade_highlight ? true : false;
             $bid->status       = $status;
             $bid->milestone_plan = !empty($normalizedPlan) ? $normalizedPlan : null;
+            $bid->compliance_answers = !empty($complianceData['answers'] ?? []) ? $complianceData['answers'] : null;
+
+            if (!empty($complianceData['nda'])) {
+                $bid->nda_signed_at    = now();
+                $bid->nda_signature    = $complianceData['nda']['signature'] ?? null;
+                $bid->nda_signature_meta = [
+                    'ip'                => $complianceData['nda']['ip'] ?? request()->ip(),
+                    'user_agent'        => $complianceData['nda']['user_agent'] ?? request()->userAgent(),
+                    'signed_payload_at' => $complianceData['nda']['signed_at'] ?? now()->toIso8601String(),
+                    'scope'             => $this->project->nda_scope,
+                    'term_months'       => $this->project->nda_term_months,
+                ];
+            }
             $bid->save();
 
             // If pending payment, we have to create a payment link

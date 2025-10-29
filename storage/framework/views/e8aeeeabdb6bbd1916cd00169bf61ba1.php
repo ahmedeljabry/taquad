@@ -6,6 +6,8 @@
       dir="<?php echo e(config()->get('direction'), false); ?>"
       data-theme-preference="<?php echo e($initialThemePreference, false); ?>"
       data-theme="<?php echo e($initialThemePreference, false); ?>"
+      data-theme-endpoint="<?php echo e(url('theme/preference'), false); ?>"
+      data-theme-auth="<?php echo e(auth()->check() ? 'true' : 'false', false); ?>"
       class="<?php echo \Illuminate\Support\Arr::toCssClasses(['dark' => current_theme() === 'dark']); ?>">
 
     <head>

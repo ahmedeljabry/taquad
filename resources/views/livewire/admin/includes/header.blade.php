@@ -1,3 +1,8 @@
+@php
+    $isRtl = config()->get('direction') === 'rtl';
+    $notificationsPlacement = $isRtl ? 'left' : 'right';
+@endphp
+
 <header class="z-10 py-4 bg-white shadow-sm dark:bg-gray-800 h-16 fixed w-full">
     <div class="flex items-center justify-between h-full px-6 text-purple-600 dark:text-purple-300">
 
@@ -16,10 +21,14 @@
         </div>
         
         {{-- Notifications / Account --}}
-        <ul class="flex items-center flex-shrink-0 space-x-6 rtl:space-x-reverse">
+        <ul class="flex items-center flex-shrink-0 space-x-6 rtl:space-x-reverse rtl:flex-row-reverse">
             
             {{-- Notification button --}}
-            <button class="h-8 w-8 flex items-center transition ease-in-out duration-150 justify-center rounded-md bg-slate-100 hover:bg-slate-200 relative" data-drawer-target="notifications-drawer" data-drawer-show="notifications-drawer" aria-controls="notifications-drawer" data-drawer-placement="right">
+            <button class="h-8 w-8 flex items-center transition ease-in-out duration-150 justify-center rounded-md bg-slate-100 hover:bg-slate-200 relative"
+                data-drawer-target="notifications-drawer"
+                data-drawer-show="notifications-drawer"
+                aria-controls="notifications-drawer"
+                data-drawer-placement="{{ $notificationsPlacement }}">
 
                 {{-- Icon --}}
                 <svg class="w-5 h-5 text-slate-500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" version="1.1"> <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <path d="M17,12 L18.5,12 C19.3284271,12 20,12.6715729 20,13.5 C20,14.3284271 19.3284271,15 18.5,15 L5.5,15 C4.67157288,15 4,14.3284271 4,13.5 C4,12.6715729 4.67157288,12 5.5,12 L7,12 L7.5582739,6.97553494 C7.80974924,4.71225688 9.72279394,3 12,3 C14.2772061,3 16.1902508,4.71225688 16.4417261,6.97553494 L17,12 Z" fill="currentColor"/> <rect fill="currentColor" opacity="0.3" x="10" y="16" width="4" height="4" rx="2"/> </g></svg>

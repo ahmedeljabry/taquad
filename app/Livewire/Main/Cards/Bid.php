@@ -102,6 +102,8 @@ class Bid extends Component
             'last_viewed_at' => $bid->last_viewed_at,
         ];
 
+        $this->view_data['compliance'] = $this->compileComplianceData($bid);
+
         // Set project for the view
         $this->view_data['project']    = [
             'id'          => $project->uid,
@@ -226,6 +228,7 @@ class Bid extends Component
             'message'      => $can_view ? $bid->message : null,
             'date'         => $bid->created_at
         ];
+        $this->view_data['compliance'] = $this->compileComplianceData($bid);
 
         $this->render();
     }
@@ -627,5 +630,103 @@ class Bid extends Component
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+
+    /**
+     * Build compliance payload for the view
+     *
+     * @param ProjectBid $bid
+     * @return array{visible:bool,answers:array<int,array>,nda:array}
+     */
+    private function compileComplianceData(ProjectBid $bid): array
+    {
+        $visible = $this->canSeeCompliance($bid);
+
+        if (!$visible) {
+            return [
+                'visible' => false,
+                'answers' => [],
+                'nda'     => [
+                    'available'           => false,
+                    'signed'              => false,
+                    'signature'           => null,
+                    'signed_at'           => null,
+                    'signed_at_for_humans'=> null,
+                    'download_url'        => null,
+                    'scope'               => null,
+                    'term_label'          => null,
+                ],
+            ];
+        }
+
+        $answers = collect($bid->compliance_answers ?? [])
+            ->map(function ($entry, $index) {
+                $question = trim((string) ($entry['question'] ?? ''));
+
+                return [
+                    'index'       => $index + 1,
+                    'question'    => $question,
+                    'answer'      => isset($entry['answer']) && $entry['answer'] !== '' ? trim((string) $entry['answer']) : null,
+                    'is_required' => (bool) ($entry['is_required'] ?? false),
+                ];
+            })
+            ->filter(fn ($item) => $item['question'] !== '')
+            ->values()
+            ->all();
+
+        $ndaAvailable = (bool) ($this->project->requires_nda && $this->project->nda_path);
+        $ndaDownloadUrl = $ndaAvailable
+            ? route('project.nda.download', [
+                'pid'  => $this->project->pid,
+                'slug' => $this->project->slug,
+                'bid'  => $bid->uid,
+            ])
+            : null;
+
+        $termMonths = $this->project->nda_term_months ?? 12;
+        $termLabel  = $ndaAvailable
+            ? trans_choice('messages.t_project_nda_term_value', $termMonths, ['count' => $termMonths])
+            : null;
+
+        $scope = $this->project->nda_scope ?: __('messages.t_project_nda_scope_default');
+
+        return [
+            'visible' => true,
+            'answers' => $answers,
+            'nda'     => [
+                'available'            => $ndaAvailable,
+                'signed'               => (bool) $bid->nda_signature,
+                'signature'            => $bid->nda_signature,
+                'signed_at'            => $bid->nda_signed_at,
+                'signed_at_for_humans' => $bid->nda_signed_at ? format_date($bid->nda_signed_at, config('carbon-formats.long_date_time')) : null,
+                'download_url'         => $ndaDownloadUrl,
+                'scope'                => $scope,
+                'term_label'           => $termLabel,
+            ],
+        ];
+    }
+
+
+    /**
+     * Check if current user can see compliance data
+     */
+    private function canSeeCompliance(ProjectBid $bid): bool
+    {
+        if (!($this->project->requires_nda || !empty($bid->compliance_answers))) {
+            return false;
+        }
+
+        if (auth('admin')->check()) {
+            return true;
+        }
+
+        if (!auth()->check()) {
+            return false;
+        }
+
+        $userId = auth()->id();
+
+        return $userId === $this->project->user_id || $userId === $bid->user_id;
     }
 }

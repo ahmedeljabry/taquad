@@ -1,10 +1,10 @@
-﻿@php
+﻿<?php
     $projectCollection = $projects instanceof \Illuminate\Pagination\LengthAwarePaginator ? $projects->getCollection() : collect($projects);
     $activeCount = $projectCollection->where('status', 'active')->count();
     $reviewCount = $projectCollection->whereIn('status', ['pending_approval', 'pending_payment'])->count();
     $completedCount = $projectCollection->where('status', 'completed')->count();
     $draftCount = $projectCollection->whereIn('status', ['hidden', 'rejected'])->count();
-@endphp
+?>
 
 <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24 space-y-12">
 
@@ -18,7 +18,7 @@
                 <span
                     class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1 text-[12px] font-semibold uppercase tracking-[0.3em]">
                     <i class="ph ph-squares-four"></i>
-                    @lang('messages.t_my_projects')
+                    <?php echo app('translator')->get('messages.t_my_projects'); ?>
                 </span>
                 <div>
                     <h1 class="text-3xl font-bold sm:text-4xl">خطط، راقب، ووجّه فريقك بثقة.</h1>
@@ -30,21 +30,22 @@
                 <div class="flex flex-wrap gap-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-white/70">
                     <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
                         <i class="ph ph-queue"></i>
-                        {{ $projects->total() }} @lang('messages.t_projects')
+                        <?php echo e($projects->total(), false); ?> <?php echo app('translator')->get('messages.t_projects'); ?>
                     </span>
                     <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
                         <i class="ph ph-user-circle"></i>
-                        {{ auth()->user()->fullname ?? auth()->user()->username }}
+                        <?php echo e(auth()->user()->fullname ?? auth()->user()->username, false); ?>
+
                     </span>
                 </div>
             </div>
             <div class="flex flex-col gap-3 sm:flex-row">
-                <a href="{{ url('post/project') }}"
+                <a href="<?php echo e(url('post/project'), false); ?>"
                     class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-md transition hover:-translate-y-0.5 hover:bg-white/90">
                     <i class="ph ph-plus-circle"></i>
                     مشروع جديد
                 </a>
-                <a href="{{ url('explore/projects') }}"
+                <a href="<?php echo e(url('explore/projects'), false); ?>"
                     class="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10">
                     <i class="ph ph-compass"></i>
                     استعرض المستقلين
@@ -60,7 +61,7 @@
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500 dark:text-slate-400">
                         مشاريع نشطة</p>
-                    <p class="mt-2 text-2xl font-bold text-slate-900 dark:text-white">{{ $activeCount }}</p>
+                    <p class="mt-2 text-2xl font-bold text-slate-900 dark:text-white"><?php echo e($activeCount, false); ?></p>
                 </div>
                 <span
                     class="flex h-11 w-11 items-center justify-center rounded-full bg-primary-500/10 text-primary-600 dark:text-primary-400">
@@ -76,7 +77,7 @@
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500 dark:text-slate-400">قيد
                         المراجعة</p>
-                    <p class="mt-2 text-2xl font-bold text-slate-900 dark:text-white">{{ $reviewCount }}</p>
+                    <p class="mt-2 text-2xl font-bold text-slate-900 dark:text-white"><?php echo e($reviewCount, false); ?></p>
                 </div>
                 <span
                     class="flex h-11 w-11 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
@@ -92,7 +93,7 @@
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500 dark:text-slate-400">
                         مُكتملة</p>
-                    <p class="mt-2 text-2xl font-bold text-slate-900 dark:text-white">{{ $completedCount }}</p>
+                    <p class="mt-2 text-2xl font-bold text-slate-900 dark:text-white"><?php echo e($completedCount, false); ?></p>
                 </div>
                 <span
                     class="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
@@ -107,7 +108,7 @@
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500 dark:text-slate-400">في
                         الأرشيف</p>
-                    <p class="mt-2 text-2xl font-bold text-slate-900 dark:text-white">{{ $draftCount }}</p>
+                    <p class="mt-2 text-2xl font-bold text-slate-900 dark:text-white"><?php echo e($draftCount, false); ?></p>
                 </div>
                 <span
                     class="flex h-11 w-11 items-center justify-center rounded-full bg-slate-200 text-slate-600 dark:bg-slate-700/60 dark:text-slate-300">
@@ -128,12 +129,12 @@
                 </p>
             </div>
             <div class="flex gap-2">
-                <a href="{{ url('post/project') }}"
+                <a href="<?php echo e(url('post/project'), false); ?>"
                     class="inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-primary-700">
                     <i class="ph ph-plus"></i>
                     مشروع جديد
                 </a>
-                <a href="{{ url('explore/projects') }}"
+                <a href="<?php echo e(url('explore/projects'), false); ?>"
                     class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-primary-200 hover:text-primary-600 dark:border-zinc-700 dark:text-zinc-300">
                     <i class="ph ph-rocket-launch"></i>
                     ابحث عن مستقل
@@ -146,27 +147,27 @@
                 <thead
                     class="bg-slate-50 text-[12px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:bg-zinc-800 dark:text-zinc-300">
                     <tr>
-                        <th class="px-5 py-3 text-right">@lang('messages.t_project')</th>
-                        <th class="px-5 py-3 text-center">@lang('messages.t_status')</th>
-                        <th class="px-5 py-3 text-center">@lang('messages.t_bids')</th>
-                        <th class="px-5 py-3 text-center">@lang('messages.t_budget')</th>
-                        <th class="px-5 py-3 text-center">@lang('messages.t_actions')</th>
+                        <th class="px-5 py-3 text-right"><?php echo app('translator')->get('messages.t_project'); ?></th>
+                        <th class="px-5 py-3 text-center"><?php echo app('translator')->get('messages.t_status'); ?></th>
+                        <th class="px-5 py-3 text-center"><?php echo app('translator')->get('messages.t_bids'); ?></th>
+                        <th class="px-5 py-3 text-center"><?php echo app('translator')->get('messages.t_budget'); ?></th>
+                        <th class="px-5 py-3 text-center"><?php echo app('translator')->get('messages.t_actions'); ?></th>
                     </tr>
                 </thead>
                 <tbody
                     class="divide-y divide-slate-100 bg-white text-slate-700 dark:divide-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
-                    @forelse ($projects as $project)
+                    <!--[if BLOCK]><![endif]--><?php $__empty_1 = true; $__currentLoopData = $projects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr class="hover:bg-primary-50/40 dark:hover:bg-primary-500/5">
                             <td class="max-w-xs px-5 py-4 align-top">
                                 <div class="flex flex-col gap-1">
-                                    <a href="{{ url('project/' . $project->pid . '/' . $project->slug) }}"
-                                        class="font-semibold text-slate-900 transition hover:text-primary-600 dark:text-white">{{ $project->title }}</a>
+                                    <a href="<?php echo e(url('project/' . $project->pid . '/' . $project->slug), false); ?>"
+                                        class="font-semibold text-slate-900 transition hover:text-primary-600 dark:text-white"><?php echo e($project->title, false); ?></a>
                                     <span
-                                        class="text-[12px] text-slate-500 dark:text-slate-400">{{ format_date($project->created_at, config('carbon-formats.F_d,_Y')) }}</span>
+                                        class="text-[12px] text-slate-500 dark:text-slate-400"><?php echo e(format_date($project->created_at, config('carbon-formats.F_d,_Y')), false); ?></span>
                                 </div>
                             </td>
                             <td class="px-5 py-4 text-center align-top">
-                                @php
+                                <?php
                                     $statusColorMap = [
                                         'pending_payment' => 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300',
                                         'pending_approval' => 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300',
@@ -177,30 +178,32 @@
                                         'rejected' => 'bg-rose-100 text-rose-700 dark:bg-rose-500/10 dark:text-rose-300',
                                     ];
                                     $statusClass = $statusColorMap[$project->status] ?? 'bg-slate-100 text-slate-700 dark:bg-slate-700/30 dark:text-slate-300';
-                                @endphp
+                                ?>
                                 <span
-                                    class="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold {{ $statusClass }}">
-                                    {{ __('messages.t_' . $project->status) }}
+                                    class="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold <?php echo e($statusClass, false); ?>">
+                                    <?php echo e(__('messages.t_' . $project->status), false); ?>
+
                                 </span>
                             </td>
                             <td class="px-5 py-4 text-center align-top">
                                 <span
-                                    class="font-semibold text-slate-900 dark:text-white">{{ number_format($project->bids_count ?? 0) }}</span>
+                                    class="font-semibold text-slate-900 dark:text-white"><?php echo e(number_format($project->bids_count ?? 0), false); ?></span>
                             </td>
                             <td class="px-5 py-4 text-center align-top">
                                 <span class="text-sm font-semibold text-slate-900 dark:text-white">
-                                    {{ money($project->budget_min, settings('currency')->code, true) }} -
-                                    {{ money($project->budget_max, settings('currency')->code, true) }}
+                                    <?php echo e(money($project->budget_min, settings('currency')->code, true), false); ?> -
+                                    <?php echo e(money($project->budget_max, settings('currency')->code, true), false); ?>
+
                                 </span>
                             </td>
                             <td class="px-5 py-4 text-center align-top">
                                 <div class="flex items-center justify-center gap-2">
-                                    <a href="{{ url('project/' . $project->pid . '/' . $project->slug) }}"
+                                    <a href="<?php echo e(url('project/' . $project->pid . '/' . $project->slug), false); ?>"
                                         class="inline-flex items-center gap-1 rounded-full border border-slate-200 px-3 py-1 text-[12px] font-semibold text-slate-600 transition hover:border-primary-200 hover:text-primary-600 dark:border-zinc-700 dark:text-zinc-300">
                                         <i class="ph ph-eye"></i>
                                         عرض
                                     </a>
-                                    <a href="{{ url('post/project') . '?clone=' . $project->uid }}"
+                                    <a href="<?php echo e(url('post/project') . '?clone=' . $project->uid, false); ?>"
                                         class="inline-flex items-center gap-1 rounded-full border border-slate-200 px-3 py-1 text-[12px] font-semibold text-slate-600 transition hover:border-primary-200 hover:text-primary-600 dark:border-zinc-700 dark:text-zinc-300">
                                         <i class="ph ph-copy"></i>
                                         استنساخ
@@ -208,12 +211,12 @@
                                 </div>
                             </td>
                         </tr>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
                             <td colspan="5" class="px-5 py-10 text-center">
                                 <div class="space-y-3 text-sm text-slate-500 dark:text-slate-400">
                                     <p>لم تنشئ أي مشاريع بعد. ابدأ الآن واستقبل عروض المستقلين خلال دقائق.</p>
-                                    <a href="{{ url('post/project') }}"
+                                    <a href="<?php echo e(url('post/project'), false); ?>"
                                         class="inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-primary-700">
                                         <i class="ph ph-plus"></i>
                                         نشر أول مشروع
@@ -221,14 +224,15 @@
                                 </div>
                             </td>
                         </tr>
-                    @endforelse
+                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                 </tbody>
             </table>
         </div>
 
         <div class="mt-6 flex justify-center">
-            {{ $projects->links('pagination::tailwind') }}
+            <?php echo e($projects->links('pagination::tailwind'), false); ?>
+
         </div>
     </div>
 
-</div>
+</div><?php /**PATH C:\xampp\htdocs\taquad\resources\views/livewire/main/account/projects/projects.blade.php ENDPATH**/ ?>

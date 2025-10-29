@@ -154,8 +154,9 @@
 
             
             <div class="space-y-10 lg:col-start-1 lg:col-span-2">
-                <!--[if BLOCK]><![endif]--><?php if($bestBids->isNotEmpty() && $bestBids->count() > 2  && auth()->user()?->id === $project->user_id): ?>
-                    <section class="rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+                <!--[if BLOCK]><![endif]--><?php if($bestBids->isNotEmpty() && $bestBids->count() > 2 && auth()->user()?->id === $project->user_id): ?>
+                    <section
+                        class="rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
                         <div class="flex items-center justify-between gap-3">
                             <div>
                                 <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">أفضل عرضين موصى بهما
@@ -300,6 +301,87 @@
                                     <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                                 </div>
                             </section>
+
+                            <?php
+                                $briefQuestions = collect($project->brief_questions ?? []);
+                            ?>
+
+                            <!--[if BLOCK]><![endif]--><?php if($briefQuestions->isNotEmpty()): ?>
+                                <section>
+                                    <div
+                                        class="rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800/60">
+                                        <div
+                                            class="border-b border-gray-100 px-6 py-5 dark:border-zinc-700 sm:px-8 sm:py-6">
+                                            <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                                                <?php echo app('translator')->get('messages.t_project_brief_questions_heading'); ?>
+                                            </h3>
+                                            <p class="mt-2 text-[13px] leading-6 text-slate-600 dark:text-zinc-400">
+                                                <?php echo app('translator')->get('messages.t_project_brief_questions_hint'); ?>
+                                            </p>
+                                        </div>
+                                        <ul class="divide-y divide-gray-100 dark:divide-zinc-700">
+                                            <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $briefQuestions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $question): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <li class="px-6 py-5 sm:px-8">
+                                                    <div
+                                                        class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                                        <p
+                                                            class="text-sm font-medium leading-6 text-zinc-800 dark:text-zinc-200">
+                                                            <?php echo e($question->question, false); ?>
+
+                                                        </p>
+                                                        <span class="inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wide class="<?php echo \Illuminate\Support\Arr::toCssClasses([
+                                                            'border-amber-300 bg-amber-100/70 text-amber-700 dark:border-amber-400/40 dark:bg-amber-500/10 dark:text-amber-300' => $question->is_required,
+                                                            'border-slate-200 bg-slate-100/70 text-slate-600 dark:border-zinc-600 dark:bg-zinc-700/50 dark:text-zinc-300' => !$question->is_required,
+                                                        ]); ?>"">
+                                                            <?php echo e($question->is_required ? __('messages.t_project_brief_question_required_badge') : __('messages.t_project_brief_question_optional_badge'), false); ?>
+
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
+                                        </ul>
+                                    </div>
+                                </section>
+                            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+
+                            <!--[if BLOCK]><![endif]--><?php if($project->requires_nda): ?>
+                                <section>
+                                    <div
+                                        class="rounded-2xl border border-primary-200 bg-primary-50/60 shadow-sm dark:border-primary-500/40 dark:bg-primary-500/10">
+                                        <div class="px-6 py-5 sm:px-8 sm:py-6">
+                                            <h3 class="text-sm font-semibold text-primary-800 dark:text-primary-200">
+                                                <?php echo app('translator')->get('messages.t_project_nda_heading'); ?>
+                                            </h3>
+                                            <p
+                                                class="mt-2 text-[13px] leading-6 text-primary-800/80 dark:text-primary-100/80">
+                                                <?php echo app('translator')->get('messages.t_project_nda_public_hint'); ?>
+                                            </p>
+                                            <dl class="mt-4 grid gap-4 sm:grid-cols-2">
+                                                <div class="space-y-1">
+                                                    <dt
+                                                        class="text-[12px] font-bold uppercase tracking-wide text-primary-700/80 dark:text-primary-200/80">
+                                                        <?php echo app('translator')->get('messages.t_project_nda_scope_label'); ?>
+                                                    </dt>
+                                                    <dd class="text-sm leading-6 text-primary-900 dark:text-primary-100">
+                                                        <?php echo e($project->nda_scope ?: __('messages.t_project_nda_scope_default'), false); ?>
+
+                                                    </dd>
+                                                </div>
+                                                <div class="space-y-1">
+                                                    <dt
+                                                        class="text-[12px] font-bold uppercase tracking-wide text-primary-700/80 dark:text-primary-200/80">
+                                                        <?php echo app('translator')->get('messages.t_project_nda_term_label'); ?>
+                                                    </dt>
+                                                    <dd class="text-sm leading-6 text-primary-900 dark:text-primary-100">
+                                                        <?php echo e(trans_choice('messages.t_project_nda_term_value', $project->nda_term_months ?? 12, ['count' => $project->nda_term_months ?? 12]), false); ?>
+
+                                                    </dd>
+                                                </div>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </section>
+                            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
                             <!--[if BLOCK]><![endif]--><?php if($project->status === 'active'): ?>
                                 <div
@@ -608,7 +690,8 @@ if (isset($__slots)) unset($__slots);
             <section class="lg:col-start-3 lg:col-span-1">
 
                 
-                <div class="mb-6 rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-sm shadow-slate-900/5 dark:border-zinc-700 dark:bg-zinc-900">
+                <div
+                    class="mb-6 rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-sm shadow-slate-900/5 dark:border-zinc-700 dark:bg-zinc-900">
                     <h2 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400 dark:text-zinc-500">
                         <?php echo app('translator')->get('messages.t_project_summary'); ?>
                     </h2>
@@ -1022,6 +1105,121 @@ unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
 
                             </div>
 
+                            <?php
+                                $modalBriefQuestions = ($briefQuestions ?? null) instanceof \Illuminate\Support\Collection
+                                    ? $briefQuestions
+                                    : collect($project->brief_questions ?? []);
+                            ?>
+
+                            <!--[if BLOCK]><![endif]--><?php if($modalBriefQuestions->isNotEmpty()): ?>
+                                <div class="col-span-12">
+                                    <div
+                                        class="rounded-2xl border border-gray-200 bg-white px-6 py-5 shadow-sm dark:border-zinc-600 dark:bg-zinc-700/60 sm:px-8 sm:py-6">
+                                        <div class="flex flex-col space-y-2">
+                                            <h4 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                                                <?php echo app('translator')->get('messages.t_project_brief_questions_heading'); ?>
+                                            </h4>
+                                            <p class="text-[13px] leading-6 text-slate-600 dark:text-zinc-300">
+                                                <?php echo app('translator')->get('messages.t_project_requirements_block_subtitle'); ?>
+                                            </p>
+                                        </div>
+                                        <div class="mt-5 space-y-5">
+                                            <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $modalBriefQuestions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $question): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <div class="space-y-2">
+                                                    <label for="bid-brief-question-<?php echo e($loop->iteration, false); ?>"
+                                                        class="flex items-center justify-between gap-3 text-[13px] font-semibold text-gray-900 dark:text-zinc-100">
+                                                        <span class="leading-6"><?php echo e($question->question, false); ?></span>
+                                                        <span class="rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wide class="<?php echo \Illuminate\Support\Arr::toCssClasses([
+                                                            'border-amber-300 bg-amber-100/70 text-amber-700 dark:border-amber-400/40 dark:bg-amber-500/10 dark:text-amber-200' => $question->is_required,
+                                                            'border-slate-200 bg-slate-100/70 text-slate-600 dark:border-zinc-500 dark:bg-zinc-600/60 dark:text-zinc-200' => !$question->is_required,
+                                                        ]); ?>"">
+                                                            <?php echo e($question->is_required ? __('messages.t_project_brief_question_required_badge') : __('messages.t_project_brief_question_optional_badge'), false); ?>
+
+                                                        </span>
+                                                    </label>
+                                                    <textarea wire:model.defer="brief_responses.<?php echo e($question->uid, false); ?>"
+                                                        id="bid-brief-question-<?php echo e($loop->iteration, false); ?>" rows="3"
+                                                        class="w-full rounded-xl border border-gray-300 bg-white p-3 text-sm font-medium text-gray-700 shadow-sm transition focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/40 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:focus:border-primary-400 dark:focus:ring-primary-500/30"
+                                                        placeholder="<?php echo e(__('messages.t_project_brief_question_placeholder'), false); ?>"></textarea>
+                                                    <!--[if BLOCK]><![endif]--><?php $__errorArgs = ['brief_responses.' . $question->uid];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                        <p class="text-[12px] font-medium text-red-600 ltr:pl-1 rtl:pr-1">
+                                                            <?php echo e($message, false); ?>
+
+                                                        </p>
+                                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
+                                                </div>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+
+                            <!--[if BLOCK]><![endif]--><?php if($project->requires_nda): ?>
+                                <div class="col-span-12">
+                                    <div
+                                        class="rounded-2xl border border-primary-200 bg-primary-50/70 px-6 py-5 shadow-sm dark:border-primary-500/40 dark:bg-primary-500/10 sm:px-8 sm:py-6">
+                                        <div class="flex flex-col space-y-2">
+                                            <h4 class="text-sm font-semibold text-primary-800 dark:text-primary-100">
+                                                <?php echo app('translator')->get('messages.t_project_nda_heading'); ?>
+                                            </h4>
+                                            <p class="text-[13px] leading-6 text-primary-800/80 dark:text-primary-100/70">
+                                                <?php echo app('translator')->get('messages.t_project_nda_modal_hint'); ?>
+                                            </p>
+                                        </div>
+                                        <div class="mt-5 space-y-4">
+                                            <label
+                                                class="flex items-start gap-3 text-sm leading-6 text-primary-900 dark:text-primary-100">
+                                                <input type="checkbox" wire:model.defer="nda_confirmed" value="1"
+                                                    class="mt-1 h-4 w-4 rounded border-primary-300 text-primary-600 focus:ring-primary-500 dark:border-primary-400 dark:bg-primary-500/10">
+                                                <span><?php echo app('translator')->get('messages.t_project_nda_checkbox_label'); ?></span>
+                                            </label>
+                                            <!--[if BLOCK]><![endif]--><?php $__errorArgs = ['nda_confirmed'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                <p class="text-[12px] font-medium text-red-600 ltr:pl-1 rtl:pr-1">
+                                                    <?php echo e($message, false); ?>
+
+                                                </p>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
+                                            <div class="space-y-2">
+                                                <label for="nda-signature-input"
+                                                    class="text-[13px] font-semibold text-primary-900 dark:text-primary-100">
+                                                    <?php echo app('translator')->get('messages.t_project_nda_signature_label'); ?>
+                                                </label>
+                                                <input type="text" id="nda-signature-input" wire:model.defer="nda_signature"
+                                                    placeholder="<?php echo e(__('messages.t_project_nda_signature_placeholder'), false); ?>"
+                                                    class="w-full rounded-xl border border-primary-200 bg-white p-3 text-sm font-semibold text-primary-900 transition focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/40 dark:border-primary-400/40 dark:bg-primary-500/10 dark:text-primary-100 dark:placeholder-primary-200/60 dark:focus:border-primary-400 dark:focus:ring-primary-400/30" />
+                                                <!--[if BLOCK]><![endif]--><?php $__errorArgs = ['nda_signature'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                    <p class="text-[12px] font-medium text-red-600 ltr:pl-1 rtl:pr-1">
+                                                        <?php echo e($message, false); ?>
+
+                                                    </p>
+                                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+
                             <div class="col-span-12">
                                 <p class="mb-2 text-[13px] font-bold text-gray-900 dark:text-white">خطة الدفع</p>
                                 <div class="grid gap-3 md:grid-cols-2">
@@ -1071,14 +1269,14 @@ unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
                                         <button type="button" wire:click="addBidMilestone"
                                             class="inline-flex items-center gap-2 rounded-full border border-primary-200 px-3 py-1.5 text-[12px] font-semibold text-primary-600 transition hover:border-primary-300 hover:text-primary-700 dark:border-primary-500/40 dark:text-primary-200 dark:hover:border-primary-400">
                                             <i class="ph ph-plus text-xs"></i>
-                                            إضافة معلم
+                                            إضافة دفعه
                                         </button>
                                     </div>
                                     <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $bid_milestones; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $milestone): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <div
                                             class="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm dark:border-zinc-700 dark:bg-zinc-800/80">
                                             <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                                                <h5 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">المعلم رقم
+                                                <h5 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">الدفعه رقم
                                                     <?php echo e($index + 1, false); ?>
 
                                                 </h5>
@@ -1663,5 +1861,4 @@ unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
 
         window.LVoePqYZdmjQURo = LVoePqYZdmjQURo();
     </script>
-<?php $__env->stopPush(); ?>
-<?php /**PATH C:\xampp\htdocs\taquad\resources\views/livewire/main/project/project.blade.php ENDPATH**/ ?>
+<?php $__env->stopPush(); ?><?php /**PATH C:\xampp\htdocs\taquad\resources\views/livewire/main/project/project.blade.php ENDPATH**/ ?>

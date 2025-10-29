@@ -221,7 +221,7 @@
                                     <div class="flex items-center gap-3">
                                         <span
                                             class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-500/10 text-primary-600 dark:text-primary-300">{{ $index + 1 }}</span>
-                                        <span>{{ $milestone['title'] ?: 'معلم بدون اسم' }}</span>
+                                        <span>{{ $milestone['title'] ?: 'دفعه بدون اسم' }}</span>
                                     </div>
                                     @if (!empty($milestone['amount']))
                                         <span
@@ -280,7 +280,8 @@
                     <div class="mt-4 space-y-2 text-[13px] text-slate-500 dark:text-zinc-400">
                         @foreach ($plans as $plan)
                             <p>• {{ $plan['title'] }} — {{ $formatMoney($plan['price']) ?? $plan['price'] }}
-                                {{ $currencySymbol }}</p>
+                                {{ $currencySymbol }}
+                            </p>
                         @endforeach
                     </div>
                 @endif
