@@ -231,7 +231,7 @@
                         <div class="flex justify-between py-3 space-x-4 rtl:space-x-reverse">
 
                             {{-- Project action buttons --}}
-                            @if ( in_array($project->status, ['active', 'completed', 'under_development', 'pending_final_review', 'incomplete', 'closed']) && $project->awarded_bid && $project->awarded_bid->status === 'active' && $project->awarded_bid->is_freelancer_accepted && $project->awarded_freelancer_id == auth()->id() )
+                            @if ( in_array($project->status, ['active', 'completed', 'under_development', 'pending_final_review', 'incomplete', 'closed', 'cancelled']) && $project->awarded_bid && $project->awarded_bid->status === 'active' && $project->awarded_bid->is_freelancer_accepted && $project->awarded_freelancer_id == auth()->id() )
                                 <div>
                                     <div class="isolate inline-flex rounded-md shadow-sm sm:space-x-3 sm:rtl:space-x-reverse sm:shadow-none">
 

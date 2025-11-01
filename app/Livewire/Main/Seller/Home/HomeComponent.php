@@ -122,7 +122,7 @@ class HomeComponent extends Component
                             ->latest('updated_at');
                     })
                     ->where('awarded_freelancer_id', $userId)
-                    ->whereIn('status', ['active', 'completed', 'under_development', 'pending_final_review', 'incomplete', 'closed'])
+                    ->whereIn('status', ['active', 'completed', 'under_development', 'pending_final_review', 'incomplete', 'closed', 'cancelled'])
                     ->take(8)
                     ->get();
             } else {

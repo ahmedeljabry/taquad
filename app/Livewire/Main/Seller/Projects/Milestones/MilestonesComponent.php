@@ -9,6 +9,7 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use App\Models\ProjectMilestone;
 use App\Models\ProjectReview;
+use App\Models\ProjectDecision;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
 use App\Notifications\User\Client\ProjectReviewReceived as ClientProjectReviewReceived;
@@ -36,6 +37,8 @@ class MilestonesComponent extends Component
     public string $ratingComment = '';
     public bool $hasPaidMilestones = false;
     public ?ProjectReview $freelancerReview = null;
+    public ?ProjectDecision $pendingDecision = null;
+    public string $requestNote = '';
 
 
     /**
@@ -58,7 +61,7 @@ class MilestonesComponent extends Component
         // Get project
         $project = Project::where('uid', $id)
             ->where('awarded_freelancer_id', auth()->id())
-            ->whereIn('status', ['active', 'completed', 'under_development', 'pending_final_review', 'incomplete', 'closed'])
+            ->whereIn('status', ['active', 'completed', 'under_development', 'pending_final_review', 'incomplete', 'closed', 'cancelled'])
             ->whereHas('awarded_bid', function ($query) {
                 return $query->where('user_id', auth()->id())
                     ->where('is_freelancer_accepted', true)
@@ -93,6 +96,7 @@ class MilestonesComponent extends Component
         }
 
         $this->syncReviewState();
+        $this->refreshDecisionState();
     }
 
     protected function syncReviewState(): void
@@ -109,9 +113,25 @@ class MilestonesComponent extends Component
 
         $this->freelancerReview = $existingReview;
 
-        $this->canRateClient = in_array($this->project->status, ['completed', 'pending_final_review'], true)
-            && $this->hasPaidMilestones
-            && is_null($existingReview);
+        $statusesAllowingRating = ['completed', 'pending_final_review', 'cancelled'];
+        $ratingUnlocked = in_array($this->project->status, $statusesAllowingRating, true);
+
+        if ($this->project->status === 'cancelled') {
+            $ratingUnlocked = true;
+        } elseif ($ratingUnlocked) {
+            $ratingUnlocked = $this->hasPaidMilestones;
+        }
+
+        $this->canRateClient = $ratingUnlocked && is_null($existingReview);
+    }
+
+    protected function refreshDecisionState(): void
+    {
+        $this->project->loadMissing(['decisions.requester']);
+        $this->pendingDecision = $this->project->decisions()
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
     }
 
     protected function milestoneStatusLabel(string $status): string
@@ -179,6 +199,95 @@ class MilestonesComponent extends Component
             'ring_color'   => $style['ring'],
             'icon'         => $style['icon'],
         ];
+    }
+
+    public function requestDelivery(): void
+    {
+        $this->submitProjectDecisionRequest('deliver');
+    }
+
+    public function requestCancellation(): void
+    {
+        $this->submitProjectDecisionRequest('cancel');
+    }
+
+    private function submitProjectDecisionRequest(string $type): void
+    {
+        if (!in_array($type, ['deliver', 'cancel'], true)) {
+            return;
+        }
+
+        if (!in_array($this->project->status, ['active', 'under_development', 'pending_final_review'], true)) {
+            $this->alert(
+                'info',
+                __('messages.t_noted'),
+                [
+                    'text'     => __('messages.t_project_action_invalid_state'),
+                    'toast'    => true,
+                    'position' => 'top-end',
+                ]
+            );
+
+            return;
+        }
+
+        if ($this->project->decisions()->where('status', 'pending')->exists()) {
+            $this->alert(
+                'info',
+                __('messages.t_noted'),
+                [
+                    'text'     => __('messages.t_project_request_pending_exists'),
+                    'toast'    => true,
+                    'position' => 'top-end',
+                ]
+            );
+
+            return;
+        }
+
+        $cleanNote = $this->requestNote ? clean($this->requestNote) : null;
+
+        ProjectDecision::create([
+            'project_id'        => $this->project->id,
+            'requested_by_id'   => auth()->id(),
+            'requested_by_role' => 'freelancer',
+            'type'              => $type,
+            'status'            => 'pending',
+            'message'           => $cleanNote,
+        ]);
+
+        $this->project->refresh();
+        $this->refreshDecisionState();
+        $this->requestNote = '';
+
+        $notificationKey = $type === 'deliver'
+            ? 't_project_delivery_request_sent'
+            : 't_project_cancel_request_sent';
+
+        $actionDescription = $type === 'deliver'
+            ? __('messages.t_project_request_type_deliver')
+            : __('messages.t_project_request_type_cancel');
+
+        notification([
+            'text'    => 't_project_request_client_prompt',
+            'action'  => url('account/projects/milestones', $this->project->uid),
+            'user_id' => $this->project->user_id,
+            'params'  => [
+                'username' => auth()->user()->username,
+                'project'  => $this->project->title,
+                'action'   => $actionDescription,
+            ],
+        ]);
+
+        $this->alert(
+            'success',
+            __('messages.t_success'),
+            [
+                'text'     => __($notificationKey),
+                'toast'    => true,
+                'position' => 'top-end',
+            ]
+        );
     }
 
     public function openRatingModal(): void

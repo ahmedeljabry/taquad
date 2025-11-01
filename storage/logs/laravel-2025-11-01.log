@@ -1,0 +1,479 @@
+[2025-11-01 06:30:13] local.ERROR: Attribute [head] does not exist. {"exception":"[object] (InvalidArgumentException(code: 0): Attribute [head] does not exist. at C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteRegistrar.php:112)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(1502): Illuminate\\Routing\\RouteRegistrar->attribute('head', 'healthz')
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\Facades\\Facade.php(355): Illuminate\\Routing\\Router->__call('head', Array)
+#2 C:\\xampp\\htdocs\\taquad\\routes\\api.php(28): Illuminate\\Support\\Facades\\Facade::__callStatic('head', Array)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(509): Illuminate\\Routing\\RouteFileRegistrar->{closure}(Object(Illuminate\\Routing\\Router))
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(465): Illuminate\\Routing\\Router->loadRoutes(Object(Closure))
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteRegistrar.php(194): Illuminate\\Routing\\Router->group(Array, Object(Closure))
+#6 C:\\xampp\\htdocs\\taquad\\routes\\api.php(26): Illuminate\\Routing\\RouteRegistrar->group(Object(Closure))
+#7 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteFileRegistrar.php(35): require('C:\\\\xampp\\\\htdocs...')
+#8 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(511): Illuminate\\Routing\\RouteFileRegistrar->register('C:\\\\xampp\\\\htdocs...')
+#9 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(465): Illuminate\\Routing\\Router->loadRoutes('C:\\\\xampp\\\\htdocs...')
+#10 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteRegistrar.php(194): Illuminate\\Routing\\Router->group(Array, 'C:\\\\xampp\\\\htdocs...')
+#11 C:\\xampp\\htdocs\\taquad\\app\\Providers\\RouteServiceProvider.php(34): Illuminate\\Routing\\RouteRegistrar->group('C:\\\\xampp\\\\htdocs...')
+#12 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): App\\Providers\\RouteServiceProvider->App\\Providers\\{closure}()
+#13 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(41): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#14 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(81): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#15 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Object(Closure), Object(Closure))
+#16 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(662): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Object(Closure), Array, NULL)
+#17 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider.php(120): Illuminate\\Container\\Container->call(Object(Closure))
+#18 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider.php(45): Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider->loadRoutes()
+#19 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider->Illuminate\\Foundation\\Support\\Providers\\{closure}()
+#20 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(41): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#21 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(81): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#22 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Object(Closure), Object(Closure))
+#23 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(662): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Object(Closure), Array, NULL)
+#24 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\ServiceProvider.php(119): Illuminate\\Container\\Container->call(Object(Closure))
+#25 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1062): Illuminate\\Support\\ServiceProvider->callBootedCallbacks()
+#26 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1040): Illuminate\\Foundation\\Application->bootProvider(Object(App\\Providers\\RouteServiceProvider))
+#27 [internal function]: Illuminate\\Foundation\\Application->Illuminate\\Foundation\\{closure}(Object(App\\Providers\\RouteServiceProvider), 58)
+#28 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1039): array_walk(Array, Object(Closure))
+#29 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Bootstrap\\BootProviders.php(17): Illuminate\\Foundation\\Application->boot()
+#30 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(286): Illuminate\\Foundation\\Bootstrap\\BootProviders->bootstrap(Object(Illuminate\\Foundation\\Application))
+#31 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(447): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#32 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(199): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#33 C:\\xampp\\htdocs\\taquad\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#34 {main}
+"} 
+[2025-11-01 06:52:33] local.ERROR: __VSCODE_LARAVEL_STARTUP_ERROR__: rename(C:\xampp\htdocs\taquad\bootstrap\cache\serEE2A.tmp,C:\xampp\htdocs\taquad\bootstrap\cache/services.php): Access is denied (code: 5) {"exception":"[object] (Error(code: 0): __VSCODE_LARAVEL_STARTUP_ERROR__: rename(C:\\xampp\\htdocs\\taquad\\bootstrap\\cache\\serEE2A.tmp,C:\\xampp\\htdocs\\taquad\\bootstrap\\cache/services.php): Access is denied (code: 5) at C:\\xampp\\htdocs\\taquad\\vendor\\_laravel_ide\\discover-5802e590a92e23606bb54d2909564178.php:33)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\_laravel_ide\\discover-5802e590a92e23606bb54d2909564178.php(62): LaravelVsCode::startupError(Object(ErrorException))
+#1 {main}
+"} 
+[2025-11-01 07:27:46] local.ERROR: PHP Parse error: Syntax error, unexpected T_NS_SEPARATOR on line 1 {"exception":"[object] (Psy\\Exception\\ParseErrorException(code: 0): PHP Parse error: Syntax error, unexpected T_NS_SEPARATOR on line 1 at C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Exception\\ParseErrorException.php:44)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\CodeCleaner.php(560): Psy\\Exception\\ParseErrorException::fromParseError(Object(PhpParser\\Error))
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\CodeCleaner.php(283): Psy\\CodeCleaner->parse('<?php \\\\=app(App...', false)
+#2 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(924): Psy\\CodeCleaner->clean(Array, false)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(958): Psy\\Shell->addCode('\\\\=app(App\\\\\\\\Serv...', true)
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(1497): Psy\\Shell->setCode('\\\\=app(App\\\\\\\\Serv...', true)
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\tinker\\src\\Console\\TinkerCommand.php(76): Psy\\Shell->execute('\\\\=app(App\\\\\\\\Serv...')
+#6 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Laravel\\Tinker\\Console\\TinkerCommand->handle()
+#7 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(41): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#8 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#9 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#10 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(662): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#11 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(211): Illuminate\\Container\\Container->call(Array)
+#12 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Command\\Command.php(326): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#13 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(180): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#14 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(1096): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#15 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand(Object(Laravel\\Tinker\\Console\\TinkerCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#16 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(175): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#17 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(201): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#18 C:\\xampp\\htdocs\\taquad\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#19 {main}
+"} 
+[2025-11-01 07:28:27] local.ERROR: PHP Parse error: Syntax error, unexpected T_NAME_FULLY_QUALIFIED, expecting '{' on line 1 {"exception":"[object] (Psy\\Exception\\ParseErrorException(code: 0): PHP Parse error: Syntax error, unexpected T_NAME_FULLY_QUALIFIED, expecting '{' on line 1 at C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Exception\\ParseErrorException.php:44)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\CodeCleaner.php(560): Psy\\Exception\\ParseErrorException::fromParseError(Object(PhpParser\\Error))
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\CodeCleaner.php(283): Psy\\CodeCleaner->parse('<?php use App\\\\\\\\...', false)
+#2 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(924): Psy\\CodeCleaner->clean(Array, false)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(958): Psy\\Shell->addCode('use App\\\\\\\\Servic...', true)
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(1497): Psy\\Shell->setCode('use App\\\\\\\\Servic...', true)
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\tinker\\src\\Console\\TinkerCommand.php(76): Psy\\Shell->execute('use App\\\\\\\\Servic...')
+#6 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Laravel\\Tinker\\Console\\TinkerCommand->handle()
+#7 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(41): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#8 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#9 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#10 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(662): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#11 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(211): Illuminate\\Container\\Container->call(Array)
+#12 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Command\\Command.php(326): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#13 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(180): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#14 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(1096): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#15 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand(Object(Laravel\\Tinker\\Console\\TinkerCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#16 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(175): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#17 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(201): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#18 C:\\xampp\\htdocs\\taquad\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#19 {main}
+"} 
+[2025-11-01 07:28:48] local.ERROR: PHP Parse error: Syntax error, unexpected T_NS_SEPARATOR on line 1 {"exception":"[object] (Psy\\Exception\\ParseErrorException(code: 0): PHP Parse error: Syntax error, unexpected T_NS_SEPARATOR on line 1 at C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Exception\\ParseErrorException.php:44)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\CodeCleaner.php(560): Psy\\Exception\\ParseErrorException::fromParseError(Object(PhpParser\\Error))
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\CodeCleaner.php(283): Psy\\CodeCleaner->parse('<?php \\\\=app(\\\\Ap...', false)
+#2 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(924): Psy\\CodeCleaner->clean(Array, false)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(958): Psy\\Shell->addCode('\\\\=app(\\\\App\\\\\\\\Ser...', true)
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(1497): Psy\\Shell->setCode('\\\\=app(\\\\App\\\\\\\\Ser...', true)
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\tinker\\src\\Console\\TinkerCommand.php(76): Psy\\Shell->execute('\\\\=app(\\\\App\\\\\\\\Ser...')
+#6 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Laravel\\Tinker\\Console\\TinkerCommand->handle()
+#7 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(41): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#8 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#9 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#10 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(662): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#11 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(211): Illuminate\\Container\\Container->call(Array)
+#12 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Command\\Command.php(326): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#13 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(180): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#14 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(1096): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#15 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand(Object(Laravel\\Tinker\\Console\\TinkerCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#16 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(175): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#17 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(201): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#18 C:\\xampp\\htdocs\\taquad\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#19 {main}
+"} 
+[2025-11-01 07:37:16] local.ERROR: Declaration of App\Http\Controllers\Auth\TrackerOAuthController::authorize(Illuminate\Http\Request $request, App\Services\TrackerOAuthService $service): Illuminate\Http\RedirectResponse must be compatible with App\Http\Controllers\Controller::authorize($ability, $arguments = []) {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Declaration of App\\Http\\Controllers\\Auth\\TrackerOAuthController::authorize(Illuminate\\Http\\Request $request, App\\Services\\TrackerOAuthService $service): Illuminate\\Http\\RedirectResponse must be compatible with App\\Http\\Controllers\\Controller::authorize($ability, $arguments = []) at C:\\xampp\\htdocs\\taquad\\app\\Http\\Controllers\\Auth\\TrackerOAuthController.php:14)
+[stacktrace]
+#0 {main}
+"} 
+[2025-11-01 07:42:32] local.ERROR: PHP Parse error: Syntax error, unexpected '=' on line 1 {"exception":"[object] (Psy\\Exception\\ParseErrorException(code: 0): PHP Parse error: Syntax error, unexpected '=' on line 1 at C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Exception\\ParseErrorException.php:44)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\CodeCleaner.php(560): Psy\\Exception\\ParseErrorException::fromParseError(Object(PhpParser\\Error))
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\CodeCleaner.php(283): Psy\\CodeCleaner->parse('<?php  = app(\\\\A...', false)
+#2 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(924): Psy\\CodeCleaner->clean(Array, false)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(958): Psy\\Shell->addCode(' = app(\\\\App\\\\Ser...', true)
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(1497): Psy\\Shell->setCode(' = app(\\\\App\\\\Ser...', true)
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\tinker\\src\\Console\\TinkerCommand.php(76): Psy\\Shell->execute(' = app(\\\\App\\\\Ser...')
+#6 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Laravel\\Tinker\\Console\\TinkerCommand->handle()
+#7 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(41): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#8 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#9 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#10 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(662): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#11 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(211): Illuminate\\Container\\Container->call(Array)
+#12 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Command\\Command.php(326): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#13 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(180): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#14 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(1096): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#15 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand(Object(Laravel\\Tinker\\Console\\TinkerCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#16 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(175): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#17 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(201): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#18 C:\\xampp\\htdocs\\taquad\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#19 {main}
+"} 
+[2025-11-01 07:42:41] local.ERROR: PHP Parse error: Syntax error, unexpected T_NS_SEPARATOR on line 1 {"exception":"[object] (Psy\\Exception\\ParseErrorException(code: 0): PHP Parse error: Syntax error, unexpected T_NS_SEPARATOR on line 1 at C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Exception\\ParseErrorException.php:44)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\CodeCleaner.php(560): Psy\\Exception\\ParseErrorException::fromParseError(Object(PhpParser\\Error))
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\CodeCleaner.php(283): Psy\\CodeCleaner->parse('<?php \\\\ = app(\\\\...', false)
+#2 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(924): Psy\\CodeCleaner->clean(Array, false)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(958): Psy\\Shell->addCode('\\\\ = app(\\\\\\\\App\\\\\\\\...', true)
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\psy\\psysh\\src\\Shell.php(1497): Psy\\Shell->setCode('\\\\ = app(\\\\\\\\App\\\\\\\\...', true)
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\tinker\\src\\Console\\TinkerCommand.php(76): Psy\\Shell->execute('\\\\ = app(\\\\\\\\App\\\\\\\\...')
+#6 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Laravel\\Tinker\\Console\\TinkerCommand->handle()
+#7 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(41): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#8 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#9 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#10 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(662): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#11 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(211): Illuminate\\Container\\Container->call(Array)
+#12 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Command\\Command.php(326): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#13 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(180): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#14 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(1096): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#15 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand(Object(Laravel\\Tinker\\Console\\TinkerCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#16 C:\\xampp\\htdocs\\taquad\\vendor\\symfony\\console\\Application.php(175): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#17 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(201): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#18 C:\\xampp\\htdocs\\taquad\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#19 {main}
+"} 
+[2025-11-01 09:01:19] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:58622/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:01:19] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"WWhaYk8on3KDRjR5qZMf7z4I9YKXtk7jBVwjpxu3c9zwGu1u","ttl":600} 
+[2025-11-01 09:01:19] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"XRubfYxU","state":"WWhaYk8on3KDRjR5qZMf7z4I9YKXtk7jBVwjpxu3c9zwGu1u"} 
+[2025-11-01 09:01:30] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:61993/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:01:30] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"SiuY37wvlfv5hIwpYQroyYG4haROVoAQabea6yvgvvMdbG3E","ttl":600} 
+[2025-11-01 09:01:30] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"8pG4Hv9l","state":"SiuY37wvlfv5hIwpYQroyYG4haROVoAQabea6yvgvvMdbG3E"} 
+[2025-11-01 09:04:19] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:60797/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:04:19] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"sgl7zf937kJe49r2Ef0K3LeLbKy7Efil8astFFdaroavlUiE","ttl":600} 
+[2025-11-01 09:04:19] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"6FZwqDLj","state":"sgl7zf937kJe49r2Ef0K3LeLbKy7Efil8astFFdaroavlUiE"} 
+[2025-11-01 09:08:42] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:64453/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:08:42] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"ObSP5Ub5jfd3PAbQry0RCKHJR8Ku88jlpztPpGYDSmoenozr","ttl":600} 
+[2025-11-01 09:08:42] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"TOiIWWhq","state":"ObSP5Ub5jfd3PAbQry0RCKHJR8Ku88jlpztPpGYDSmoenozr"} 
+[2025-11-01 09:10:22] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:49948/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:10:22] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"pargRbyNlpv4aQ5mYAvbXnl2sgDovMRLdBxvIUTVwjULZi9H","ttl":600} 
+[2025-11-01 09:10:22] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"OLARCXbJ","state":"pargRbyNlpv4aQ5mYAvbXnl2sgDovMRLdBxvIUTVwjULZi9H"} 
+[2025-11-01 09:10:26] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop"} 
+[2025-11-01 09:13:54] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:51512/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:13:54] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"y4XoOmJpUBvn3BCZ18W6dLY7z8s1JaMyucjnX5BfFJmf8GCa","ttl":600} 
+[2025-11-01 09:13:54] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"ft80Id4K","state":"y4XoOmJpUBvn3BCZ18W6dLY7z8s1JaMyucjnX5BfFJmf8GCa"} 
+[2025-11-01 09:13:57] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop"} 
+[2025-11-01 09:20:31] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:49985/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:20:31] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"XUvvjLGjl2V0vF5SU3fhDbVdperBhNTlLDjblKadskzxc1rR","ttl":600} 
+[2025-11-01 09:20:31] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"7hRbOcOO","state":"XUvvjLGjl2V0vF5SU3fhDbVdperBhNTlLDjblKadskzxc1rR"} 
+[2025-11-01 09:20:33] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop"} 
+[2025-11-01 09:20:40] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:63133/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:20:40] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"EDxRfCYqWRU13KTrlCLaEwiLubcRPM2ZyBRBewiffwYIk1hA","ttl":600} 
+[2025-11-01 09:20:40] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"qnhEwcvR","state":"EDxRfCYqWRU13KTrlCLaEwiLubcRPM2ZyBRBewiffwYIk1hA"} 
+[2025-11-01 09:20:43] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop"} 
+[2025-11-01 09:22:07] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:58592/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:22:07] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"t7hbGhoU1BLBlnEg1UvyBPp615BSVLu8gWG8YL8AuNrQQxDG","ttl":600} 
+[2025-11-01 09:22:07] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"tzMSLIMI","state":"t7hbGhoU1BLBlnEg1UvyBPp615BSVLu8gWG8YL8AuNrQQxDG"} 
+[2025-11-01 09:22:09] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop"} 
+[2025-11-01 09:23:09] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:65115/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:23:09] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"NgrbTCMspnUk8OE7eD4lHFz01jJXTCF1Vx9VeMwa2AxQPOlC","ttl":600} 
+[2025-11-01 09:23:09] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"B960Y21Q","state":"NgrbTCMspnUk8OE7eD4lHFz01jJXTCF1Vx9VeMwa2AxQPOlC"} 
+[2025-11-01 09:23:10] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop"} 
+[2025-11-01 09:26:17] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:54837/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:26:17] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"NBniMPZmcLhzrftfz3BvaB65LWpXvo2Js5k5ReBa4YKZMAmE","ttl":600} 
+[2025-11-01 09:26:17] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"F6YJuTuW","state":"NBniMPZmcLhzrftfz3BvaB65LWpXvo2Js5k5ReBa4YKZMAmE"} 
+[2025-11-01 09:26:19] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop"} 
+[2025-11-01 09:28:02] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:59839/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:28:02] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"Qj2An9Sl1OYsZumZ7iDSls3hg7bWdYBgZPjecktLnH7KW9Qz","ttl":600} 
+[2025-11-01 09:28:02] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"c3o1A4XZ","state":"Qj2An9Sl1OYsZumZ7iDSls3hg7bWdYBgZPjecktLnH7KW9Qz"} 
+[2025-11-01 09:28:03] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop"} 
+[2025-11-01 09:33:13] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:55603/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:33:13] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"4gWC1c75ROk6STrRu60bftlHMZrB4EDzFMRUeelZluznwmTJ","ttl":600} 
+[2025-11-01 09:33:13] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"UHxjeouU","state":"4gWC1c75ROk6STrRu60bftlHMZrB4EDzFMRUeelZluznwmTJ"} 
+[2025-11-01 09:33:15] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop"} 
+[2025-11-01 09:33:59] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:60294/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:33:59] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"DkH7sqrzo4CXbi8sEuwFOzS3HGp6WVxsKolTJ7jrq4XO4vbw","ttl":600} 
+[2025-11-01 09:33:59] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"VMdpUHAN","state":"DkH7sqrzo4CXbi8sEuwFOzS3HGp6WVxsKolTJ7jrq4XO4vbw"} 
+[2025-11-01 09:34:01] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop"} 
+[2025-11-01 09:36:41] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:62936/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:36:41] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"X3FEXYspjc32nhqY4RgS7GvlO5uAaID6DmS7l9OBFzC6FYun","ttl":600} 
+[2025-11-01 09:36:41] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"wGUEZVfJ","state":"X3FEXYspjc32nhqY4RgS7GvlO5uAaID6DmS7l9OBFzC6FYun"} 
+[2025-11-01 09:36:43] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop","access_token":"12|rqOOUcxmNLfacDaDHjNBwSsWANFJAbH9eaV74FPt694806e4"} 
+[2025-11-01 09:41:57] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:65320/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:41:57] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"f0GmL5CutWmJaJ6mBOKzvoMnMQdSFDsonOX47Fp743JljbfR","ttl":600} 
+[2025-11-01 09:41:57] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"rL92jK4C","state":"f0GmL5CutWmJaJ6mBOKzvoMnMQdSFDsonOX47Fp743JljbfR"} 
+[2025-11-01 09:42:00] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop","access_token":"13|HwdYALAviPfKRGBZcB2pLUiisEv3snnd076V1Erh2c283077"} 
+[2025-11-01 09:43:11] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:65325/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:43:11] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"DJtMy4du0aafwu2mCCD8DPNXQxVvJjWY7q9e0yNJovGALWVP","ttl":600} 
+[2025-11-01 09:43:11] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"mJPaOK1T","state":"DJtMy4du0aafwu2mCCD8DPNXQxVvJjWY7q9e0yNJovGALWVP"} 
+[2025-11-01 09:43:13] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop","access_token":"14|eCMdHg6i5i6oOc6HmRb6YsuU8gG9w0Me5SiM6rwN1532d023"} 
+[2025-11-01 09:45:36] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:57282/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:45:36] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"sb2opT1RnvmHF0Aolg1b9vcArrWDAu3BmX9M7suEM3NisBOa","ttl":600} 
+[2025-11-01 09:45:36] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"Zsj4DngV","state":"sb2opT1RnvmHF0Aolg1b9vcArrWDAu3BmX9M7suEM3NisBOa"} 
+[2025-11-01 09:45:39] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop","access_token":"15|sdbCebDJPmsC25LQvz7pESFR2dF5of0EQAn5jLqj48ab688c"} 
+[2025-11-01 09:47:09] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:61876/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:47:09] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"RorhZ7ie3x1E5i9HbrrKNUkvxifHLQSZGDZTU26AiUPegbXg","ttl":600} 
+[2025-11-01 09:47:09] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"iD0ZTGNL","state":"RorhZ7ie3x1E5i9HbrrKNUkvxifHLQSZGDZTU26AiUPegbXg"} 
+[2025-11-01 09:47:56] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:54047/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:47:56] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"f7Z9petFqy04d792J05jr0hoJfumx6nyRJ8LvNmINgHk457k","ttl":600} 
+[2025-11-01 09:47:56] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"ACSACrGr","state":"f7Z9petFqy04d792J05jr0hoJfumx6nyRJ8LvNmINgHk457k"} 
+[2025-11-01 09:54:00] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:62343/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:54:00] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"ShzXFKWpT90p061sGgh3EVOMnFlJupQuLVKdyqWy4L8NryMl","ttl":600} 
+[2025-11-01 09:54:00] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"eEryPb2I","state":"ShzXFKWpT90p061sGgh3EVOMnFlJupQuLVKdyqWy4L8NryMl"} 
+[2025-11-01 09:55:31] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:63308/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:55:31] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"ci4Jm60naC8YxAGAtURgUEkVkhlnip76FjCzjm8xJbpSArlf","ttl":600} 
+[2025-11-01 09:55:31] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"ZtmQKqkw","state":"ci4Jm60naC8YxAGAtURgUEkVkhlnip76FjCzjm8xJbpSArlf"} 
+[2025-11-01 09:55:33] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop","access_token":"16|jwyGOW9zv55BUuw8PeeMogUw6ODvO8aqgMWrpS8X3a2ea66c"} 
+[2025-11-01 09:56:35] local.INFO: Tracker OAuth: authorization request approved. {"user_id":1,"client_id":"taquad-tracker-desktop","redirect":"http://127.0.0.1:59374/oauth/callback","scope":"tracker:read tracker:write"} 
+[2025-11-01 09:56:35] local.DEBUG: Tracker OAuth: authorization code issued. {"user_id":1,"client_id":"taquad-tracker-desktop","state":"hRW1WCqHu4BTUbo0AuK1qOVWuMX4J9hsK8hhOr0VOc8nJxXu","ttl":600} 
+[2025-11-01 09:56:35] local.INFO: Tracker OAuth: redirecting to loopback callback with code. {"user_id":1,"client_id":"taquad-tracker-desktop","code_prefix":"8eoVZqVN","state":"hRW1WCqHu4BTUbo0AuK1qOVWuMX4J9hsK8hhOr0VOc8nJxXu"} 
+[2025-11-01 09:56:36] local.INFO: Tracker OAuth: issued access + refresh tokens. {"user_id":1,"client_id":"taquad-tracker-desktop","access_token":"17|9TOLjc0tX41AJBoFJtKZiXlh98J1IQ5J0hDE3H6X770f2016"} 
+[2025-11-01 09:56:37] local.ERROR: Target class [abilities] does not exist. {"userId":1,"exception":"[object] (Illuminate\\Contracts\\Container\\BindingResolutionException(code: 0): Target class [abilities] does not exist. at C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php:914)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(795): Illuminate\\Container\\Container->build('abilities')
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(986): Illuminate\\Container\\Container->resolve('abilities', Array, true)
+#2 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(731): Illuminate\\Foundation\\Application->resolve('abilities', Array)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(971): Illuminate\\Container\\Container->make('abilities', Array)
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(172): Illuminate\\Foundation\\Application->make('abilities')
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#6 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#7 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#8 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(125): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#9 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#10 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#11 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Auth\\Middleware\\Authenticate.php(57): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#12 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Auth\\Middleware\\Authenticate->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'sanctum')
+#13 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#14 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(805): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#15 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#16 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#17 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#18 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#19 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#20 C:\\xampp\\htdocs\\taquad\\vendor\\livewire\\livewire\\src\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#21 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 C:\\xampp\\htdocs\\taquad\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#23 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#24 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#25 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#26 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#28 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#31 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#32 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#34 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#35 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#36 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#37 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#38 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#39 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#40 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#41 C:\\xampp\\htdocs\\taquad\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#42 {main}
+
+[previous exception] [object] (ReflectionException(code: -1): Class \"abilities\" does not exist at C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php:912)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(912): ReflectionClass->__construct('abilities')
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(795): Illuminate\\Container\\Container->build('abilities')
+#2 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(986): Illuminate\\Container\\Container->resolve('abilities', Array, true)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(731): Illuminate\\Foundation\\Application->resolve('abilities', Array)
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(971): Illuminate\\Container\\Container->make('abilities', Array)
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(172): Illuminate\\Foundation\\Application->make('abilities')
+#6 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#7 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#8 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#9 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(125): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#10 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#11 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#12 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Auth\\Middleware\\Authenticate.php(57): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#13 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Auth\\Middleware\\Authenticate->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'sanctum')
+#14 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#15 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(805): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#16 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#17 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#18 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#19 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#20 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#21 C:\\xampp\\htdocs\\taquad\\vendor\\livewire\\livewire\\src\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#23 C:\\xampp\\htdocs\\taquad\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#28 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#29 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#38 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#39 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#40 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#41 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#42 C:\\xampp\\htdocs\\taquad\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#43 {main}
+"} 
+[2025-11-01 09:56:37] local.ERROR: Target class [abilities] does not exist. {"userId":1,"exception":"[object] (Illuminate\\Contracts\\Container\\BindingResolutionException(code: 0): Target class [abilities] does not exist. at C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php:914)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(795): Illuminate\\Container\\Container->build('abilities')
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(986): Illuminate\\Container\\Container->resolve('abilities', Array, true)
+#2 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(731): Illuminate\\Foundation\\Application->resolve('abilities', Array)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(971): Illuminate\\Container\\Container->make('abilities', Array)
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(255): Illuminate\\Foundation\\Application->make('abilities')
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(213): Illuminate\\Foundation\\Http\\Kernel->terminateMiddleware(Object(Illuminate\\Http\\Request), Object(Illuminate\\Http\\JsonResponse))
+#6 C:\\xampp\\htdocs\\taquad\\index.php(56): Illuminate\\Foundation\\Http\\Kernel->terminate(Object(Illuminate\\Http\\Request), Object(Illuminate\\Http\\JsonResponse))
+#7 {main}
+
+[previous exception] [object] (ReflectionException(code: -1): Class \"abilities\" does not exist at C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php:912)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(912): ReflectionClass->__construct('abilities')
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(795): Illuminate\\Container\\Container->build('abilities')
+#2 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(986): Illuminate\\Container\\Container->resolve('abilities', Array, true)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(731): Illuminate\\Foundation\\Application->resolve('abilities', Array)
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(971): Illuminate\\Container\\Container->make('abilities', Array)
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(255): Illuminate\\Foundation\\Application->make('abilities')
+#6 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(213): Illuminate\\Foundation\\Http\\Kernel->terminateMiddleware(Object(Illuminate\\Http\\Request), Object(Illuminate\\Http\\JsonResponse))
+#7 C:\\xampp\\htdocs\\taquad\\index.php(56): Illuminate\\Foundation\\Http\\Kernel->terminate(Object(Illuminate\\Http\\Request), Object(Illuminate\\Http\\JsonResponse))
+#8 {main}
+"} 
+[2025-11-01 09:58:16] local.ERROR: Target class [abilities] does not exist. {"userId":1,"exception":"[object] (Illuminate\\Contracts\\Container\\BindingResolutionException(code: 0): Target class [abilities] does not exist. at C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php:914)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(795): Illuminate\\Container\\Container->build('abilities')
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(986): Illuminate\\Container\\Container->resolve('abilities', Array, true)
+#2 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(731): Illuminate\\Foundation\\Application->resolve('abilities', Array)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(971): Illuminate\\Container\\Container->make('abilities', Array)
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(172): Illuminate\\Foundation\\Application->make('abilities')
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#6 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#7 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#8 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(125): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#9 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#10 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#11 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Auth\\Middleware\\Authenticate.php(57): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#12 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Auth\\Middleware\\Authenticate->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'sanctum')
+#13 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#14 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(805): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#15 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#16 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#17 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#18 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#19 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#20 C:\\xampp\\htdocs\\taquad\\vendor\\livewire\\livewire\\src\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#21 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 C:\\xampp\\htdocs\\taquad\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#23 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#24 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#25 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#26 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#28 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#31 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#32 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#34 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#35 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#36 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#37 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#38 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#39 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#40 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#41 C:\\xampp\\htdocs\\taquad\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#42 {main}
+
+[previous exception] [object] (ReflectionException(code: -1): Class \"abilities\" does not exist at C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php:912)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(912): ReflectionClass->__construct('abilities')
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(795): Illuminate\\Container\\Container->build('abilities')
+#2 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(986): Illuminate\\Container\\Container->resolve('abilities', Array, true)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(731): Illuminate\\Foundation\\Application->resolve('abilities', Array)
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(971): Illuminate\\Container\\Container->make('abilities', Array)
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(172): Illuminate\\Foundation\\Application->make('abilities')
+#6 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#7 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#8 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#9 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(125): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#10 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#11 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#12 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Auth\\Middleware\\Authenticate.php(57): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#13 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Auth\\Middleware\\Authenticate->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'sanctum')
+#14 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#15 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(805): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#16 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#17 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#18 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#19 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#20 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#21 C:\\xampp\\htdocs\\taquad\\vendor\\livewire\\livewire\\src\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#23 C:\\xampp\\htdocs\\taquad\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#28 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#29 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#38 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#39 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#40 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#41 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#42 C:\\xampp\\htdocs\\taquad\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#43 {main}
+"} 
+[2025-11-01 09:58:16] local.ERROR: Target class [abilities] does not exist. {"userId":1,"exception":"[object] (Illuminate\\Contracts\\Container\\BindingResolutionException(code: 0): Target class [abilities] does not exist. at C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php:914)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(795): Illuminate\\Container\\Container->build('abilities')
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(986): Illuminate\\Container\\Container->resolve('abilities', Array, true)
+#2 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(731): Illuminate\\Foundation\\Application->resolve('abilities', Array)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(971): Illuminate\\Container\\Container->make('abilities', Array)
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(255): Illuminate\\Foundation\\Application->make('abilities')
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(213): Illuminate\\Foundation\\Http\\Kernel->terminateMiddleware(Object(Illuminate\\Http\\Request), Object(Illuminate\\Http\\JsonResponse))
+#6 C:\\xampp\\htdocs\\taquad\\index.php(56): Illuminate\\Foundation\\Http\\Kernel->terminate(Object(Illuminate\\Http\\Request), Object(Illuminate\\Http\\JsonResponse))
+#7 {main}
+
+[previous exception] [object] (ReflectionException(code: -1): Class \"abilities\" does not exist at C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php:912)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(912): ReflectionClass->__construct('abilities')
+#1 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(795): Illuminate\\Container\\Container->build('abilities')
+#2 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(986): Illuminate\\Container\\Container->resolve('abilities', Array, true)
+#3 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(731): Illuminate\\Foundation\\Application->resolve('abilities', Array)
+#4 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(971): Illuminate\\Container\\Container->make('abilities', Array)
+#5 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(255): Illuminate\\Foundation\\Application->make('abilities')
+#6 C:\\xampp\\htdocs\\taquad\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(213): Illuminate\\Foundation\\Http\\Kernel->terminateMiddleware(Object(Illuminate\\Http\\Request), Object(Illuminate\\Http\\JsonResponse))
+#7 C:\\xampp\\htdocs\\taquad\\index.php(56): Illuminate\\Foundation\\Http\\Kernel->terminate(Object(Illuminate\\Http\\Request), Object(Illuminate\\Http\\JsonResponse))
+#8 {main}
+"} 

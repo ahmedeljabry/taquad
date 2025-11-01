@@ -163,6 +163,11 @@ class Project extends Model implements Sitemapable
         return $this->hasOne(ProjectMilestone::class, 'project_id')->whereIn('status', ['paid', 'funded']);
     }
 
+    public function decisions()
+    {
+        return $this->hasMany(ProjectDecision::class);
+    }
+
     /**
      * Get subscriptions
      *

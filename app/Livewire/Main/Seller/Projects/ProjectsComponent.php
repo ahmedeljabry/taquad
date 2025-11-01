@@ -91,7 +91,7 @@ class ProjectsComponent extends Component
                 ->latest('updated_at');
         })
             ->where('awarded_freelancer_id', auth()->id())
-            ->whereIn('status', ['active', 'completed', 'under_development', 'pending_final_review', 'incomplete', 'closed'])
+            ->whereIn('status', ['active', 'completed', 'under_development', 'pending_final_review', 'incomplete', 'closed', 'cancelled'])
             ->latest('updated_at')
             ->paginate(42);
     }
@@ -207,7 +207,9 @@ class ProjectsComponent extends Component
             ]);
 
             // We have to redirect him to project overview section
-            return redirect('seller/projects/milestones/' . $project->uid)->with('success', __('messages.t_awarded_projects_warning_msg'));
+            return redirect()
+                ->to('seller/projects/milestones/' . $project->uid)
+                ->with('success', __('messages.t_awarded_projects_warning_msg'));
         } catch (\Throwable $th) {
 
             // Error

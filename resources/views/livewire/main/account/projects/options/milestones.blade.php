@@ -93,6 +93,25 @@
                 </div>
             </div>
 
+            <div class="mb-10 flex flex-wrap gap-3">
+                <a href="{{ url('account/projects/options/milestones/' . $project->uid) }}"
+                   class="inline-flex items-center px-3 py-2 rounded border text-xs font-semibold transition
+                        {{ request()->is('account/projects/options/milestones*')
+                            ? 'border-primary-500 bg-primary-50 text-primary-600 dark:border-primary-400 dark:bg-primary-500/20 dark:text-primary-200'
+                            : 'border-gray-200 bg-white text-gray-600 hover:border-primary-200 hover:text-primary-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300' }}">
+                    <i class="ph-duotone ph-flag text-base ltr:mr-1 rtl:ml-1"></i>
+                    @lang('messages.t_milestone_payments')
+                </a>
+                <a href="{{ url('account/projects/options/tracker/' . $project->uid) }}"
+                   class="inline-flex items-center px-3 py-2 rounded border text-xs font-semibold transition
+                        {{ request()->is('account/projects/options/tracker*')
+                            ? 'border-primary-500 bg-primary-50 text-primary-600 dark:border-primary-400 dark:bg-primary-500/20 dark:text-primary-200'
+                            : 'border-gray-200 bg-white text-gray-600 hover:border-primary-200 hover:text-primary-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300' }}">
+                    <i class="ph-duotone ph-monitor-play text-base ltr:mr-1 rtl:ml-1"></i>
+                    @lang('messages.t_tracker_activity_review')
+                </a>
+            </div>
+
             {{-- Content --}}
             <div class="w-full">
 
@@ -217,6 +236,89 @@
 
                     </div>
                 </div>
+
+                @if ($pendingDecision)
+                    @php
+                        $decisionActionLabel = $pendingDecision->type === 'deliver'
+                            ? __('messages.t_project_request_type_deliver')
+                            : __('messages.t_project_request_type_cancel');
+                        $decisionRequester = optional($pendingDecision->requester)->username ?? __('messages.t_freelancer');
+                    @endphp
+                    <div class="mt-12 rounded-2xl border border-amber-200 bg-amber-50/70 p-6 shadow-sm dark:border-amber-400/40 dark:bg-amber-500/10">
+                        <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-3">
+                                    <span class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500 text-white">
+                                        <i class="ph ph-handshake text-lg"></i>
+                                    </span>
+                                    <h3 class="text-sm font-semibold text-amber-900 dark:text-amber-100">
+                                        @lang('messages.t_project_pending_request_heading')
+                                    </h3>
+                                </div>
+                                <p class="text-sm leading-6 text-amber-900/80 dark:text-amber-100/80">
+                                    {{ __('messages.t_project_pending_request_body', ['username' => $decisionRequester, 'action' => $decisionActionLabel]) }}
+                                </p>
+
+                                @if ($pendingDecision->message)
+                                    <div class="rounded-xl bg-white/70 p-4 text-sm text-amber-900/90 shadow-sm dark:bg-amber-500/20 dark:text-amber-100">
+                                        {!! nl2br(e($pendingDecision->message)) !!}
+                                    </div>
+                                @endif
+
+                                <div class="grid gap-2">
+                                    <label class="text-xs font-semibold uppercase tracking-wide text-amber-800 dark:text-amber-100">
+                                        @lang('messages.t_optional_note_label')
+                                    </label>
+                                    <textarea wire:model.defer="decisionResponseNote" rows="2" class="w-full resize-none rounded-lg border border-amber-200 bg-white/90 p-3 text-sm text-amber-900 shadow-sm focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/30 dark:border-amber-400/40 dark:bg-amber-500/10 dark:text-amber-100" placeholder="@lang('messages.t_optional_note_placeholder')"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="flex w-full flex-col gap-3 lg:w-56">
+                                <button wire:click="respondToDecision('{{ $pendingDecision->id }}','approve')" type="button" class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-amber-50 dark:focus:ring-offset-amber-500/10">
+                                    <i class="ph ph-check-fat text-base ltr:mr-2 rtl:ml-2"></i>
+                                    @lang('messages.t_approve_request')
+                                </button>
+
+                                <button wire:click="respondToDecision('{{ $pendingDecision->id }}','decline')" type="button" class="inline-flex items-center justify-center rounded-lg border border-amber-400 px-4 py-2 text-sm font-semibold text-amber-700 shadow-sm hover:bg-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-amber-50 dark:border-amber-400/60 dark:text-amber-100 dark:hover:bg-amber-500/10 dark:focus:ring-offset-amber-500/10">
+                                    <i class="ph ph-x text-base ltr:mr-2 rtl:ml-2"></i>
+                                    @lang('messages.t_decline_request')
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @if (in_array($project->status, ['active', 'under_development', 'pending_final_review']))
+                    <div class="mt-12 rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                            <div>
+                                <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                                    @lang('messages.t_project_controls_heading')
+                                </h3>
+                                <p class="mt-1 text-sm text-slate-500 dark:text-zinc-400">
+                                    @lang('messages.t_project_controls_subheading')
+                                </p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <button wire:click="confirmMarkCompleted" type="button" class="inline-flex items-center rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-900">
+                                    <i class="ph ph-flag-checkered text-base ltr:mr-2 rtl:ml-2"></i>
+                                    @lang('messages.t_mark_as_completed')
+                                </button>
+                                <button wire:click="confirmCancelProject" type="button" class="inline-flex items-center rounded-lg border border-rose-500 px-4 py-2 text-sm font-semibold text-rose-600 shadow-sm hover:bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 focus:ring-offset-white dark:border-rose-400 dark:text-rose-200 dark:hover:bg-rose-500/10 dark:focus:ring-offset-zinc-900">
+                                    <i class="ph ph-warning text-base ltr:mr-2 rtl:ml-2"></i>
+                                    @lang('messages.t_cancel_project')
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 grid gap-2">
+                            <label class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-zinc-400">
+                                @lang('messages.t_optional_note_label')
+                            </label>
+                            <textarea wire:model.defer="cancelNote" rows="2" class="w-full resize-none rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-700 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/30 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200" placeholder="@lang('messages.t_cancel_note_placeholder')"></textarea>
+                        </div>
+                    </div>
+                @endif
 
                     {{-- Milestones --}}
                     <div class="w-full">
@@ -841,6 +943,42 @@
                     @error('ratingScore')
                         <p class="mt-3 text-sm font-medium text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-sm font-semibold text-slate-600 dark:text-zinc-200">@lang('messages.t_rating_breakdown_title')</p>
+                        <p class="text-xs text-slate-400 dark:text-zinc-400 mt-1">@lang('messages.t_rating_breakdown_subtitle')</p>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        @foreach (\App\Enums\ProjectReviewAspect::cases() as $aspect)
+                            @php
+                                $aspectKey = $aspect->value;
+                                $currentValue = (int) data_get($ratingBreakdown, $aspectKey, 0);
+                            @endphp
+                            <div class="rounded-lg border border-slate-200 bg-white/70 p-4 dark:border-zinc-700 dark:bg-zinc-800">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-zinc-400 mb-2">
+                                    {{ $aspect->label() }}
+                                </p>
+                                <div class="flex items-center gap-2">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <label class="cursor-pointer">
+                                            <input type="radio"
+                                                class="sr-only"
+                                                name="ratingBreakdown_{{ $aspectKey }}"
+                                                value="{{ $i }}"
+                                                wire:model="ratingBreakdown.{{ $aspectKey }}">
+                                            <i class="ph-duotone ph-star text-xl transition-colors duration-150 {{ $currentValue >= $i ? 'text-amber-400' : 'text-slate-300 dark:text-zinc-600' }}"></i>
+                                        </label>
+                                    @endfor
+                                </div>
+                                @error('ratingBreakdown.' . $aspectKey)
+                                    <p class="mt-2 text-xs font-medium text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        @endforeach
+                    </div>
+                    <p class="text-xs text-slate-400 dark:text-zinc-400">@lang('messages.t_rating_breakdown_hint')</p>
                 </div>
 
                 <div>

@@ -17,6 +17,7 @@ class ProjectReview extends Model
         'reviewee_id',
         'reviewer_role',
         'score',
+        'score_breakdown',
         'comment',
         'is_skipped',
         'submitted_at',
@@ -25,6 +26,7 @@ class ProjectReview extends Model
     protected $casts = [
         'is_skipped'   => 'boolean',
         'submitted_at' => 'datetime',
+        'score_breakdown' => 'array',
     ];
 
     public function project()

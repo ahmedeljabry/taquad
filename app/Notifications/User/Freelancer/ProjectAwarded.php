@@ -46,7 +46,11 @@ class ProjectAwarded extends Notification implements ShouldQueue
                     ->greeting(__('messages.t_hello_username', ['username' => $notifiable->username]))
                     ->line(new HtmlString(__('messages.t_notification_congts_u_awarded_a_project')))
                     ->line($this->project->title)
-                    ->action(__('messages.t_view_project'), url('project/' . $this->project->pid . '/' . $this->project->slug));
+                    ->action(
+                        __('messages.t_manage_awarded_project'),
+                        url('seller/projects/milestones/' . $this->project->uid)
+                    )
+                    ->line(__('messages.t_manage_awarded_project_hint'));
     }
 
     /**

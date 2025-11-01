@@ -10,7 +10,10 @@ class TimeSnapshot extends Model
     use HasFactory;
 
     protected $fillable = [
-        'time_entry_id','image_path','captured_at',
+        'time_entry_id',
+        'image_path',
+        'disk',
+        'captured_at',
     ];
 
     protected $casts = [
@@ -19,4 +22,3 @@ class TimeSnapshot extends Model
 
     public function entry() { return $this->belongsTo(TimeEntry::class, 'time_entry_id'); }
 }
-

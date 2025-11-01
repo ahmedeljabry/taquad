@@ -776,6 +776,41 @@
                                 </div>
                             </div>
 
+                            @php
+                                $breakdown = $projectReputation['breakdown'] ?? [];
+                                $hasBreakdown = collect($breakdown)->filter(fn ($item) => !empty($item['avg']))->isNotEmpty();
+                            @endphp
+
+                            @if ($hasBreakdown)
+                                <div class="grid gap-3 rounded-2xl border border-slate-100 bg-white/80 p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+                                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400 dark:text-zinc-500">
+                                        @lang('messages.t_rating_breakdown_card_title')
+                                    </p>
+                                    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                                        @foreach ($breakdown as $item)
+                                            @continue(empty($item['avg']))
+                                            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/60">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="text-xs font-semibold text-slate-600 dark:text-zinc-200">
+                                                        {{ $item['label'] }}
+                                                    </span>
+                                                    <span class="inline-flex items-center gap-1 text-sm font-semibold text-amber-600 dark:text-amber-300">
+                                                        <i class="ph-duotone ph-star text-xs"></i>
+                                                        {{ number_format($item['avg'], 1) }}/5
+                                                    </span>
+                                                </div>
+                                                <div class="mt-2 h-1.5 rounded-full bg-slate-200/80 dark:bg-zinc-700">
+                                                    <span class="block h-full rounded-full bg-amber-400/80 dark:bg-amber-400/70" style="width: {{ min(100, max(0, ($item['avg'] ?? 0) * 20)) }}%"></span>
+                                                </div>
+                                                <p class="mt-2 text-[11px] text-slate-400 dark:text-zinc-500">
+                                                    @lang('messages.t_based_on_number_reviews', ['number' => $item['count']])
+                                                </p>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
                             {{-- Reviews list --}}
                             <div class="space-y-4">
                                 @foreach ($projectReviews as $review)
@@ -805,7 +840,7 @@
                                                 @if ($review->score)
                                                     {!! render_star_rating($review->score, '1rem', '1rem', '#d1d5db') !!}
                                                     <span class="ml-2 text-sm font-semibold text-amber-600 dark:text-amber-400">
-                                                        {{ number_format($review->score, 1) }}
+                                                        {{ number_format($review->score, 1) }}/5
                                                     </span>
                                                 @else
                                                     <span class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400 dark:text-zinc-500">
@@ -814,6 +849,29 @@
                                                 @endif
                                             </div>
                                         </div>
+
+                                        @php
+                                            $reviewBreakdown = collect($review->score_breakdown ?? [])
+                                                ->filter(fn ($value) => (int) $value > 0);
+                                        @endphp
+
+                                        @if ($reviewBreakdown->isNotEmpty())
+                                            <div class="mt-4 grid gap-2 sm:grid-cols-2">
+                                                @foreach (\App\Enums\ProjectReviewAspect::cases() as $aspect)
+                                                    @php
+                                                        $value = (int) $reviewBreakdown->get($aspect->value);
+                                                    @endphp
+                                                    @continue($value === 0)
+                                                    <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+                                                        <span>{{ $aspect->label() }}</span>
+                                                        <span class="inline-flex items-center gap-1 text-amber-500">
+                                                            <i class="ph-duotone ph-star text-xs"></i>
+                                                            {{ number_format($value, 1) }}/5
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
 
                                         @if ($review->comment)
                                             <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-zinc-300">

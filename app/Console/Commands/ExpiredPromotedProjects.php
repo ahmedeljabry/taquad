@@ -37,7 +37,7 @@ class ExpiredPromotedProjects extends Command
                                                         ->orWhereNotNull('expiry_date_urgent')
                                                         ->orWhereNotNull('expiry_date_highlight');
                                         })
-                                        ->whereIn('status', ['active', 'completed', 'under_development', 'pending_final_review', 'incomplete', 'closed'])
+                                        ->whereIn('status', ['active', 'completed', 'under_development', 'pending_final_review', 'incomplete', 'closed', 'cancelled'])
                                         ->get();
 
             // Set current date

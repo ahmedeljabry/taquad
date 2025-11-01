@@ -3,6 +3,7 @@
 namespace App\Livewire\Main\Profile;
 
 use App\Models\User;
+use App\Enums\ProjectReviewAspect;
 use App\Models\Admin;
 use App\Models\Order;
 use Livewire\Component;
@@ -15,6 +16,7 @@ use Livewire\WithFileUploads;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\DB;
 use App\Models\CustomOfferAttachment;
+use App\Models\ProjectReview;
 use App\Notifications\Admin\ProfileReported;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use App\Notifications\Admin\NewCustomOfferPending;
@@ -125,7 +127,51 @@ class ProfileComponent extends Component
             'badge'          => $badge,
             'level'          => $badge['label'] ?? null,
             'last_review_at' => $user->last_project_review_at,
+            'breakdown'      => $this->buildBreakdownMetrics($user->id),
         ];
+    }
+
+    private function buildBreakdownMetrics(int $userId): array
+    {
+        $aspects = ProjectReviewAspect::cases();
+        $totals  = [];
+        $counts  = [];
+
+        foreach ($aspects as $aspect) {
+            $totals[$aspect->value] = 0;
+            $counts[$aspect->value] = 0;
+        }
+
+        ProjectReview::query()
+            ->where('reviewee_id', $userId)
+            ->where('reviewer_role', 'client')
+            ->where('is_skipped', false)
+            ->whereNotNull('score_breakdown')
+            ->get(['score_breakdown'])
+            ->each(function (ProjectReview $review) use (&$totals, &$counts) {
+                foreach ($review->score_breakdown ?? [] as $key => $value) {
+                    if (array_key_exists($key, $totals)) {
+                        $totals[$key] += (int) $value;
+                        $counts[$key]++;
+                    }
+                }
+            });
+
+        return collect($aspects)
+            ->mapWithKeys(function (ProjectReviewAspect $aspect) use (&$totals, &$counts) {
+                $key   = $aspect->value;
+                $count = $counts[$key] ?? 0;
+                $avg   = $count > 0 ? round($totals[$key] / $count, 2) : null;
+
+                return [
+                    $key => [
+                        'label' => $aspect->label(),
+                        'avg'   => $avg,
+                        'count' => $count,
+                    ],
+                ];
+            })
+            ->toArray();
     }
 
     private function projectReviews()

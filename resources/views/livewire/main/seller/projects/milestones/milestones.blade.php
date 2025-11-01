@@ -202,6 +202,73 @@
         </div>
     </div>
 
+    @if ($pendingDecision)
+        @php
+            $decisionActionLabel = $pendingDecision->type === 'deliver'
+                ? __('messages.t_project_request_type_deliver')
+                : __('messages.t_project_request_type_cancel');
+            $isOwnRequest = $pendingDecision->requested_by_role === 'freelancer';
+        @endphp
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
+            <div class="mt-10 rounded-2xl border border-amber-200 bg-amber-50/70 p-6 shadow-sm dark:border-amber-400/40 dark:bg-amber-500/10">
+                <div class="flex items-start gap-3">
+                    <span class="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-amber-500 text-white">
+                        <i class="ph ph-hourglass-medium text-lg"></i>
+                    </span>
+                    <div class="space-y-3">
+                        <h3 class="text-sm font-semibold text-amber-900 dark:text-amber-100">
+                            {{ $isOwnRequest ? __('messages.t_request_waiting_client') : __('messages.t_project_pending_request_heading') }}
+                        </h3>
+                        <p class="text-sm leading-6 text-amber-900/80 dark:text-amber-100/80">
+                            {{ $isOwnRequest
+                                ? __('messages.t_request_waiting_client_body', ['action' => $decisionActionLabel])
+                                : __('messages.t_project_pending_request_body', ['username' => optional($pendingDecision->requester)->username ?? __('messages.t_employer'), 'action' => $decisionActionLabel])
+                            }}
+                        </p>
+                        @if ($pendingDecision->message)
+                            <div class="rounded-xl bg-white/70 p-4 text-sm text-amber-900/90 shadow-sm dark:bg-amber-500/20 dark:text-amber-100">
+                                {!! nl2br(e($pendingDecision->message)) !!}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if (in_array($project->status, ['active', 'under_development', 'pending_final_review']) && ! $pendingDecision)
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
+            <div class="mt-10 rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div>
+                        <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                            @lang('messages.t_request_actions_heading')
+                        </h3>
+                        <p class="mt-1 text-sm text-slate-500 dark:text-zinc-400">
+                            @lang('messages.t_request_actions_subheading')
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button wire:click="requestDelivery" type="button" class="inline-flex items-center rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-900">
+                            <i class="ph ph-rocket-launch text-base ltr:mr-2 rtl:ml-2"></i>
+                            @lang('messages.t_project_request_type_deliver')
+                        </button>
+                        <button wire:click="requestCancellation" type="button" class="inline-flex items-center rounded-lg border border-rose-500 px-4 py-2 text-sm font-semibold text-rose-600 shadow-sm hover:bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 focus:ring-offset-white dark:border-rose-400 dark:text-rose-200 dark:hover:bg-rose-500/10 dark:focus:ring-offset-zinc-900">
+                            <i class="ph ph-warning text-base ltr:mr-2 rtl:ml-2"></i>
+                            @lang('messages.t_project_request_type_cancel')
+                        </button>
+                    </div>
+                </div>
+                <div class="mt-4 grid gap-2">
+                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-zinc-400">
+                        @lang('messages.t_optional_note_label')
+                    </label>
+                    <textarea wire:model.defer="requestNote" rows="2" class="w-full resize-none rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-700 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/30 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200" placeholder="@lang('messages.t_optional_note_placeholder')"></textarea>
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{-- Content --}}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
         {{-- Timeline --}}

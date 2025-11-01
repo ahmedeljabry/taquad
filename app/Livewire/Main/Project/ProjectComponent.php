@@ -1176,16 +1176,28 @@ class ProjectComponent extends Component
 
             if (!empty($complianceData['nda'])) {
                 $bid->nda_signed_at    = now();
-                $bid->nda_signature    = $complianceData['nda']['signature'] ?? null;
-                $bid->nda_signature_meta = [
-                    'ip'                => $complianceData['nda']['ip'] ?? request()->ip(),
-                    'user_agent'        => $complianceData['nda']['user_agent'] ?? request()->userAgent(),
-                    'signed_payload_at' => $complianceData['nda']['signed_at'] ?? now()->toIso8601String(),
-                    'scope'             => $this->project->nda_scope,
-                    'term_months'       => $this->project->nda_term_months,
-                ];
-            }
-            $bid->save();
+            $bid->nda_signature    = $complianceData['nda']['signature'] ?? null;
+            $bid->nda_signature_meta = [
+                'ip'                => $complianceData['nda']['ip'] ?? request()->ip(),
+                'user_agent'        => $complianceData['nda']['user_agent'] ?? request()->userAgent(),
+                'signed_payload_at' => $complianceData['nda']['signed_at'] ?? now()->toIso8601String(),
+                'scope'             => $this->project->nda_scope,
+                'term_months'       => $this->project->nda_term_months,
+            ];
+        }
+        $bid->save();
+
+        if (!empty($complianceData['nda'])) {
+            notification([
+                'text'    => 't_notification_freelancer_signed_nda',
+                'action'  => url('project/' . $this->project->pid . '/' . $this->project->slug),
+                'user_id' => $this->project->user_id,
+                'params'  => [
+                    'username' => auth()->user()?->username,
+                    'project'  => $this->project->title,
+                ],
+            ]);
+        }
 
             // If pending payment, we have to create a payment link
             if ($status === 'pending_payment') {

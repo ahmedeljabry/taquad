@@ -4,18 +4,16 @@ namespace App\Livewire\Main\Cards;
 
 use App\Models\Admin;
 use Livewire\Component;
-use App\Models\ProjectBid;
 use WireUi\Traits\Actions;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use App\Models\ProjectMilestone;
-use App\Models\ProjectReportedBid;
 use App\Notifications\Admin\BidReported;
 use App\Notifications\User\Freelancer\ProposalViewed;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use App\Http\Validators\Main\Bid\ReportValidator;
 use App\Notifications\User\Freelancer\ProjectAwarded;
+use App\Models\{ProjectBid,ProjectMilestone,ProjectReportedBid};
 
 class Bid extends Component
 {
@@ -41,7 +39,10 @@ class Bid extends Component
     public function mount($bid_id)
     {
         // Get bid
-        $bid              = ProjectBid::whereUid($bid_id)->whereStatus('active')->firstOrFail();
+        $bid              = ProjectBid::whereUid($bid_id)
+            ->whereStatus('active')
+            ->with(['user.country', 'project.client'])
+            ->firstOrFail();
 
         // Get user
         $freelancer       = $bid->user;
@@ -202,7 +203,10 @@ class Bid extends Component
     public function updateBid()
     {
         // Get the bid
-        $bid                    = ProjectBid::whereUid($this->bid_id)->whereStatus('active')->firstOrFail();
+        $bid                    = ProjectBid::whereUid($this->bid_id)
+            ->whereStatus('active')
+            ->with(['user.country', 'project.client'])
+            ->firstOrFail();
 
         // Set the bid
         $this->bid              = $bid;
@@ -509,10 +513,12 @@ class Bid extends Component
             // Send notification to the freelancer (From website)
             notification([
                 'text'    => 't_congratulations_employer_awarded_u_their_project_title',
-                'action'  => url('seller/projects'),
+                'action'  => url('seller/projects/milestones/' . $project->uid),
                 'user_id' => $bid->user_id,
-                'params'  => ['username' => $project->client->username, 'title' => $project->title]
-
+                'params'  => [
+                    'username' => $project->client->username,
+                    'title'    => $project->title,
+                ],
             ]);
 
             // Send notification to the freelancer (By email)
@@ -676,7 +682,8 @@ class Bid extends Component
             ->all();
 
         $ndaAvailable = (bool) ($this->project->requires_nda && $this->project->nda_path);
-        $ndaDownloadUrl = $ndaAvailable
+        $downloadEnabled = $bid->is_awarded && $ndaAvailable && !empty($bid->nda_signature);
+        $ndaDownloadUrl = $downloadEnabled
             ? route('project.nda.download', [
                 'pid'  => $this->project->pid,
                 'slug' => $this->project->slug,
@@ -701,6 +708,7 @@ class Bid extends Component
                 'signed_at'            => $bid->nda_signed_at,
                 'signed_at_for_humans' => $bid->nda_signed_at ? format_date($bid->nda_signed_at, config('carbon-formats.long_date_time')) : null,
                 'download_url'         => $ndaDownloadUrl,
+                'download_enabled'     => $downloadEnabled,
                 'scope'                => $scope,
                 'term_label'           => $termLabel,
             ],

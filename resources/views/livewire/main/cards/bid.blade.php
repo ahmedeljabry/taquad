@@ -172,6 +172,116 @@
 
         @endif
 
+        {{-- Compliance: Freelancer answers and NDA --}}
+        @if (!empty($view_data['compliance']) && $view_data['compliance']['visible'])
+            <div class="mt-5 space-y-4">
+
+                <section class="rounded-2xl border border-slate-200 bg-slate-50/60 p-5 dark:border-zinc-700 dark:bg-zinc-800/60">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h4 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">@lang('messages.t_freelancer_answers')</h4>
+                            <p class="text-[12px] text-slate-600 dark:text-zinc-400">@lang('messages.t_freelancer_answers_hint')</p>
+                        </div>
+                        <span class="inline-flex items-center rounded-full bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500 shadow-sm dark:bg-zinc-900/70 dark:text-zinc-300">
+                            {{ count($view_data['compliance']['answers']) }}
+                            <span class="ltr:ml-1 rtl:mr-1">@lang('messages.t_responses')</span>
+                        </span>
+                    </div>
+
+                    <div class="mt-5">
+                        @if (!empty($view_data['compliance']['answers']))
+                            <ol class="space-y-4">
+                                @foreach ($view_data['compliance']['answers'] as $entry)
+                                    <li class="rounded-xl bg-white/80 p-4 shadow-sm ring-1 ring-slate-200/70 transition hover:-translate-y-0.5 hover:shadow-md dark:bg-zinc-900/70 dark:ring-zinc-700">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div>
+                                                <p class="text-[13px] font-semibold text-zinc-800 dark:text-zinc-100">
+                                                    {{ __('messages.t_response_counter', ['count' => $entry['index']]) }}
+                                                    @if ($entry['is_required'])
+                                                        <span class="ml-1 inline-flex items-center rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-rose-600 dark:bg-rose-500/20 dark:text-rose-200">
+                                                            @lang('messages.t_required')
+                                                        </span>
+                                                    @endif
+                                                </p>
+                                                <p class="mt-1 text-[12px] font-medium text-slate-500 dark:text-zinc-400">
+                                                    {{ $entry['question'] }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-[12px] leading-6 text-slate-700 dark:bg-zinc-800/80 dark:text-zinc-300">
+                                            @if (!is_null($entry['answer']))
+                                                {!! nl2br(e($entry['answer'])) !!}
+                                            @else
+                                                <span class="italic text-slate-400">@lang('messages.t_no_answer_provided')</span>
+                                            @endif
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ol>
+                        @else
+                            <div class="rounded-xl border border-dashed border-slate-300 bg-white/60 px-4 py-6 text-center text-[13px] text-slate-500 dark:border-zinc-600 dark:bg-zinc-900/60 dark:text-zinc-400">
+                                @lang('messages.t_no_answers_yet')
+                            </div>
+                        @endif
+                    </div>
+                </section>
+
+                @if ($view_data['compliance']['nda']['available'])
+                    <section class="rounded-2xl border border-primary-200 bg-gradient-to-r from-primary-50 via-white to-white p-5 shadow-sm dark:border-primary-500/40 dark:from-primary-500/15 dark:via-zinc-900 dark:to-zinc-900">
+                        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h4 class="text-sm font-semibold text-primary-900 dark:text-primary-100">@lang('messages.t_project_nda_heading')</h4>
+                                <p class="text-[12px] text-primary-900/80 dark:text-primary-100/70">
+                                    {!! nl2br(e($view_data['compliance']['nda']['scope'])) !!}
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide @class([
+                                    'bg-primary-600 text-white shadow-sm' => $view_data['compliance']['nda']['signed'],
+                                    'bg-white text-primary-700 ring-1 ring-primary-200' => !$view_data['compliance']['nda']['signed'],
+                                ])">
+                                    {{ $view_data['compliance']['nda']['signed'] ? __('messages.t_nda_status_signed') : __('messages.t_nda_status_pending') }}
+                                </span>
+                                @if ($view_data['compliance']['nda']['download_enabled'] && $view_data['compliance']['nda']['download_url'])
+                                    <a href="{{ $view_data['compliance']['nda']['download_url'] }}" class="inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-1.5 text-[11px] font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-primary-700">
+                                        <i class="ph ph-file-pdf text-sm"></i>
+                                        <span>@lang('messages.t_download_nda_pdf')</span>
+                                    </a>
+                                @else
+                                    <span class="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-[11px] font-semibold text-primary-600 ring-1 ring-primary-200/60 dark:bg-primary-500/10 dark:text-primary-100">
+                                        <i class="ph ph-lock-simple text-sm"></i>
+                                        <span>@lang('messages.t_download_nda_locked')</span>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="mt-5 grid gap-4 text-[12px] md:grid-cols-3">
+                            <div class="rounded-xl bg-white/80 p-3 shadow-sm ring-1 ring-primary-100/80 dark:bg-primary-500/10 dark:ring-primary-400/40">
+                                <p class="font-semibold uppercase tracking-wide text-[11px] text-primary-700 dark:text-primary-100/80">@lang('messages.t_project_nda_term_label')</p>
+                                <p class="mt-2 leading-6 text-primary-900 dark:text-primary-100">{{ $view_data['compliance']['nda']['term_label'] }}</p>
+                            </div>
+                            <div class="rounded-xl bg-white/80 p-3 shadow-sm ring-1 ring-primary-100/80 dark:bg-primary-500/10 dark:ring-primary-400/40">
+                                <p class="font-semibold uppercase tracking-wide text-[11px] text-primary-700 dark:text-primary-100/80">@lang('messages.t_project_nda_signature_label')</p>
+                                <p class="mt-2 leading-6 text-primary-900 dark:text-primary-100">
+                                    @if ($view_data['compliance']['nda']['signed'])
+                                        {{ $view_data['compliance']['nda']['signature'] }}
+                                        <span class="block text-[11px] opacity-70 mt-1">{{ $view_data['compliance']['nda']['signed_at_for_humans'] }}</span>
+                                    @else
+                                        @lang('messages.t_project_nda_waiting_signature')
+                                    @endif
+                                </p>
+                            </div>
+                            <div class="rounded-xl bg-white/80 p-3 shadow-sm ring-1 ring-primary-100/80 dark:bg-primary-500/10 dark:ring-primary-400/40">
+                                <p class="font-semibold uppercase tracking-wide text-[11px] text-primary-700 dark:text-primary-100/80">@lang('messages.t_project_nda_scope_label')</p>
+                                <p class="mt-2 leading-6 text-primary-900 dark:text-primary-100">{!! nl2br(e($view_data['compliance']['nda']['scope'])) !!}</p>
+                            </div>
+                        </div>
+                    </section>
+                @endif
+            </div>
+        @endif
+
         {{-- Bid footer --}}
         <div class="mt-6 flex justify-between items-center">
 

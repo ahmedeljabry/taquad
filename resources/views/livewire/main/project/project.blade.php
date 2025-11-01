@@ -1,129 +1,5 @@
 <div class="max-w-[1400px] mx-auto">
 
-    {{-- Breadcrumbs --}}
-    <nav class="hidden justify-between px-4 py-3 text-gray-700 rounded-lg sm:flex sm:px-5 bg-white dark:bg-zinc-700/40 dark:border-zinc-700 shadow"
-        aria-label="Breadcrumb" style="margin-top: 150px;">
-
-        {{-- Links --}}
-        <ol class="inline-flex items-center mb-3 space-x-1 md:space-x-3 rtl:space-x-reverse sm:mb-0">
-
-            {{-- Home --}}
-            <li>
-                <div class="flex items-center">
-                    <a href="{{ url('/') }}"
-                        class="ltr:ml-1 rtl:mr-1 text-sm font-medium text-gray-700 hover:text-primary-600 ltr:md:ml-2 rtl:md:mr-2 dark:text-zinc-300 dark:hover:text-white">
-                        @lang('messages.t_home')
-                    </a>
-                </div>
-            </li>
-
-            {{-- Projects --}}
-            <li aria-current="page">
-                <div class="flex items-center">
-                    <svg aria-hidden="true" class="w-5 h-5 text-gray-400 rtl:rotate-180" fill="currentColor"
-                        viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                    <a href="{{ url('explore/projects') }}"
-                        class="ltr:ml-1 rtl:mr-1 text-sm font-medium text-gray-700 hover:text-primary-600 ltr:md:ml-2 rtl:md:mr-2 dark:text-zinc-300 dark:hover:text-white">
-                        @lang('messages.t_projects')
-                    </a>
-
-                </div>
-            </li>
-
-            {{-- Project title --}}
-            <li aria-current="page">
-                <div class="flex items-center">
-                    <svg aria-hidden="true" class="w-5 h-5 text-gray-400 rtl:rotate-180" fill="currentColor"
-                        viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                    <span
-                        class="mx-1 text-sm font-medium text-gray-500 md:mx-2 dark:text-zinc-500 truncate max-w-[18rem]">
-                        {{ $project->title }}
-                    </span>
-                </div>
-            </li>
-
-        </ol>
-
-        {{-- Actions button --}}
-        <div class="relative">
-            <button x-on:click="is_actions_menu = !is_actions_menu"
-                class="inline-flex items-center px-3 py-2 text-sm font-normal text-center text-gray-600 bg-gray-200 rounded hover:bg-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:text-zinc-300 dark:focus:ring-zinc-700">
-                <svg class="w-4 h-4 ltr:mr-2 rtl:ml-2" stroke="currentColor" fill="currentColor" stroke-width="0"
-                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z">
-                    </path>
-                </svg>
-                @lang('messages.t_actions')
-                <svg class="w-4 h-4 ltr:ml-1 rtl:mr-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                        clip-rule="evenodd"></path>
-                </svg>
-            </button>
-            <div x-show="is_actions_menu" x-transition:enter="transition ease-out duration-150"
-                x-transition:enter-start="transform opacity-0 scale-75"
-                x-transition:enter-end="transform opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-100"
-                x-transition:leave-start="transform opacity-100 scale-100"
-                x-transition:leave-end="transform opacity-0 scale-75" x-on:click.outside="is_actions_menu = false"
-                role="menu" aria-labelledby="tk-dropdown-simple"
-                class="absolute ltr:right-0 rtl:left-0 ltr:origin-top-right rtl:origin-top-left mt-2 w-48 shadow-xl rounded z-1"
-                style="display: none">
-                <div
-                    class="bg-white dark:bg-zinc-900 ring-1 ring-black ring-opacity-5 rounded divide-y divide-gray-100">
-                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
-                        aria-labelledby="project-page-actions-default">
-
-                        {{-- Report project --}}
-                        @auth
-                            @if (auth()->id() != $project->user_id)
-                                <li>
-                                    <button type="button" id="modal-report-project-button"
-                                        class="w-full flex items-center space-x-3 rtl:space-x-reverse px-4 py-2 hover:bg-gray-100 dark:hover:bg-zinc-600 dark:hover:text-white focus:outline-none focus:ring-transparent">
-                                        <svg class="w-5 h-5 text-gray-500 dark:text-zinc-300" stroke="currentColor"
-                                            fill="currentColor" stroke-width="0" viewBox="0 0 20 20"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd"
-                                                d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z"
-                                                clip-rule="evenodd"></path>
-                                        </svg>
-                                        <span>@lang('messages.t_report_project')</span>
-                                    </button>
-                                </li>
-                            @endif
-                        @endauth
-
-                        {{-- Share project --}}
-                        <li>
-                            <button type="button" id="modal-share-project-button"
-                                class="w-full flex items-center space-x-3 rtl:space-x-reverse px-4 py-2 hover:bg-gray-100 dark:hover:bg-zinc-600 dark:hover:text-white focus:outline-none focus:ring-transparent">
-                                <svg class="w-5 h-5 text-gray-500 dark:text-zinc-300" stroke="currentColor"
-                                    fill="currentColor" stroke-width="0" viewBox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z">
-                                    </path>
-                                </svg>
-                                <span>@lang('messages.t_share_project')</span>
-                            </button>
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-    </nav>
 
     @php
         $projectBudget = $project->budget_min === $project->budget_max
@@ -143,17 +19,121 @@
             'rejected' => ['label' => __('messages.t_rejected'), 'class' => 'bg-red-500/15 text-red-600 dark:text-red-200'],
             'hidden' => ['label' => __('messages.t_hidden'), 'class' => 'bg-slate-500/15 text-slate-700 dark:text-slate-200'],
             'incomplete' => ['label' => __('messages.t_incomplete'), 'class' => 'bg-stone-500/15 text-stone-600 dark:text-stone-200'],
-        ];
-        $projectStatusLabel = $statusStyles[$project->status]['label'] ?? __('messages.t_' . $project->status);
-        $projectStatusClass = $statusStyles[$project->status]['class'] ?? 'bg-slate-500/15 text-slate-700 dark:text-slate-200';
-    @endphp
+    ];
+    $projectStatusLabel = $statusStyles[$project->status]['label'] ?? __('messages.t_' . $project->status);
+    $projectStatusClass = $statusStyles[$project->status]['class'] ?? 'bg-slate-500/15 text-slate-700 dark:text-slate-200';
+@endphp
+
+    <nav  class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-sm shadow-slate-900/5 dark:border-zinc-700 dark:bg-zinc-900 sm:p-8">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div class="space-y-4">
+                <nav class="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-zinc-400">
+                    <a href="{{ url('/') }}" class="hover:text-primary-600 dark:hover:text-primary-300">
+                        @lang('messages.t_home')
+                    </a>
+                    <span class="text-slate-300 dark:text-zinc-600">/</span>
+                    <a href="{{ url('explore/projects') }}" class="hover:text-primary-600 dark:hover:text-primary-300">
+                        @lang('messages.t_projects')
+                    </a>
+                </nav>
+                <div class="space-y-2">
+                    <h1 class="text-2xl font-semibold text-zinc-900 dark:text-zinc-50 sm:text-3xl">
+                        {{ $project->title }}
+                    </h1>
+                    <div class="flex flex-wrap items-center gap-3 text-sm text-slate-500 dark:text-zinc-400">
+                        <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold {{ $projectStatusClass }}">
+                            <i class="ph ph-flag text-sm"></i>
+                            {{ $projectStatusLabel }}
+                        </span>
+                        <span class="inline-flex items-center gap-2">
+                            <i class="ph ph-clock text-base"></i>
+                            {{ format_date($project->created_at, 'ago') }}
+                        </span>
+                        @if ($projectCategory)
+                            <span class="inline-flex items-center gap-2">
+                                <i class="ph ph-folders text-base"></i>
+                                {{ $projectCategory }}
+                            </span>
+                        @endif
+                        <span class="inline-flex items-center gap-2">
+                            <i class="ph ph-chats-circle text-base"></i>
+                            {{ $projectBidsCount }} @lang('messages.t_bids')
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                @auth
+                    @if (auth()->id() != $project->user_id && $project->status === 'active' && !$already_submitted_proposal && auth()->user()->account_type === 'seller')
+                        <button id="modal-bid-button" type="button"
+                            class="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400 dark:bg-primary-500 dark:hover:bg-primary-400">
+                            <i class="ph ph-paper-plane-right text-base"></i>
+                            <span>@lang('messages.t_bid_on_this_project')</span>
+                        </button>
+                    @endif
+                @endauth
+
+                @auth
+                    @if (auth()->id() != $project->user_id)
+                        <button type="button" id="modal-report-project-button"
+                            class="inline-flex items-center justify-center gap-2 rounded-full border border-transparent bg-rose-50 px-4 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-100 focus:outline-none focus:ring-2 focus:ring-rose-400 dark:bg-rose-500/10 dark:text-rose-200 dark:hover:bg-rose-500/20">
+                            <i class="ph ph-flag text-sm"></i>
+                            @lang('messages.t_report_project')
+                        </button>
+                    @endif
+                @endauth
+
+                <button type="button" id="modal-share-project-button"
+                    class="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700">
+                    <i class="ph ph-share-network text-sm"></i>
+                    @lang('messages.t_share_project')
+                </button>
+            </div>
+        </div>
+
+        <dl class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="rounded-2xl border border-slate-200 bg-white/80 p-4 dark:border-zinc-700 dark:bg-zinc-800/70">
+                <dt class="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
+                    @lang('messages.t_project_budget')
+                </dt>
+                <dd class="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                    {{ $projectBudget }}
+                </dd>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white/80 p-4 dark:border-zinc-700 dark:bg-zinc-800/70">
+                <dt class="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
+                    @lang('messages.t_average_bid')
+                </dt>
+                <dd class="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                    {{ $projectAvgBid }}
+                </dd>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white/80 p-4 dark:border-zinc-700 dark:bg-zinc-800/70">
+                <dt class="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
+                    @lang('messages.t_duration')
+                </dt>
+                <dd class="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                    {{ $project->duration ? trans_choice('messages.t_days_count', $project->duration, ['count' => $project->duration]) : __('messages.t_na') }}
+                </dd>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white/80 p-4 dark:border-zinc-700 dark:bg-zinc-800/70">
+                <dt class="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
+                    @lang('messages.t_project_type')
+                </dt>
+                <dd class="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                    {{ $project->budget_type === 'fixed' ? __('messages.t_fixed_price') : __('messages.t_hourly_price') }}
+                </dd>
+            </div>
+        </dl>
+    </nav>
 
     <div class="py-0">
         <div class="gap-6 grid grid-cols-1 lg:grid-cols-3 lg:grid-flow-col-dense sm:mt-8">
 
             {{-- Left section --}}
             <div class="space-y-10 lg:col-start-1 lg:col-span-2">
-                @if ($bestBids->isNotEmpty() && $bestBids->count() > 2 && auth()->user()?->id === $project->user_id)
+                @if (auth()->user()?->id === $project->user_id)
                     <section
                         class="rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
                         <div class="flex items-center justify-between gap-3">
@@ -250,15 +230,6 @@
                                     {{ $project->title }}
                                 </h2>
                             </div>
-                            @auth
-                                @if (auth()->id() != $project->user_id && $project->status === 'active' && !$already_submitted_proposal && auth()->user()->account_type === 'seller')
-                                    <button id="modal-bid-button" type="button"
-                                        class="inline-flex items-center gap-2 rounded-full bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400 dark:bg-primary-500 dark:hover:bg-primary-400">
-                                        <i class="ph ph-paper-plane-right text-base"></i>
-                                        <span>@lang('messages.t_bid_on_this_project')</span>
-                                    </button>
-                                @endif
-                            @endauth
                         </header>
 
                         <div class="mt-6 space-y-10">

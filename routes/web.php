@@ -3,9 +3,14 @@
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\Api\Auth\TrackerOAuthTokenController;
+use App\Http\Controllers\Auth\TrackerOAuthController;
+use App\Http\Controllers\Main\ProjectNdaController;
+use App\Http\Controllers\Main\TrackerLoginController;
 use App\Http\Controllers\SupportWidgetController;
 use App\Http\Controllers\Theme\PreferenceController;
 use App\Livewire\Main\Project\InviteComponent;
+use App\Livewire\Main\Account\Projects\Options\TrackerComponent;
 
 // Update route for livewire
 Livewire::setUpdateRoute(function ($handle) {
@@ -32,6 +37,13 @@ Route::prefix('tasks')->group(function () {
     });
 });
 
+
+Route::post('oauth/token', [TrackerOAuthTokenController::class, 'token'])
+    ->middleware('api')
+    ->name('oauth.token');
+
+Route::get('tracker/oauth', TrackerLoginController::class)->name('tracker.oauth');
+Route::get('oauth/authorize', [TrackerOAuthController::class, 'authorizeRequest'])->name('oauth.authorize');
 
 // Support widget
 Route::post('support/widget', SupportWidgetController::class)->name('support.widget.store');
@@ -84,6 +96,16 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted'])->group(functio
 
         // Project
         Route::get('{pid}/{slug}', ProjectComponent::class);
+
+        // NDA download
+        Route::get('{pid}/{slug}/nda/{bid}', [ProjectNdaController::class, 'downloadNda'])
+            ->middleware('auth')
+            ->name('project.nda.download');
+
+        // Proposal PDF download (freelancer answers and bid summary)
+        Route::get('{pid}/{slug}/proposal/{bid}', [ProjectNdaController::class, 'downloadProposal'])
+            ->middleware('auth')
+            ->name('project.proposal.download');
     });
 
     // Blog
@@ -179,6 +201,9 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted'])->group(functio
 
                 // Milestones
                 Route::get('milestones/{id}', MilestonesComponent::class);
+
+                // Tracker
+                Route::get('tracker/{id}', TrackerComponent::class);
 
                 // Edit
                 Route::get('edit/{id}', EditComponent::class);
