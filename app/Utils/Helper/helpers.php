@@ -38,6 +38,7 @@ use App\Models\CashfreeSettings;
 use App\Models\JazzcashSettings;
 use App\Models\PaystackSettings;
 use App\Models\RazorpaySettings;
+use App\Events\Realtime\UserNotificationBroadcast;
 use App\Models\SettingsCurrency;
 use App\Models\SettingsLiveChat;
 use App\Models\SettingsSecurity;
@@ -1106,6 +1107,23 @@ function notification(array $data)
     $notification->action  = $data['action'];
     $notification->params  = isset($data['params']) ? $data['params'] : null;
     $notification->save();
+
+    try {
+        event(new UserNotificationBroadcast(
+            (int) $notification->user_id,
+            'notification.created',
+            [
+                'id'         => $notification->uid,
+                'text'       => $notification->text,
+                'action'     => $notification->action,
+                'params'     => $notification->params,
+                'is_seen'    => (bool) $notification->is_seen,
+                'created_at' => optional($notification->created_at)->toIso8601String(),
+            ]
+        ));
+    } catch (\Throwable $th) {
+        report($th);
+    }
 
     // Return notification
     return $notification;

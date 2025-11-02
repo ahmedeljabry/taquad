@@ -7,10 +7,12 @@ use App\Http\Controllers\Api\Auth\TrackerOAuthTokenController;
 use App\Http\Controllers\Auth\TrackerOAuthController;
 use App\Http\Controllers\Main\ProjectNdaController;
 use App\Http\Controllers\Main\TrackerLoginController;
+use App\Http\Controllers\Main\TrackerLogoutController;
 use App\Http\Controllers\SupportWidgetController;
 use App\Http\Controllers\Theme\PreferenceController;
 use App\Livewire\Main\Project\InviteComponent;
 use App\Livewire\Main\Account\Projects\Options\TrackerComponent;
+use App\Livewire\Main\Seller\Projects\TrackerComponent as SellerTrackerComponent;
 
 // Update route for livewire
 Livewire::setUpdateRoute(function ($handle) {
@@ -43,6 +45,7 @@ Route::post('oauth/token', [TrackerOAuthTokenController::class, 'token'])
     ->name('oauth.token');
 
 Route::get('tracker/oauth', TrackerLoginController::class)->name('tracker.oauth');
+Route::post('tracker/logout', TrackerLogoutController::class)->name('tracker.logout');
 Route::get('oauth/authorize', [TrackerOAuthController::class, 'authorizeRequest'])->name('oauth.authorize');
 
 // Support widget
@@ -194,7 +197,7 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted'])->group(functio
             Route::get('/', ProjectsComponent::class);
 
             // Options
-            Route::namespace('Options')->group(function () {
+            Route::namespace('Options')->prefix('options')->group(function () {
 
                 // Checkout
                 Route::get('checkout/{id}', CheckoutComponent::class);
@@ -297,6 +300,9 @@ Route::namespace('Become')->prefix('start_selling')->group(function () {
 
             // Index
             Route::get('/', ProjectsComponent::class);
+
+            // Tracker hub
+            Route::get('tracker/{id}', SellerTrackerComponent::class);
 
             // Milestones
             Route::namespace('Milestones')->prefix('milestones')->group(function () {

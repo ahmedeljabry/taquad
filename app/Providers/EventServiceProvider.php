@@ -6,6 +6,8 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Notifications\Events\NotificationSent;
+use App\Listeners\BroadcastNotificationListener;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -22,7 +24,10 @@ class EventServiceProvider extends ServiceProvider
             \SocialiteProviders\LinkedIn\LinkedInExtendSocialite::class.'@handle',
             \SocialiteProviders\Google\GoogleExtendSocialite::class.'@handle',
             \SocialiteProviders\Facebook\FacebookExtendSocialite::class.'@handle'
-        ]
+        ],
+        NotificationSent::class => [
+            BroadcastNotificationListener::class,
+        ],
     ];
 
     /**

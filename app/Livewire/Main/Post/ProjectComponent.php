@@ -10,6 +10,7 @@ use Livewire\WithFileUploads;
 use Illuminate\Database\Eloquent\Collection;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use App\Http\Validators\Main\Post\ProjectValidator;
+use App\Services\Tracker\HourlyProjectProvisioner;
 use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
 use App\Models\{ProjectPlan, ProjectSkill, Project, ProjectCategory, ProjectRequiredSkill, ProjectSubscription};
 use App\Models\{ProjectBriefAttachment, ProjectBriefQuestion};
@@ -37,6 +38,9 @@ class ProjectComponent extends Component
     public $attachments     = [];
     public $questions       = [];
     public $milestones      = [];
+    public ?float $hourly_weekly_limit = 40;
+    public bool $hourly_allow_manual_time = false;
+    public bool $hourly_auto_approve_low_activity = true;
     public bool $requires_nda = false;
     public ?string $nda_scope = null;
     public ?int $nda_term_months = 12;
@@ -78,9 +82,24 @@ class ProjectComponent extends Component
 
     public function updatedSalaryType($value): void
     {
-        if ($value !== 'fixed') {
+        if (!in_array($value, ['fixed', 'hourly'], true)) {
             $this->salary_type = 'fixed';
-            $this->showHourlyNotice();
+            return;
+        }
+
+        if ($value === 'hourly') {
+            if ($this->hourly_weekly_limit === null) {
+                $this->hourly_weekly_limit = 40;
+            }
+
+            if (!$this->hasShownHourlyNotice) {
+                $this->showHourlyNotice();
+            }
+        }
+
+        if ($value === 'fixed') {
+            $this->hourly_allow_manual_time        = false;
+            $this->hourly_auto_approve_low_activity = true;
         }
     }
 
@@ -92,6 +111,9 @@ class ProjectComponent extends Component
         $this->salary_type         = 'fixed';
         $this->min_price           = null;
         $this->max_price           = null;
+        $this->hourly_weekly_limit = 40;
+        $this->hourly_allow_manual_time = false;
+        $this->hourly_auto_approve_low_activity = true;
         $this->required_skills     = [];
         $this->selected_plans      = [];
         $this->selectedSkillLabels = [];
@@ -133,7 +155,7 @@ class ProjectComponent extends Component
         $this->hasShownHourlyNotice = true;
 
         $this->alert('info', __('messages.t_attention_needed'), [
-            'text'     => __('messages.t_hourly_projects_coming_soon'),
+            'text'     => __('messages.t_hourly_projects_notice'),
             'toast'    => true,
             'position' => 'top-end',
         ]);
@@ -152,9 +174,12 @@ class ProjectComponent extends Component
                 'required_skills' => 'array|min:1',
             ],
             2 => [
-                'salary_type'      => 'required|in:fixed',
+                'salary_type'      => 'required|in:fixed,hourly',
                 'min_price'        => 'required|numeric|min:0',
                 'max_price'        => 'required|numeric|gt:min_price',
+                'hourly_weekly_limit' => 'required_if:salary_type,hourly|numeric|min:1|max:168',
+                'hourly_allow_manual_time' => 'nullable|boolean',
+                'hourly_auto_approve_low_activity' => 'nullable|boolean',
                 'requires_nda'     => 'boolean',
                 'nda_scope'        => 'nullable|string|max:500',
                 'nda_term_months'  => 'nullable|integer|min:1|max:60',
@@ -993,12 +1018,14 @@ class ProjectComponent extends Component
 
         $this->description = $this->buildTemplateDescription($template);
 
-        if (!empty($template['salary_type'])) {
+        if (!empty($template['salary_type']) && in_array($template['salary_type'], ['fixed', 'hourly'], true)) {
+            $this->salary_type = $template['salary_type'];
+
             if ($template['salary_type'] === 'hourly') {
-                $this->salary_type = 'fixed';
+                $this->hourly_weekly_limit = $template['hourly_weekly_limit'] ?? $this->hourly_weekly_limit;
+                $this->hourly_allow_manual_time = (bool) ($template['hourly_allow_manual_time'] ?? $this->hourly_allow_manual_time);
+                $this->hourly_auto_approve_low_activity = (bool) ($template['hourly_auto_approve_low_activity'] ?? $this->hourly_auto_approve_low_activity);
                 $this->showHourlyNotice();
-            } else {
-                $this->salary_type = $template['salary_type'];
             }
         }
 
@@ -1320,9 +1347,10 @@ class ProjectComponent extends Component
                 return;
             }
 
-            // Check if user didn't select salary type
-            if ($this->salary_type !== 'fixed') {
+            // Normalize salary type
+            if (!in_array($this->salary_type, ['fixed', 'hourly'], true)) {
                 $this->salary_type = 'fixed';
+            } elseif ($this->salary_type === 'hourly' && !$this->hasShownHourlyNotice) {
                 $this->showHourlyNotice();
             }
 
@@ -1335,6 +1363,20 @@ class ProjectComponent extends Component
 
             if ($ndaScopeSanitized !== null) {
                 $this->nda_scope = $ndaScopeSanitized;
+            }
+
+            $hourlyWeeklyLimit       = null;
+            $allowManualTime         = false;
+            $autoApproveLowActivity  = false;
+
+            if ($this->salary_type === 'hourly') {
+                $hourlyWeeklyLimit = max(1, min(168, (float) ($this->hourly_weekly_limit ?? 40)));
+                $allowManualTime = (bool) $this->hourly_allow_manual_time;
+                $autoApproveLowActivity = (bool) $this->hourly_auto_approve_low_activity;
+
+                $this->hourly_weekly_limit = $hourlyWeeklyLimit;
+                $this->hourly_allow_manual_time = $allowManualTime;
+                $this->hourly_auto_approve_low_activity = $autoApproveLowActivity;
             }
 
 
@@ -1497,6 +1539,14 @@ class ProjectComponent extends Component
                 }
             }
 
+            if ($project->budget_type === 'hourly') {
+                $this->provisionHourlyProject($project, [
+                    'weekly_limit_hours' => $hourlyWeeklyLimit,
+                    'allow_manual_time' => $allowManualTime,
+                    'auto_approve_low_activity' => $autoApproveLowActivity,
+                ]);
+            }
+
             // Check if payment required, redirect to payment link
             if ($subscription) {
 
@@ -1541,6 +1591,25 @@ class ProjectComponent extends Component
         }
     }
 
+
+    protected function provisionHourlyProject(Project $project, array $options): void
+    {
+        $currency = settings('currency');
+        $currencyCode = $currency?->code ?? 'USD';
+
+        $defaultRate = null;
+        if (is_numeric($project->budget_min) && is_numeric($project->budget_max)) {
+            $defaultRate = round(((float) $project->budget_min + (float) $project->budget_max) / 2, 2);
+        }
+
+        app(HourlyProjectProvisioner::class)->provision($project, [
+            'default_hourly_rate' => $defaultRate,
+            'weekly_limit_hours' => $options['weekly_limit_hours'] ?? null,
+            'allow_manual_time' => $options['allow_manual_time'] ?? false,
+            'auto_approve_low_activity' => $options['auto_approve_low_activity'] ?? false,
+            'currency_code' => $currencyCode,
+        ]);
+    }
 
     /**
      * Get project status

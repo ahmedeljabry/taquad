@@ -28,9 +28,20 @@
 	// Disable pusher logging
 	Pusher.logToConsole = false;
 
-	var pusher = new Pusher("{{ config('chatify.pusher.key') }}", {
-		encrypted   : Boolean({{ config('chatify.pusher.options.encrypted') ? 1 : 0 }}),
-		cluster     : "{{ config('chatify.pusher.options.cluster') }}",
+    const BROADCAST = @json(config('broadcasting.connections.reverb'));
+    const LEGACY = @json(config('chatify.pusher'));
+    const OPTIONS = (BROADCAST && BROADCAST.options) || (LEGACY && LEGACY.options) || {};
+    const HOST = OPTIONS.host || window.location.hostname;
+    const PORT = OPTIONS.port || (OPTIONS.encrypted ? 443 : 6001);
+    const SCHEME = OPTIONS.scheme || (OPTIONS.encrypted ? 'https' : 'http');
+    const KEY = (BROADCAST && BROADCAST.key) || (LEGACY && LEGACY.key);
+
+	var pusher = new Pusher(KEY, {
+        wsHost      : HOST,
+        wsPort      : PORT,
+        wssPort     : PORT,
+        forceTLS    : SCHEME === 'https',
+        enabledTransports: SCHEME === 'https' ? ['wss'] : ['ws', 'wss'],
 		authEndpoint: '{{ route("pusher.auth") }}',
 		auth        : {
 			headers: {

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Validator;
 
 class UpdateValidator
 {
-    
+
     /**
      * Validate form
      *
@@ -54,10 +54,6 @@ class UpdateValidator
                 'deposit_fee_percentage.decimal'            => __('messages.t_validator_numeric'),
                 'deposit_fee_fixed.required'                => __('messages.t_validator_required'),
                 'deposit_fee_fixed.decimal'                 => __('messages.t_validator_numeric'),
-                'gigs_checkout_fee_percentage.required'     => __('messages.t_validator_required'),
-                'gigs_checkout_fee_percentage.decimal'      => __('messages.t_validator_numeric'),
-                'gigs_checkout_fee_fixed.required'          => __('messages.t_validator_required'),
-                'gigs_checkout_fee_fixed.decimal'           => __('messages.t_validator_numeric'),
                 'projects_checkout_fee_percentage.required' => __('messages.t_validator_required'),
                 'projects_checkout_fee_percentage.decimal'  => __('messages.t_validator_numeric'),
                 'projects_checkout_fee_fixed.required'      => __('messages.t_validator_required'),

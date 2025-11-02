@@ -193,6 +193,16 @@ class ProjectsComponent extends Component
             $project->awarded_bid->freelancer_accepted_date = now();
             $project->awarded_bid->save();
 
+            $redirectPath = 'seller/projects/milestones/' . $project->uid;
+
+            if ($project->budget_type === 'hourly') {
+                if ($project->awarded_bid) {
+                    $bid = $project->awarded_bid->fresh(['project.trackerProject', 'project.client']);
+                    app(\App\Actions\Hourly\AcceptProposalAction::class)->handle($bid);
+                }
+                $redirectPath = 'seller/projects/tracker/' . $project->uid;
+            }
+
             // Send a notification to the employer
             $project->client->notify(new FreelancerAcceptedYourProject($project, $project->awarded_bid));
 
@@ -208,7 +218,7 @@ class ProjectsComponent extends Component
 
             // We have to redirect him to project overview section
             return redirect()
-                ->to('seller/projects/milestones/' . $project->uid)
+                ->to($redirectPath)
                 ->with('success', __('messages.t_awarded_projects_warning_msg'));
         } catch (\Throwable $th) {
 

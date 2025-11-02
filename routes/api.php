@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\TrackerOAuthTokenController;
+use App\Http\Controllers\Api\Tracker\Admin\ClientController as TrackerAdminClientController;
+use App\Http\Controllers\Api\Tracker\Admin\ContractController as TrackerAdminContractController;
+use App\Http\Controllers\Api\Tracker\Admin\ProjectController as TrackerAdminProjectController;
 use App\Http\Controllers\Api\Tracker\ContractController;
 use App\Http\Controllers\Api\Tracker\HealthController;
 use App\Http\Controllers\Api\Tracker\ProfileController;
@@ -39,3 +42,20 @@ Route::prefix('tracker')->name('tracker.')->group(function () {
         Route::post('screenshots', [ScreenshotController::class, 'store'])->name('screenshots.store');
     });
 });
+
+Route::prefix('tracker/admin')
+    ->name('tracker.admin.')
+    ->middleware(['auth:sanctum', 'abilities:tracker:manage'])
+    ->group(function () {
+        Route::apiResource('clients', TrackerAdminClientController::class)->parameters(['clients' => 'tracker_client']);
+        Route::apiResource('projects', TrackerAdminProjectController::class)->parameters(['projects' => 'tracker_project']);
+        Route::post('projects/{tracker_project}/members', [TrackerAdminProjectController::class, 'storeMember'])
+            ->name('projects.members.store');
+        Route::delete('projects/{tracker_project}/members/{tracker_project_member}', [TrackerAdminProjectController::class, 'destroyMember'])
+            ->name('projects.members.destroy');
+        Route::apiResource('contracts', TrackerAdminContractController::class)
+            ->except(['destroy'])
+            ->parameters(['contracts' => 'tracker_contract']);
+        Route::post('contracts/{tracker_contract}/status', [TrackerAdminContractController::class, 'changeStatus'])
+            ->name('contracts.change-status');
+    });

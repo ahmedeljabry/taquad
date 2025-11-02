@@ -3,6 +3,7 @@
 namespace App\Livewire\Main\Partials;
 
 use Livewire\Component;
+use Livewire\Attributes\On;
 use App\Models\Notification;
 
 class Notifications extends Component
@@ -53,6 +54,15 @@ class Notifications extends Component
 
         // Refresh notifications
         $this->notifications = Notification::where('user_id', auth()->id())->where('is_seen', false)->latest()->get();
+    }
+
+    #[On('notifications:refresh')]
+    public function refreshNotifications(): void
+    {
+        $this->notifications = Notification::where('user_id', auth()->id())
+            ->where('is_seen', false)
+            ->latest()
+            ->get();
     }
     
 }

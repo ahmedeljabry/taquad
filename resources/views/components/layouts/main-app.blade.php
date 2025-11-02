@@ -30,6 +30,36 @@
         <link href="{{ asset('vendor/bladewind/css/animate.min.css') }}" rel="stylesheet" />
         <link href="{{ asset('vendor/bladewind/css/bladewind-ui.min.css') }}" rel="stylesheet" />
 
+        {{-- Bootstrap persisted theme before hydration --}}
+        <script>
+            (function () {
+                try {
+                    var storageKey = 'taquad-theme-preference';
+                    var root = document.documentElement;
+                    var stored = null;
+                    try {
+                        stored = localStorage.getItem(storageKey);
+                    } catch (_) {
+                        stored = null;
+                    }
+                    var preference = stored || root.dataset.themePreference || 'system';
+                    var effective = preference;
+                    if (preference === 'system') {
+                        effective = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                    }
+                    root.dataset.themePreference = preference;
+                    root.dataset.theme = effective;
+                    if (effective === 'dark') {
+                        root.classList.add('dark');
+                    } else {
+                        root.classList.remove('dark');
+                    }
+                } catch (error) {
+                    // noop
+                }
+            })();
+        </script>
+
         {{-- Preload hero section image --}}
 		@if (settings('hero')->enable_bg_img)
 
@@ -322,8 +352,8 @@
         <script type="text/JavaScript">
             (function () {
                 // ---------------- server settings pushed to JS -------------
-                const PUSHER_KEY = @json(config('chatify.pusher.key')),
-                PUSHER_OPTS = @json(config('chatify.pusher.options')),
+                const BROADCAST = @json(config('broadcasting.connections.reverb')),
+                LEGACY_PUSHER = @json(config('chatify.pusher')),
                 USER_ID = {{ auth()->id() }},
                 BASE_TITLE = document.title.replace(/\(\d+\)\s*/, '');
 
@@ -331,13 +361,48 @@
 
                 // -------------- Bootstrap Echo -----------
                 window.Pusher = Pusher;
+                const OPTIONS = (BROADCAST && BROADCAST.options) || {};
+                const LEGACY_OPTIONS = (LEGACY_PUSHER && LEGACY_PUSHER.options) || {};
+                const HOST = OPTIONS.host || LEGACY_OPTIONS.host || window.location.hostname;
+                const PORT = OPTIONS.port || LEGACY_OPTIONS.port || (LEGACY_OPTIONS.encrypted ? 443 : 6001);
+                const SCHEME = OPTIONS.scheme || LEGACY_OPTIONS.scheme || (LEGACY_OPTIONS.encrypted ? 'https' : 'http');
+                const KEY = (BROADCAST && BROADCAST.key) || (LEGACY_PUSHER && LEGACY_PUSHER.key);
+
                 window.Echo = new Echo({
                     broadcaster : 'pusher',
-                    key         : PUSHER_KEY,
-                    ...PUSHER_OPTS,
-                    csrfToken   : '{{ csrf_token() }}',
+                    key         : KEY,
+                    wsHost      : HOST,
+                    wsPort      : PORT,
+                    wssPort     : PORT,
+                    forceTLS    : SCHEME === 'https',
+                    enabledTransports: SCHEME === 'https' ? ['wss'] : ['ws', 'wss'],
                     authEndpoint: "{{ route('pusher.auth') }}",
-                    enabledTransports: ['ws','wss']
+                    auth        : {
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    }
+                });
+
+                if (USER_ID) {
+                    const dispatchRealtime = (event, payload) => {
+                        window.dispatchEvent(new CustomEvent('realtime:notification', {
+                            detail: { event, payload }
+                        }));
+                    };
+
+                    window.Echo.private(`user.${USER_ID}`)
+                        .listen('.notification.created', (payload) => dispatchRealtime('notification.created', payload))
+                        .listen('.notification.sent', (payload) => dispatchRealtime('notification.sent', payload));
+                }
+
+                window.addEventListener('realtime:notification', (event) => {
+                    if (window.Livewire && typeof window.Livewire.dispatch === 'function') {
+                        window.Livewire.dispatch('notifications:refresh', {
+                            event: event.detail?.event,
+                            payload: event.detail?.payload
+                        });
+                    }
                 });
 
                 const badgeHTML   =

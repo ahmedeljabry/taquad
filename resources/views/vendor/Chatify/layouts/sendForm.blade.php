@@ -1,3 +1,23 @@
+@php
+    $voiceLabels = [
+        'record' => trans('messages.t_record_voice_note'),
+        'stop'   => trans('messages.t_stop_recording'),
+        'send'   => trans('messages.t_send_voice_note'),
+        'discard'=> trans('messages.t_discard'),
+    ];
+    $voiceFallbacks = [
+        'record' => 'Record voice',
+        'stop'   => 'Stop',
+        'send'   => 'Send voice',
+        'discard'=> 'Discard',
+    ];
+    foreach ($voiceLabels as $key => $label) {
+        if (\Illuminate\Support\Str::startsWith($label, 'messages.')) {
+            $voiceLabels[$key] = $voiceFallbacks[$key];
+        }
+    }
+@endphp
+
 <div class="messenger-sendCard" x-data="window.ieFgUjXUHsNGdOd" x-init="initialize">
 
     {{-- Emojis box --}}
@@ -27,10 +47,33 @@
             <x-forms.tooltip id="chat-tooltip-btn-insert-file" :text="__('messages.t_attach_a_file')" />
         @endif
 
+        {{-- Voice note --}}
+        @if (config('chatify.voice_notes.enabled'))
+            <button type="button"
+                    id="voice-record-toggle"
+                    class="voice-note-btn"
+                    data-record-text="{{ $voiceLabels['record'] }}"
+                    data-stop-text="{{ $voiceLabels['stop'] }}"
+                    aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <path d="M12 19v4" />
+                    <path d="M8 23h8" />
+                </svg>
+                <span id="voice-record-label">{{ $voiceLabels['record'] }}</span>
+                <span class="voice-record-timer hidden" id="voice-record-timer">00:00</span>
+            </button>
+        @endif
+
         {{-- Message content --}}
         <div class="w-full px-3 flex items-center justify-center">
             <textarea x-model="message" id="live-chat-message-textarea" readonly='readonly' name="message" class="m-send app-scroll dark:placeholder:text-zinc-400" placeholder="@lang('messages.t_type_ur_message_here')"></textarea>
         </div>
+
+        @if (config('chatify.voice_notes.enabled'))
+            <input type="hidden" name="voice_duration" id="voice-note-duration-field" value="">
+        @endif
 
         {{-- Send --}}
         <button disabled='disabled' class="focus:outline-none">
@@ -38,6 +81,32 @@
         </button>
 
     </form>
+
+    @if (config('chatify.voice_notes.enabled'))
+        <div id="voice-note-preview" class="voice-note-preview hidden">
+            <div class="flex flex-col md:flex-row md:items-center gap-3 grow w-full">
+                <audio id="voice-note-audio" controls preload="metadata"></audio>
+                <span class="voice-note-duration" id="voice-note-duration-label">00:00</span>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <button type="button" id="voice-record-cancel" class="voice-note-cancel">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6 6 18" />
+                        <path d="m6 6 12 12" />
+                    </svg>
+                    <span>{{ $voiceLabels['discard'] }}</span>
+                </button>
+                <button type="button" id="voice-record-send" class="voice-note-send">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+                        <path d="m22 2-7 20-4-9-9-4Z" />
+                        <path d="M22 2 11 13" />
+                    </svg>
+                    <span>{{ $voiceLabels['send'] }}</span>
+                </button>
+            </div>
+        </div>
+        <div id="voice-note-hint" class="voice-note-hint hidden"></div>
+    @endif
 
 </div>
 

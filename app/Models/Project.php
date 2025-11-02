@@ -182,4 +182,9 @@ class Project extends Model implements Sitemapable
     {
         return $this->hasMany(ProjectReview::class);
     }
+
+    public function trackerProject()
+    {
+        return $this->hasOne(TrackerProject::class, 'project_id');
+    }
 }

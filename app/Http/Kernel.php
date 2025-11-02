@@ -74,5 +74,8 @@ class Kernel extends HttpKernel
         'banned.ip'        => \App\Http\Middleware\isIpBanned::class,
         'tracker'          => \App\Http\Middleware\Tracker::class,
         'restricted'       => \App\Http\Middleware\Restricted::class,
+        'abilities'        => \Laravel\Sanctum\Http\Middleware\CheckAbilities::class,
+        'ability'          => \Laravel\Sanctum\Http\Middleware\CheckForAnyAbility::class,
+        'broadcast.auth'   => \App\Http\Middleware\AuthenticateBroadcast::class,
     ];
 }

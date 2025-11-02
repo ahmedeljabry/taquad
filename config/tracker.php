@@ -12,4 +12,5 @@ return [
     'access_token_abilities' => [
         'tracker:use',
     ],
+    'admin_required_ability' => 'tracker:manage', 
 ];

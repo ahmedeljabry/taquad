@@ -4,6 +4,7 @@ namespace App\Livewire\Main\Includes;
 
 use App\Models\User;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use App\Models\Language;
 use WireUi\Traits\Actions;
 use App\Models\Notification;
@@ -200,6 +201,19 @@ class Header extends Component
 
         // Refresh notifications
         $this->notifications = Notification::where('user_id', auth()->id())->where('is_seen', false)->latest()->get();
+    }
+
+    #[On('notifications:refresh')]
+    public function refreshNotifications(): void
+    {
+        if (! auth()->check()) {
+            return;
+        }
+
+        $this->notifications = Notification::where('user_id', auth()->id())
+            ->where('is_seen', false)
+            ->latest()
+            ->get();
     }
 
 

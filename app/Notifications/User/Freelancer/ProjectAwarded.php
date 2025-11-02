@@ -41,6 +41,10 @@ class ProjectAwarded extends Notification implements ShouldQueue
         // Set subject
         $subject = __('messages.t_subject_freelancer_u_awarded_a_project');
 
+        $actionUrl = $this->project->budget_type === 'hourly'
+            ? url('seller/projects/tracker/' . $this->project->uid)
+            : url('seller/projects/milestones/' . $this->project->uid);
+
         return (new MailMessage)
                     ->subject($subject)
                     ->greeting(__('messages.t_hello_username', ['username' => $notifiable->username]))
@@ -48,7 +52,7 @@ class ProjectAwarded extends Notification implements ShouldQueue
                     ->line($this->project->title)
                     ->action(
                         __('messages.t_manage_awarded_project'),
-                        url('seller/projects/milestones/' . $this->project->uid)
+                        $actionUrl
                     )
                     ->line(__('messages.t_manage_awarded_project_hint'));
     }

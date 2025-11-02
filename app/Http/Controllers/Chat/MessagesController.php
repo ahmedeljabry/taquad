@@ -190,11 +190,45 @@ class MessagesController extends Controller
         ];
 
         // Set default attachement values
-        $attachment       = null;
-        $attachment_title = null;
+        $attachment           = null;
+        $attachment_title     = null;
+        $attachment_extension = null;
+        $attachment_size      = null;
+        $voiceDuration        = null;
+        $uploadedFile         = null;
+        $isVoice              = false;
+
+        if ($request->hasFile('voice') && config('chatify.voice_notes.enabled')) {
+
+            $voiceFile   = $request->file('voice');
+            $voiceExt    = strtolower($voiceFile->extension());
+            $voiceLimits = $this->chat->getMaxUploadSize();
+            $allowedVoiceExtensions = array_map('strtolower', config('chatify.voice_notes.formats') ?? ['webm','ogg','m4a','mp3','wav']);
+
+            if ($voiceFile->getSize() > $voiceLimits) {
+                $error->status  = 1;
+                $error->message = __('messages.t_selected_file_size_big');
+            } elseif (! in_array($voiceExt, $allowedVoiceExtensions)) {
+                $error->status  = 1;
+                $error->message = __('messages.t_voice_upload_failed');
+            } else {
+                $isVoice              = true;
+                $attachment_title     = 'Voice note';
+                $attachment_extension = $voiceExt;
+                $attachment_size      = $voiceFile->getSize();
+                $attachment           = Str::uuid() . "." . $voiceExt;
+                $voiceDuration        = (int) $request->input('voice_duration', 0);
+                $uploadedFile         = $voiceFile;
+
+                $voiceFile->storeAs(
+                    config('chatify.attachments.folder'),
+                    $attachment,
+                    config('chatify.storage_disk_name')
+                );
+            }
 
         // if there is attachment [file]
-        if ($request->hasFile('file') && settings('live_chat')->enable_attachments) {
+        } elseif ($request->hasFile('file') && settings('live_chat')->enable_attachments) {
 
             // allowed extensions
             $allowed_images = $this->chat->getAllowedImages();
@@ -211,7 +245,10 @@ class MessagesController extends Controller
                 if (in_array(strtolower($file->extension()), $allowed)) {
 
                     // Get attachment name
-                    $attachment_title = $file->getClientOriginalName();
+                    $attachment_title     = $file->getClientOriginalName();
+                    $attachment_extension = $file->extension();
+                    $attachment_size      = $file->getSize();
+                    $uploadedFile         = $file;
 
                     // Set new name for this attachment
                     $attachment       = Str::uuid() . "." . $file->extension();
@@ -244,8 +281,8 @@ class MessagesController extends Controller
             if (!$get_message) {
 
                 // Error
-                $error->status  = true;
-                $error->message = __('messages.t_enter_your_message');
+                    $error->status  = true;
+                    $error->message = __('messages.t_enter_your_message');
 
             }
 
@@ -258,6 +295,25 @@ class MessagesController extends Controller
             $message_id = mt_rand(9, 999999999) + time();
 
             // Save message
+            $attachmentPayload = null;
+
+            if ($attachment && $uploadedFile) {
+                $attachmentPayload = [
+                    'new_name'  => $attachment,
+                    'old_name'  => htmlentities(trim(clean($attachment_title ?? $uploadedFile->getClientOriginalName())), ENT_QUOTES, 'UTF-8'),
+                    'size'      => $attachment_size ?? $uploadedFile->getSize(),
+                    'extension' => $attachment_extension ?? $uploadedFile->extension(),
+                ];
+
+                if (! is_null($voiceDuration)) {
+                    $attachmentPayload['duration'] = (int) $voiceDuration;
+                }
+
+                if ($isVoice) {
+                    $attachmentPayload['type'] = 'voice';
+                }
+            }
+
             $this->chat->newMessage([
                 'id'         => $message_id,
                 'type'       => 'user',
@@ -265,12 +321,7 @@ class MessagesController extends Controller
                 'to_id'      => $request->get('id'),
                 'project_id' => $request->get('project_id'),
                 'body'       => $request->get('message') ? clean($request->get('message')) : null,
-                'attachment' => ($attachment) ? json_encode((object)[
-                    'new_name'  => $attachment,
-                    'old_name'  => htmlentities(trim(clean($attachment_title)), ENT_QUOTES, 'UTF-8'),
-                    'size'      => $file->getSize(),
-                    'extension' => $file->extension()
-                ]) : null,
+                'attachment' => $attachmentPayload ? json_encode((object) $attachmentPayload) : null,
             ]);
 
             // fetch message to send it with the response

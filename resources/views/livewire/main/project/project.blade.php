@@ -1,4 +1,4 @@
-<div class="max-w-[1400px] mx-auto">
+<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" >
 
 
     @php
@@ -91,41 +91,6 @@
                 </button>
             </div>
         </div>
-
-        <dl class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div class="rounded-2xl border border-slate-200 bg-white/80 p-4 dark:border-zinc-700 dark:bg-zinc-800/70">
-                <dt class="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
-                    @lang('messages.t_project_budget')
-                </dt>
-                <dd class="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                    {{ $projectBudget }}
-                </dd>
-            </div>
-            <div class="rounded-2xl border border-slate-200 bg-white/80 p-4 dark:border-zinc-700 dark:bg-zinc-800/70">
-                <dt class="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
-                    @lang('messages.t_average_bid')
-                </dt>
-                <dd class="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                    {{ $projectAvgBid }}
-                </dd>
-            </div>
-            <div class="rounded-2xl border border-slate-200 bg-white/80 p-4 dark:border-zinc-700 dark:bg-zinc-800/70">
-                <dt class="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
-                    @lang('messages.t_duration')
-                </dt>
-                <dd class="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                    {{ $project->duration ? trans_choice('messages.t_days_count', $project->duration, ['count' => $project->duration]) : __('messages.t_na') }}
-                </dd>
-            </div>
-            <div class="rounded-2xl border border-slate-200 bg-white/80 p-4 dark:border-zinc-700 dark:bg-zinc-800/70">
-                <dt class="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
-                    @lang('messages.t_project_type')
-                </dt>
-                <dd class="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                    {{ $project->budget_type === 'fixed' ? __('messages.t_fixed_price') : __('messages.t_hourly_price') }}
-                </dd>
-            </div>
-        </dl>
     </nav>
 
     <div class="py-0">
@@ -845,6 +810,9 @@
 
                     {{-- First step --}}
                     @if ($bid_current_step === 1)
+                        @php
+                            $isHourlyProject = $project->budget_type === 'hourly';
+                        @endphp
                         <div class="grid grid-cols-12 md:gap-x-6 gap-y-6 py-2">
 
                             {{-- Amount --}}
@@ -853,7 +821,7 @@
                                 {{-- Label --}}
                                 <label for="bid-amount-input"
                                     class="{{ $errors->first('bid_amount') ? 'text-red-600' : 'text-gray-900' }} block mb-2 text-[13px] font-bold dark:text-white">
-                                    @lang('messages.t_bid_amount')
+                                    {{ $isHourlyProject ? __('messages.t_bid_hourly_rate') : __('messages.t_bid_amount') }}
                                 </label>
 
                                 {{-- Form controll --}}
@@ -869,6 +837,9 @@
                                     <div
                                         class="absolute inset-y-0 ltr:right-0 rtl:left-0 flex items-center ltr:pr-3 rtl:pl-3 font-bold text-xs tracking-widest dark:text-gray-300 uppercase">
                                         {{ settings('currency')->code }}
+                                        @if ($isHourlyProject)
+                                            / {{ __('messages.t_hour_short') }}
+                                        @endif
                                     </div>
 
                                 </div>
@@ -888,7 +859,7 @@
                                 {{-- Label --}}
                                 <label for="bid-amount-paid-input"
                                     class="text-gray-900 mb-2 text-[13px] font-bold dark:text-white flex items-center space-x-2 rtl:space-x-reverse">
-                                    <span>@lang('messages.t_paid_to_you')</span>
+                                    <span>{{ $isHourlyProject ? __('messages.t_paid_to_you_hourly') : __('messages.t_paid_to_you') }}</span>
                                     <svg data-tooltip-target="bid-paid-to-you-tooltip" class="cursor-pointer w-4 h-4 text-gray-400"
                                         stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -914,6 +885,9 @@
                                     <div
                                         class="absolute inset-y-0 ltr:right-0 rtl:left-0 flex items-center ltr:pr-3 rtl:pl-3 font-bold text-xs tracking-widest dark:text-gray-300 uppercase">
                                         {{ settings('currency')->code }}
+                                        @if ($isHourlyProject)
+                                            / {{ __('messages.t_hour_short') }}
+                                        @endif
                                     </div>
 
                                 </div>
@@ -926,7 +900,7 @@
                                 {{-- Label --}}
                                 <label for="bid-days-input"
                                     class="{{ $errors->first('bid_days') ? 'text-red-600' : 'text-gray-900' }} block mb-2 text-[13px] font-bold dark:text-white">
-                                    @lang('messages.t_this_project_will_be_delivered_in')
+                                    {{ $isHourlyProject ? __('messages.t_estimated_weekly_hours') : __('messages.t_this_project_will_be_delivered_in') }}
                                 </label>
 
                                 {{-- Form controll --}}
@@ -939,10 +913,16 @@
                                     {{-- Suffix --}}
                                     <div
                                         class="absolute inset-y-0 ltr:right-0 rtl:left-0 flex items-center ltr:pr-3 rtl:pl-3 font-bold text-xs tracking-widest dark:text-gray-300 uppercase">
-                                        @lang('messages.t_days')
+                                        {{ $isHourlyProject ? __('messages.t_hours_label') : __('messages.t_days') }}
                                     </div>
 
                                 </div>
+
+                                @if ($isHourlyProject)
+                                    <p class="mt-2 text-[11px] text-slate-500 dark:text-zinc-400">
+                                        {{ __('messages.t_estimated_weekly_hours_hint') }}
+                                    </p>
+                                @endif
 
                                 {{-- Error --}}
                                 @error('bid_days')
@@ -952,6 +932,28 @@
                                 @enderror
 
                             </div>
+
+                            @if ($isHourlyProject)
+                                <div class="col-span-12">
+                                    <div
+                                        class="rounded-2xl border border-primary-200 bg-primary-50/70 px-5 py-4 text-sm text-primary-800 shadow-sm dark:border-primary-500/30 dark:bg-primary-500/10 dark:text-primary-100">
+                                        <div class="flex items-start gap-3">
+                                            <span
+                                                class="mt-0.5 flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-primary-500/15 text-primary-600 dark:bg-primary-500/30 dark:text-primary-100">
+                                                <i class="ph-duotone ph-gauge text-lg"></i>
+                                            </span>
+                                            <div class="space-y-1">
+                                                <p class="text-sm font-semibold">
+                                                    {{ __('messages.t_hourly_tracker_bid_title') }}
+                                                </p>
+                                                <p class="text-[12.5px] leading-6 text-primary-800/80 dark:text-primary-100/70">
+                                                    {{ __('messages.t_hourly_tracker_bid_hint') }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
 
                             {{-- Description --}}
                             <div class="col-span-12">
@@ -1082,8 +1084,9 @@
                                 </div>
                             @endif
 
-                            <div class="col-span-12">
-                                <p class="mb-2 text-[13px] font-bold text-gray-900 dark:text-white">خطة الدفع</p>
+                            @if (!$isHourlyProject)
+                                <div class="col-span-12">
+                                    <p class="mb-2 text-[13px] font-bold text-gray-900 dark:text-white">خطة الدفع</p>
                                 <div class="grid gap-3 md:grid-cols-2">
                                     <label wire:click="$set('bid_plan_type', 'fixed')" @class([
                                         'flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 transition hover:border-primary-200 hover:bg-primary-50/40 dark:border-zinc-600 dark:hover:border-primary-400 dark:hover:bg-primary-500/10',
@@ -1122,12 +1125,12 @@
                                         </span>
                                     </label>
                                 </div>
-                            </div>
+                                </div>
 
-                            @if ($bid_plan_type === 'milestone')
-                                <div class="col-span-12 space-y-4">
-                                    <div class="flex items-center justify-between">
-                                        <h4 class="text-sm font-semibold text-zinc-800 dark:text-zinc-200">تفاصيل الدفعات</h4>
+                                @if ($bid_plan_type === 'milestone')
+                                    <div class="col-span-12 space-y-4">
+                                        <div class="flex items-center justify-between">
+                                            <h4 class="text-sm font-semibold text-zinc-800 dark:text-zinc-200">تفاصيل الدفعات</h4>
                                         <button type="button" wire:click="addBidMilestone"
                                             class="inline-flex items-center gap-2 rounded-full border border-primary-200 px-3 py-1.5 text-[12px] font-semibold text-primary-600 transition hover:border-primary-300 hover:text-primary-700 dark:border-primary-500/40 dark:text-primary-200 dark:hover:border-primary-400">
                                             <i class="ph ph-plus text-xs"></i>
@@ -1183,7 +1186,8 @@
                                             {{ $errors->first('bid_milestones') }}
                                         </p>
                                     @endif
-                                </div>
+                                    </div>
+                                @endif
                             @endif
 
                         </div>
@@ -1228,10 +1232,11 @@
                                         </div>
                                     </div>
                                 @endforeach
-                            </div>
+                                    </div>
 
-                        </fieldset>
-                    @endif
+                                </fieldset>
+                                @endif
+                            @endif
 
                 </x-slot>
 
@@ -1277,7 +1282,6 @@
                 </x-slot>
 
             </x-forms.modal>
-        @endif
     @endauth
 
     {{-- Share project --}}

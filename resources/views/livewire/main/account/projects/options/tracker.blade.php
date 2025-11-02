@@ -110,7 +110,7 @@
                 @endforeach
             </section>
 
-            <section class="bg-white dark:bg-zinc-800 shadow-sm border border-gray-200 dark:border-zinc-700 rounded-lg overflow-hidden">
+            <section class="bg-white dark:bg-zinc-800 shadow-sm border border-gray-200 dark:border-zinc-700 rounded-lg overflow-hidden" wire:poll.60s="refreshEntries">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-zinc-700 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                     <div>
                         <h3 class="text-base font-semibold text-gray-800 dark:text-zinc-100">

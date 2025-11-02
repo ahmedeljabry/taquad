@@ -507,13 +507,26 @@ class Bid extends Component
 
             $bid->refresh();
             $project->refresh();
-            $project->loadMissing('client', 'awarded_bid');
+            $project->loadMissing('client', 'awarded_bid', 'trackerProject');
             $this->view_data['project']['awarded'] = $project->awarded_bid;
 
+            if ($project->budget_type === 'hourly') {
+                app(\App\Actions\Hourly\AcceptProposalAction::class)->handle($bid, [
+                    'weekly_limit_hours' => $project->trackerProject?->weekly_limit_hours,
+                    'allow_manual_time' => $project->trackerProject?->allow_manual_time_default,
+                    'auto_approve_low_activity' => $project->trackerProject?->auto_approve_low_activity_default,
+                    'hourly_rate' => (float) convertToNumber($bid->amount ?? 0),
+                ]);
+            }
+
             // Send notification to the freelancer (From website)
+            $actionUrl = $project->budget_type === 'hourly'
+                ? url('seller/projects/tracker/' . $project->uid)
+                : url('seller/projects/milestones/' . $project->uid);
+
             notification([
                 'text'    => 't_congratulations_employer_awarded_u_their_project_title',
-                'action'  => url('seller/projects/milestones/' . $project->uid),
+                'action'  => $actionUrl,
                 'user_id' => $bid->user_id,
                 'params'  => [
                     'username' => $project->client->username,

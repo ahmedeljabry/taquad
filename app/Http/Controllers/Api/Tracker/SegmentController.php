@@ -12,6 +12,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\User\Client\NewTrackedTimeEntry;
 
 class SegmentController extends Controller
 {
@@ -58,11 +59,15 @@ class SegmentController extends Controller
 
                 $signature = $segment['signature'] ?? sprintf('%s-%s-%s', $contract->id, $user->id, $start->getTimestamp());
 
+                $contract->loadMissing(['project', 'client']);
+
                 $entry = TimeEntry::firstOrNew([
                     'contract_id' => $contract->id,
                     'user_id'     => $user->id,
                     'started_at'  => $start,
                 ]);
+
+                $isNewEntry = ! $entry->exists;
 
                 $entry->ended_at             = $end;
                 $entry->duration_minutes     = $minutes;
@@ -74,13 +79,31 @@ class SegmentController extends Controller
                 $entry->synced_at            = now();
                 $entry->created_from_tracker = true;
 
-                if (! $entry->exists) {
+                if ($isNewEntry) {
                     $entry->client_status   = TimeEntryClientStatus::Pending;
                     $entry->has_screenshot  = false;
                 }
 
                 $entry->save();
                 $synced[] = $entry->id;
+
+                if ($isNewEntry) {
+                    $client = $contract->client;
+                    $project = $contract->project;
+
+                    if ($client && $project) {
+                        notification([
+                            'user_id' => $client->id,
+                            'text'    => 't_notification_tracker_pending',
+                            'params'  => [
+                                'project' => $project->title,
+                            ],
+                            'action'  => url('account/projects/options/tracker/' . $project->uid),
+                        ]);
+
+                        $client->notify(new NewTrackedTimeEntry($contract, $entry));
+                    }
+                }
             }
 
             DB::commit();

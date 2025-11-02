@@ -62,6 +62,16 @@ class ChatApi
         return explode(",", settings('live_chat')->allowed_files);
     }
 
+    /**
+     * Returns allowed voice note extensions.
+     *
+     * @return array
+     */
+    public function getAllowedVoices()
+    {
+        return array_map('strtolower', config('chatify.voice_notes.formats') ?? ['webm', 'ogg', 'm4a', 'mp3', 'wav']);
+    }
+
 
     /**
      * Returns an array contains messenger's colors
@@ -146,6 +156,7 @@ class ChatApi
         $attachment_title     = null;
         $attachment_extension = null;
         $attachment_size      = null;
+        $attachment_duration  = null;
 
         // Fetch message
         $msg = Message::where('id', $id)->first();
@@ -164,23 +175,32 @@ class ChatApi
             $attachment_title     = htmlentities(trim($attachment_results->old_name), ENT_QUOTES, 'UTF-8');
 
             // Get file extension
-            $attachment_extension = $attachment_results->extension;
+            $attachment_extension = $attachment_results->extension ?? null;
+
+            // Set duration if present
+            $attachment_duration  = isset($attachment_results->duration) ? (int) $attachment_results->duration : null;
 
             // Get file type
-            if (in_array($attachment_extension, $this->getAllowedImages())) {
+            if (isset($attachment_results->type) && $attachment_results->type === 'voice') {
+
+                $attachment_type = 'voice';
+
+            } elseif ($attachment_extension && in_array($attachment_extension, $this->getAllowedImages())) {
                 
-                // Image
                 $attachment_type = 'image';
+
+            } elseif ($attachment_extension && in_array($attachment_extension, $this->getAllowedVoices())) {
+
+                $attachment_type = 'voice';
 
             } else {
 
-                // File
                 $attachment_type = 'file';
 
             }
 
-            // Set image size
-            $attachment_size      = $attachment_results->size;
+            // Set attachment size
+            $attachment_size      = $attachment_results->size ?? null;
 
         }
 
@@ -214,7 +234,7 @@ class ChatApi
             'from_id'         => $msg->from_id,
             'to_id'           => $msg->to_id,
             'message'         => $message,
-            'attachment'      => [$attachment, $attachment_title, $attachment_type, $attachment_extension, $attachment_size],
+            'attachment'      => [$attachment, $attachment_title, $attachment_type, $attachment_extension, $attachment_size, $attachment_duration],
             'time'            => format_date($msg->created_at),
             'fullTime'        => $msg->created_at,
             'viewType'        => ($msg->from_id == auth()->id()) ? 'sender' : 'default',

@@ -238,11 +238,24 @@
                                         {{-- Milestones / Bid / Send file --}}
                                         <span class="inline-flex sm:shadow-sm">
 
+                                        {{-- Tracker (hourly) --}}
+                                        @if ($project->budget_type === 'hourly')
+                                            <a href="{{ url('seller/projects/tracker', $project->uid) }}" class="relative inline-flex items-center ltr:rounded-l-md rtl:rounded-r-md border border-primary-500 bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:z-10 focus:outline-none whitespace-nowrap dark:border-primary-500/80 dark:bg-primary-500/80 dark:hover:bg-primary-600">
+                                                <i class="ph-duotone ph-timer md:ltr:mr-2.5 md:rtl:ml-2.5 h-5 w-5 text-white/80"></i>
+                                                <span class="hidden md:block">@lang('messages.t_tracker_hourly_open_workspace')</span>
+                                                <span class="md:hidden">@lang('messages.t_tracker_hourly_hub_title')</span>
+                                            </a>
+                                            <a href="{{ url('seller/projects/milestones', $project->uid) }}" class="relative inline-flex items-center ltr:-ml-px rtl:-mr-px border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50 focus:z-10 focus:outline-none whitespace-nowrap dark:bg-zinc-700/40 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-700">
+                                                <svg class="md:ltr:mr-2.5 md:rtl:ml-2.5 h-5 w-5 text-gray-400 dark:text-zinc-300" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M19 14V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-9-1c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-6v11c0 1.1-.9 2-2 2H4v-2h17V7h2z"></path></svg>
+                                                <span class="hidden md:block">@lang('messages.t_milestones')</span>
+                                            </a>
+                                        @else
                                             {{-- Milestones --}}
                                             <a href="{{ url('seller/projects/milestones', $project->uid) }}" class="relative inline-flex items-center ltr:rounded-l-md rtl:rounded-r-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50 focus:z-10  focus:outline-none whitespace-nowrap dark:bg-zinc-700/40 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-700">
                                                 <svg class="md:ltr:mr-2.5 md:rtl:ml-2.5 h-5 w-5 text-gray-400 dark:text-zinc-300" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M19 14V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-9-1c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-6v11c0 1.1-.9 2-2 2H4v-2h17V7h2z"></path></svg>
                                                 <span class="hidden md:block">@lang('messages.t_milestones')</span>
                                             </a>
+                                        @endif
 
                                             {{-- My proposal --}}
                                             <button type="button" id="modal-my-proposal-button-{{ $project->uid }}" class="relative ltr:-ml-px rtl:-mr-px items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50 focus:z-10 inline-flex whitespace-nowrap dark:bg-zinc-700/40 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-700">

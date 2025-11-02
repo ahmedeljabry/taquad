@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Contract;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -15,4 +16,18 @@ use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
+});
+
+Broadcast::channel('user.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
+});
+
+Broadcast::channel('contract.{contractId}', function ($user, $contractId) {
+    return Contract::query()
+        ->where('id', $contractId)
+        ->where(function ($query) use ($user) {
+            $query->where('client_id', $user->id)
+                ->orWhere('freelancer_id', $user->id);
+        })
+        ->exists();
 });

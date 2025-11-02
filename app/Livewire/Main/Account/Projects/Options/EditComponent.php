@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
 use App\Http\Validators\Main\Account\Projects\EditValidator;
+use App\Services\Tracker\HourlyProjectProvisioner;
 
 class EditComponent extends Component
 {
@@ -32,6 +33,9 @@ class EditComponent extends Component
     public $salary_type;
     public $min_price;
     public $max_price;
+    public ?float $hourly_weekly_limit = 40;
+    public bool $hourly_allow_manual_time = false;
+    public bool $hourly_auto_approve_low_activity = true;
     public $currency_symbol;
     public $required_skills = [];
     public $selected_plans  = [];
@@ -62,7 +66,7 @@ class EditComponent extends Component
         $project         = Project::where('uid', $id)
             ->where('user_id', auth()->id())
             ->whereIn('status', ['pending_approval', 'pending_payment', 'active', 'rejected'])
-            ->with(['skills.skill'])
+            ->with(['skills.skill', 'trackerProject'])
             ->firstOrFail();
 
         // Set project
@@ -98,9 +102,16 @@ class EditComponent extends Component
             'salary_type'   => $project->budget_type
         ]);
 
-        if ($project->budget_type !== 'fixed') {
-            $this->salary_type = 'fixed';
-            $this->showHourlyNotice();
+        $trackerProject = $project->trackerProject;
+
+        if ($project->budget_type === 'hourly') {
+            $this->hourly_weekly_limit = $trackerProject?->weekly_limit_hours ?? 40;
+            $this->hourly_allow_manual_time = (bool) ($trackerProject?->allow_manual_time_default ?? false);
+            $this->hourly_auto_approve_low_activity = (bool) ($trackerProject?->auto_approve_low_activity_default ?? false);
+        } else {
+            $this->hourly_weekly_limit = 40;
+            $this->hourly_allow_manual_time = false;
+            $this->hourly_auto_approve_low_activity = true;
         }
 
         // Set subcategories
@@ -124,9 +135,24 @@ class EditComponent extends Component
 
     public function updatedSalaryType($value): void
     {
-        if ($value !== 'fixed') {
+        if (!in_array($value, ['fixed', 'hourly'], true)) {
             $this->salary_type = 'fixed';
-            $this->showHourlyNotice();
+            return;
+        }
+
+        if ($value === 'hourly') {
+            if ($this->hourly_weekly_limit === null) {
+                $this->hourly_weekly_limit = 40;
+            }
+
+            if (!$this->hasShownHourlyNotice) {
+                $this->showHourlyNotice();
+            }
+        }
+
+        if ($value === 'fixed') {
+            $this->hourly_allow_manual_time = false;
+            $this->hourly_auto_approve_low_activity = true;
         }
     }
 
@@ -139,7 +165,7 @@ class EditComponent extends Component
         $this->hasShownHourlyNotice = true;
 
         $this->alert('info', __('messages.t_attention_needed'), [
-            'text'     => __('messages.t_hourly_projects_coming_soon'),
+            'text'     => __('messages.t_hourly_projects_notice'),
             'toast'    => true,
             'position' => 'top-end',
         ]);
@@ -423,13 +449,28 @@ class EditComponent extends Component
             }
 
             // Check if user didn't select salary type
-            if ($this->salary_type !== 'fixed') {
+            if (!in_array($this->salary_type, ['fixed', 'hourly'], true)) {
                 $this->salary_type = 'fixed';
+            } elseif ($this->salary_type === 'hourly' && !$this->hasShownHourlyNotice) {
                 $this->showHourlyNotice();
             }
 
             // Validate form
             EditValidator::validate($this);
+
+            $hourlyWeeklyLimit       = null;
+            $allowManualTime         = false;
+            $autoApproveLowActivity  = false;
+
+            if ($this->salary_type === 'hourly') {
+                $hourlyWeeklyLimit = max(1, min(168, (float) ($this->hourly_weekly_limit ?? 40)));
+                $allowManualTime = (bool) $this->hourly_allow_manual_time;
+                $autoApproveLowActivity = (bool) $this->hourly_auto_approve_low_activity;
+
+                $this->hourly_weekly_limit = $hourlyWeeklyLimit;
+                $this->hourly_allow_manual_time = $allowManualTime;
+                $this->hourly_auto_approve_low_activity = $autoApproveLowActivity;
+            }
 
             // Get skills
             $skills                          = $this->required_skills;
@@ -494,6 +535,22 @@ class EditComponent extends Component
                 $skill->save();
             }
 
+            $defaultRate = null;
+            if (is_numeric($this->project->budget_min) && is_numeric($this->project->budget_max)) {
+                $defaultRate = round(((float) $this->project->budget_min + (float) $this->project->budget_max) / 2, 2);
+            }
+
+            $this->syncHourlyTracking(
+                $this->project,
+                $this->project->budget_type === 'hourly',
+                [
+                    'weekly_limit_hours' => $hourlyWeeklyLimit,
+                    'allow_manual_time' => $allowManualTime,
+                    'auto_approve_low_activity' => $autoApproveLowActivity,
+                    'default_hourly_rate' => $defaultRate,
+                ]
+            );
+
             // Check if payment required, redirect to payment link
             if ($subscription) {
 
@@ -538,6 +595,38 @@ class EditComponent extends Component
         }
     }
 
+
+    protected function syncHourlyTracking(Project $project, bool $isHourly, array $options = []): void
+    {
+        $tracker = $project->trackerProject;
+
+        if (!$isHourly) {
+            if ($tracker && $tracker->is_active) {
+                $tracker->update([
+                    'is_active'   => false,
+                    'archived_at' => now(),
+                ]);
+            }
+
+            return;
+        }
+
+        $currency = settings('currency');
+        $currencyCode = $currency?->code ?? 'USD';
+
+        $defaultRate = $options['default_hourly_rate'] ?? null;
+        if ($defaultRate === null && is_numeric($project->budget_min) && is_numeric($project->budget_max)) {
+            $defaultRate = round(((float) $project->budget_min + (float) $project->budget_max) / 2, 2);
+        }
+
+        app(HourlyProjectProvisioner::class)->provision($project, [
+            'default_hourly_rate' => $defaultRate,
+            'weekly_limit_hours' => $options['weekly_limit_hours'] ?? null,
+            'allow_manual_time' => $options['allow_manual_time'] ?? false,
+            'auto_approve_low_activity' => $options['auto_approve_low_activity'] ?? false,
+            'currency_code' => $currencyCode,
+        ]);
+    }
 
     /**
      * Get project status

@@ -36,7 +36,15 @@ const ThemeManager = {
 
         root.classList.toggle('dark', effective === 'dark');
 
-        if (persist) {\n            try {\n                localStorage.setItem(THEME_STORAGE_KEY, theme);\n            } catch (_) {\n            }\n\n            this.persistPreference(theme);\n        }
+        if (persist) {
+            try {
+                localStorage.setItem(THEME_STORAGE_KEY, theme);
+            } catch (_) {
+                // Ignore storage quota errors
+            }
+
+            this.persistPreference(theme);
+        }
 
         document.dispatchEvent(new CustomEvent('theme:changed', {
             detail: {

@@ -2,10 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\Contract;
+use App\Models\TrackerClient;
+use App\Models\TrackerProject;
+use App\Models\TrackerProjectMember;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
@@ -24,6 +28,11 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Route::model('tracker_client', TrackerClient::class);
+        Route::model('tracker_project', TrackerProject::class);
+        Route::model('tracker_project_member', TrackerProjectMember::class);
+        Route::model('tracker_contract', Contract::class);
+
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });

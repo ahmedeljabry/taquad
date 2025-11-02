@@ -7,7 +7,7 @@
             {{-- Message content --}}
             @if ($message)
                 <div class="msg-card-content" title="{{ $fullTime }}">
-                    {!! ($message == null && $attachment != null && @$attachment[2] != 'file') ? $attachment[1] : nl2br($message) !!}
+                    {!! ($message == null && $attachment != null && @$attachment[2] == 'image') ? $attachment[1] : nl2br($message) !!}
                 </div>
             @endif
 
@@ -42,6 +42,22 @@
                 </div>
             @endif
 
+            {{-- Message attachment (Voice) --}}
+            @if(@$attachment[2] == 'voice')
+                <div class="voice-note-player mt-2 w-full max-w-sm bg-white/70 dark:bg-zinc-700/70 rounded-xl px-4 py-3 backdrop-blur" dir="{{ config()->get('direction') }}">
+                    <div class="flex items-center gap-3">
+                        <audio controls preload="metadata" class="w-full" src="{{ Chatify::getAttachmentUrl($attachment[0]) }}"></audio>
+                        @if(!empty($attachment[5]))
+                            <span class="text-xs font-semibold text-slate-600 dark:text-slate-200">{{ gmdate('i:s', (int) $attachment[5]) }}</span>
+                        @endif
+                    </div>
+                    <div class="flex items-center justify-between mt-2 text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-300">
+                        <span class="font-medium">{{ $attachment[1] }}</span>
+                        <a href="{{ url('inbox/download', $attachment[0]) }}" class="text-primary-600 hover:underline">@lang('messages.t_download')</a>
+                    </div>
+                </div>
+            @endif
+
             {{-- Message attachment (Image) --}}
             @if(@$attachment[2] == 'image')
                 <div class="image-file chat-image w-60 h-48" style="background-image: url('{{ Chatify::getAttachmentUrl($attachment[0]) }}')"></div>
@@ -65,7 +81,7 @@
             {{-- Message content --}}
             @if ($message)
                 <div class="msg-card-content" title="{{ $fullTime }}">
-                    {!! ($message == null && $attachment != null && @$attachment[2] != 'file') ? $attachment[1] : nl2br($message) !!}
+                    {!! ($message == null && $attachment != null && @$attachment[2] == 'image') ? $attachment[1] : nl2br($message) !!}
                 </div>
             @endif
 
@@ -96,6 +112,22 @@
     
                         </div>
 
+                    </div>
+                </div>
+            @endif
+
+            {{-- Message attachment (Voice) --}}
+            @if(@$attachment[2] == 'voice')
+                <div class="voice-note-player mt-2 w-full max-w-sm bg-white/80 dark:bg-zinc-700/75 rounded-xl px-4 py-3 backdrop-blur" dir="{{ config()->get('direction') }}">
+                    <div class="flex items-center gap-3">
+                        <audio controls preload="metadata" class="w-full" src="{{ Chatify::getAttachmentUrl($attachment[0]) }}"></audio>
+                        @if(!empty($attachment[5]))
+                            <span class="text-xs font-semibold text-slate-600 dark:text-slate-200">{{ gmdate('i:s', (int) $attachment[5]) }}</span>
+                        @endif
+                    </div>
+                    <div class="flex items-center justify-between mt-2 text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-300">
+                        <span class="font-medium">{{ $attachment[1] }}</span>
+                        <a href="{{ url('inbox/download', $attachment[0]) }}" class="text-primary-200 hover:underline">@lang('messages.t_download')</a>
                     </div>
                 </div>
             @endif

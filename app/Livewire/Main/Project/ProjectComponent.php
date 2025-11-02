@@ -558,6 +558,11 @@ class ProjectComponent extends Component
 
     public function updatedBidPlanType($value): void
     {
+        if ($this->project && $this->project->budget_type === 'hourly') {
+            $this->bid_plan_type = 'fixed';
+            return;
+        }
+
         $this->bid_plan_type = $value === 'milestone' ? 'milestone' : 'fixed';
 
         if ($this->bid_plan_type === 'fixed') {
@@ -573,6 +578,10 @@ class ProjectComponent extends Component
 
     public function addBidMilestone(): void
     {
+        if ($this->project && $this->project->budget_type === 'hourly') {
+            return;
+        }
+
         if (count($this->bid_milestones) >= 6) {
             return;
         }

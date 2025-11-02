@@ -221,19 +221,16 @@
 
                             {{-- Hourly price --}}
                             <li>
-                                <input type="radio" id="post-project-salary-type-hourly" name="salary_type" class="hidden" disabled>
-                                <label for="post-project-salary-type-hourly" class="relative inline-flex items-center justify-between w-full p-4 text-gray-500 bg-white border shadow-sm border-gray-200 rounded-lg cursor-not-allowed opacity-70 dark:border-zinc-700 dark:text-zinc-400 dark:bg-zinc-800">
+                                <input type="radio" id="post-project-salary-type-hourly" name="salary_type" wire:model="salary_type" value="hourly" class="hidden peer">
+                                <label for="post-project-salary-type-hourly" class="inline-flex items-center justify-between w-full p-4 text-gray-500 bg-white border shadow-sm border-gray-200 rounded-lg cursor-pointer transition hover:text-gray-600 hover:bg-gray-100 dark:text-zinc-400 dark:bg-zinc-800 dark:border-zinc-700 dark:hover:bg-zinc-700 dark:peer-checked:text-primary-600 peer-checked:border-primary-600 peer-checked:text-primary-600">
                                     <div class="block">
-                                        <div class="w-full text-xs+ tracking-wide font-semibold text-slate-500 dark:text-zinc-400">
+                                        <div class="w-full text-xs+ tracking-wide font-semibold">
                                             @lang('messages.t_hourly_price')
                                         </div>
                                         <p class="mt-1 text-[11px] text-slate-500 dark:text-zinc-400">
-                                            @lang('messages.t_hourly_projects_coming_soon')
+                                            @lang('messages.t_hourly_price_hint')
                                         </p>
                                     </div>
-                                    <span class="absolute rtl:right-4 ltr:left-4 -top-2 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-slate-600 dark:bg-zinc-700 dark:text-zinc-200">
-                                        @lang('messages.t_coming_soon')
-                                    </span>
                                     <i class="ph-duotone ph-clock text-2xl opacity-60"></i>
                                 </label>
                             </li>
@@ -247,22 +244,55 @@
                     </div>
 
                     {{-- Min price --}}
+                    @php
+                        $isHourly = $salary_type === 'hourly';
+                        $minLabel = $isHourly ? __('messages.t_hourly_min_rate') : __('messages.t_min_price');
+                        $maxLabel = $isHourly ? __('messages.t_hourly_max_rate') : __('messages.t_max_price');
+                        $currencySuffix = $currency_symbol . ($isHourly ? ' / ' . __('messages.t_hour_short') : '');
+                    @endphp
                     <div class="col-span-12 md:col-span-6">
                         <x-forms.text-input required
-                            :label="__('messages.t_min_price')"
+                            :label="$minLabel"
                             placeholder="0.00"
                             model="min_price"
-                            suffix="{{ $currency_symbol }}" />
+                            :suffix="$currencySuffix" />
                     </div>
 
                     {{-- Max price --}}
                     <div class="col-span-12 md:col-span-6">
                         <x-forms.text-input required
-                            :label="__('messages.t_max_price')"
+                            :label="$maxLabel"
                             placeholder="0.00"
                             model="max_price"
-                            suffix="{{ $currency_symbol }}" />
+                            :suffix="$currencySuffix" />
                     </div>
+
+                    @if ($salary_type === 'hourly')
+                        <div class="col-span-12 lg:col-span-6">
+                            <x-forms.text-input required
+                                :label="__('messages.t_hourly_weekly_limit')"
+                                placeholder="40"
+                                model="hourly_weekly_limit"
+                                :suffix="__('messages.t_hours_per_week_suffix')" />
+                        </div>
+                        <div class="col-span-12 lg:col-span-6">
+                            <div class="space-y-4 rounded-xl border border-slate-200 bg-white px-4 py-4 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+                                <div>
+                                    <x-forms.checkbox :label="__('messages.t_hourly_allow_manual_time')" model="hourly_allow_manual_time" />
+                                    <p class="mt-2 text-[12px] leading-6 text-slate-500 dark:text-zinc-400">
+                                        @lang('messages.t_hourly_allow_manual_time_hint')
+                                    </p>
+                                </div>
+                                <div>
+                                    <x-forms.checkbox :label="__('messages.t_hourly_auto_approve_low_activity')" model="hourly_auto_approve_low_activity" />
+                                    <p class="mt-2 text-[12px] leading-6 text-slate-500 dark:text-zinc-400">
+                                        @lang('messages.t_hourly_auto_approve_low_activity_hint')
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
 
                 </div>
             </div>

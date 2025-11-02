@@ -78,73 +78,106 @@
                 </div>
             @endif
 
-            <section class="card px-5 sm:px-8 py-8 border border-slate-100/80 shadow-sm dark:border-zinc-700/60">
-                <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                    <div class="flex items-start gap-3">
+            <section
+                class="relative overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 px-6 py-10 shadow-xl backdrop-blur-sm dark:border-zinc-700/70 dark:bg-zinc-900/70 sm:px-9 lg:px-12">
+                <div
+                    class="pointer-events-none absolute -top-24 ltr:-right-24 rtl:-left-24 h-64 w-64 rounded-full bg-primary-500/15 blur-3xl dark:bg-primary-400/20">
+                </div>
+                <div
+                    class="pointer-events-none absolute top-1/2 -translate-y-1/2 ltr:-left-28 rtl:-right-28 h-64 w-64 rounded-full bg-sky-400/10 blur-3xl">
+                </div>
+
+                <div class="relative flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                    <div class="flex items-start gap-4">
                         <div
-                            class="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-300 text-2xl">
+                            class="flex h-14 w-14 flex-none items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-sky-500 text-2xl text-white shadow-lg shadow-primary-500/35">
                             <i class="ph-duotone ph-briefcase"></i>
                         </div>
                         <div>
-                            <h1 class="text-lg font-extrabold tracking-tight text-zinc-900 dark:text-white">
+                            <h1 class="text-xl font-black tracking-tight text-slate-900 dark:text-white">
                                 @lang('messages.t_post_new_project')
                             </h1>
-                            <p class="mt-1 text-sm text-slate-500 dark:text-zinc-300">
+                            <p class="mt-2 text-sm leading-relaxed text-slate-500 dark:text-zinc-300">
                                 @lang('messages.t_post_new_project_subtitle')
                             </p>
                         </div>
                     </div>
                     @if ($activeTemplate)
                         <div
-                            class="rounded-xl border border-primary-100 bg-primary-50/60 px-4 py-3 text-sm text-primary-700 dark:border-primary-500/30 dark:bg-primary-500/10 dark:text-primary-200">
-                            <div class="flex items-center gap-2">
+                            class="relative flex w-full flex-col gap-2 rounded-2xl border border-primary-200/60 bg-primary-50/50 px-4 py-4 text-sm text-primary-700 shadow-inner dark:border-primary-400/30 dark:bg-primary-500/10 dark:text-primary-100 md:w-72">
+                            <div class="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wide">
                                 <i class="ph-duotone ph-magic-wand text-base"></i>
                                 <span>{{ $activeTemplate['name'] ?? __('messages.t_selected') }}</span>
                             </div>
-                            <p class="mt-2 leading-relaxed text-[13px] text-primary-600/80 dark:text-primary-200/80">
+                            <p class="leading-relaxed text-[13px] text-primary-700/80 dark:text-primary-100/80">
                                 {{ $activeTemplate['headline'] ?? '' }}
                             </p>
                         </div>
                     @endif
                 </div>
 
-                <div class="mt-7">
-                    <ol class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                @php
+                    $totalSteps = count($wizardSteps);
+                    $progressPercent = $totalSteps > 1 ? ($step / ($totalSteps - 1)) * 100 : 0;
+                @endphp
+
+                <div class="relative mt-10">
+                    <div class="h-2 w-full rounded-full bg-slate-100 dark:bg-zinc-700">
+                        <div class="h-2 rounded-full bg-gradient-to-r from-primary-500 via-sky-500 to-emerald-400 transition-all duration-500"
+                            style="width: {{ $progressPercent }}%;">
+                        </div>
+                    </div>
+                    <div class="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         @foreach ($wizardSteps as $wizardStep)
                             @php
                                 $isCurrent = $wizardStep['id'] === $step;
                                 $isCompleted = $wizardStep['id'] < $step;
                                 $isLocked = $wizardStep['id'] > $step;
                             @endphp
-                            <li wire:key="wizard-step-{{ $wizardStep['id'] }}">
-                                <button type="button" @if (!$isLocked) wire:click="$set('step', {{ $wizardStep['id'] }})"
-                                @endif @disabled($isLocked) @class([
-                                        'group flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-200',
-                                        'border-primary-500 bg-primary-50/70 text-primary-700 shadow-sm dark:border-primary-400/60 dark:bg-primary-500/10 dark:text-primary-200' => $isCurrent,
-                                        'border-emerald-400/60 bg-emerald-50/70 text-emerald-600 shadow-sm dark:border-emerald-400/40 dark:bg-emerald-500/10 dark:text-emerald-200' => $isCompleted,
-                                        'border-slate-200 bg-white text-slate-500 hover:border-primary-200 hover:text-primary-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300' => !$isCurrent && !$isCompleted,
-                                        'cursor-not-allowed opacity-60 hover:border-slate-200 hover:text-slate-500 dark:hover:border-zinc-700' => $isLocked,
+                            <div wire:key="wizard-step-{{ $wizardStep['id'] }}">
+                                <button type="button"
+                                    @if (!$isLocked) wire:click="$set('step', {{ $wizardStep['id'] }})" @endif
+                                    @disabled($isLocked)
+                                    @class([
+                                        'group relative flex w-full flex-col gap-3 rounded-2xl border bg-white/90 px-4 py-4 text-right shadow transition-all duration-200 dark:bg-zinc-900/80',
+                                        'border-primary-500/70 shadow-primary-500/20 ring-2 ring-primary-500/40 dark:border-primary-400/60 dark:ring-primary-400/40' =>
+                                            $isCurrent,
+                                        'border-emerald-400/60 bg-emerald-50/70 text-emerald-700 dark:border-emerald-400/40 dark:bg-emerald-500/10 dark:text-emerald-200' =>
+                                            $isCompleted,
+                                        'border-slate-200/70 text-slate-500 hover:-translate-y-1 hover:border-primary-200 hover:text-primary-600 dark:border-zinc-700/70 dark:text-zinc-300' =>
+                                            !$isCurrent && !$isCompleted,
+                                        'cursor-not-allowed opacity-60 hover:translate-y-0 hover:border-slate-200 hover:text-slate-500 dark:hover:border-zinc-700' =>
+                                            $isLocked,
                                     ])>
-                                    <span @class([
-                                        'flex h-9 w-9 flex-none items-center justify-center rounded-full text-sm font-semibold transition',
-                                        'bg-primary-600 text-white' => $isCurrent,
-                                        'bg-emerald-500 text-white' => $isCompleted,
-                                        'bg-slate-100 text-slate-500 dark:bg-zinc-700 dark:text-zinc-200' => !$isCurrent && !$isCompleted,
-                                    ])>
-                                        <span>{{ $wizardStep['id'] + 1 }}</span>
-                                    </span>
-                                    <span class="flex flex-col">
-                                        <span class="text-[13px] font-semibold tracking-wide">
+                                    <div class="flex items-center justify-between">
+                                        <span @class([
+                                            'flex h-10 w-10 flex-none items-center justify-center rounded-full text-sm font-semibold transition',
+                                            'bg-gradient-to-br from-primary-500 to-sky-500 text-white shadow-lg shadow-primary-500/30' =>
+                                                $isCurrent,
+                                            'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' => $isCompleted,
+                                            'bg-slate-100 text-slate-500 dark:bg-zinc-700 dark:text-zinc-200' =>
+                                                !$isCurrent && !$isCompleted,
+                                        ])>
+                                            {{ $wizardStep['id'] + 1 }}
+                                        </span>
+                                    </div>
+                                    <div class="text-start">
+                                        <p @class([
+                                            'text-[14px] font-semibold leading-5',
+                                            'text-primary-600 dark:text-primary-200' => $isCurrent,
+                                            'text-emerald-600 dark:text-emerald-200' => $isCompleted && !$isCurrent,
+                                            'text-slate-600 dark:text-zinc-200' => !$isCurrent && !$isCompleted,
+                                        ])>
                                             {{ $wizardStep['label'] }}
-                                        </span>
-                                        <span class="mt-1 text-[12px] leading-5 text-slate-500 dark:text-zinc-400">
+                                        </p>
+                                        <p class="mt-2 text-[12px] leading-6 text-slate-500 dark:text-zinc-400">
                                             {{ $wizardStep['caption'] }}
-                                        </span>
-                                    </span>
+                                        </p>
+                                    </div>
                                 </button>
-                            </li>
+                            </div>
                         @endforeach
-                    </ol>
+                    </div>
                 </div>
             </section>
             {{-- Step: Brief --}}
@@ -765,32 +798,61 @@
                                     </span>
                                 </label>
                                 <label
-                                    class="relative flex cursor-not-allowed items-center gap-3 rounded-2xl border px-4 py-4 opacity-70 dark:border-zinc-600">
-                                    <span class="absolute top-3 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-slate-600 rtl:right-4 ltr:left-4 dark:bg-zinc-700 dark:text-zinc-200">
-                                        @lang('messages.t_coming_soon')
-                                    </span>
-                                    <input type="radio" id="post-project-salary-type-hourly" name="salary_type" class="hidden" disabled>
+                                    class="relative flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-4 transition hover:border-primary-200 hover:bg-primary-50/30 dark:border-zinc-600 dark:hover:border-primary-400"
+                                    :class="{ 'border-primary-500 bg-primary-50/60 dark:border-primary-400/70 dark:bg-primary-500/10': $wire.salary_type === 'hourly' }">
+                                    <input type="radio" id="post-project-salary-type-hourly" name="salary_type"
+                                        wire:model="salary_type" value="hourly" class="hidden">
                                     <span
                                         class="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-primary-600/10 text-primary-600 dark:bg-primary-500/15 dark:text-primary-200">
                                         <i class="ph-duotone ph-clock text-xl"></i>
                                     </span>
                                     <span class="flex flex-col">
-                                        <span class="text-sm font-semibold text-slate-500 dark:text-zinc-400">
+                                        <span class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
                                             @lang('messages.t_hourly_price')
                                         </span>
                                         <span class="text-[12.5px] text-slate-500 dark:text-zinc-400">
-                                            @lang('messages.t_hourly_projects_coming_soon')
+                                            @lang('messages.t_hourly_price_hint')
                                         </span>
                                     </span>
                                 </label>
                             </div>
 
+                            @php
+                                $isHourly = $salary_type === 'hourly';
+                                $minLabel = $isHourly ? __('messages.t_hourly_min_rate') : __('messages.t_min_price');
+                                $maxLabel = $isHourly ? __('messages.t_hourly_max_rate') : __('messages.t_max_price');
+                                $currencySuffix = $currency_symbol . ($isHourly ? ' / ' . __('messages.t_hour_short') : '');
+                            @endphp
                             <div class="mt-6 grid gap-6 md:grid-cols-2">
-                                <x-forms.text-input required :label="__('messages.t_min_price')" placeholder="0.00"
-                                    model="min_price" suffix="{{ $currency_symbol }}" />
-                                <x-forms.text-input required :label="__('messages.t_max_price')" placeholder="0.00"
-                                    model="max_price" suffix="{{ $currency_symbol }}" />
+                                <x-forms.text-input required :label="$minLabel" placeholder="0.00"
+                                    model="min_price" :suffix="$currencySuffix" />
+                                <x-forms.text-input required :label="$maxLabel" placeholder="0.00"
+                                    model="max_price" :suffix="$currencySuffix" />
                             </div>
+
+                            @if ($isHourly)
+                                <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+                                    <div>
+                                        <x-forms.text-input required :label="__('messages.t_hourly_weekly_limit')" placeholder="40"
+                                            model="hourly_weekly_limit" :suffix="__('messages.t_hours_per_week_suffix')" />
+                                    </div>
+                                    <div
+                                        class="space-y-4 rounded-2xl border border-slate-200 bg-white/80 px-5 py-5 shadow-sm dark:border-zinc-600 dark:bg-zinc-800">
+                                        <div>
+                                            <x-forms.checkbox :label="__('messages.t_hourly_allow_manual_time')" model="hourly_allow_manual_time" />
+                                            <p class="mt-2 text-[12px] leading-6 text-slate-500 dark:text-zinc-400">
+                                                @lang('messages.t_hourly_allow_manual_time_hint')
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <x-forms.checkbox :label="__('messages.t_hourly_auto_approve_low_activity')" model="hourly_auto_approve_low_activity" />
+                                            <p class="mt-2 text-[12px] leading-6 text-slate-500 dark:text-zinc-400">
+                                                @lang('messages.t_hourly_auto_approve_low_activity_hint')
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
 
                             <div
                                 class="rounded-2xl border border-slate-200 bg-white/80 px-5 py-5 shadow-sm dark:border-zinc-600 dark:bg-zinc-800">

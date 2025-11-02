@@ -158,10 +158,17 @@ class TrackerComponent extends Component
             ->where('contract_id', $this->contract->id)
             ->groupBy('client_status')
             ->get()
-            ->mapWithKeys(fn ($row) => [$row->client_status => [
-                'count'   => (int) $row->total,
-                'minutes' => (int) $row->minutes,
-            ]]);
+            ->mapWithKeys(function ($row) {
+                $status = $row->client_status;
+                if ($status instanceof TimeEntryClientStatus) {
+                    $status = $status->value;
+                }
+
+                return [$status => [
+                    'count'   => (int) $row->total,
+                    'minutes' => (int) $row->minutes,
+                ]];
+            });
 
         $this->summary = [
             'pending'  => $grouped['pending']['count'] ?? 0,

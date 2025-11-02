@@ -38,12 +38,15 @@ return [
     |-------------------------------------
     */
     'pusher' => [
-        'key'     => '543a807d1a1fec6d1fc6',
-        'secret'  => '10c1191d044909ef3f9b',
-        'app_id'  => '1939320',
+        'key'     => env('REVERB_APP_KEY', env('PUSHER_APP_KEY')),
+        'secret'  => env('REVERB_APP_SECRET', env('PUSHER_APP_SECRET')),
+        'app_id'  => env('REVERB_APP_ID', env('PUSHER_APP_ID')),
         'options' => [
-            'cluster'   => 'ap2',
-            'encrypted' => 1,
+            'host'      => env('REVERB_HOST', env('PUSHER_HOST', '127.0.0.1')),
+            'port'      => (int) env('REVERB_PORT', env('PUSHER_PORT', 6001)),
+            'scheme'    => env('REVERB_SCHEME', env('PUSHER_SCHEME', 'http')),
+            'useTLS'    => env('REVERB_SCHEME', env('PUSHER_SCHEME', 'http')) === 'https',
+            'encrypted' => env('REVERB_SCHEME', env('PUSHER_SCHEME', 'http')) === 'https',
         ],
     ],
 
@@ -115,5 +118,17 @@ return [
         'enabled'     => true,
         'public_path' => 'js/chatify/sounds',
         'new_message' => 'new-message-sound.mp3',
-    ]
+    ],
+
+    /*
+    |-------------------------------------
+    | Voice notes
+    |-------------------------------------
+    */
+    'voice_notes' => [
+        'enabled'      => env('CHATIFY_VOICE_NOTES', true),
+        'max_seconds'  => (int) env('CHATIFY_VOICE_MAX_SECONDS', 180),
+        'formats'      => array_filter(array_map('trim', explode(',', env('CHATIFY_VOICE_FORMATS', 'webm,ogg,m4a,mp3,wav')))),
+        'storage_disk' => env('CHATIFY_VOICE_DISK', env('FILESYSTEM_DISK', config('chatify.storage_disk_name', 'chat'))),
+    ],
 ];

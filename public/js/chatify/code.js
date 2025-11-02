@@ -3,7 +3,7 @@
  * Global variables
  *-------------------------------------------------------------
  */
- var messenger,
+var messenger,
 	typingTimeout,
 	typingNow               = 0,
 	temporaryMsgId          = 0,
@@ -11,6 +11,23 @@
 	messengerColor,
 	dark_mode,
 	messages_page           = 1;
+
+const voiceNotes = {
+	enabled: ($('meta[name="chatify-voice-enabled"]').attr('content') || '0') === '1' && (window.__chatifyVoiceNotes?.enabled ?? true),
+	maxSeconds: window.__chatifyVoiceNotes?.maxSeconds || parseInt($('meta[name="chatify-voice-max"]').attr('content') || '180', 10),
+	formats: window.__chatifyVoiceNotes?.formats || (($('meta[name="chatify-voice-formats"]').attr('content') || 'webm').split(',').map((f) => f.trim()).filter(Boolean)),
+	state: {
+		recorder: null,
+		stream: null,
+		chunks: [],
+		blob: null,
+		duration: 0,
+		timer: null,
+		objectUrl: null,
+	},
+	elements: {},
+	labels: window.__chatifyVoiceNotes?.labels || {},
+};
 
 // Set locale &Timezone
 moment.locale( $("meta[name='time-locale']").attr("content") );
@@ -208,6 +225,223 @@ function attachmentTemplate(fileType, fileName, imgURL = null) {
 `
 	 );
  }
+}
+
+function formatSeconds(seconds) {
+	const total = Math.max(0, Number.parseInt(seconds || 0, 10));
+	const mins = Math.floor(total / 60);
+	const secs = total % 60;
+	return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+}
+
+function updateVoiceToggleState(isRecording) {
+	if (!voiceNotes.enabled || !voiceNotes.elements?.toggle?.length) {
+		return;
+	}
+	const toggle = voiceNotes.elements.toggle;
+	const label = voiceNotes.elements.label;
+	const timer = voiceNotes.elements.timer;
+	if (isRecording) {
+		toggle.addClass("is-recording").attr("aria-pressed", "true");
+		timer?.removeClass("hidden").text("00:00");
+		label?.text(voiceNotes.labels.stop || toggle.data("stop-text") || "Stop");
+	} else {
+		toggle.removeClass("is-recording").attr("aria-pressed", "false");
+		timer?.addClass("hidden").text("00:00");
+		label?.text(voiceNotes.labels.record || toggle.data("record-text") || "Record voice");
+	}
+}
+
+function updateVoiceTimer() {
+	if (!voiceNotes.enabled || !voiceNotes.elements?.timer?.length) {
+		return;
+	}
+	voiceNotes.elements.timer.text(formatSeconds(voiceNotes.state.duration || 0));
+}
+
+function setVoiceHint(message, type = "info") {
+	const hintEl = voiceNotes.elements?.hint;
+	if (!voiceNotes.enabled || !hintEl?.length) {
+		return;
+	}
+	if (!message) {
+		hintEl.addClass("hidden").removeClass("is-error").text("");
+		return;
+	}
+	hintEl.text(message);
+	hintEl.toggleClass("is-error", type === "error");
+	hintEl.removeClass("hidden");
+}
+
+function resetVoiceRecorder(clearPreview = true) {
+	if (!voiceNotes.enabled) {
+		return;
+	}
+	try {
+		if (voiceNotes.state.recorder && voiceNotes.state.recorder.state !== "inactive") {
+			voiceNotes.state.recorder.stop();
+		}
+	} catch (error) {
+		console.error(error);
+	}
+	if (voiceNotes.state.stream) {
+		voiceNotes.state.stream.getTracks().forEach((track) => track.stop());
+	}
+	if (voiceNotes.state.timer) {
+		clearInterval(voiceNotes.state.timer);
+	}
+	voiceNotes.state.recorder = null;
+	voiceNotes.state.stream = null;
+	voiceNotes.state.timer = null;
+	voiceNotes.state.chunks = [];
+	if (clearPreview) {
+		if (voiceNotes.state.objectUrl) {
+			URL.revokeObjectURL(voiceNotes.state.objectUrl);
+		}
+		voiceNotes.state.objectUrl = null;
+		voiceNotes.state.blob = null;
+		voiceNotes.state.duration = 0;
+		if (voiceNotes.elements?.audio?.length) {
+            voiceNotes.elements.audio[0].pause();
+            voiceNotes.elements.audio[0].src = "";
+        }
+		voiceNotes.elements?.preview?.addClass("hidden");
+		voiceNotes.elements?.duration?.text("00:00");
+		voiceNotes.elements?.durationField?.val("");
+		setVoiceHint("");
+	}
+	updateVoiceToggleState(false);
+}
+
+function finalizeVoiceRecording() {
+	if (!voiceNotes.enabled) {
+		return;
+	}
+	if (voiceNotes.state.stream) {
+		voiceNotes.state.stream.getTracks().forEach((track) => track.stop());
+	}
+	voiceNotes.state.stream = null;
+	const chunkType = voiceNotes.state.chunks[0]?.type || `audio/${voiceNotes.formats[0] || "webm"}`;
+	const blob = new Blob(voiceNotes.state.chunks, { type: chunkType });
+	voiceNotes.state.chunks = [];
+	if (voiceNotes.state.objectUrl) {
+		URL.revokeObjectURL(voiceNotes.state.objectUrl);
+	}
+	voiceNotes.state.blob = blob;
+	voiceNotes.state.objectUrl = URL.createObjectURL(blob);
+	voiceNotes.elements?.audio?.length && (voiceNotes.elements.audio[0].src = voiceNotes.state.objectUrl);
+	voiceNotes.elements?.duration?.length && voiceNotes.elements.duration.text(formatSeconds(voiceNotes.state.duration));
+	voiceNotes.elements?.durationField?.length && voiceNotes.elements.durationField.val(voiceNotes.state.duration);
+	voiceNotes.elements?.preview?.removeClass("hidden");
+	setVoiceHint("");
+}
+
+function stopVoiceRecording() {
+	if (!voiceNotes.enabled || !voiceNotes.state.recorder) {
+		return;
+	}
+	try {
+		voiceNotes.state.recorder.stop();
+	} catch (error) {
+		console.error(error);
+	}
+	if (voiceNotes.state.timer) {
+		clearInterval(voiceNotes.state.timer);
+	}
+	voiceNotes.state.timer = null;
+	updateVoiceToggleState(false);
+	updateVoiceTimer();
+}
+
+function startVoiceRecording() {
+	if (!voiceNotes.enabled) {
+		return;
+	}
+	if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+		setVoiceHint(voiceNotes.labels.unsupported || "Your browser does not support voice notes.", "error");
+		return;
+	}
+	resetVoiceRecorder(true);
+	updateVoiceToggleState(true);
+	setVoiceHint("");
+	navigator.mediaDevices
+		.getUserMedia({ audio: true })
+		.then((stream) => {
+			voiceNotes.state.stream = stream;
+			voiceNotes.state.recorder = new MediaRecorder(stream);
+			voiceNotes.state.chunks = [];
+			voiceNotes.state.duration = 0;
+			updateVoiceTimer();
+			voiceNotes.state.timer = setInterval(() => {
+				voiceNotes.state.duration += 1;
+				updateVoiceTimer();
+				if (voiceNotes.state.duration >= voiceNotes.maxSeconds) {
+					stopVoiceRecording();
+				}
+			}, 1000);
+			voiceNotes.state.recorder.ondataavailable = (event) => {
+				if (event.data && event.data.size > 0) {
+					voiceNotes.state.chunks.push(event.data);
+				}
+			};
+			voiceNotes.state.recorder.onstop = finalizeVoiceRecording;
+			voiceNotes.state.recorder.start();
+		})
+		.catch(() => {
+			setVoiceHint(voiceNotes.labels.permission || "Please allow microphone access to record.", "error");
+			updateVoiceToggleState(false);
+			resetVoiceRecorder();
+		});
+}
+
+function initVoiceNotes() {
+	if (!voiceNotes.enabled) {
+		return;
+	}
+	voiceNotes.elements = {
+		toggle: $("#voice-record-toggle"),
+		label: $("#voice-record-label"),
+		timer: $("#voice-record-timer"),
+		preview: $("#voice-note-preview"),
+		hint: $("#voice-note-hint"),
+		audio: $("#voice-note-audio"),
+		duration: $("#voice-note-duration-label"),
+		durationField: $("#voice-note-duration-field"),
+		cancel: $("#voice-record-cancel"),
+		send: $("#voice-record-send"),
+	};
+	if (!voiceNotes.elements.toggle.length) {
+		voiceNotes.enabled = false;
+		return;
+	}
+	const toggle = voiceNotes.elements.toggle;
+	voiceNotes.labels.record = voiceNotes.labels.record || toggle.data("record-text") || "Record voice";
+	voiceNotes.labels.stop = voiceNotes.labels.stop || toggle.data("stop-text") || "Stop";
+	voiceNotes.labels.discard = voiceNotes.labels.discard || voiceNotes.elements.cancel?.text()?.trim() || "Discard";
+	voiceNotes.labels.send = voiceNotes.labels.send || voiceNotes.elements.send?.text()?.trim() || "Send voice";
+	voiceNotes.labels.noRecording = voiceNotes.labels.noRecording || "No voice note recorded yet.";
+	voiceNotes.labels.uploading = voiceNotes.labels.uploading || "Uploading voice note…";
+	voiceNotes.labels.uploadFailed = voiceNotes.labels.uploadFailed || "Failed to upload the voice note. Please try again.";
+
+	toggle.on("click", () => {
+		if (voiceNotes.state.recorder) {
+			stopVoiceRecording();
+		} else {
+			startVoiceRecording();
+		}
+	});
+	voiceNotes.elements.cancel?.on("click", () => {
+		resetVoiceRecorder();
+	});
+	voiceNotes.elements.send?.on("click", () => {
+		if (!voiceNotes.state.blob) {
+			setVoiceHint(voiceNotes.labels.noRecording, "error");
+			return;
+		}
+		setVoiceHint("");
+		sendMessage();
+	});
+	updateVoiceToggleState(false);
 }
 
 // Active Status Circle
@@ -486,10 +720,21 @@ function sendMessage() {
 	      temporaryMsgId += 1;
 	let   tempID          = `temp_${temporaryMsgId}`;
 	let   hasFile         = !!$(".upload-attachment").val() && chatify.enable_attachments;
+	let   hasVoice        = voiceNotes.enabled && !!voiceNotes.state.blob;
 	const inputValue      = $.trim(messageInput.val());
 
-	if (inputValue.length > 0 || hasFile) {
+	if (inputValue.length > 0 || hasFile || hasVoice) {
 		const formData = new FormData($("#message-form")[0]);
+		if (hasVoice) {
+			const blobType = voiceNotes.state.blob.type || `audio/${voiceNotes.formats[0] || "webm"}`;
+			const extension = blobType.split("/").pop().split(";")[0] || voiceNotes.formats[0] || "webm";
+			const fileName = `voice-note-${Date.now()}.${extension}`;
+			const voiceFile = new File([voiceNotes.state.blob], fileName, { type: blobType });
+			formData.delete("voice");
+			formData.delete("file");
+			formData.append("voice", voiceFile);
+			formData.set("voice_duration", voiceNotes.state.duration || 0);
+		}
 		formData.append("id", getMessengerId());
 		formData.append("type", getMessengerType());
 		formData.append("temporaryMsgId", tempID);
@@ -507,15 +752,14 @@ function sendMessage() {
 			processData: false,
 			contentType: false,
 			beforeSend: () => {
-				// remove message hint
 				$(".messages").find(".message-hint").remove();
-				// append a temporary message card
-				if (hasFile) {
+				const tempText = inputValue.length > 0 ? inputValue : (hasVoice ? (voiceNotes.labels.uploading || "Uploading voice note…") : "");
+				if (hasFile || hasVoice) {
 					messagesContainer
 						.find(".messages")
 						.append(
 							sendTempMessageCard(
-								inputValue + "\n" + loadingSVG("28px"),
+								tempText + "\n" + loadingSVG("28px"),
 								tempID
 							)
 						);
@@ -524,62 +768,58 @@ function sendMessage() {
 						.find(".messages")
 						.append(sendTempMessageCard(inputValue, tempID));
 				}
-				// scroll to bottom
+				if (hasVoice) {
+					setVoiceHint(voiceNotes.labels.uploading || "Uploading voice note…");
+					voiceNotes.elements?.preview?.addClass("hidden");
+				}
 				scrollToBottom(messagesContainer);
 				messageInput.css({
 					height: "42px"
 				});
-				// form reset and focus
 				$("#message-form").trigger("reset");
-				cancelAttachment();
+				cancelAttachment(!hasVoice);
 				messageInput.focus();
 			},
 			success: (data) => {
 				if (data.error > 0) {
-					// message card error status
 					errorMessageCard(tempID);
 					console.error(data.error_msg);
+					if (hasVoice) {
+						setVoiceHint(voiceNotes.labels.uploadFailed || "Failed to upload the voice note. Please try again.", "error");
+					}
 				} else {
-					// update contact item
 					updateContactItem(getMessengerId());
-					// temporary message card
 					const tempMsgCardElement = messagesContainer.find(
 						`.message-card[data-id=${data.tempID}]`
 					);
-					// add the message card coming from the server before the temp-card
 					tempMsgCardElement.before(data.message);
-					// then, remove the temporary message card
 					tempMsgCardElement.remove();
-					// scroll to bottom
 					scrollToBottom(messagesContainer);
-					// send contact item updates
 					sendContactItemUpdates(true);
+					if (hasVoice) {
+						resetVoiceRecorder();
+					}
+					setVoiceHint("");
 
 					$( ".message-time" ).each( function( index ) {
-
-						// Get element
 						const element        = $(this);
-				
-						// Get time
 						const created_at     = element.attr('data-time');
-						
-						// Format time
 						const formatted_time = moment(created_at).fromNow();
-				
-						// Set formatted time
 						element.text( formatted_time );
-				
 					});
 
 				}
 			},
 			error: () => {
-				// message card error status
 				errorMessageCard(tempID);
-				// error log
 				console.error(
 					"Failed sending the message! Please, check your server response."
 				);
+				if (hasVoice) {
+					setVoiceHint(voiceNotes.labels.uploadFailed || "Failed to upload the voice note. Please try again.", "error");
+					resetVoiceRecorder(false);
+					voiceNotes.elements?.preview?.removeClass("hidden");
+				}
 			},
 		});
 	}
@@ -669,11 +909,14 @@ function fetchMessages(id, type, newFetch = false) {
 * Cancel file attached in the message.
 *-------------------------------------------------------------
 */
-function cancelAttachment() {
+function cancelAttachment(resetVoice = true) {
 	$(".messenger-sendCard").find(".attachment-preview").remove();
 	$(".upload-attachment").replaceWith(
 		$(".upload-attachment").val("").clone(true)
 	);
+	if (resetVoice && voiceNotes.enabled) {
+		resetVoiceRecorder();
+	}
 }
 
 /**
@@ -1469,6 +1712,7 @@ $(document).ready(function () {
 
  // make message input autosize.
  autosize($(".m-send"));
+ initVoiceNotes();
 
  // check if pusher has access to the channel [Internet status]
  pusher.connection.bind("state_change", function (states) {
@@ -1590,7 +1834,10 @@ $(document).ready(function () {
  });
 
  // On [upload attachment] input change, show a preview of the image/file.
- $("body").on("change", ".upload-attachment", (e) => {
+$("body").on("change", ".upload-attachment", (e) => {
+	 if (voiceNotes.enabled) {
+		 resetVoiceRecorder();
+	 }
 	 let file = e.target.files[0];
 	 if (!attachmentValidate(file)) return false;
 	 let reader = new FileReader();

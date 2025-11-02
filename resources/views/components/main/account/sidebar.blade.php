@@ -158,35 +158,6 @@
 
         </a>
 
-        {{-- My refunds --}}
-        <a href="{{ url('account/refunds') }}"
-            class="{{ Request::is('account/refunds') ? $link_active_class : $link_basic_class }} group ltr:border-l-4 rtl:border-r-4 px-5 py-3 flex items-center text-sm font-medium">
-
-            {{-- icon --}}
-            <svg xmlns="http://www.w3.org/2000/svg" class="{{ Request::is('account/refunds') ? $icon_active_class : $icon_basic_class }} flex-shrink-0 ltr:-ml-1 rtl:-mr-1 ltr:mr-3 rtl:ml-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z"/></svg>
-
-            {{-- text --}}
-            <span class="truncate text-sm font-semibold"> {{ __('messages.t_my_refunds') }} </span>
-
-        </a>
-
-        {{-- Favorite list --}}
-        <a href="{{ url('account/favorite') }}"
-            class="{{ Request::is('account/favorite') ? $link_active_class : $link_basic_class }} group ltr:border-l-4 rtl:border-r-4 px-5 py-3 flex items-center text-sm font-medium">
-
-            {{-- icon --}}
-            <svg xmlns="http://www.w3.org/2000/svg"
-                class="{{ Request::is('account/favorite') ? $icon_active_class : $icon_basic_class }} flex-shrink-0 ltr:-ml-1 rtl:-mr-1 ltr:mr-3 rtl:ml-3 h-5 w-5"
-                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-
-            {{-- text --}}
-            <span class="truncate text-sm font-semibold"> {{ __('messages.t_favorite_list') }} </span>
-
-        </a>
-
     </div>
 
     <div class="border-b border-gray-100 dark:border-zinc-600">

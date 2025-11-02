@@ -25,8 +25,6 @@ class Review extends Model
         'uid',
         'user_id',
         'seller_id',
-        'gig_id',
-        'order_item_id',
         'rating',
         'message',
         'status'
@@ -61,15 +59,5 @@ class Review extends Model
     public function seller()
     {
         return $this->belongsTo(User::class, 'seller_id')->withTrashed();
-    }
-
-    /**
-     * Get gig
-     *
-     * @return object
-     */
-    public function gig()
-    {
-        return $this->belongsTo(Gig::class, 'gig_id')->withTrashed();
     }
 }
