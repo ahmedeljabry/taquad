@@ -188,19 +188,16 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Cartalyst\Stripe\Laravel\StripeServiceProvider::class,
         October\Rain\Config\ServiceProvider::class,
-        Unicodeveloper\Paystack\PaystackServiceProvider::class,
-        LoveyCom\CashFree\CashFreeServiceProvider::class,
-        Paytabscom\Laravel_paytabs\PaypageServiceProvider::class,
         WireUi\Providers\WireUiServiceProvider::class,
         /*
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        
+
 
     ],
 

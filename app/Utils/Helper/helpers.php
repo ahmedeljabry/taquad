@@ -2057,13 +2057,12 @@ function unseen_messages_count(): mixed
 {
     try {
 
-        $unseen = 0;
-        if (auth()->check()) {
-            $unseen = \App\Models\ChMessage::where('to_id', auth()->id())
-                ->where('seen', false)
-                ->count();
+        if (! auth()->check()) {
+            return 0;
         }
-        return $unseen;
+
+        return \App\Models\ConversationParticipant::where('user_id', auth()->id())
+            ->sum('unread_count');
     } catch (\Throwable $th) {
         return 0;
     }

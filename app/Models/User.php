@@ -277,28 +277,30 @@ class User extends Authenticatable
         return $this->hasMany(UserRestriction::class, 'user_id');
     }
 
-    /**
-     * Get live chat contacts
-     *
-     * @return object
-     */
-    public function chat_contacts_from()
+    public function conversationParticipants()
     {
-        return $this->belongsToMany(self::class, 'ch_messages', 'to_id', 'from_id');
+        return $this->hasMany(ConversationParticipant::class, 'user_id');
     }
 
-    /**
-     * Get live chat contacts
-     *
-     * @return object
-     */
-    public function chat_contacts_to()
+    public function conversations()
     {
-        return $this->belongsToMany(self::class, 'ch_messages', 'from_id', 'to_id');
+        return $this->belongsToMany(Conversation::class, 'conversation_participants', 'user_id', 'conversation_id')
+            ->withPivot(['role', 'joined_at', 'last_read_at', 'unread_count', 'settings'])
+            ->withTimestamps();
     }
 
     public function contacts()
     {
-        return $this->chat_contacts_to->merge($this->chat_contacts_from);
+        return $this->conversations()
+            ->with('participants.user')
+            ->get()
+            ->flatMap(function (Conversation $conversation) {
+                return $conversation->participants
+                    ->pluck('user')
+                    ->filter();
+            })
+            ->filter(fn ($user) => $user->id !== $this->id)
+            ->unique('id')
+            ->values();
     }
 }

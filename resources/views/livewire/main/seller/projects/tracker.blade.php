@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 mb-16">
     <x-forms.loading />
 
     <div class="space-y-10">

@@ -8,6 +8,12 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use Illuminate\Notifications\Events\NotificationSent;
 use App\Listeners\BroadcastNotificationListener;
+use App\Listeners\LogMessagingEvent;
+use App\Events\MessageDelivered;
+use App\Events\MessageRead;
+use App\Events\MessageSent;
+use App\Events\TypingStarted;
+use App\Events\TypingStopped;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -27,6 +33,21 @@ class EventServiceProvider extends ServiceProvider
         ],
         NotificationSent::class => [
             BroadcastNotificationListener::class,
+        ],
+        MessageSent::class => [
+            LogMessagingEvent::class,
+        ],
+        MessageDelivered::class => [
+            LogMessagingEvent::class,
+        ],
+        MessageRead::class => [
+            LogMessagingEvent::class,
+        ],
+        TypingStarted::class => [
+            LogMessagingEvent::class,
+        ],
+        TypingStopped::class => [
+            LogMessagingEvent::class,
         ],
     ];
 

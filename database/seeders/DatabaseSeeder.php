@@ -64,5 +64,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ProjectLevelSeeder::class);
         $this->call(DemoUsersSeeder::class);
         $this->call(DemoProjectsSeeder::class);
+        $this->call(MessagingSeeder::class);
     }
 }

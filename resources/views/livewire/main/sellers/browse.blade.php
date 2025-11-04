@@ -19,7 +19,7 @@
                         class="w-full rounded-2xl border border-slate-200/70 bg-white p-4 shadow-xl shadow-primary-500/10 dark:border-white/10 dark:bg-white/10 dark:backdrop-blur">
                         <div
                             class="flex items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-lg shadow-primary-500/10 dark:bg-zinc-900">
-                            <i class="ph-duotone ph-magnifying-glass text-xl text-primary-600"></i>
+                            <i class="ph-duotone  text-xl text-primary-600"></i>
                             <input type="search" wire:model.debounce.450ms="search"
                                 placeholder="{{ __('messages.t_freelancers_directory_search_placeholder') }}"
                                 class="w-full border-none bg-transparent text-base font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-0 dark:text-zinc-100 dark:placeholder:text-zinc-400" />
@@ -227,18 +227,18 @@
                     @if (!empty($selectedSkills))
                         <div class="mt-6 flex flex-wrap gap-2">
                             @foreach ($selectedSkills as $slug)
-                                                    @php
-                                                        $label = optional($trendingSkills->firstWhere('slug', $slug))->name ?? $slug;
-                                                    @endphp
-                                 <span
-                                                        class="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold text-primary-700 dark:bg-primary-500/15 dark:text-primary-100">
-                                                        <i class="ph-duotone ph-tag text-sm"></i>
-                                                        {{ $label }}
-                                                        <button type="button" wire:click="removeSkill('{{ $slug }}')"
-                                                            class="ml-1 text-sm text-primary-700/70 hover:text-primary-900 dark:text-primary-100/80">
-                                                            <i class="ph-duotone ph-x-circle text-base"></i>
-                                                        </button>
-                                                    </span>
+                                @php
+                                    $label = optional($trendingSkills->firstWhere('slug', $slug))->name ?? $slug;
+                                @endphp
+                                <span
+                                    class="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold text-primary-700 dark:bg-primary-500/15 dark:text-primary-100">
+                                    <i class="ph-duotone ph-tag text-sm"></i>
+                                    {{ $label }}
+                                    <button type="button" wire:click="removeSkill('{{ $slug }}')"
+                                        class="ml-1 text-sm text-primary-700/70 hover:text-primary-900 dark:text-primary-100/80">
+                                        <i class="ph-duotone ph-x-circle text-base"></i>
+                                    </button>
+                                </span>
                             @endforeach
                         </div>
                     @endif

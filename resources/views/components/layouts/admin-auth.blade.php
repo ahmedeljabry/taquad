@@ -93,6 +93,7 @@
 
         {{-- Livewire --}}
         @livewireScriptConfig
+        @livewireScripts
 
         {{-- Custom footer code --}}
         @if (settings('appearance')->custom_code_footer_admin_layout)

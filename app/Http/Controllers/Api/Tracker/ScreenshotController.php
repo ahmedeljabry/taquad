@@ -9,6 +9,7 @@ use App\Models\TimeSnapshot;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 
 class ScreenshotController extends Controller
@@ -59,8 +60,14 @@ class ScreenshotController extends Controller
         $entry->has_screenshot = true;
         $entry->save();
 
+        $url = Storage::disk($disk)->url($path);
+
+        if (! str_starts_with($url, ['http://', 'https://'])) {
+            $url = URL::to($url);
+        }
+
         return response()->json([
-            'path' => Storage::disk($disk)->url($path),
+            'path' => $url,
         ]);
     }
 }

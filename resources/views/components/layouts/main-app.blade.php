@@ -1,4 +1,5 @@
 @php
+    use Illuminate\Support\Facades\View;
     $initialThemePreference = current_theme() ?: 'system';
 @endphp
 <!DOCTYPE html>
@@ -191,10 +192,13 @@
         @endauth
 
         {{-- Footer --}}
-        @livewire('main.includes.footer')
+        @unless (View::hasSection('hideMainFooter'))
+            @livewire('main.includes.footer')
+        @endunless
 
         {{-- Livewire --}}
         @livewireScriptConfig
+        @livewireScripts
 
         {{-- jQuery --}}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -349,51 +353,148 @@
         {{-- Add global real‑time unread counter to browser tab --}}
         <script src="https://js.pusher.com/8.2/pusher.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1/dist/echo.iife.js"></script>
-        <script type="text/JavaScript">
+        <script type="text/javascript">
             (function () {
-                // ---------------- server settings pushed to JS -------------
-                const BROADCAST = @json(config('broadcasting.connections.reverb')),
-                LEGACY_PUSHER = @json(config('chatify.pusher')),
-                USER_ID = {{ auth()->id() }},
-                BASE_TITLE = document.title.replace(/\(\d+\)\s*/, '');
+                const CONNECTION = @json(config('broadcasting.connections.reverb') ?? config('broadcasting.connections.pusher'));
+                const OPTIONS = (CONNECTION && CONNECTION.options) || {};
+                const USER_ID = {{ auth()->id() ?? 'null' }};
+                const BASE_TITLE = document.title.replace(/\(\d+\)\s*/, '');
 
-                let   unread = {{ unseen_messages_count() }};
+                let unread = {{ unseen_messages_count() }};
 
-                // -------------- Bootstrap Echo -----------
                 window.Pusher = Pusher;
-                const OPTIONS = (BROADCAST && BROADCAST.options) || {};
-                const LEGACY_OPTIONS = (LEGACY_PUSHER && LEGACY_PUSHER.options) || {};
-                const HOST = OPTIONS.host || LEGACY_OPTIONS.host || window.location.hostname;
-                const PORT = OPTIONS.port || LEGACY_OPTIONS.port || (LEGACY_OPTIONS.encrypted ? 443 : 6001);
-                const SCHEME = OPTIONS.scheme || LEGACY_OPTIONS.scheme || (LEGACY_OPTIONS.encrypted ? 'https' : 'http');
-                const KEY = (BROADCAST && BROADCAST.key) || (LEGACY_PUSHER && LEGACY_PUSHER.key);
+                const host = OPTIONS.host || window.location.hostname;
+                const port = Number(OPTIONS.port || (OPTIONS.encrypted ? 443 : 6001));
+                const scheme = OPTIONS.scheme || (OPTIONS.encrypted ? 'https' : 'http');
+                const driver = (CONNECTION && CONNECTION.driver) || 'pusher';
+                const isReverb = driver === 'reverb';
+                const key = CONNECTION ? CONNECTION.key : null;
+                const wsPath = (() => {
+                    if (typeof OPTIONS.path !== 'string' || OPTIONS.path.length === 0) {
+                        return '';
+                    }
 
-                window.Echo = new Echo({
-                    broadcaster : 'pusher',
-                    key         : KEY,
-                    wsHost      : HOST,
-                    wsPort      : PORT,
-                    wssPort     : PORT,
-                    forceTLS    : SCHEME === 'https',
-                    enabledTransports: SCHEME === 'https' ? ['wss'] : ['ws', 'wss'],
-                    authEndpoint: "{{ route('pusher.auth') }}",
-                    auth        : {
+                    return OPTIONS.path.startsWith('/') ? OPTIONS.path : `/${OPTIONS.path}`;
+                })();
+                const authEndpoint = "{{ url('/broadcasting/auth') }}";
+
+                const echoOptions = {
+                    broadcaster: isReverb ? 'reverb' : 'pusher',
+                    key,
+                    wsHost: host,
+                    wsPort: port,
+                    wssPort: Number(OPTIONS.wssPort ?? port),
+                    wsPath,
+                    forceTLS: scheme === 'https',
+                    disableStats: true,
+                    encrypted: OPTIONS.encrypted ?? (scheme === 'https'),
+                    authEndpoint,
+                    auth: {
+                        withCredentials: true,
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         }
                     }
-                });
+                };
+
+                if (!echoOptions.forceTLS) {
+                    echoOptions.enabledTransports = ['ws'];
+                }
+
+                if (!isReverb) {
+                    echoOptions.cluster = OPTIONS.cluster || 'mt1';
+                }
+
+                window.Echo = new Echo(echoOptions);
+
+                const playNotificationSound = () => {
+                    try {
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        if (AudioContext) {
+                            const ctx = new AudioContext();
+                            const oscillator = ctx.createOscillator();
+                            const gain = ctx.createGain();
+
+                            oscillator.type = 'sine';
+                            oscillator.frequency.value = 880;
+                            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+
+                            oscillator.connect(gain);
+                            gain.connect(ctx.destination);
+
+                            oscillator.start();
+                            oscillator.stop(ctx.currentTime + 0.25);
+
+                            return;
+                        }
+                    } catch (error) {
+                        // Fallback to audio element below
+                    }
+
+                    const audio = new Audio("{{ asset('sounds/new-message.mp3') }}");
+                    audio.play().catch(() => {});
+                };
+
+                const badgeHTML = `\n                    <span id="nav-badge"\n                            class="flex absolute h-2 w-2 top-0 ltr:right-0 rtl:left-0 mt-0 ltr:-mr-1 rtl:-ml-1">\n                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full\n                                    bg-primary-400 opacity-75"></span>\n                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>\n                    </span>`;
+
+                const inboxLink = document.querySelector('a[href="{{ route('messages.inbox') }}"]');
+
+                const addBadge = () => {
+                    if (!inboxLink) {
+                        return;
+                    }
+
+                    if (!document.getElementById('nav-badge')) {
+                        inboxLink.insertAdjacentHTML('beforeend', badgeHTML);
+                    }
+                };
+
+                const removeBadge = () => {
+                    const el = document.getElementById('nav-badge');
+                    if (el) {
+                        el.remove();
+                    }
+                };
+
+                const paint = () => {
+                    document.title = unread ? `(${unread}) ${BASE_TITLE}` : BASE_TITLE;
+
+                    if (unread) {
+                        addBadge();
+                    } else {
+                        removeBadge();
+                    }
+                };
+
+                paint();
+
+                const dispatchRealtime = (event, payload) => {
+                    window.dispatchEvent(new CustomEvent('realtime:notification', {
+                        detail: { event, payload }
+                    }));
+                };
 
                 if (USER_ID) {
-                    const dispatchRealtime = (event, payload) => {
-                        window.dispatchEvent(new CustomEvent('realtime:notification', {
-                            detail: { event, payload }
-                        }));
-                    };
-
                     window.Echo.private(`user.${USER_ID}`)
                         .listen('.notification.created', (payload) => dispatchRealtime('notification.created', payload))
-                        .listen('.notification.sent', (payload) => dispatchRealtime('notification.sent', payload));
+                        .listen('.notification.sent', (payload) => dispatchRealtime('notification.sent', payload))
+                        .listen('.message.sent', (payload) => {
+                            if (window.Livewire && typeof window.Livewire.dispatch === 'function') {
+                                window.Livewire.dispatch('conversations:refresh', {
+                                    event: 'chat.message.received',
+                                    payload
+                                });
+                            }
+
+                            if ((payload.sender?.id ?? null) === USER_ID) {
+                                return;
+                            }
+
+                            unread += 1;
+                            addBadge();
+                            playNotificationSound();
+                            paint();
+                        });
                 }
 
                 window.addEventListener('realtime:notification', (event) => {
@@ -405,54 +506,12 @@
                     }
                 });
 
-                const badgeHTML   =
-                    `<span id="nav-badge"
-                            class="flex absolute h-2 w-2 top-0 ltr:right-0 rtl:left-0 mt-0 ltr:-mr-1 rtl:-ml-1">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full
-                                    bg-primary-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
-                    </span>`,
-
-                inboxLink = document.querySelector('a[href="{{ url("inbox") }}"]');
-                const addBadge = () => {
-                        if (!document.getElementById('nav-badge')) {
-                            inboxLink.insertAdjacentHTML('beforeend', badgeHTML);
-                        }
-                    };
-
-                  const   removeBadge = () => {
-                        const el = document.getElementById('nav-badge');
-                        if (el) el.remove();
-                    };
-                // -------------- helper to write tab title ------------------
-                const paint = () => {
-                    document.title = unread ? `(${unread}) ${BASE_TITLE}` : BASE_TITLE;
-
-                    if (unread) {
-                        addBadge();;
+                window.addEventListener('messages:unread-count', (event) => {
+                    if (typeof event.detail?.count === 'number') {
+                        unread = Math.max(0, event.detail.count);
+                        paint();
                     }
-                };
-                paint();
-
-                // -------------- listen for new msgs on ALL pages -----------
-                window.Echo.private(`chat.${USER_ID}`)
-                    .listen('.messaging', (e) => {
-                        if (e.to_id == USER_ID) {
-                            ++unread;
-                            const sound = new Audio("{{ asset('js/chatify/sounds/new-message-sound.mp3') }}");
-                             addBadge();
-                            sound.play();
-                            paint();
-                        }
-                    })
-                    .listen('.client-seen', (e) => {
-                        if (e.to_id == USER_ID && e.seen) {
-                            unread = 0;
-                            paint();
-                            removeBadge();
-                        }
-                    });
-
+                });
             })();
         </script>
 
@@ -497,3 +556,6 @@
     </body>
 
 </html>
+
+
+

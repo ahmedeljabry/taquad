@@ -4,102 +4,87 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class Conversation extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'conversations';
-
-    /**
-     * The name of the "updated at" column.
-     *
-     * @var string
-     */
-    const UPDATED_AT = null;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'uid',
-        'from_id',
-        'to_id',
-        'status',
-        'blocked_by',
-        'last_message_at'
+        'project_id',
+        'created_by',
+        'last_message_id',
+        'last_message_at',
     ];
 
-    /**
-     * Get user 1
-     *
-     * @return object
-     */
-    public function from()
+    protected $casts = [
+        'last_message_at' => 'datetime',
+    ];
+
+    protected static function booted(): void
     {
-        return $this->belongsTo(User::class, 'from_id')->withTrashed();
+        static::creating(function (Conversation $conversation) {
+            if (empty($conversation->uid)) {
+                $conversation->uid = Str::ulid()->toBase32();
+            }
+        });
+    }
+
+    public function participants(): HasMany
+    {
+        return $this->hasMany(ConversationParticipant::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
     }
 
     /**
-     * Get user 2
-     *
-     * @return object
+     * Scope the query to conversations that include the given user.
      */
-    public function to()
+    public function scopeForUser($query, int $userId)
     {
-        return $this->belongsTo(User::class, 'to_id')->withTrashed();
+        return $query->whereHas('participants', fn ($relation) => $relation->where('user_id', $userId));
     }
 
-    /**
-     * Get user who blocked this conversation
-     *
-     * @return object
-     */
-    public function blocker()
+    public function latestMessage(): HasOne
     {
-        return $this->belongsTo(User::class, 'blocked_by')->withTrashed();
+        return $this->hasOne(Message::class)->latestOfMany();
     }
 
-    /**
-     * Get conversation messages
-     *
-     * @return object
-     */
-    public function messages()
+    public function project(): BelongsTo
     {
-        return $this->hasMany(ConversationMessage::class, 'conversation_id');
+        return $this->belongsTo(Project::class);
     }
 
-    /**
-     * Get sender  
-     *
-     * @return object
-     */
-    public function sender()
+    public function creator(): BelongsTo
     {
-        if ((int)auth()->id() === (int)$this->from_id) {
-            return $this->belongsTo(User::class, 'to_id')->withTrashed();
-        } else {
-            return $this->belongsTo(User::class, 'from_id')->withTrashed();
-        }
+        return $this->belongsTo(User::class, 'created_by');
     }
 
-    /**
-     * Count unread messages
-     *
-     * @return integer
-     */
-    public function unreadMessages()
+    public function lastMessage(): BelongsTo
     {
-        return $this->hasMany(ConversationMessage::class, 'conversation_id')
-                    ->where('message_from', '!=', auth()->id())
-                    ->where('is_seen', false);
+        return $this->belongsTo(Message::class, 'last_message_id');
+    }
+
+    public function participantFor(User|int $user): ?ConversationParticipant
+    {
+        $userId = $user instanceof User ? $user->getKey() : $user;
+
+        return $this->participants
+            ->firstWhere('user_id', $userId);
+    }
+
+    public function otherParticipant(User|int $user): ?ConversationParticipant
+    {
+        $userId = $user instanceof User ? $user->getKey() : $user;
+
+        return $this->participants
+            ->first(fn (ConversationParticipant $participant) => $participant->user_id !== $userId);
     }
 }

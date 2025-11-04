@@ -1,4 +1,4 @@
-﻿@php
+@php
     $wizardSteps = [
         ['id' => 0, 'label' => 'الفكرة والهدف', 'caption' => 'صِف النتيجة، الجمهور، والأسئلة الحرجة.'],
         ['id' => 1, 'label' => 'الفريق والمتطلبات', 'caption' => 'اختر المهارات وجهّز ملفات السياق.'],
@@ -135,10 +135,8 @@
                                 $isLocked = $wizardStep['id'] > $step;
                             @endphp
                             <div wire:key="wizard-step-{{ $wizardStep['id'] }}">
-                                <button type="button"
-                                    @if (!$isLocked) wire:click="$set('step', {{ $wizardStep['id'] }})" @endif
-                                    @disabled($isLocked)
-                                    @class([
+                                <button type="button" @if (!$isLocked) wire:click="$set('step', {{ $wizardStep['id'] }})"
+                                @endif @disabled($isLocked) @class([
                                         'group relative flex w-full flex-col gap-3 rounded-2xl border bg-white/90 px-4 py-4 text-right shadow transition-all duration-200 dark:bg-zinc-900/80',
                                         'border-primary-500/70 shadow-primary-500/20 ring-2 ring-primary-500/40 dark:border-primary-400/60 dark:ring-primary-400/40' =>
                                             $isCurrent,
@@ -408,7 +406,7 @@
                                             @endphp
                                             <div x-data class="relative">
                                                 <i
-                                                    class="ph ph-magnifying-glass text-slate-400 dark:text-zinc-500 absolute inset-y-0 right-4 my-auto text-sm"></i>
+                                                    class="ph  text-slate-400 dark:text-zinc-500 absolute inset-y-0 right-4 my-auto text-sm"></i>
                                                 <input type="search" wire:model.debounce.400ms="skillSearch"
                                                     wire:keydown.enter.prevent
                                                     class="w-full rounded-full border border-slate-200/70 bg-white/85 px-12 py-2 text-xs font-semibold text-slate-600 transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-200"
@@ -824,28 +822,31 @@
                                 $currencySuffix = $currency_symbol . ($isHourly ? ' / ' . __('messages.t_hour_short') : '');
                             @endphp
                             <div class="mt-6 grid gap-6 md:grid-cols-2">
-                                <x-forms.text-input required :label="$minLabel" placeholder="0.00"
-                                    model="min_price" :suffix="$currencySuffix" />
-                                <x-forms.text-input required :label="$maxLabel" placeholder="0.00"
-                                    model="max_price" :suffix="$currencySuffix" />
+                                <x-forms.text-input required :label="$minLabel" placeholder="0.00" model="min_price"
+                                    :suffix="$currencySuffix" />
+                                <x-forms.text-input required :label="$maxLabel" placeholder="0.00" model="max_price"
+                                    :suffix="$currencySuffix" />
                             </div>
 
                             @if ($isHourly)
                                 <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
                                     <div>
-                                        <x-forms.text-input required :label="__('messages.t_hourly_weekly_limit')" placeholder="40"
-                                            model="hourly_weekly_limit" :suffix="__('messages.t_hours_per_week_suffix')" />
+                                        <x-forms.text-input required :label="__('messages.t_hourly_weekly_limit')"
+                                            placeholder="40" model="hourly_weekly_limit"
+                                            :suffix="__('messages.t_hours_per_week_suffix')" />
                                     </div>
                                     <div
                                         class="space-y-4 rounded-2xl border border-slate-200 bg-white/80 px-5 py-5 shadow-sm dark:border-zinc-600 dark:bg-zinc-800">
                                         <div>
-                                            <x-forms.checkbox :label="__('messages.t_hourly_allow_manual_time')" model="hourly_allow_manual_time" />
+                                            <x-forms.checkbox :label="__('messages.t_hourly_allow_manual_time')"
+                                                model="hourly_allow_manual_time" />
                                             <p class="mt-2 text-[12px] leading-6 text-slate-500 dark:text-zinc-400">
                                                 @lang('messages.t_hourly_allow_manual_time_hint')
                                             </p>
                                         </div>
                                         <div>
-                                            <x-forms.checkbox :label="__('messages.t_hourly_auto_approve_low_activity')" model="hourly_auto_approve_low_activity" />
+                                            <x-forms.checkbox :label="__('messages.t_hourly_auto_approve_low_activity')"
+                                                model="hourly_auto_approve_low_activity" />
                                             <p class="mt-2 text-[12px] leading-6 text-slate-500 dark:text-zinc-400">
                                                 @lang('messages.t_hourly_auto_approve_low_activity_hint')
                                             </p>

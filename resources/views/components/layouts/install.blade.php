@@ -96,6 +96,7 @@
 
         {{-- Livewire --}}
         @livewireScriptConfig
+        @livewireScripts
 
         {{-- Custom scripts --}}
         @stack('scripts')

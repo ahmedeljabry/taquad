@@ -1,4 +1,5 @@
 <?php
+    use Illuminate\Support\Facades\View;
     $initialThemePreference = current_theme() ?: 'system';
 ?>
 <!DOCTYPE html>
@@ -309,7 +310,8 @@ if (isset($__slots)) unset($__slots);
         <?php endif; ?>
 
         
-        <?php
+        <?php if (! (View::hasSection('hideMainFooter'))): ?>
+            <?php
 $__split = function ($name, $params = []) {
     return [$name, $params];
 };
@@ -325,9 +327,12 @@ unset($__params);
 unset($__split);
 if (isset($__slots)) unset($__slots);
 ?>
+        <?php endif; ?>
 
         
         <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::scriptConfig(); ?>
+
+        <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::scripts(); ?>
 
 
         
@@ -518,51 +523,148 @@ if (isset($__slots)) unset($__slots);
         
         <script src="https://js.pusher.com/8.2/pusher.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1/dist/echo.iife.js"></script>
-        <script type="text/JavaScript">
+        <script type="text/javascript">
             (function () {
-                // ---------------- server settings pushed to JS -------------
-                const BROADCAST = <?php echo json_encode(config('broadcasting.connections.reverb'), 15, 512) ?>,
-                LEGACY_PUSHER = <?php echo json_encode(config('chatify.pusher'), 15, 512) ?>,
-                USER_ID = <?php echo e(auth()->id(), false); ?>,
-                BASE_TITLE = document.title.replace(/\(\d+\)\s*/, '');
+                const CONNECTION = <?php echo json_encode(config('broadcasting.connections.reverb') ?? config('broadcasting.connections.pusher'), 15, 512) ?>;
+                const OPTIONS = (CONNECTION && CONNECTION.options) || {};
+                const USER_ID = <?php echo e(auth()->id() ?? 'null', false); ?>;
+                const BASE_TITLE = document.title.replace(/\(\d+\)\s*/, '');
 
-                let   unread = <?php echo e(unseen_messages_count(), false); ?>;
+                let unread = <?php echo e(unseen_messages_count(), false); ?>;
 
-                // -------------- Bootstrap Echo -----------
                 window.Pusher = Pusher;
-                const OPTIONS = (BROADCAST && BROADCAST.options) || {};
-                const LEGACY_OPTIONS = (LEGACY_PUSHER && LEGACY_PUSHER.options) || {};
-                const HOST = OPTIONS.host || LEGACY_OPTIONS.host || window.location.hostname;
-                const PORT = OPTIONS.port || LEGACY_OPTIONS.port || (LEGACY_OPTIONS.encrypted ? 443 : 6001);
-                const SCHEME = OPTIONS.scheme || LEGACY_OPTIONS.scheme || (LEGACY_OPTIONS.encrypted ? 'https' : 'http');
-                const KEY = (BROADCAST && BROADCAST.key) || (LEGACY_PUSHER && LEGACY_PUSHER.key);
+                const host = OPTIONS.host || window.location.hostname;
+                const port = Number(OPTIONS.port || (OPTIONS.encrypted ? 443 : 6001));
+                const scheme = OPTIONS.scheme || (OPTIONS.encrypted ? 'https' : 'http');
+                const driver = (CONNECTION && CONNECTION.driver) || 'pusher';
+                const isReverb = driver === 'reverb';
+                const key = CONNECTION ? CONNECTION.key : null;
+                const wsPath = (() => {
+                    if (typeof OPTIONS.path !== 'string' || OPTIONS.path.length === 0) {
+                        return '';
+                    }
 
-                window.Echo = new Echo({
-                    broadcaster : 'pusher',
-                    key         : KEY,
-                    wsHost      : HOST,
-                    wsPort      : PORT,
-                    wssPort     : PORT,
-                    forceTLS    : SCHEME === 'https',
-                    enabledTransports: SCHEME === 'https' ? ['wss'] : ['ws', 'wss'],
-                    authEndpoint: "<?php echo e(route('pusher.auth'), false); ?>",
-                    auth        : {
+                    return OPTIONS.path.startsWith('/') ? OPTIONS.path : `/${OPTIONS.path}`;
+                })();
+                const authEndpoint = "<?php echo e(url('/broadcasting/auth'), false); ?>";
+
+                const echoOptions = {
+                    broadcaster: isReverb ? 'reverb' : 'pusher',
+                    key,
+                    wsHost: host,
+                    wsPort: port,
+                    wssPort: Number(OPTIONS.wssPort ?? port),
+                    wsPath,
+                    forceTLS: scheme === 'https',
+                    disableStats: true,
+                    encrypted: OPTIONS.encrypted ?? (scheme === 'https'),
+                    authEndpoint,
+                    auth: {
+                        withCredentials: true,
                         headers: {
                             'X-CSRF-TOKEN': '<?php echo e(csrf_token(), false); ?>'
                         }
                     }
-                });
+                };
+
+                if (!echoOptions.forceTLS) {
+                    echoOptions.enabledTransports = ['ws'];
+                }
+
+                if (!isReverb) {
+                    echoOptions.cluster = OPTIONS.cluster || 'mt1';
+                }
+
+                window.Echo = new Echo(echoOptions);
+
+                const playNotificationSound = () => {
+                    try {
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        if (AudioContext) {
+                            const ctx = new AudioContext();
+                            const oscillator = ctx.createOscillator();
+                            const gain = ctx.createGain();
+
+                            oscillator.type = 'sine';
+                            oscillator.frequency.value = 880;
+                            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+
+                            oscillator.connect(gain);
+                            gain.connect(ctx.destination);
+
+                            oscillator.start();
+                            oscillator.stop(ctx.currentTime + 0.25);
+
+                            return;
+                        }
+                    } catch (error) {
+                        // Fallback to audio element below
+                    }
+
+                    const audio = new Audio("<?php echo e(asset('sounds/new-message.mp3'), false); ?>");
+                    audio.play().catch(() => {});
+                };
+
+                const badgeHTML = `\n                    <span id="nav-badge"\n                            class="flex absolute h-2 w-2 top-0 ltr:right-0 rtl:left-0 mt-0 ltr:-mr-1 rtl:-ml-1">\n                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full\n                                    bg-primary-400 opacity-75"></span>\n                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>\n                    </span>`;
+
+                const inboxLink = document.querySelector('a[href="<?php echo e(route('messages.inbox'), false); ?>"]');
+
+                const addBadge = () => {
+                    if (!inboxLink) {
+                        return;
+                    }
+
+                    if (!document.getElementById('nav-badge')) {
+                        inboxLink.insertAdjacentHTML('beforeend', badgeHTML);
+                    }
+                };
+
+                const removeBadge = () => {
+                    const el = document.getElementById('nav-badge');
+                    if (el) {
+                        el.remove();
+                    }
+                };
+
+                const paint = () => {
+                    document.title = unread ? `(${unread}) ${BASE_TITLE}` : BASE_TITLE;
+
+                    if (unread) {
+                        addBadge();
+                    } else {
+                        removeBadge();
+                    }
+                };
+
+                paint();
+
+                const dispatchRealtime = (event, payload) => {
+                    window.dispatchEvent(new CustomEvent('realtime:notification', {
+                        detail: { event, payload }
+                    }));
+                };
 
                 if (USER_ID) {
-                    const dispatchRealtime = (event, payload) => {
-                        window.dispatchEvent(new CustomEvent('realtime:notification', {
-                            detail: { event, payload }
-                        }));
-                    };
-
                     window.Echo.private(`user.${USER_ID}`)
                         .listen('.notification.created', (payload) => dispatchRealtime('notification.created', payload))
-                        .listen('.notification.sent', (payload) => dispatchRealtime('notification.sent', payload));
+                        .listen('.notification.sent', (payload) => dispatchRealtime('notification.sent', payload))
+                        .listen('.message.sent', (payload) => {
+                            if (window.Livewire && typeof window.Livewire.dispatch === 'function') {
+                                window.Livewire.dispatch('conversations:refresh', {
+                                    event: 'chat.message.received',
+                                    payload
+                                });
+                            }
+
+                            if ((payload.sender?.id ?? null) === USER_ID) {
+                                return;
+                            }
+
+                            unread += 1;
+                            addBadge();
+                            playNotificationSound();
+                            paint();
+                        });
                 }
 
                 window.addEventListener('realtime:notification', (event) => {
@@ -574,54 +676,12 @@ if (isset($__slots)) unset($__slots);
                     }
                 });
 
-                const badgeHTML   =
-                    `<span id="nav-badge"
-                            class="flex absolute h-2 w-2 top-0 ltr:right-0 rtl:left-0 mt-0 ltr:-mr-1 rtl:-ml-1">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full
-                                    bg-primary-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
-                    </span>`,
-
-                inboxLink = document.querySelector('a[href="<?php echo e(url("inbox"), false); ?>"]');
-                const addBadge = () => {
-                        if (!document.getElementById('nav-badge')) {
-                            inboxLink.insertAdjacentHTML('beforeend', badgeHTML);
-                        }
-                    };
-
-                  const   removeBadge = () => {
-                        const el = document.getElementById('nav-badge');
-                        if (el) el.remove();
-                    };
-                // -------------- helper to write tab title ------------------
-                const paint = () => {
-                    document.title = unread ? `(${unread}) ${BASE_TITLE}` : BASE_TITLE;
-
-                    if (unread) {
-                        addBadge();;
+                window.addEventListener('messages:unread-count', (event) => {
+                    if (typeof event.detail?.count === 'number') {
+                        unread = Math.max(0, event.detail.count);
+                        paint();
                     }
-                };
-                paint();
-
-                // -------------- listen for new msgs on ALL pages -----------
-                window.Echo.private(`chat.${USER_ID}`)
-                    .listen('.messaging', (e) => {
-                        if (e.to_id == USER_ID) {
-                            ++unread;
-                            const sound = new Audio("<?php echo e(asset('js/chatify/sounds/new-message-sound.mp3'), false); ?>");
-                             addBadge();
-                            sound.play();
-                            paint();
-                        }
-                    })
-                    .listen('.client-seen', (e) => {
-                        if (e.to_id == USER_ID && e.seen) {
-                            unread = 0;
-                            paint();
-                            removeBadge();
-                        }
-                    });
-
+                });
             })();
         </script>
 
@@ -666,4 +726,7 @@ if (isset($__slots)) unset($__slots);
     </body>
 
 </html>
+
+
+
 <?php /**PATH C:\xampp\htdocs\taquad\resources\views/components/layouts/main-app.blade.php ENDPATH**/ ?>

@@ -1,6 +1,7 @@
 <?php
 
 use Livewire\Livewire;
+use Livewire\Mechanisms\FrontendAssets\FrontendAssets;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Api\Auth\TrackerOAuthTokenController;
@@ -10,18 +11,39 @@ use App\Http\Controllers\Main\TrackerLoginController;
 use App\Http\Controllers\Main\TrackerLogoutController;
 use App\Http\Controllers\SupportWidgetController;
 use App\Http\Controllers\Theme\PreferenceController;
+use App\Http\Controllers\Messages\DownloadAttachmentController;
+use App\Http\Controllers\Messages\StartConversationController;
 use App\Livewire\Main\Project\InviteComponent;
 use App\Livewire\Main\Account\Projects\Options\TrackerComponent;
 use App\Livewire\Main\Seller\Projects\TrackerComponent as SellerTrackerComponent;
 
-// Update route for livewire
-Livewire::setUpdateRoute(function ($handle) {
+// Base path for Livewire assets when the app runs from a sub-directory
+$livewireBasePath = trim(parse_url(config('app.url'), PHP_URL_PATH) ?: '', '/');
+$livewirePrefix = $livewireBasePath === '' ? '' : $livewireBasePath . '/';
 
-    // Get uri
-    $path = is_localhost() ? basename(base_path()) . "/livewire/update" : "/livewire/update";
+// Update route for Livewire to honour sub-directory installs
+Livewire::setUpdateRoute(function ($handle) use ($livewirePrefix) {
+    $path = trim($livewirePrefix . 'livewire/update', '/');
 
-    return Route::post($path, $handle);
+    return Route::post($path, function () {
+        logger()->info('livewire.request', [
+            'uri' => request()->getRequestUri(),
+            'has_components' => request()->has('components'),
+            'content' => request()->getContent(),
+        ]);
+
+        return app(\Livewire\Mechanisms\HandleRequests\HandleRequests::class)->handleUpdate();
+    })->middleware('web');
 });
+
+Livewire::setScriptRoute(function ($handle) use ($livewirePrefix) {
+    $script = config('app.debug') ? 'livewire/livewire.js' : 'livewire/livewire.min.js';
+    $path = trim($livewirePrefix . $script, '/');
+
+    return Route::get($path, $handle);
+});
+
+Route::get(trim($livewirePrefix . 'livewire/livewire.min.js.map', '/'), [FrontendAssets::class, 'maps']);
 
 // Tasks
 Route::prefix('tasks')->group(function () {
@@ -64,11 +86,6 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted'])->group(functio
         // Home
         Route::get('/', HomeComponent::class);
     });
-
-    Route::namespace('Messages')->group(function () {
-        Route::get('chat' , MessagesComponent::class);
-    });
-
 
     // Post
     Route::namespace('Post')->prefix('post')->middleware('auth')->group(function () {
@@ -368,19 +385,6 @@ Route::namespace('Become')->prefix('start_selling')->group(function () {
         Route::get('{keyword}', HireComponent::class);
     });
 
-    // Messages
-    Route::namespace('Messages')->prefix('messages')->middleware('auth')->group(function () {
-
-        // Index
-        Route::get('/', MessagesComponent::class);
-
-        // New
-        Route::get('new/{username}/{project_id?}', NewComponent::class);
-
-        // Conversation
-        Route::get('{conversationId}', ConversationComponent::class);
-    });
-
     // Search
     Route::namespace('Search')->prefix('search')->group(function () {
 
@@ -395,6 +399,17 @@ Route::namespace('Become')->prefix('start_selling')->group(function () {
         Route::get('{slug}', PageComponent::class);
     });
 
+});
+
+Route::middleware(['restricted', 'auth'])->group(function () {
+    Route::namespace('App\Livewire\Main\Conversations')->group(function () {
+        Route::get('messages/{conversation?}', WorkspaceComponent::class)->name('messages.inbox');
+    });
+    Route::get('messages/new/{username}/{project?}', StartConversationController::class);
+});
+
+Route::middleware(['restricted', 'auth:web,admin'])->group(function () {
+    Route::get('messages/attachments/{attachment}', DownloadAttachmentController::class)->name('messages.attachments.download');
 });
 
 // Authentication

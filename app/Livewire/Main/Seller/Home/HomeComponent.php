@@ -10,8 +10,7 @@ use App\Models\ProjectBid;
 use App\Models\CustomOffer;
 use Livewire\Attributes\Layout;
 use App\Models\ProjectMilestone;
-use Illuminate\Support\Facades\DB;
-use App\Models\ChMessage as Message;
+use App\Models\ConversationParticipant;
 use Artesaos\SEOTools\Traits\SEOTools as SEOToolsTrait;
 use Carbon\Carbon;
 
@@ -78,41 +77,56 @@ class HomeComponent extends Component
             $this->monthly_proposals_remaining = $limit > 0 ? max($limit - $currentMonthProposals, 0) : null;
             $this->monthly_proposals_reset_at  = Carbon::now()->startOfMonth()->addMonth();
 
-            $contacts = Message::join('users', function ($join): void {
-                    $join->on('ch_messages.from_id', '=', 'users.id')
-                        ->orOn('ch_messages.to_id', '=', 'users.id');
-                })
-                ->where(function ($query) use ($userId): void {
-                    $query->where('ch_messages.from_id', $userId)
-                        ->orWhere('ch_messages.to_id', $userId);
-                })
-                ->with('avatar')
-                ->where('users.id', '!=', $userId)
-                ->select('users.*', DB::raw('MAX(ch_messages.created_at) as max_created_at'))
-                ->orderBy('max_created_at', 'desc')
-                ->groupBy('users.id')
+            $this->latest_messages = ConversationParticipant::query()
+                ->where('user_id', $userId)
+                ->where('unread_count', '>', 0)
+                ->with([
+                    'conversation.participants.user' => function ($query) {
+                        $query->select('users.id', 'users.uid', 'users.username', 'users.fullname', 'users.avatar_id');
+                    },
+                ])
+                ->orderByDesc('updated_at')
                 ->take(6)
-                ->get();
+                ->get()
+                ->map(function (ConversationParticipant $participant) use ($userId) {
+                    $conversation = $participant->conversation;
+                    if (! $conversation) {
+                        return null;
+                    }
 
-            foreach ($contacts as $contact) {
-                $latestMessage = Message::where('from_id', $contact->id)
-                    ->where('to_id', $userId)
-                    ->where('seen', false)
-                    ->latest()
-                    ->first();
+                    $latestMessage = $conversation->messages()
+                        ->where('sender_id', '!=', $userId)
+                        ->with('attachments')
+                        ->latest('id')
+                        ->first();
 
-                if ($latestMessage) {
-                    $this->latest_messages[] = [
-                        'uid'      => strtolower($contact->uid),
-                        'username' => $contact->username,
-                        'avatar'   => src($contact->avatar),
+                    if (! $latestMessage) {
+                        return null;
+                    }
+
+                    $counterpart = $conversation->participants
+                        ->firstWhere('user_id', '!=', $userId)
+                        ?->user;
+
+                    if (! $counterpart) {
+                        return null;
+                    }
+
+                    $counterpart->loadMissing('avatar');
+
+                    return [
+                        'uid'      => $conversation->uid,
+                        'username' => $counterpart->username,
+                        'avatar'   => src($counterpart->avatar ?? null),
                         'message'  => [
                             'body'       => $latestMessage->body,
-                            'attachment' => (bool) $latestMessage->attachment,
+                            'attachment' => $latestMessage->attachments->isNotEmpty(),
                         ],
                     ];
-                }
-            }
+                })
+                ->filter()
+                ->values()
+                ->toArray();
 
             if (settings('projects')->is_enabled) {
                 $this->latest_awarded_projects = Project::whereHas('bids', function ($query) use ($userId) {

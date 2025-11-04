@@ -95,80 +95,134 @@
                 </thead>
                 <thead>
                     @forelse ($messages as $msg)
+                        @php
+                            $conversation = $msg->conversation;
+                            $conversation?->loadMissing('participants.user.avatar');
+
+                            $sender = $msg->sender;
+                            $sender?->loadMissing('avatar');
+
+                            $recipients = $conversation
+                                ? $conversation->participants
+                                    ->where('user_id', '!=', $msg->sender_id)
+                                    ->map->user
+                                    ->filter()
+                                : collect();
+
+                            $primaryRecipient = $recipients->first();
+
+                            if ($primaryRecipient) {
+                                $primaryRecipient->loadMissing('avatar');
+                            }
+
+                            $sentAt = $msg->sent_at ?? $msg->created_at;
+
+                            $isRead = $conversation
+                                ? $conversation->participants
+                                    ->where('user_id', '!=', $msg->sender_id)
+                                    ->every(function ($participant) use ($sentAt) {
+                                        if (! $sentAt) {
+                                            return true;
+                                        }
+
+                                        if (! $participant->last_read_at) {
+                                            return false;
+                                        }
+
+                                        return $participant->last_read_at->gte($sentAt);
+                                    })
+                                : true;
+
+                            $attachments = $msg->attachments ?? collect();
+                        @endphp
                         <tr class="intro-x shadow-sm bg-white dark:bg-zinc-800 rounded-md h-16" wire:key="admin-dashboard-messages-{{ $msg->id }}">
 
                             {{-- From --}}
                             <td class="px-5 py-3 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md w-96 rtl:text-right">
                                 <div class="flex items-center space-x-4 rtl:space-x-reverse">
-                                    <img class="w-10 h-10 rounded-md object-contain lazy flex-shrink-0 bg-slate-100" src="{{ placeholder_img() }}" data-src="{{ src($msg->from->avatar) }}" alt="{{ $msg->from->username }}">
+                                    <img class="w-10 h-10 rounded-md object-contain lazy flex-shrink-0 bg-slate-100" src="{{ placeholder_img() }}" data-src="{{ src($sender->avatar ?? null) }}" alt="{{ $sender->username ?? __('messages.t_not_available') }}">
                                     <div class="space-y-1 font-medium dark:text-white">
                                         <div class="flex items-center space-x-1 rtl:space-x-reverse">
 
                                             {{-- Username / Fullname --}}
-                                            <a href="{{ url('profile', $msg->from->username) }}" target="_blank" class="font-bold whitespace-nowrap truncate block max-w-[240px] hover:text-zinc-900 dark:text-white text-sm text-zinc-700" title="{{ $msg->from->username }}">
-                                                {{ $msg->from->fullname ? $msg->from->fullname : $msg->from->username }}
-                                            </a>
+                                            @if ($sender)
+                                                <a href="{{ url('profile', $sender->username) }}" target="_blank" class="font-bold whitespace-nowrap truncate block max-w-[240px] hover:text-zinc-900 dark:text-white text-sm text-zinc-700" title="{{ $sender->username }}">
+                                                    {{ $sender->fullname ?: $sender->username }}
+                                                </a>
+                                            @else
+                                                <span class="font-bold text-sm text-zinc-700 dark:text-white">@lang('messages.t_not_available')</span>
+                                            @endif
 
                                         </div>
-                                        <div class="flex items-center space-x-3 rtl:space-x-reverse text-xs font-normal text-gray-400 dark:text-zinc-300">
-                
-                                            {{-- Details --}}
-                                            <a href="{{ admin_url('users/details/' . $msg->from->uid) }}" class="dark:text-zinc-300 whitespace-nowrap hover:text-gray-600 hover:underline">
-                                                @lang('messages.t_user_details')   
-                                            </a>
-                        
-                                            {{-- Divider --}}
-                                            <div class="mx-2 my-0.5 text-gray-200 dark:text-zinc-600">|</div>
+                                        @if ($sender)
+                                            <div class="flex items-center space-x-3 rtl:space-x-reverse text-xs font-normal text-gray-400 dark:text-zinc-300">
+                    
+                                                {{-- Details --}}
+                                                <a href="{{ admin_url('users/details/' . $sender->uid) }}" class="dark:text-zinc-300 whitespace-nowrap hover:text-gray-600 hover:underline">
+                                                    @lang('messages.t_user_details')   
+                                                </a>
+                            
+                                                {{-- Divider --}}
+                                                <div class="mx-2 my-0.5 text-gray-200 dark:text-zinc-600">|</div>
 
-                                            {{-- View profile --}}
-                                            <a href="{{ url('profile', $msg->from->username) }}" target="_blank" class="dark:text-zinc-300 whitespace-nowrap hover:text-gray-600 hover:underline">
-                                                @lang('messages.t_view_profile')    
-                                            </a>
-                        
-                                        </div>
+                                                {{-- View profile --}}
+                                                <a href="{{ url('profile', $sender->username) }}" target="_blank" class="dark:text-zinc-300 whitespace-nowrap hover:text-gray-600 hover:underline">
+                                                    @lang('messages.t_view_profile')    
+                                                </a>
+                            
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </td>
 
                             {{-- To --}}
                             <td class="px-5 py-3 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md w-96 rtl:text-right">
-                                <div class="flex items-center space-x-4 rtl:space-x-reverse">
-                                    <img class="w-10 h-10 rounded-md object-contain lazy flex-shrink-0 bg-slate-100" src="{{ placeholder_img() }}" data-src="{{ src($msg->to->avatar) }}" alt="{{ $msg->to->username }}">
-                                    <div class="space-y-1 font-medium dark:text-white">
-                                        <div class="flex items-center space-x-1 rtl:space-x-reverse">
+                                @if ($primaryRecipient)
+                                    <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                                        <img class="w-10 h-10 rounded-md object-contain lazy flex-shrink-0 bg-slate-100" src="{{ placeholder_img() }}" data-src="{{ src($primaryRecipient->avatar ?? null) }}" alt="{{ $primaryRecipient->username ?? __('messages.t_not_available') }}">
+                                        <div class="space-y-1 font-medium dark:text-white">
+                                            <div class="flex items-center space-x-1 rtl:space-x-reverse">
 
-                                            {{-- Username / Fullname --}}
-                                            <a href="{{ url('profile', $msg->to->username) }}" target="_blank" class="font-bold whitespace-nowrap truncate block max-w-[240px] hover:text-zinc-900 dark:text-white text-sm text-zinc-700" title="{{ $msg->to->username }}">
-                                                {{ $msg->to->fullname ? $msg->to->fullname : $msg->to->username }}
-                                            </a>
+                                                {{-- Username / Fullname --}}
+                                                <a href="{{ url('profile', $primaryRecipient->username) }}" target="_blank" class="font-bold whitespace-nowrap truncate block max-w-[240px] hover:text-zinc-900 dark:text-white text-sm text-zinc-700" title="{{ $primaryRecipient->username }}">
+                                                    {{ $primaryRecipient->fullname ?: $primaryRecipient->username }}
+                                                </a>
 
-                                        </div>
-                                        <div class="flex items-center space-x-3 rtl:space-x-reverse text-xs font-normal text-gray-400 dark:text-zinc-300">
-                
-                                            {{-- Details --}}
-                                            <a href="{{ admin_url('users/details/' . $msg->to->uid) }}" class="dark:text-zinc-300 whitespace-nowrap hover:text-gray-600 hover:underline">
-                                                @lang('messages.t_user_details')   
-                                            </a>
-                        
-                                            {{-- Divider --}}
-                                            <div class="mx-2 my-0.5 text-gray-200 dark:text-zinc-600">|</div>
+                                                @if ($recipients->count() > 1)
+                                                    <span class="text-[11px] font-semibold text-gray-400 dark:text-zinc-300">+{{ $recipients->count() - 1 }} @lang('messages.t_more')</span>
+                                                @endif
 
-                                            {{-- View profile --}}
-                                            <a href="{{ url('profile', $msg->to->username) }}" target="_blank" class="dark:text-zinc-300 whitespace-nowrap hover:text-gray-600 hover:underline">
-                                                @lang('messages.t_view_profile')    
-                                            </a>
-                        
+                                            </div>
+                                            <div class="flex items-center space-x-3 rtl:space-x-reverse text-xs font-normal text-gray-400 dark:text-zinc-300">
+                    
+                                                {{-- Details --}}
+                                                <a href="{{ admin_url('users/details/' . $primaryRecipient->uid) }}" class="dark:text-zinc-300 whitespace-nowrap hover:text-gray-600 hover:underline">
+                                                    @lang('messages.t_user_details')   
+                                                </a>
+                            
+                                                {{-- Divider --}}
+                                                <div class="mx-2 my-0.5 text-gray-200 dark:text-zinc-600">|</div>
+
+                                                {{-- View profile --}}
+                                                <a href="{{ url('profile', $primaryRecipient->username) }}" target="_blank" class="dark:text-zinc-300 whitespace-nowrap hover:text-gray-600 hover:underline">
+                                                    @lang('messages.t_view_profile')    
+                                                </a>
+                            
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                @else
+                                    <span class="text-xs font-medium text-gray-400 dark:text-zinc-300">@lang('messages.t_not_available')</span>
+                                @endif
                             </td>
 
                             {{-- Status --}}
                             <td class="px-5 py-3 first:ltr:rounded-l-md last:ltr:rounded-r-md first:rtl:rounded-r-md last:rtl:rounded-l-md text-center">
-                                @if ($msg->seen)
+                                @if ($isRead)
                                     <svg class="mx-auto h-6 w-6 text-blue-500" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>
                                 @else
-                                    <svg class="mx-auto h-6 w-6 text-slate-400" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>
+                                    <svg class="mx-auto h-6 w-6 text-rose-500" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 22a10 10 0 1 1 10-10 10.011 10.011 0 0 1-10 10Zm0-18a8 8 0 1 0 8 8 8.009 8.009 0 0 0-8-8Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                                 @endif
                             </td>
 
@@ -224,49 +278,50 @@
                                         </div>
                                     @endif
     
-                                    {{-- Attachment --}}
-                                    @if ($msg->attachment)
+                                    {{-- Attachments --}}
+                                    @if ($attachments->isNotEmpty())
                                         <div class="w-full pb-4">
                                                 
                                             {{-- Label --}}
                                             <span class="{{ $msg->body ? 'mt-8' : '' }} mb-2 block text-sm font-bold tracking-wide text-zinc-700">@lang('messages.t_attachment')</span>
-    
-                                            {{-- File --}}
-                                            @php
-                                                $attachment = json_decode($msg->attachment)
-                                            @endphp
-                                            <div class="mt-6 flex">
 
-                                                {{-- File extension preview --}}
-                                                <div class="w-10 flex flex-col items-center">
-                                                    <div class="fiv-sqo fiv-icon-{{ $attachment->extension }} text-4xl"></div>
-                                                </div>
+                                            {{-- Files --}}
+                                            @foreach ($attachments as $attachment)
+                                                @php
+                                                    $extension = strtolower(pathinfo($attachment->file_name, PATHINFO_EXTENSION));
+                                                @endphp
+                                                <div class="mt-4 flex">
 
-                                                {{-- File details --}}
-                                                <div class="ltr:pl-3 rtl:pr-3">
-
-                                                    {{-- File name --}}
-                                                    <p class="focus:outline-none text-sm font-semibold leading-normal text-gray-800 pb-1 -mt-1 dark:text-zinc-200">
-                                                        {{ $attachment->old_name }}
-                                                    </p>
-
-                                                    {{-- Date / Download --}}
-                                                    <div class="focus:outline-none text-xs leading-3 text-gray-500 pt-1 space-x-2 rtl:space-x-reverse dark:text-zinc-400">
-                                                        
-                                                        {{-- Download --}}
-                                                        <a href="{{ url('inbox/download', $attachment->new_name) }}" class="text-primary-600 hover:underline">@lang('messages.t_download')</a>
-
-                                                        {{-- Divider --}}
-                                                        <span class="text-gray-300 dark:text-zinc-600" aria-hidden="true">|</span>
-
-                                                        {{-- Size --}}
-                                                        <span>{{ human_filesize($attachment->size) }}</span>
-
+                                                    {{-- File extension preview --}}
+                                                    <div class="w-10 flex flex-col items-center">
+                                                        <div class="fiv-sqo fiv-icon-{{ $extension ?: 'file' }} text-4xl"></div>
                                                     </div>
-                                                </div>
 
-                                            </div>
-    
+                                                    {{-- File details --}}
+                                                    <div class="ltr:pl-3 rtl:pr-3">
+
+                                                        {{-- File name --}}
+                                                        <p class="focus:outline-none text-sm font-semibold leading-normal text-gray-800 pb-1 -mt-1 dark:text-zinc-200">
+                                                            {{ $attachment->file_name }}
+                                                        </p>
+
+                                                        {{-- Actions --}}
+                                                        <div class="focus:outline-none text-xs leading-3 text-gray-500 pt-1 space-x-2 rtl:space-x-reverse dark:text-zinc-400">
+                                                            
+                                                            {{-- Download --}}
+                                                            <a href="{{ route('messages.attachments.download', $attachment) }}" class="text-primary-600 hover:underline">@lang('messages.t_download')</a>
+
+                                                            {{-- Divider --}}
+                                                            <span class="text-gray-300 dark:text-zinc-600" aria-hidden="true">|</span>
+
+                                                            {{-- Size --}}
+                                                            <span>{{ human_filesize($attachment->size) }}</span>
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            @endforeach
                                         </div>
                                     @endif
 

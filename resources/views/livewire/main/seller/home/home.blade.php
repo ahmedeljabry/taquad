@@ -48,7 +48,7 @@
             </div>
             <div class="flex flex-col gap-3 sm:flex-row">
                 <a href="{{ url('explore/projects') }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-primary-600 shadow-md transition hover:-translate-y-0.5 hover:bg-white/90">
-                    <i class="ph ph-magnifying-glass"></i>
+                    <i class="ph "></i>
                     استكشف مشاريع جديدة
                 </a>
                 <a href="{{ url('/') }}" class="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10">

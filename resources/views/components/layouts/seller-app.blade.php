@@ -322,9 +322,9 @@
 
 							{{-- Messages --}}
 							@php
-								$new_messages = \App\Models\ChMessage::where('to_id', auth()->id())->where('seen', false)->count();
+								$new_messages = unseen_messages_count();
 							@endphp
-							<a href="{{ url('inbox') }}" class="text-gray-500 hover:text-primary-600 transition-colors duration-300 py-2 relative mx-4 dark:text-gray-100 dark:hover:text-white">
+							<a href="{{ route('messages.inbox') }}" class="text-gray-500 hover:text-primary-600 transition-colors duration-300 py-2 relative mx-4 dark:text-gray-100 dark:hover:text-white">
 								<svg class="text-gray-400 hover:text-gray-700 h-6 w-6 dark:text-gray-100 dark:hover:text-white" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.044l7.386 5.745a.994.994 0 0 0 1.228 0L20 9.044 20.002 18H4z"></path></svg>
 								@if ($new_messages)
 									<span class="flex absolute h-2 w-2 top-0 ltr:right-0 rtl:left-0 mt-0 ltr:-mr-1 rtl:-ml-1">
@@ -469,7 +469,7 @@
 										</a>
 
 										{{-- Messages --}}
-										<a href="{{ url('inbox') }}"
+										<a href="{{ route('messages.inbox') }}"
 											class="group flex items-center py-1.5 group-hover:text-primary-600">
 											<svg xmlns="http://www.w3.org/2000/svg"
 												class="flex-none ltr:mr-3 rtl:ml-3 text-gray-400 group-hover:text-primary-600 h-5 w-5"
@@ -535,7 +535,6 @@
 
 						{{-- Notifications --}}
 						@livewire('main.partials.notifications')
-
 					</div>
 				</main>
 
@@ -545,6 +544,7 @@
 
         {{-- Livewire --}}
         @livewireScriptConfig
+        @livewireScripts
 
         {{-- jQuery --}}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -734,4 +734,3 @@
     </body>
 
 </html>
-

@@ -126,50 +126,47 @@
                     </div>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-zinc-700">
-                        <thead class="bg-gray-50 dark:bg-zinc-900">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">@lang('messages.t_time_range')</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">@lang('messages.t_minutes')</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">@lang('messages.t_activity')</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">@lang('messages.t_status')</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">@lang('messages.t_actions')</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white dark:bg-zinc-800 divide-y divide-gray-200 dark:divide-zinc-700">
-                            @forelse ($entries as $entry)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-zinc-100">
-                                        <div class="flex flex-col">
+                <div class="px-4 pb-6 sm:px-6">
+                    <div class="space-y-4">
+                            @forelse ($entries->take(5) as $entry)
+                            <article wire:key="tracked-entry-{{ $entry->id }}" class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+                                <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                                    <div class="space-y-3">
+                                        <div class="flex flex-wrap items-center gap-2 text-sm font-semibold text-gray-800 dark:text-zinc-100">
                                             <span>{{ $entry->started_at->timezone(config('app.timezone'))->format('Y-m-d H:i') }}</span>
-                                            <span class="text-xs text-gray-400 dark:text-zinc-500">
-                                                {{ $entry->ended_at->timezone(config('app.timezone'))->format('Y-m-d H:i') }}
+                                            <span class="text-gray-400 dark:text-zinc-500">•</span>
+                                            <span>{{ $entry->ended_at->timezone(config('app.timezone'))->format('Y-m-d H:i') }}</span>
+                                        </div>
+                                        <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-zinc-400">
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 font-medium text-gray-700 dark:bg-zinc-800 dark:text-zinc-200">
+                                                <i class="ph-duotone ph-hourglass text-sm"></i>
+                                                {{ number_format($entry->duration_minutes) }} @lang('messages.t_minutes')
                                             </span>
-                                            @if ($entry->snapshots->isNotEmpty())
-                                                @php
-                                                    $snapshot = $entry->snapshots->first();
-                                                @endphp
-                                                <a href="{{ \Storage::disk($snapshot->disk)->url($snapshot->image_path) }}" target="_blank" class="mt-1 text-xs text-primary-600 hover:underline">
-                                                    @lang('messages.t_view_screenshot')
-                                                </a>
+                                            <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold
+                                                {{ $entry->activity_score >= 60 ? 'bg-emerald-100 text-emerald-700' :
+                                                    ($entry->activity_score >= 30 ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700') }}">
+                                                <i class="ph-duotone ph-pulse text-sm"></i>
+                                                {{ $entry->activity_score }}%
+                                            </span>
+                                            @if ($entry->low_activity)
+                                                <span class="text-xs font-semibold text-rose-500">@lang('messages.t_low_activity_flag')</span>
                                             @endif
                                         </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-zinc-100">
-                                        {{ number_format($entry->duration_minutes) }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
-                                            {{ $entry->activity_score >= 60 ? 'bg-emerald-100 text-emerald-700' :
-                                                ($entry->activity_score >= 30 ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700') }}">
-                                            {{ $entry->activity_score }}%
-                                        </span>
-                                        @if ($entry->low_activity)
-                                            <span class="ml-2 text-xs text-rose-500">@lang('messages.t_low_activity_flag')</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <div class="space-y-1">
+                                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-zinc-400">
+                                                @lang('messages.t_tracker_entry_memo_label')
+                                            </p>
+                                            @php
+                                                $memoPreview = \Illuminate\Support\Str::limit(strip_tags($entry->memo ?? ''), 160);
+                                            @endphp
+                                            @if ($memoPreview)
+                                                <p class="text-sm text-gray-700 dark:text-zinc-100">{{ $memoPreview }}</p>
+                                            @else
+                                                <p class="text-sm text-gray-400 dark:text-zinc-500">@lang('messages.t_tracker_entry_no_memo')</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-start gap-2 md:items-end">
                                         @php
                                             $statusClasses = match($entry->client_status->value) {
                                                 'approved' => 'bg-emerald-100 text-emerald-700',
@@ -177,60 +174,89 @@
                                                 default    => 'bg-amber-100 text-amber-700',
                                             };
                                         @endphp
-                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $statusClasses }}">
+                                        <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold {{ $statusClasses }}">
                                             @lang("messages.t_status_{$entry->client_status->value}")
                                         </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                        <div class="flex flex-col sm:flex-row gap-2">
-                                            @if ($entry->client_status === \App\Enums\TimeEntryClientStatus::Pending)
-                                                <button wire:click="approveEntry({{ $entry->id }})" type="button" class="inline-flex items-center px-3 py-1.5 border border-emerald-500 text-emerald-600 text-xs font-semibold rounded hover:bg-emerald-50 dark:hover:bg-emerald-500/10">
-                                                    <i class="ph-duotone ph-check-circle text-base ltr:mr-1 rtl:ml-1"></i>
-                                                    @lang('messages.t_approve')
-                                                </button>
-                                                <button wire:click="startReject({{ $entry->id }})" type="button" class="inline-flex items-center px-3 py-1.5 border border-rose-500 text-rose-600 text-xs font-semibold rounded hover:bg-rose-50 dark:hover:bg-rose-500/10">
-                                                    <i class="ph-duotone ph-x-circle text-base ltr:mr-1 rtl:ml-1"></i>
-                                                    @lang('messages.t_reject')
-                                                </button>
-                                            @else
-                                                <span class="text-xs text-gray-400 dark:text-zinc-500">
-                                                    {{ $entry->client_reviewed_at?->timezone(config('app.timezone'))->format('Y-m-d H:i') }}
-                                                </span>
-                                            @endif
+                                        @if ($entry->client_status !== \App\Enums\TimeEntryClientStatus::Pending)
+                                            <span class="text-xs text-gray-400 dark:text-zinc-500">
+                                                {{ $entry->client_reviewed_at?->timezone(config('app.timezone'))->format('Y-m-d H:i') }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                @if ($entry->snapshots->isNotEmpty())
+                                    <div class="mt-4">
+                                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-zinc-400">
+                                            @lang('messages.t_tracker_entry_screenshots')
+                                        </p>
+                                        <div class="mt-2 flex flex-wrap gap-3">
+                                            @foreach ($entry->snapshots as $snapshot)
+                                                @php
+                                                    $shotUrl = \Storage::disk($snapshot->disk)->url($snapshot->image_path);
+                                                @endphp
+                                                <a href="{{ $shotUrl }}" target="_blank" class="group relative block overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-sm transition hover:border-primary-300 dark:border-zinc-700 dark:bg-zinc-800">
+                                                    <img src="{{ $shotUrl }}" alt="@lang('messages.t_view_screenshot')" class="h-28 w-36 object-cover transition duration-200 group-hover:scale-105">
+                                                    <span class="absolute inset-0 flex items-center justify-center bg-black/20 text-xs font-semibold text-white opacity-0 transition group-hover:opacity-100">
+                                                        @lang('messages.t_view_screenshot')
+                                                    </span>
+                                                </a>
+                                            @endforeach
                                         </div>
-                                        @if ($rejectEntryId === $entry->id)
-                                            <div class="mt-3 space-y-2">
-                                                <textarea wire:model.defer="rejectNotes" rows="3" class="w-full border-gray-300 dark:border-zinc-700 dark:bg-zinc-900 text-sm rounded" placeholder="@lang('messages.t_add_rejection_note_placeholder')"></textarea>
-                                                @error('rejectNotes')
-                                                    <p class="text-xs text-rose-500">{{ $message }}</p>
-                                                @enderror
-                                                <div class="flex gap-2">
-                                                    <button wire:click="rejectEntry" type="button" class="inline-flex items-center px-3 py-1.5 bg-rose-600 text-white text-xs font-semibold rounded hover:bg-rose-700">
-                                                        @lang('messages.t_submit_decision')
-                                                    </button>
-                                                    <button wire:click="cancelReject" type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-gray-600 text-xs font-semibold rounded hover:bg-gray-50">
-                                                        @lang('messages.t_cancel')
-                                                    </button>
-                                                </div>
+                                    </div>
+                                @else
+                                    <p class="mt-4 text-xs text-gray-400 dark:text-zinc-500">
+                                        @lang('messages.t_tracker_entry_no_screenshots')
+                                    </p>
+                                @endif
+
+                                <div class="mt-5 space-y-4">
+                                    <div class="flex flex-wrap gap-2">
+                                        @if ($entry->client_status === \App\Enums\TimeEntryClientStatus::Pending)
+                                            <button wire:click="approveEntry({{ $entry->id }})" type="button" class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-emerald-500 px-4 py-2 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-50 dark:hover:bg-emerald-500/10 sm:w-auto">
+                                                <i class="ph-duotone ph-check-circle text-base"></i>
+                                                @lang('messages.t_approve')
+                                            </button>
+                                            <button wire:click="startReject({{ $entry->id }})" type="button" class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-rose-500 px-4 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50 dark:hover:bg-rose-500/10 sm:w-auto">
+                                                <i class="ph-duotone ph-x-circle text-base"></i>
+                                                @lang('messages.t_reject')
+                                            </button>
+                                        @endif
+                                    </div>
+
+                                    @if ($rejectEntryId === $entry->id)
+                                        <div class="space-y-3 rounded-xl border border-rose-200 bg-rose-50/60 p-4 dark:border-rose-500/30 dark:bg-rose-500/5">
+                                            <textarea wire:model.defer="rejectNotes" rows="3" class="w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-rose-500 focus:ring-rose-500 dark:border-zinc-700 dark:bg-zinc-900" placeholder="@lang('messages.t_add_rejection_note_placeholder')"></textarea>
+                                            @error('rejectNotes')
+                                                <p class="text-xs font-semibold text-rose-500">{{ $message }}</p>
+                                            @enderror
+                                            <div class="flex flex-wrap gap-2">
+                                                <button wire:click="rejectEntry" type="button" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-rose-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-rose-700 sm:w-auto">
+                                                    <i class="ph-duotone ph-paper-plane-tilt text-sm"></i>
+                                                    @lang('messages.t_submit_decision')
+                                                </button>
+                                                <button wire:click="cancelReject" type="button" class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-xs font-semibold text-gray-600 transition hover:bg-gray-50 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-zinc-700 sm:w-auto">
+                                                    <i class="ph-duotone ph-arrow-counter-clockwise text-sm"></i>
+                                                    @lang('messages.t_cancel')
+                                                </button>
                                             </div>
-                                        @endif
-                                        @if ($entry->client_notes)
-                                            <p class="mt-2 text-xs text-gray-500 dark:text-zinc-400">
-                                                <span class="font-semibold">@lang('messages.t_client_note'):</span>
-                                                {{ $entry->client_notes }}
-                                            </p>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="px-6 py-8 text-center text-sm text-gray-500 dark:text-zinc-400">
-                                        @lang('messages.t_no_tracked_sessions_yet')
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                                        </div>
+                                    @endif
+
+                                    @if ($entry->client_notes)
+                                        <p class="text-xs text-gray-500 dark:text-zinc-400">
+                                            <span class="font-semibold">@lang('messages.t_client_note'):</span>
+                                            {{ $entry->client_notes }}
+                                        </p>
+                                    @endif
+                                </div>
+                            </article>
+                        @empty
+                            <div class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-6 py-12 text-center text-sm text-gray-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
+                                @lang('messages.t_no_tracked_sessions_yet')
+                            </div>
+                        @endforelse
+                    </div>
                 </div>
             </section>
         </div>

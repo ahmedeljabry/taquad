@@ -1,4 +1,4 @@
-﻿@php
+@php
     $projectCollection = $projects instanceof \Illuminate\Pagination\LengthAwarePaginator ? $projects->getCollection() : collect($projects);
     $activeCount = $projectCollection->where('status', 'active')->count();
     $reviewCount = $projectCollection->whereIn('status', ['pending_approval', 'pending_payment'])->count();

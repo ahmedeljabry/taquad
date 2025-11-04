@@ -212,6 +212,7 @@
 
         {{-- Livewire --}}
         @livewireScriptConfig
+        @livewireScripts
 
         {{-- Custom JS codes --}}
         <script defer>

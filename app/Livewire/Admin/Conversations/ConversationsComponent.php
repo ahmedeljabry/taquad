@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin\Conversations;
 
 use Livewire\Component;
-use App\Models\ChMessage;
+use App\Models\Message;
 use WireUi\Traits\Actions;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
@@ -40,10 +40,18 @@ class ConversationsComponent extends Component
      */
     public function getMessagesProperty()
     {
-        return ChMessage::whereHas('from')
-            ->whereHas('to')
-            ->with(['to', 'from'])
-            ->latest()
+        return Message::query()
+            ->with([
+                'sender' => function ($query) {
+                    $query->select('id', 'uid', 'username', 'fullname', 'avatar_id');
+                },
+                'conversation.participants.user' => function ($query) {
+                    $query->select('users.id', 'users.uid', 'users.username', 'users.fullname', 'users.avatar_id');
+                },
+                'attachments',
+            ])
+            ->latest('sent_at')
+            ->latest('created_at')
             ->paginate(42);
     }
 
@@ -59,7 +67,7 @@ class ConversationsComponent extends Component
         try {
 
             // Get message
-            $message = ChMessage::where('id', $id)->firstOrFail();
+            $message = Message::query()->findOrFail($id);
 
             // Confirm delete
             $this->dialog()->confirm([
@@ -98,27 +106,58 @@ class ConversationsComponent extends Component
         try {
 
             // Get message
-            $message = ChMessage::where('id', $id)->firstOrFail();
+            $message = Message::query()
+                ->with(['attachments', 'conversation.participants'])
+                ->findOrFail($id);
 
-            // Check if message has attachment
-            if ($message->attachment) {
-
-                // Decode attachment
-                $attachment   = json_decode($message->attachment);
-
-                // Get path to this file
-                $path         = config('chatify.attachments.folder') . '/' . $attachment->new_name;
-
-                // Check if file exists
-                if (Storage::disk(config('chatify.storage_disk_name'))->exists($path)) {
-
-                    // Delete
-                    Storage::disk(config('chatify.storage_disk_name'))->delete($path);
+            // Delete attachments if exist
+            foreach ($message->attachments as $attachment) {
+                if ($attachment->path && Storage::disk($attachment->disk)->exists($attachment->path)) {
+                    Storage::disk($attachment->disk)->delete($attachment->path);
                 }
+
+                $attachment->delete();
             }
 
-            // Delete message
+            $conversation = $message->conversation;
+
             $message->delete();
+
+            if ($conversation) {
+                $lastMessage = $conversation->messages()
+                    ->latest('sent_at')
+                    ->latest('created_at')
+                    ->first();
+
+                $lastTimestamp = $lastMessage?->sent_at ?? $lastMessage?->created_at;
+
+                $conversation->forceFill([
+                    'last_message_id' => $lastMessage?->id,
+                    'last_message_at' => $lastTimestamp,
+                ])->save();
+
+                $conversation->loadMissing('participants');
+
+                foreach ($conversation->participants as $participant) {
+                    $unreadQuery = $conversation->messages()
+                        ->where('sender_id', '!=', $participant->user_id);
+
+                    if ($participant->last_read_at) {
+                        $lastRead = $participant->last_read_at;
+                        $unreadQuery->where(function ($builder) use ($lastRead) {
+                            $builder->where('sent_at', '>', $lastRead)
+                                ->orWhere(function ($nested) use ($lastRead) {
+                                    $nested->whereNull('sent_at')
+                                        ->where('created_at', '>', $lastRead);
+                                });
+                        });
+                    }
+
+                    $participant->update([
+                        'unread_count' => $unreadQuery->count(),
+                    ]);
+                }
+            }
 
             // Success
             $this->alert(

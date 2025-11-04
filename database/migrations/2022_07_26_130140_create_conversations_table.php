@@ -15,16 +15,15 @@ return new class extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
-            $table->string('uid', 20)->unique();
-            $table->unsignedBigInteger('from_id');
-            $table->unsignedBigInteger('to_id');
-            $table->enum('status', ['active', 'blocked', 'archived'])->default('active');
-            $table->bigInteger('blocked_by')->nullable();
+            $table->string('uid', 26)->unique();
+            $table->unsignedBigInteger('project_id')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('last_message_id')->nullable();
             $table->timestamp('last_message_at')->nullable();
-            $table->timestamp('created_at');
+            $table->timestamps();
 
-            $table->foreign('from_id')->references('id')->on('users')->onUpdate('no action')->onDelete('no action');
-            $table->foreign('to_id')->references('id')->on('users')->onUpdate('no action')->onDelete('no action');
+            $table->foreign('project_id')->references('id')->on('projects')->nullOnDelete();
+            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
         });
     }
 

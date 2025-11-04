@@ -7,7 +7,7 @@ use Livewire\Component;
 use App\Models\Invoice;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\DB;
-use App\Models\ConversationMessage;
+use App\Models\Message;
 use App\Models\TrackerAgent;
 use App\Models\TrackerDevice;
 use App\Models\TrackerDomain;
@@ -116,7 +116,7 @@ class HomeComponent extends Component
         $this->total_users = User::count();
 
         // Calculate users messages
-        $this->total_messages = ConversationMessage::count();
+        $this->total_messages = Message::count();
 
         // Legacy GigVisit metrics removed; tracker_map already provides geo info
 

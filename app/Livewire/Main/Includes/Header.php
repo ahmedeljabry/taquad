@@ -9,16 +9,17 @@ use App\Models\Language;
 use WireUi\Traits\Actions;
 use App\Models\Notification;
 use Conner\Tagging\Model\Tag;
-use App\Models\ChMessage as Message;
+use App\Models\ConversationParticipant;
 use Illuminate\Support\Facades\Cookie;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+use Illuminate\Support\Collection;
 
 class Header extends Component
 {
     use Actions, LivewireAlert;
 
     public $new_messages;
-    public $notifications;
+    public Collection $notifications;
 
     public $q;
 
@@ -43,15 +44,13 @@ class Header extends Component
         if (auth()->check()) {
 
             // Count unread messages
-            $unread_message      = Message::where('to_id', auth()->id())
-                ->where('seen', false)
-                ->count();
-
-            // Set unread messages
-            $this->new_messages  = $unread_message;
+            $this->new_messages = ConversationParticipant::where('user_id', auth()->id())
+                ->sum('unread_count');
 
             // Get notifications
-            $this->notifications = Notification::where('user_id', auth()->id())->where('is_seen', false)->latest()->get();
+            $this->notifications = $this->unreadNotifications();
+        } else {
+            $this->notifications = collect();
         }
 
         // Get language from session
@@ -192,28 +191,35 @@ class Header extends Component
      * @param string $id
      * @return void
      */
-    public function readNotification($id)
-    {
-        // Get notification
-        Notification::where('uid', $id)->where('user_id', auth()->id())->update([
-            'is_seen' => true
-        ]);
-
-        // Refresh notifications
-        $this->notifications = Notification::where('user_id', auth()->id())->where('is_seen', false)->latest()->get();
-    }
-
     #[On('notifications:refresh')]
-    public function refreshNotifications(): void
+    public function refreshNotifications(...$arguments): void
     {
         if (! auth()->check()) {
+            $this->notifications = collect();
             return;
         }
 
-        $this->notifications = Notification::where('user_id', auth()->id())
-            ->where('is_seen', false)
-            ->latest()
-            ->get();
+        [$eventName, $payload] = $this->parseEventArguments($arguments);
+
+        if (in_array($eventName, ['notification.created', 'notification.sent'], true) && isset($payload['id'])) {
+            $notification = Notification::where('uid', $payload['id'])
+                ->where('user_id', auth()->id())
+                ->latest('id')
+                ->first();
+
+            if ($notification && ! $notification->is_seen) {
+                $existing = $this->notifications ?? collect();
+                $this->notifications = collect([$notification])
+                    ->merge($existing)
+                    ->unique('uid')
+                    ->sortByDesc('created_at')
+                    ->values();
+
+                return;
+            }
+        }
+
+        $this->notifications = $this->unreadNotifications();
     }
 
 
@@ -258,5 +264,75 @@ class Header extends Component
 
         // Refresh the page
         $this->dispatch('refresh');
+    }
+
+    /**
+     * Fetch unread notifications.
+     */
+    protected function unreadNotifications(): Collection
+    {
+        if (! auth()->check()) {
+            return collect();
+        }
+
+        return Notification::where('user_id', auth()->id())
+            ->where('is_seen', false)
+            ->latest()
+            ->take(30)
+            ->get();
+    }
+
+    /**
+     * Normalize Livewire event arguments.
+     *
+     * @param array<int, mixed> $arguments
+     * @return array{0: string|null, 1: array}
+     */
+    protected function parseEventArguments(array $arguments): array
+    {
+        $eventName = null;
+        $payload   = [];
+
+        if (count($arguments) === 0) {
+            return [$eventName, $payload];
+        }
+
+        if (count($arguments) === 1) {
+            $value = $arguments[0];
+
+            if (is_array($value)) {
+                $eventName = $value['event'] ?? $value[0] ?? null;
+                $payload   = $value['payload'] ?? (isset($value['id']) ? $value : []);
+
+                return [$eventName, is_array($payload) ? $payload : []];
+            }
+
+            if (is_string($value)) {
+                return [$value, []];
+            }
+
+            if (is_object($value)) {
+                $array     = (array) $value;
+                $eventName = $array['event'] ?? null;
+                $payload   = $array['payload'] ?? [];
+
+                return [$eventName, is_array($payload) ? $payload : []];
+            }
+        }
+
+        $eventCandidate   = $arguments[0] ?? null;
+        $payloadCandidate = $arguments[1] ?? [];
+
+        if (is_string($eventCandidate)) {
+            $eventName = $eventCandidate;
+        }
+
+        if (is_array($payloadCandidate)) {
+            $payload = $payloadCandidate;
+        } elseif (is_object($payloadCandidate)) {
+            $payload = (array) $payloadCandidate;
+        }
+
+        return [$eventName, $payload];
     }
 }

@@ -84,6 +84,19 @@ class TrackerComponent extends Component
         $this->loadEntries();
         $this->refreshSummary();
 
+        if ($freelancer = $this->contract->freelancer) {
+            \notification([
+                'user_id' => $freelancer->id,
+                'text'    => 't_notification_time_entry_approved',
+                'action'  => url('seller/projects/tracker/' . $this->project->uid),
+                'params'  => [
+                    'project' => $this->project->title,
+                    'minutes' => (int) $entry->duration_minutes,
+                    'memo'    => $entry->memo ? strip_tags($entry->memo) : null,
+                ],
+            ]);
+        }
+
         $this->alert('success', __('messages.t_success'), [
             'text' => __('messages.t_time_entry_marked_approved'),
         ]);

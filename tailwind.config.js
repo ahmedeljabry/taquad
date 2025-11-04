@@ -52,8 +52,6 @@ module.exports = {
 		"./resources/**/*.blade.php",
 		"./resources/views/components/bladewind/*.blade.php",
 		"./resources/views/components/bladewind/button/*.blade.php",
-		"./resources/views/vendor/Chatify/layouts/*.blade.php",
-		"./resources/views/vendor/Chatify/pages/*.blade.php",
 		"./resources/**/*.js",
 		"./resources/**/*.vue",
 		"./vendor/rawilk/laravel-form-components/src/**/*.php",

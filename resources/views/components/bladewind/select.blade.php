@@ -146,7 +146,7 @@
             @if ($required)
                 <span class="font-bold text-red-400">*</span>
             @endif
-            
+
         </label>
     @endif
 
@@ -160,8 +160,8 @@
             <x-bladewind.icon name="chevron-up-down" class="opacity-40 ltr:!ml-4 rtl:!mr-4 w-5 h-5" />
         </div>
     </div>
-    <div class="w-full absolute z-30 rounded-md bg-white shadow-sm border 
-        border-gray-200 dark:text-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 border-t-0 mt-1 
+    <div class="w-full absolute z-30 rounded-md bg-white shadow-sm border
+        border-gray-200 dark:text-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 border-t-0 mt-1
         hidden bw-select-items-container overflow-y-auto max-h-64 animate__animated animate__fadeIn animate__faster">
 
         {{-- Search input --}}
@@ -169,7 +169,7 @@
             <div class="relative m-3 rounded-md shadow-sm">
                 <input type="text" class="bw_filter block w-full ltr:pr-10 ltr:pl-4 rtl:pl-10 rtl:!pr-4 py-2.5 placeholder:font-normal placeholder:text-xs placeholder:text-gray-400 dark:placeholder-zinc-300 text-xs font-medium text-zinc-800 dark:text-white rounded dark:bg-transparent focus:ring-0 focus:outline-none focus:border-gray-400 border-gray-300 dark:border-zinc-600" placeholder="{{ __('messages.t_search') }}">
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                    <i class="ph-duotone ph-magnifying-glass text-gray-400 text-lg"></i>
+                    <i class="ph-duotone  text-gray-400 text-lg"></i>
                 </div>
             </div>
         </div>

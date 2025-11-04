@@ -157,12 +157,12 @@
         </a>
 
         
-        <a href="<?php echo e(url('inbox'), false); ?>"
-            class="<?php echo e(Request::is('inbox') ? $link_active_class : $link_basic_class, false); ?> group ltr:border-l-4 rtl:border-r-4 px-5 py-3 flex items-center text-sm font-medium">
+        <a href="<?php echo e(route('messages.inbox'), false); ?>"
+            class="<?php echo e(Request::is('messages*') ? $link_active_class : $link_basic_class, false); ?> group ltr:border-l-4 rtl:border-r-4 px-5 py-3 flex items-center text-sm font-medium">
 
             
             <svg xmlns="http://www.w3.org/2000/svg"
-                class="<?php echo e(Request::is('inbox') ? $icon_active_class : $icon_basic_class, false); ?> flex-shrink-0 ltr:-ml-1 rtl:-mr-1 ltr:mr-3 rtl:ml-3 h-5 w-5"
+                class="<?php echo e(Request::is('messages*') ? $icon_active_class : $icon_basic_class, false); ?> flex-shrink-0 ltr:-ml-1 rtl:-mr-1 ltr:mr-3 rtl:ml-3 h-5 w-5"
                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />

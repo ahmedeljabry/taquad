@@ -19,6 +19,7 @@ use App\Models\Notification;
 use App\Models\ReportedUser;
 use App\Models\UserPortfolio;
 use App\Models\DepositWebhook;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use App\Models\ProjectMilestone;
 use App\Models\DepositTransaction;
@@ -159,15 +160,26 @@ class TrashComponent extends Component
             Schema::disableForeignKeyConstraints();
 
             // Get conversations from this user
-            $conversations = Conversation::where('from_id', $user->id)->orWhere('to_id', $user->id)->get();
+            $conversations = Conversation::whereHas('participants', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->get();
 
-            // Loop through conversations
             foreach ($conversations as $conversation) {
+                $conversation->messages()
+                    ->with('attachments')
+                    ->each(function ($message) {
+                        foreach ($message->attachments as $attachment) {
+                            if (Storage::disk($attachment->disk)->exists($attachment->path)) {
+                                Storage::disk($attachment->disk)->delete($attachment->path);
+                            }
 
-                // Delete messages inside this conversation
-                $conversation->messages()->delete();
+                            $attachment->delete();
+                        }
 
-                // Delete conversation
+                        $message->delete();
+                    });
+
+                $conversation->participants()->delete();
                 $conversation->delete();
             }
 
