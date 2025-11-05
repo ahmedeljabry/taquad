@@ -361,6 +361,13 @@ class WorkspaceComponent extends Component
 
         if ((int) ($payload['message']['user_id'] ?? 0) !== $this->userId) {
             $this->markConversationAsRead($message['id']);
+            foreach ($this->messages as &$item) {
+                if (($item['id'] ?? null) === $message['id']) {
+                    $item['is_new'] = false;
+                    break;
+                }
+            }
+            unset($item);
         }
 
         $this->dispatch('chat:scroll-bottom');
@@ -798,6 +805,10 @@ class WorkspaceComponent extends Component
             ->values()
             ->all();
 
+        $participantState = $this->participantStates[$this->userId] ?? [];
+        $lastReadId = $participantState['last_read_message_id'] ?? null;
+        $isNew = ! $fromMe && ($lastReadId ? $message->id > $lastReadId : true);
+
         $state = null;
 
         if ($fromMe) {
@@ -837,6 +848,7 @@ class WorkspaceComponent extends Component
             'read_by' => $readBy,
             'attachments' => $attachments,
             'meta' => $message->meta ?? [],
+            'is_new' => $isNew,
         ];
     }
 
@@ -941,7 +953,6 @@ class WorkspaceComponent extends Component
         $this->uploadQueue = [];
         $this->composerTyping = false;
         $this->lastTypingBroadcastAt = null;
-        $this->dispatch('composer-reset');
     }
 
     protected function broadcastTypingStarted(): void
@@ -1002,6 +1013,7 @@ class WorkspaceComponent extends Component
             'attachments' => $attachments,
             'meta' => $message['meta'] ?? [],
             'conversation_id' => (int) ($payload['conversation_id'] ?? 0),
+            'is_new' => ! $fromMe,
         ];
     }
 

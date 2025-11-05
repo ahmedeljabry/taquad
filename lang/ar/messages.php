@@ -761,6 +761,7 @@ return [
     "t_share_this_project" => "مشاركة هذا المشروع",
     "t_live_preview" => "معاينة مباشرة",
     "t_watch_video" => "مشاهدة الفيديو",
+    "t_email" => "البريد الإلكتروني",
     "t_no_projects" => "لا توجد مشاريع",
     "t_this_user_has_no_projects_yet" => "هذا المستخدم ليس لديه مشاريع حالياً.",
     "t_update_project" => "تحديث المشروع",

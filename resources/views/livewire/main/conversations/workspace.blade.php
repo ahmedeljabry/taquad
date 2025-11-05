@@ -4,38 +4,65 @@
 
 @section('hideMainFooter', true)
 
-<div class="w-[95%] max-w-[1600px] mx-auto px-4 sm:px-6 mt-[7rem] lg:px-8 pb-6 flex flex-col min-h-[calc(100vh-6rem)]">
+@push('styles')
+    <style>
+        .custom-chat-scroll {
+            max-height: clamp(20rem, calc(100vh - 22rem), 72vh);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(79, 70, 229, 0.55) rgba(148, 163, 184, 0.2);
+            scroll-behavior: smooth;
+        }
+
+        .custom-chat-scroll::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        .custom-chat-scroll::-webkit-scrollbar-track {
+            background: rgba(148, 163, 184, 0.15);
+            border-radius: 9999px;
+        }
+
+        .custom-chat-scroll::-webkit-scrollbar-thumb {
+            background: rgba(79, 70, 229, 0.55);
+            border-radius: 9999px;
+        }
+
+        .custom-chat-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(79, 70, 229, 0.7);
+        }
+    </style>
+@endpush
+
+<div class="w-[95%] max-w-[1600px] mx-auto px-4 sm:px-6 mt-[7rem] lg:px-8 pb-6 flex flex-col min-h-[calc(100vh-6rem)] h-full">
     <main class="flex-1 flex flex-col min-h-0">
-        <div id="grid" class="grid grid-cols-12 gap-4 flex-1 min-h-0">
-            <aside id="sidebar" class="col-span-12 md:col-span-3 rounded-2xl border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950 md:block hidden">
+        <div id="grid" class="grid grid-cols-12 gap-4 flex-1 min-h-0 h-full">
+            <aside id="sidebar"
+                class="col-span-12 md:col-span-3 rounded-2xl border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950 md:block hidden">
                 <div class="mb-3 flex items-center gap-2">
-                    <input
-                        type="search"
-                        wire:model.debounce.400ms="search"
+                    <input type="search" wire:model.debounce.400ms="search"
                         class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-900"
-                        placeholder="ابحث عن محادثة أو مستخدم…"
-                        autocomplete="off"
-                    />
-                    <button
-                        type="button"
-                        wire:click="refreshConversations"
-                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
-                    >
+                        placeholder="ابحث عن محادثة أو مستخدم…" autocomplete="off" />
+                    <button type="button" wire:click="refreshConversations"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">
                         بحث
                     </button>
                 </div>
 
                 <div class="mb-3 flex flex-wrap items-center gap-2 text-[11px]">
-                    <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 border-indigo-300 bg-indigo-50 text-indigo-700 dark:border-indigo-900/40 dark:bg-indigo-900/20 dark:text-indigo-300">
+                    <span
+                        class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 border-indigo-300 bg-indigo-50 text-indigo-700 dark:border-indigo-900/40 dark:bg-indigo-900/20 dark:text-indigo-300">
                         الكل
                     </span>
-                    <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 border-slate-200 bg-slate-50 text-slate-400 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600">
+                    <span
+                        class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 border-slate-200 bg-slate-50 text-slate-400 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600">
                         غير مقروء
                     </span>
-                    <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 border-slate-200 bg-slate-50 text-slate-400 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600">
+                    <span
+                        class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 border-slate-200 bg-slate-50 text-slate-400 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600">
                         مثبّت
                     </span>
-                    <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 border-slate-200 bg-slate-50 text-slate-400 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600">
+                    <span
+                        class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 border-slate-200 bg-slate-50 text-slate-400 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600">
                         مكتوم
                     </span>
                 </div>
@@ -46,27 +73,23 @@
                             $isActive = $conversation['id'] === $activeConversationId;
                             $unread = (int) ($conversation['unread'] ?? 0);
                         @endphp
-                        <button
-                            type="button"
-                            wire:key="conversation-{{ $conversation['id'] }}"
+                        <button type="button" wire:key="conversation-{{ $conversation['id'] }}"
                             wire:click="selectConversation('{{ $conversation['uid'] }}')"
-                            class="group w-full rounded-2xl px-3 py-3 text-left transition {{ $isActive ? 'bg-indigo-50 ring-1 ring-indigo-100 dark:bg-indigo-900/20 dark:ring-indigo-900/30' : 'hover:bg-slate-50 dark:hover:bg-slate-900' }}"
-                        >
+                            class="group w-full rounded-2xl px-3 py-3 text-left transition {{ $isActive ? 'bg-indigo-50 ring-1 ring-indigo-100 dark:bg-indigo-900/20 dark:ring-indigo-900/30' : 'hover:bg-slate-50 dark:hover:bg-slate-900' }}">
                             <div class="flex items-center gap-3">
                                 <div class="relative">
-                                    <div class="grid h-10 w-10 place-items-center overflow-hidden rounded-full bg-slate-200 text-sm font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-100">
+                                    <div
+                                        class="grid h-10 w-10 place-items-center overflow-hidden rounded-full bg-slate-200 text-sm font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-100">
                                         @if (!empty($conversation['avatar']))
-                                            <img
-                                                src="{{ $conversation['avatar'] }}"
-                                                alt="{{ $conversation['name'] }}"
-                                                class="h-full w-full object-cover"
-                                            >
+                                            <img src="{{ $conversation['avatar'] }}" alt="{{ $conversation['name'] }}"
+                                                class="h-full w-full object-cover">
                                         @else
                                             <span>{{ $conversation['initials'] }}</span>
                                         @endif
                                     </div>
                                     @if (!empty($conversation['online']))
-                                        <span class="absolute -bottom-0.5 -end-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-950"></span>
+                                        <span
+                                            class="absolute -bottom-0.5 -end-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-950"></span>
                                     @endif
                                 </div>
                                 <div class="min-w-0 flex-1">
@@ -83,11 +106,13 @@
                                             {{ $conversation['preview'] }}
                                         </div>
                                         @if ($unread > 0)
-                                            <span class="shrink-0 rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-bold text-white">
+                                            <span
+                                                class="shrink-0 rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-bold text-white">
                                                 {{ $unread }}
                                             </span>
                                         @else
-                                            <span class="text-[10px] text-slate-400 opacity-0 transition group-hover:opacity-100">
+                                            <span
+                                                class="text-[10px] text-slate-400 opacity-0 transition group-hover:opacity-100">
                                                 فتح
                                             </span>
                                         @endif
@@ -96,38 +121,41 @@
                             </div>
                         </button>
                     @empty
-                        <div class="rounded-2xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                        <div
+                            class="rounded-2xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
                             لا توجد محادثات متاحة حتى الآن.
                         </div>
                     @endforelse
                 </div>
             </aside>
-            <section
-                wire:poll.keep-alive.7s="pollRealtime"
-                class="col-span-12 md:col-span-6 flex flex-col min-h-0 h-full rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950 relative overflow-hidden"
-            >
+            <section wire:poll.keep-alive.7s="pollRealtime"
+                class="col-span-12 md:col-span-6 flex flex-col min-h-0 h-full rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950 relative overflow-hidden">
                 @if ($activeConversationId)
                     @php
                         $counterpart = $activeConversation['counterpart'] ?? null;
                         $stateLabels = [
-                            'sent' => 'قيد الإرسال',
+                            'sent' => 'تم الإرسال',
                             'delivered' => 'وصل ✓',
                             'read' => 'مقروء ✓✓',
                         ];
                     @endphp
 
-                    <div class="sticky top-0 z-[5] flex items-center justify-between border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
+                    <div
+                        class="sticky top-0 z-[5] flex items-center justify-between border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
                         <div class="flex items-center gap-3">
                             <div class="relative">
-                                <div class="grid h-10 w-10 place-items-center overflow-hidden rounded-full bg-slate-200 text-sm font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-100">
+                                <div
+                                    class="grid h-10 w-10 place-items-center overflow-hidden rounded-full bg-slate-200 text-sm font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-100">
                                     @if (!empty($counterpart['avatar']))
-                                        <img src="{{ $counterpart['avatar'] }}" alt="{{ $counterpart['name'] }}" class="h-full w-full object-cover">
+                                        <img src="{{ $counterpart['avatar'] }}" alt="{{ $counterpart['name'] }}"
+                                            class="h-full w-full object-cover">
                                     @else
                                         <span>{{ $counterpart['initials'] ?? '؟' }}</span>
                                     @endif
                                 </div>
                                 @if (!empty($counterpart['online']))
-                                    <span class="absolute -bottom-0.5 -end-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-950"></span>
+                                    <span
+                                        class="absolute -bottom-0.5 -end-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-950"></span>
                                 @endif
                             </div>
                             <div>
@@ -145,56 +173,67 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="hidden sm:flex -space-x-3 rtl:space-x-reverse items-center">
-                            @foreach ($participants as $participant)
-                                <span
-                                    wire:key="participant-chip-{{ $participant['id'] }}"
-                                    class="inline-grid h-7 w-7 place-items-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-700 ring-2 ring-white dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-950"
-                                    title="{{ $participant['name'] }}"
-                                >
-                                    {{ $participant['initials'] ?? '؟' }}
+                        <div class="flex items-center gap-2">
+                            <div class="hidden sm:flex -space-x-3 rtl:space-x-reverse items-center">
+                                @foreach ($participants as $participant)
+                                    <span wire:key="participant-chip-{{ $participant['id'] }}"
+                                        class="inline-grid h-7 w-7 place-items-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-700 ring-2 ring-white dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-950"
+                                        title="{{ $participant['name'] }}">
+                                        {{ $participant['initials'] ?? '؟' }}
+                                    </span>
+                                @endforeach
+                            </div>
+                            <button
+                                type="button"
+                                class="hidden sm:inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-1.5 text-sm text-slate-400 cursor-not-allowed bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-500"
+                                disabled
+                            >
+                                <i class="ph-duotone ph-phone-call text-base"></i>
+                                <span class="relative inline-flex items-center gap-1">
+                                    <span class="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:bg-amber-900/30 dark:text-amber-200">
+                                        قريباً
+                                    </span>
                                 </span>
-                            @endforeach
+                            </button>
                         </div>
                     </div>
 
                     @if (!empty($activeConversation['project']))
-                        <div class="mx-3 mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-800 shadow-soft dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-200">
+                        <div
+                            class="mx-3 mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-800 shadow-soft dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-200">
                             <div class="font-semibold">
                                 مشروع مرتبط: {{ $activeConversation['project']['title'] }}
                             </div>
                             <div class="mt-1">
-                                <a
-                                    href="{{ route('project', [$activeConversation['project']['id'], $activeConversation['project']['slug']]) }}"
-                                    class="text-emerald-700 underline decoration-dotted dark:text-emerald-300"
-                                >
+                                <a href="{{ route('project', [$activeConversation['project']['id'], $activeConversation['project']['slug']]) }}"
+                                    class="text-emerald-700 underline decoration-dotted dark:text-emerald-300">
                                     عرض التفاصيل
                                 </a>
                             </div>
                         </div>
                     @endif
 
-                    <div class="flex-1 min-h-0 flex flex-col px-2 sm:px-4 py-6 bg-gradient-to-b from-slate-50/60 to-transparent dark:from-slate-900/40">
-                        @if ($hasMoreMessages)
-                            <div class="mb-4 flex justify-center">
-                                <button
-                                    type="button"
-                                    wire:click="loadMoreMessages"
-                                    wire:loading.attr="disabled"
-                                    wire:target="loadMoreMessages"
-                                    class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs text-slate-500 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
-                                >
-                                    <span wire:loading.remove wire:target="loadMoreMessages">تحميل رسائل أقدم…</span>
-                                    <span wire:loading wire:target="loadMoreMessages" class="flex items-center gap-1">
-                                        <span class="h-2 w-2 animate-ping rounded-full bg-indigo-500"></span>
-                                        جاري التحميل…
-                                    </span>
-                                </button>
-                            </div>
-                        @endif
+                    <div class="flex-1 min-h-0 overflow-hidden">
+                        <div class="flex h-full flex-col overflow-hidden px-2 sm:px-4 py-6 bg-gradient-to-b from-slate-50/60 to-transparent dark:from-slate-900/40">
+                            @if ($hasMoreMessages)
+                                <div class="mb-4 flex shrink-0 justify-center">
+                                    <button type="button" wire:click="loadMoreMessages" wire:loading.attr="disabled"
+                                        wire:target="loadMoreMessages"
+                                        class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs text-slate-500 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                                        <span wire:loading.remove wire:target="loadMoreMessages">تحميل رسائل أقدم…</span>
+                                        <span wire:loading wire:target="loadMoreMessages" class="flex items-center gap-1">
+                                            <span class="h-2 w-2 animate-ping rounded-full bg-indigo-500"></span>
+                                            جاري التحميل…
+                                        </span>
+                                    </button>
+                                </div>
+                            @endif
 
-                        <div id="chat-log" class="flex-1 min-h-0 space-y-6 overflow-y-auto pr-2 pb-24 scrollbar-slim">
-                            @php $currentDay = null; @endphp
+                            <div id="chat-log" class="flex-1 min-h-0 space-y-6 overflow-y-auto pr-2 scrollbar-slim custom-chat-scroll">
+                            @php
+                                $currentDay = null;
+                                $renderedNewMarker = false;
+                            @endphp
 
                             @forelse ($messages as $message)
                                 @php
@@ -212,10 +251,21 @@
                                     @php $currentDay = $dateKey; @endphp
                                 @endif
 
+                                @if (! $renderedNewMarker && ($message['is_new'] ?? false))
+                                    <div class="relative my-4 text-center text-xs">
+                                        <span class="relative z-10 rounded-full bg-amber-100 px-3 py-1 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200">
+                                            رسائل جديدة
+                                        </span>
+                                        <span class="absolute inset-0 top-1/2 -z-0 h-px bg-amber-200/60 dark:bg-amber-800/40"></span>
+                                    </div>
+                                    @php $renderedNewMarker = true; @endphp
+                                @endif
+
                                 @if ($message['from_me'])
                                     <div class="flex items-start justify-end gap-2" wire:key="message-{{ $message['id'] }}">
                                         <div class="min-w-0 space-y-2 text-right">
-                                            <div class="inline-block rounded-2xl bg-indigo-600 px-4 py-2 text-sm leading-relaxed text-white shadow-sm dark:bg-indigo-500/90">
+                                            <div
+                                                class="inline-block rounded-2xl bg-indigo-600 px-4 py-2 text-sm leading-relaxed text-white shadow-sm dark:bg-indigo-500/90">
                                                 @if (!empty($message['body_plain']))
                                                     <div class="whitespace-pre-line">
                                                         {{ $message['body_plain'] }}
@@ -225,11 +275,8 @@
                                                 @if (!empty($message['attachments']))
                                                     <div class="mt-2 flex flex-wrap gap-2">
                                                         @foreach ($message['attachments'] as $attachment)
-                                                            <a
-                                                                href="{{ $attachment['url'] ?? '#' }}"
-                                                                target="_blank"
-                                                                class="inline-flex items-center gap-2 rounded-xl border border-indigo-300 bg-indigo-500/20 px-2 py-1 text-[11px] text-white/90 hover:bg-indigo-500/30"
-                                                            >
+                                                            <a href="{{ $attachment['url'] ?? '#' }}" target="_blank"
+                                                                class="inline-flex items-center gap-2 rounded-xl border border-indigo-300 bg-indigo-500/20 px-2 py-1 text-[11px] text-white/90 hover:bg-indigo-500/30">
                                                                 <span>📎 {{ $attachment['name'] }}</span>
                                                                 @if (!empty($attachment['size_human']))
                                                                     <span class="text-white/70">{{ $attachment['size_human'] }}</span>
@@ -251,11 +298,13 @@
                                     </div>
                                 @else
                                     <div class="flex items-start gap-2" wire:key="message-{{ $message['id'] }}">
-                                        <div class="grid h-8 w-8 place-items-center rounded-full bg-slate-200 text-[11px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-100">
+                                        <div
+                                            class="grid h-8 w-8 place-items-center rounded-full bg-slate-200 text-[11px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-100">
                                             {{ $message['sender']['initials'] ?? '؟' }}
                                         </div>
                                         <div class="min-w-0 space-y-2">
-                                            <div class="inline-block rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm leading-relaxed shadow-sm dark:border-slate-800 dark:bg-slate-950">
+                                            <div
+                                                class="inline-block rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm leading-relaxed shadow-sm dark:border-slate-800 dark:bg-slate-950">
                                                 @if (!empty($message['body_plain']))
                                                     <div class="whitespace-pre-line text-slate-700 dark:text-slate-200">
                                                         {{ $message['body_plain'] }}
@@ -265,11 +314,8 @@
                                                 @if (!empty($message['attachments']))
                                                     <div class="mt-2 flex flex-wrap gap-2">
                                                         @foreach ($message['attachments'] as $attachment)
-                                                            <a
-                                                                href="{{ $attachment['url'] ?? '#' }}"
-                                                                target="_blank"
-                                                                class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
-                                                            >
+                                                            <a href="{{ $attachment['url'] ?? '#' }}" target="_blank"
+                                                                class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800">
                                                                 <span>📎 {{ $attachment['name'] }}</span>
                                                                 @if (!empty($attachment['size_human']))
                                                                     <span class="text-slate-400">{{ $attachment['size_human'] }}</span>
@@ -293,83 +339,72 @@
                                     لم تبدأ المحادثة بعد. اكتب رسالتك الأولى في الأسفل.
                                 </div>
                             @endforelse
+                            </div>
                         </div>
                     </div>
-                    <div class="mt-auto sticky bottom-0 border-t border-slate-200 bg-white/95 p-2 sm:p-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
-                        <form wire:submit.prevent="sendMessage" class="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                            <div class="flex items-end gap-1 sm:gap-2" @keydown.enter="if (event.shiftKey) { return; } event.preventDefault(); $wire.sendMessage();">
-                                <button
-                                    type="button"
+
+                    <div
+                        class="sticky bottom-0 border-t border-slate-200 bg-white/95 p-2 sm:p-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
+                        <form wire:submit.prevent="sendMessage"
+                            class="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+                            <div class="flex items-end gap-1 sm:gap-2"
+                                @keydown.enter="if (event.shiftKey) { return; } event.preventDefault(); $wire.sendMessage();">
+                                <button type="button"
                                     class="grid h-9 w-9 place-items-center rounded-lg text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="إيموجي"
-                                >
+                                    title="إيموجي">
                                     😊
                                 </button>
 
                                 <label
                                     class="grid h-9 w-9 cursor-pointer place-items-center rounded-lg text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="إرفاق"
-                                >
+                                    title="إرفاق">
                                     📎
-                                    <input
-                                        id="attachInput"
-                                        type="file"
-                                        class="hidden"
-                                        multiple
-                                        accept="image/*,video/*,audio/*,application/pdf"
-                                        wire:model="uploadQueue"
-                                    />
+                                    <input id="attachInput" type="file" class="hidden" multiple
+                                        accept="image/*,video/*,audio/*,application/pdf" wire:model="uploadQueue" />
                                 </label>
-
-                                <label
-                                    class="grid h-9 w-9 cursor-pointer place-items-center rounded-lg text-slate-600 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="تسجيل صوتي"
-                                >
-                                    🎙️
-                                    <input
-                                        type="file"
-                                        class="hidden"
-                                        accept="audio/*"
-                                        capture="microphone"
-                                        wire:model="uploadQueue"
-                                    />
-                                </label>
-
-                                <textarea
-                                    wire:model.live="messageBody"
-                                    rows="1"
-                                    class="min-h-[44px] max-h-32 flex-1 resize-none rounded-xl border border-transparent px-3 py-2 text-sm outline-none focus:ring-0 dark:bg-transparent"
-                                    placeholder="اكتب رسالة… Enter للإرسال، Shift+Enter لسطر جديد"
-                                ></textarea>
 
                                 <button
-                                    type="submit"
-                                    wire:loading.attr="disabled"
-                                    wire:target="sendMessage,uploadQueue"
-                                    class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
-                                >
+                                    type="button"
+                                    id="voiceRecorderButton"
+                                    class="grid h-9 w-9 place-items-center rounded-lg text-slate-600 transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-slate-300 dark:hover:bg-slate-800"
+                                    title="تسجيل صوتي">
+                                    🎙️
+                                </button>
+                                <input
+                                    type="file"
+                                    id="voiceRecorderFallback"
+                                    class="hidden"
+                                    accept="audio/*"
+                                    capture="microphone"
+                                    wire:model="uploadQueue"
+                                />
+
+                                <textarea wire:model.live="messageBody" rows="1"
+                                    class="min-h-[44px] max-h-32 flex-1 resize-none rounded-xl border border-transparent px-3 py-2 text-sm outline-none focus:ring-0 dark:bg-transparent"
+                                    placeholder="اكتب رسالة… Enter للإرسال، Shift+Enter لسطر جديد"></textarea>
+
+                                <button type="submit" wire:loading.attr="disabled" wire:target="sendMessage,uploadQueue"
+                                    class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-70">
                                     <span wire:loading.remove wire:target="sendMessage,uploadQueue">إرسال</span>
-                                    <span wire:loading wire:target="sendMessage,uploadQueue" class="flex items-center gap-1">
+                                    <span wire:loading wire:target="sendMessage,uploadQueue"
+                                        class="flex items-center gap-1">
                                         <span class="h-2 w-2 animate-ping rounded-full bg-white"></span>
                                         جاري الإرسال…
                                     </span>
                                 </button>
                             </div>
 
+                            <div id="voiceRecorderStatus" class="mt-2 hidden text-xs font-semibold"></div>
+
                             @if (!empty($uploadQueue))
                                 <div class="mt-3 flex flex-wrap gap-2">
                                     @foreach ($uploadQueue as $index => $file)
-                                        <div
-                                            wire:key="upload-{{ $index }}"
-                                            class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                                        >
+                                        <div wire:key="upload-{{ $index }}"
+                                            class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
                                             <span>📎 {{ $file->getClientOriginalName() }}</span>
                                             <span class="text-slate-400">{{ format_bytes($file->getSize()) }}</span>
-                                            <button
-                                                type="button"
-                                                wire:click="removeUpload({{ $index }})"
-                                                class="text-slate-400 hover:text-rose-500"
-                                            >
+                                            <button type="button" wire:click="removeUpload({{ $index }})"
+                                                class="text-slate-400 hover:text-rose-500">
                                                 ✕
                                             </button>
                                         </div>
@@ -394,9 +429,11 @@
                                     @endif
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <kbd class="rounded border border-slate-300 bg-slate-50 px-1.5 py-0.5 text-[10px] text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">Enter</kbd>
+                                    <kbd
+                                        class="rounded border border-slate-300 bg-slate-50 px-1.5 py-0.5 text-[10px] text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">Enter</kbd>
                                     <span>إرسال • </span>
-                                    <kbd class="rounded border border-slate-300 bg-slate-50 px-1.5 py-0.5 text-[10px] text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">Shift</kbd>
+                                    <kbd
+                                        class="rounded border border-slate-300 bg-slate-50 px-1.5 py-0.5 text-[10px] text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">Shift</kbd>
                                     <span>+Enter سطر جديد</span>
                                 </div>
                             </div>
@@ -404,7 +441,8 @@
                     </div>
                 @else
                     <div class="flex flex-1 flex-col items-center justify-center gap-4 p-12 text-center">
-                        <div class="grid h-16 w-16 place-items-center rounded-full bg-indigo-50 text-2xl text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-300">
+                        <div
+                            class="grid h-16 w-16 place-items-center rounded-full bg-indigo-50 text-2xl text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-300">
                             💬
                         </div>
                         <div class="space-y-2">
@@ -416,33 +454,33 @@
                             </p>
                         </div>
                     </div>
-                    <div
-                        id="realtimeStatus"
+                    <div id="realtimeStatus"
                         class="mx-3 mt-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300"
-                        data-state="connecting"
-                    >
+                        data-state="connecting">
                         <span class="font-semibold text-slate-700 dark:text-slate-200">الرسائل الفورية</span>
                         <span class="status-text ms-2">نقوم بتهيئة الاتصال…</span>
                     </div>
                 @endif
             </section>
 
-            <aside id="detailsPanel" class="col-span-12 md:col-span-3 rounded-2xl border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950 flex flex-col gap-3">
+            <aside id="detailsPanel"
+                class="col-span-12 md:col-span-3 rounded-2xl border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950 flex flex-col gap-3">
                 @if ($activeConversationId)
                     <section class="mb-3">
-                        <button
-                            type="button"
+                        <button type="button"
                             class="collapse-toggle flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900"
-                            data-target="#jobBody"
-                        >
+                            data-target="#jobBody">
                             <div class="flex items-center gap-2">
                                 <span class="text-slate-500">الوظيفة</span>
                             </div>
                             <svg class="chev h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.586l3.71-3.355a.75.75 0 111.02 1.1l-4.2 3.8a.75.75 0 01-1.02 0l-4.2-3.8a.75.75 0 01-.02-1.06z" clip-rule="evenodd"/>
+                                <path fill-rule="evenodd"
+                                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.586l3.71-3.355a.75.75 0 111.02 1.1l-4.2 3.8a.75.75 0 01-1.02 0l-4.2-3.8a.75.75 0 01-.02-1.06z"
+                                    clip-rule="evenodd" />
                             </svg>
                         </button>
-                        <div id="jobBody" class="collapse-body mt-2 rounded-xl border border-slate-200 p-3 text-sm dark:border-slate-700">
+                        <div id="jobBody"
+                            class="collapse-body mt-2 rounded-xl border border-slate-200 p-3 text-sm dark:border-slate-700">
                             @if (!empty($activeConversation['project']))
                                 <div class="font-semibold">{{ $activeConversation['project']['title'] }}</div>
                                 <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
@@ -457,35 +495,36 @@
                     </section>
 
                     <section class="mb-4">
-                        <button
-                            type="button"
+                        <button type="button"
                             class="collapse-toggle flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-900"
-                            data-target="#membersBody"
-                        >
+                            data-target="#membersBody">
                             <div class="flex items-center gap-2">
                                 <span class="text-slate-500">المشاركون</span>
                             </div>
                             <svg class="chev h-4 w-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.586l3.71-3.355a.75.75 0 111.02 1.1l-4.2 3.8a.75.75 0 01-1.02 0l-4.2-3.8a.75.75 0 01-.02-1.06z" clip-rule="evenodd"/>
+                                <path fill-rule="evenodd"
+                                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.586l3.71-3.355a.75.75 0 111.02 1.1l-4.2 3.8a.75.75 0 01-1.02 0l-4.2-3.8a.75.75 0 01-.02-1.06z"
+                                    clip-rule="evenodd" />
                             </svg>
                         </button>
                         <div id="membersBody" class="collapse-body mt-2 space-y-2">
                             @foreach ($participants as $participant)
-                                <div
-                                    wire:key="participant-row-{{ $participant['id'] }}"
-                                    class="flex items-center justify-between rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700"
-                                >
+                                <div wire:key="participant-row-{{ $participant['id'] }}"
+                                    class="flex items-center justify-between rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700">
                                     <div class="flex items-center gap-3">
                                         <div class="relative">
-                                            <div class="grid h-10 w-10 place-items-center rounded-full bg-slate-200 text-sm font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-100">
+                                            <div
+                                                class="grid h-10 w-10 place-items-center rounded-full bg-slate-200 text-sm font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-100">
                                                 {{ $participant['initials'] ?? '؟' }}
                                             </div>
                                             @if (!empty($participant['online']))
-                                                <span class="absolute -bottom-0.5 -end-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-950"></span>
+                                                <span
+                                                    class="absolute -bottom-0.5 -end-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-950"></span>
                                             @endif
                                         </div>
                                         <div>
-                                            <div class="font-medium text-slate-700 dark:text-slate-200">{{ $participant['name'] }}</div>
+                                            <div class="font-medium text-slate-700 dark:text-slate-200">
+                                                {{ $participant['name'] }}</div>
                                             @if (!empty($participant['role']))
                                                 <div class="text-xs text-slate-500 dark:text-slate-400">
                                                     {{ $participant['role'] === 'client' ? 'عميل' : 'مستقل' }}
@@ -493,7 +532,8 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <span class="text-xs {{ !empty($participant['online']) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500' }}">
+                                    <span
+                                        class="text-xs {{ !empty($participant['online']) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500' }}">
                                         {{ !empty($participant['online']) ? 'متصل' : 'غير متصل' }}
                                     </span>
                                 </div>
@@ -502,18 +542,22 @@
                     </section>
 
                     <div class="flex flex-col gap-2">
-                        <button class="rounded-xl border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">
+                        <button
+                            class="rounded-xl border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">
                             فتح عقد
                         </button>
-                        <button class="rounded-xl border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">
+                        <button
+                            class="rounded-xl border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">
                             تثبيت المحادثة
                         </button>
-                        <button class="rounded-xl border border-rose-200 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 dark:border-rose-700/40 dark:hover:bg-rose-900/20">
+                        <button
+                            class="rounded-xl border border-rose-200 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 dark:border-rose-700/40 dark:hover:bg-rose-900/20">
                             إبلاغ/حظر
                         </button>
                     </div>
                 @else
-                    <div class="rounded-2xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                    <div
+                        class="rounded-2xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
                         اختر محادثة لعرض تفاصيل المشاركين والمشروع.
                     </div>
                 @endif
@@ -524,10 +568,297 @@
 
 @push('scripts')
     <script>
+        let chatResizeHandlerRegistered = false;
+
+        const removeLayoutMinHeight = () => {
+            const wrapper = document.querySelector('main > div.min-h-screen');
+
+            if (wrapper) {
+                wrapper.classList.remove('min-h-screen');
+                wrapper.classList.add('h-full');
+            }
+        };
+
+        const setupVoiceRecorder = () => {
+            const button = document.getElementById('voiceRecorderButton');
+            const status = document.getElementById('voiceRecorderStatus');
+            const fallbackInput = document.getElementById('voiceRecorderFallback');
+
+            if (!button || button.dataset.recorderBound === 'true') {
+                return;
+            }
+
+            let recorder = null;
+            let stream = null;
+            let chunks = [];
+            let statusTimeout = null;
+
+            const toneClasses = {
+                info: ['text-slate-500', 'dark:text-slate-400'],
+                success: ['text-emerald-600', 'dark:text-emerald-400'],
+                error: ['text-rose-600', 'dark:text-rose-400'],
+            };
+
+            const updateStatus = (message = null, tone = 'info') => {
+                if (!status) {
+                    return;
+                }
+
+                window.clearTimeout(statusTimeout);
+                status.classList.add('hidden');
+                status.classList.remove(
+                    'text-slate-500',
+                    'dark:text-slate-400',
+                    'text-emerald-600',
+                    'dark:text-emerald-400',
+                    'text-rose-600',
+                    'dark:text-rose-400'
+                );
+
+                if (!message) {
+                    status.textContent = '';
+
+                    return;
+                }
+
+                status.textContent = message;
+                status.classList.remove('hidden');
+                status.classList.add(...(toneClasses[tone] ?? toneClasses.info));
+
+                if (tone === 'success') {
+                    statusTimeout = window.setTimeout(() => updateStatus(null), 4000);
+                }
+            };
+
+            const setButtonState = (state) => {
+                button.dataset.state = state;
+                button.classList.remove(
+                    'text-rose-600',
+                    'bg-rose-50',
+                    'dark:text-rose-300',
+                    'dark:bg-rose-900/30',
+                    'animate-pulse',
+                    'cursor-wait',
+                    'opacity-60'
+                );
+
+                if (state === 'recording') {
+                    button.textContent = '⏹️';
+                    button.classList.add('text-rose-600', 'bg-rose-50', 'dark:text-rose-300', 'dark:bg-rose-900/30', 'animate-pulse');
+                } else if (state === 'uploading') {
+                    button.textContent = '⏳';
+                    button.classList.add('cursor-wait', 'opacity-60');
+                } else {
+                    button.textContent = '🎙️';
+                }
+            };
+
+            const cleanupStream = () => {
+                if (stream) {
+                    stream.getTracks().forEach((track) => track.stop());
+                    stream = null;
+                }
+            };
+
+            const getComponent = () => {
+                const root = button.closest('[wire\\:id]');
+
+                return root ? window.Livewire?.find(root.getAttribute('wire:id')) : null;
+            };
+
+            const uploadBlob = (blob) => {
+                const component = getComponent();
+
+                if (!component) {
+                    updateStatus('تعذر الوصول إلى المحادثة. أعد تحميل الصفحة.', 'error');
+                    setButtonState('idle');
+
+                    return;
+                }
+
+                setButtonState('uploading');
+                updateStatus('جاري رفع التسجيل…', 'info');
+
+                const file = new File([blob], `voice-message-${Date.now()}.webm`, {
+                    type: blob.type || 'audio/webm',
+                    lastModified: Date.now(),
+                });
+
+                component.upload(
+                    'uploadQueue',
+                    file,
+                    () => {
+                        setButtonState('idle');
+                        updateStatus('تمت إضافة التسجيل. يمكنك إرساله الآن.', 'success');
+                        chunks = [];
+                    },
+                    () => {
+                        setButtonState('idle');
+                        updateStatus('تعذر رفع التسجيل. حاول مرة أخرى.', 'error');
+                        chunks = [];
+                    }
+                );
+            };
+
+            const triggerFallback = () => {
+                if (fallbackInput) {
+                    fallbackInput.click();
+                    updateStatus('اختر ملفاً صوتياً من جهازك.', 'info');
+                } else {
+                    updateStatus('يمكنك رفع ملف صوتي يدوياً من زر الإرفاق.', 'info');
+                }
+            };
+
+            button.addEventListener('click', async () => {
+                const currentState = button.dataset.state || 'idle';
+
+                if (currentState === 'recording') {
+                    if (recorder && recorder.state === 'recording') {
+                        updateStatus('جاري إنهاء التسجيل…', 'info');
+                        setButtonState('uploading');
+                        try {
+                            recorder.stop();
+                        } catch (error) {
+                            setButtonState('idle');
+                            updateStatus('تعذر إيقاف التسجيل.', 'error');
+                        }
+                    }
+
+                    return;
+                }
+
+                if (!navigator.mediaDevices?.getUserMedia || typeof window.MediaRecorder === 'undefined') {
+                    updateStatus('التسجيل الصوتي غير مدعوم في هذا المتصفح. سيتم فتح اختيار ملفات.', 'error');
+                    triggerFallback();
+                    return;
+                }
+
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                } catch (error) {
+                    updateStatus('تم رفض الوصول إلى الميكروفون. سيتم فتح اختيار ملفات.', 'error');
+                    triggerFallback();
+                    return;
+                }
+
+                chunks = [];
+
+                try {
+                    recorder = new MediaRecorder(stream);
+                } catch (error) {
+                    cleanupStream();
+                    updateStatus('تعذر تهيئة جهاز التسجيل.', 'error');
+
+                    return;
+                }
+
+                recorder.addEventListener('dataavailable', (event) => {
+                    if (event.data && event.data.size > 0) {
+                        chunks.push(event.data);
+                    }
+                });
+
+                recorder.addEventListener('error', () => {
+                    cleanupStream();
+                    updateStatus('حدث خطأ أثناء التسجيل.', 'error');
+                    setButtonState('idle');
+                });
+
+                recorder.addEventListener('stop', () => {
+                    cleanupStream();
+
+                    if (!chunks.length) {
+                        updateStatus('لم يتم التقاط أي صوت.', 'error');
+                        setButtonState('idle');
+
+                        return;
+                    }
+
+                    const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+
+                    if (!blob.size) {
+                        updateStatus('التسجيل فارغ.', 'error');
+                        setButtonState('idle');
+
+                        return;
+                    }
+
+                    uploadBlob(blob);
+                });
+
+                try {
+                    recorder.start();
+                    setButtonState('recording');
+                    updateStatus('جاري التسجيل… انقر لإيقافه.', 'info');
+                } catch (error) {
+                    cleanupStream();
+                    setButtonState('idle');
+                    updateStatus('تعذر بدء التسجيل.', 'error');
+                }
+            });
+
+            window.addEventListener('beforeunload', () => {
+                if (recorder && recorder.state === 'recording') {
+                    try {
+                        recorder.stop();
+                    } catch (error) {
+                        // ignore
+                    }
+                }
+
+                cleanupStream();
+            }, { once: true });
+
+            button.dataset.recorderBound = 'true';
+            setButtonState('idle');
+            updateStatus(null);
+
+            if (fallbackInput) {
+                fallbackInput.addEventListener('change', () => {
+                    if (fallbackInput.files && fallbackInput.files.length) {
+                        updateStatus('تم اختيار ملف صوتي. أرسله الآن.', 'success');
+                    }
+                });
+            }
+        };
+
+        document.addEventListener('livewire:load', () => {
+            const fitChatHeight = () => {
+                const container = document.getElementById('chat-log');
+
+                if (!container || !container.parentElement) {
+                    return;
+                }
+
+                const parentBox = container.parentElement.getBoundingClientRect();
+                container.style.maxHeight = `${parentBox.height}px`;
+            };
+
+        removeLayoutMinHeight();
+
+        requestAnimationFrame(() => {
+            window.dispatchEvent(new CustomEvent('chat:scroll-bottom'));
+        });
+
+        setupVoiceRecorder();
+
+        if (window.Livewire?.hook) {
+            window.Livewire.hook('message.processed', (message, component) => {
+                if (component?.fingerprint?.name === 'main.conversations.workspace-component') {
+                    setupVoiceRecorder();
+                    removeLayoutMinHeight();
+                    requestAnimationFrame(() => {
+                        window.dispatchEvent(new CustomEvent('chat:scroll-bottom'));
+                    });
+                }
+            });
+        }
+    });
+
         window.addEventListener('chat:scroll-bottom', () => {
             const log = document.getElementById('chat-log');
 
-            if (! log) {
+            if (!log) {
                 return;
             }
 
@@ -538,7 +869,7 @@
 
         document.addEventListener('livewire:load', () => {
             const statusWrapper = document.getElementById('realtimeStatus');
-            if (! statusWrapper) {
+            if (!statusWrapper) {
                 return;
             }
 
@@ -605,7 +936,7 @@
                 ?? connector?.pusher?.connection
                 ?? null;
 
-            if (! connector || ! connection) {
+            if (!connector || !connection) {
                 updateStatus('offline');
 
                 const handler = () => updateStatus('connected');

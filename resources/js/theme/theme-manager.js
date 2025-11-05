@@ -6,9 +6,9 @@ const csrfToken = document.head.querySelector('meta[name="csrf-token"]')?.getAtt
 const isAuthenticated = rootElement.dataset.themeAuth === 'true';
 
 const themeLabels = {
-    light: rootElement.dataset.themeLabelLight || 'Light mode',
-    dark: rootElement.dataset.themeLabelDark || 'Dark mode',
-    system: rootElement.dataset.themeLabelSystem || 'Match system',
+    light: rootElement.dataset.themeLabelLight || 'الوضع الفاتح',
+    dark: rootElement.dataset.themeLabelDark || 'الوضع الداكن',
+    system: rootElement.dataset.themeLabelSystem || 'مطابق للنظام',
     toggle: rootElement.dataset.themeLabelToggle || 'Toggle theme',
 };
 
