@@ -225,10 +225,14 @@ class WorkspaceComponent extends Component
         ]);
 
         $body = trim($this->messageBody);
+        $attachments = $this->uploadQueue;
 
-        if ($body === '' && empty($this->uploadQueue)) {
+        if ($body === '' && empty($attachments)) {
             return;
         }
+
+        // Clear composer immediately for optimistic UI
+        $this->resetComposer();
 
         $conversation = Conversation::query()
             ->with('participants')
@@ -245,7 +249,7 @@ class WorkspaceComponent extends Component
         abort_unless($sender, 403);
 
         try {
-            $message = $this->messaging->send($conversation, $sender, $body, $this->uploadQueue);
+            $message = $this->messaging->send($conversation, $sender, $body, $attachments);
         } catch (\Throwable $exception) {
             report($exception);
             $this->alert('error', __('messages.t_err_something_went_wrong'));
@@ -259,8 +263,6 @@ class WorkspaceComponent extends Component
         ]);
 
         $message->loadMissing(['sender:id,username,fullname,avatar_id', 'attachments']);
-
-        $this->resetComposer();
 
         $this->messages[] = $this->transformMessage($message);
         $this->messages = collect($this->messages)->sortBy('id')->values()->all();

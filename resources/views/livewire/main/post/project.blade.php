@@ -8,112 +8,104 @@
     $activeTemplate = $this->selectedTemplateData;
 @endphp
 
-<div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-[7rem] py-12 lg:pt-16 lg:pb-24" x-data="projectIntro()"
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-20 sm:pt-12 sm:pb-24" x-data="projectIntro()"
     x-init="init()" x-cloak>
+        {{-- Loading Overlay --}}
     <div wire:loading.flex
-        class="fixed inset-0 z-[70] items-center justify-center bg-white/80 backdrop-blur-sm dark:bg-slate-900/70">
-        <div class="flex flex-col items-center gap-3 text-sm font-semibold text-primary-600 dark:text-primary-300">
-            <svg class="h-10 w-10 animate-spin text-primary-500" viewBox="0 0 24 24" fill="none">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-            </svg>
-            <span>@lang('messages.t_loading')</span>
+            class="fixed inset-0 z-[70] items-center justify-center bg-white/90 backdrop-blur-md dark:bg-zinc-900/90">
+            <div class="flex flex-col items-center gap-4">
+                <div class="relative">
+                    <div class="h-16 w-16 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="ph ph-spinner text-2xl text-primary-600 animate-spin"></i>
         </div>
     </div>
-    <div class="grid gap-8 lg:grid-cols-[minmax(0,2.1fr)_minmax(320px,1fr)]">
-        <div class="space-y-8">
+                <p class="text-sm font-medium text-slate-700 dark:text-zinc-300">@lang('messages.t_loading')</p>
+            </div>
+        </div>
+
+        <div class="space-y-6 sm:space-y-8">
 
             {{-- Loading --}}
             {{-- <x-forms.loading /> --}}
 
-            {{-- Guided intro --}}
-            <div x-show="showIntro" x-transition.opacity.duration.300ms
-                class="rounded-2xl border border-primary-100 bg-primary-50/70 px-6 py-5 text-sm text-primary-700 shadow-sm dark:border-primary-400/40 dark:bg-primary-500/10 dark:text-primary-200">
-                <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                    <div class="space-y-2">
-                        <p
-                            class="text-xs font-semibold uppercase tracking-[0.2em] text-primary-500/90 dark:text-primary-300/90">
-                            دليل البدء السريع
+            {{-- Simplified Intro Banner --}}
+            <div x-show="showIntro" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform translate-y-2"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="rounded-xl bg-gradient-to-r from-primary-50 to-sky-50 dark:from-primary-900/20 dark:to-sky-900/20 border border-primary-100/50 dark:border-primary-800/30 px-4 py-3 sm:px-5 sm:py-4">
+                <div class="flex items-start justify-between gap-4">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-primary-900 dark:text-primary-100 mb-1">
+                            مرحباً! ابدأ بإنشاء مشروعك في 4 خطوات بسيطة
                         </p>
-                        <h2 class="text-base font-bold text-primary-700 dark:text-primary-100">
-                            ٤ خطوات ذكية لتنشر مشروعاً جاهزاً للتنفيذ
-                        </h2>
-                        <ul class="space-y-1.5 text-[13px] leading-5 text-primary-700/80 dark:text-primary-100/80">
-                            <li class="flex items-start gap-2">
-                                <i class="ph ph-lightbulb text-sm mt-0.5"></i>
-                                <span>صف النتيجة المطلوبة بوضوح، وحدد خلفية الفريق أو المواد المساندة.</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <i class="ph ph-users-three text-sm mt-0.5"></i>
-                                <span>اختر المهارات وارفـع ملفاتك عبر منطقة السحب والإفلات الجديدة.</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <i class="ph ph-currency-circle-dollar text-sm mt-0.5"></i>
-                                <span>ثبت نطاق الميزانية وخيارات إبراز المشروع، بينما يقترح المستقلون الدفعات
-                                    لاحقاً.</span>
-                            </li>
-                        </ul>
+                        <p class="text-xs text-primary-700/80 dark:text-primary-200/70 leading-relaxed">
+                            املأ المعلومات الأساسية، اختر المهارات المطلوبة، حدد الميزانية، ثم راجع ونشر
+                        </p>
                     </div>
-                    <div class="flex flex-col items-stretch gap-2 md:w-56">
                         <button type="button"
-                            class="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-700"
+                        class="flex-shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-primary-600 hover:bg-primary-700 px-3 py-1.5 text-xs font-medium text-white transition-colors"
                             @click="dismissIntro(false)">
-                            <span>ابدأ الجولة</span>
-                            <i class="ph ph-arrow-right"></i>
+                        <span>ابدأ</span>
+                        <i class="ph ph-arrow-right text-sm"></i>
                         </button>
-                        <button type="button"
-                            class="text-xs font-medium text-primary-600 underline-offset-4 hover:underline dark:text-primary-200"
-                            @click="dismissIntro(true)">
-                            لا تظهر هذه الرسالة مرة أخرى
-                        </button>
-                    </div>
                 </div>
+                        <button type="button"
+                    class="mt-2 text-[11px] font-medium text-primary-600/70 hover:text-primary-700 dark:text-primary-300/70 dark:hover:text-primary-200 transition-colors"
+                            @click="dismissIntro(true)">
+                    لا تظهر مرة أخرى
+                        </button>
             </div>
 
-            {{-- Flow header --}}
+            {{-- Error Alert --}}
             @if (session()->has('preview_error'))
                 <div
-                    class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
-                    {{ session('preview_error') }}
+                    class="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800 dark:border-amber-600/40 dark:bg-amber-900/20 dark:text-amber-200">
+                    <div class="flex items-start gap-2">
+                        <i class="ph ph-warning-circle text-lg flex-shrink-0 mt-0.5"></i>
+                        <span>{{ session('preview_error') }}</span>
+                    </div>
                 </div>
             @endif
 
-            <section
-                class="relative overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 px-6 py-10 shadow-xl backdrop-blur-sm dark:border-zinc-700/70 dark:bg-zinc-900/70 sm:px-9 lg:px-12">
-                <div
-                    class="pointer-events-none absolute -top-24 ltr:-right-24 rtl:-left-24 h-64 w-64 rounded-full bg-primary-500/15 blur-3xl dark:bg-primary-400/20">
-                </div>
-                <div
-                    class="pointer-events-none absolute top-1/2 -translate-y-1/2 ltr:-left-28 rtl:-right-28 h-64 w-64 rounded-full bg-sky-400/10 blur-3xl">
-                </div>
-
-                <div class="relative flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                    <div class="flex items-start gap-4">
-                        <div
-                            class="flex h-14 w-14 flex-none items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-sky-500 text-2xl text-white shadow-lg shadow-primary-500/35">
-                            <i class="ph-duotone ph-briefcase"></i>
+            {{-- Header Section --}}
+            <section class="relative rounded-2xl bg-white dark:bg-zinc-900/50 shadow-sm border border-slate-200/50 dark:border-zinc-800/50 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-sky-500/5 pointer-events-none"></div>
+                
+                <div class="relative px-5 py-6 sm:px-6 sm:py-8">
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div class="flex items-start gap-3 sm:gap-4">
+                            <div
+                                class="flex h-12 w-12 sm:h-14 sm:w-14 flex-none items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-sky-500 text-white shadow-lg shadow-primary-500/25">
+                                <i class="ph-duotone ph-briefcase text-xl sm:text-2xl"></i>
                         </div>
-                        <div>
-                            <h1 class="text-xl font-black tracking-tight text-slate-900 dark:text-white">
+                            <div class="min-w-0 flex-1">
+                                <h1 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
                                 @lang('messages.t_post_new_project')
                             </h1>
-                            <p class="mt-2 text-sm leading-relaxed text-slate-500 dark:text-zinc-300">
+                                <p class="mt-1.5 text-sm text-slate-600 dark:text-zinc-400 leading-relaxed">
                                 @lang('messages.t_post_new_project_subtitle')
                             </p>
                         </div>
                     </div>
                     @if ($activeTemplate)
                         <div
-                            class="relative flex w-full flex-col gap-2 rounded-2xl border border-primary-200/60 bg-primary-50/50 px-4 py-4 text-sm text-primary-700 shadow-inner dark:border-primary-400/30 dark:bg-primary-500/10 dark:text-primary-100 md:w-72">
-                            <div class="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wide">
-                                <i class="ph-duotone ph-magic-wand text-base"></i>
-                                <span>{{ $activeTemplate['name'] ?? __('messages.t_selected') }}</span>
+                                class="flex-shrink-0 w-full sm:w-auto sm:max-w-xs rounded-lg border border-primary-200/60 bg-primary-50/80 dark:border-primary-800/40 dark:bg-primary-900/20 px-3 py-2.5">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <i class="ph-duotone ph-magic-wand text-sm text-primary-600 dark:text-primary-400"></i>
+                                    <span class="text-xs font-semibold text-primary-700 dark:text-primary-200">
+                                        {{ $activeTemplate['name'] ?? __('messages.t_selected') }}
+                                    </span>
                             </div>
-                            <p class="leading-relaxed text-[13px] text-primary-700/80 dark:text-primary-100/80">
+                                <p class="text-[11px] text-primary-600/80 dark:text-primary-300/70 leading-snug line-clamp-2">
                                 {{ $activeTemplate['headline'] ?? '' }}
                             </p>
                         </div>
                     @endif
+                    </div>
                 </div>
 
                 @php
@@ -121,87 +113,106 @@
                     $progressPercent = $totalSteps > 1 ? ($step / ($totalSteps - 1)) * 100 : 0;
                 @endphp
 
-                <div class="relative mt-10">
-                    <div class="h-2 w-full rounded-full bg-slate-100 dark:bg-zinc-700">
-                        <div class="h-2 rounded-full bg-gradient-to-r from-primary-500 via-sky-500 to-emerald-400 transition-all duration-500"
+                {{-- Simplified Progress Bar & Steps --}}
+                <div class="relative px-5 pb-6 sm:px-6 sm:pb-8">
+                    {{-- Progress Bar --}}
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-medium text-slate-600 dark:text-zinc-400">
+                                الخطوة {{ $step + 1 }} من {{ $totalSteps }}
+                            </span>
+                            <span class="text-xs font-semibold text-primary-600 dark:text-primary-400">
+                                {{ round($progressPercent) }}%
+                            </span>
+                        </div>
+                        <div class="h-2 w-full rounded-full bg-slate-200 dark:bg-zinc-700 overflow-hidden">
+                            <div class="h-full rounded-full bg-gradient-to-r from-primary-500 via-sky-500 to-emerald-500 transition-all duration-500 ease-out"
                             style="width: {{ $progressPercent }}%;">
                         </div>
                     </div>
-                    <div class="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    </div>
+
+                    {{-- Step Indicators --}}
+                    <div class="flex items-center justify-between gap-2 sm:gap-4">
                         @foreach ($wizardSteps as $wizardStep)
                             @php
                                 $isCurrent = $wizardStep['id'] === $step;
                                 $isCompleted = $wizardStep['id'] < $step;
                                 $isLocked = $wizardStep['id'] > $step;
                             @endphp
-                            <div wire:key="wizard-step-{{ $wizardStep['id'] }}">
                                 <button type="button" @if (!$isLocked) wire:click="$set('step', {{ $wizardStep['id'] }})"
-                                @endif @disabled($isLocked) @class([
-                                        'group relative flex w-full flex-col gap-3 rounded-2xl border bg-white/90 px-4 py-4 text-right shadow transition-all duration-200 dark:bg-zinc-900/80',
-                                        'border-primary-500/70 shadow-primary-500/20 ring-2 ring-primary-500/40 dark:border-primary-400/60 dark:ring-primary-400/40' =>
+                                @endif @disabled($isLocked)
+                                wire:key="wizard-step-{{ $wizardStep['id'] }}"
+                                @class([
+                                    'group relative flex flex-1 flex-col items-center gap-2 rounded-lg px-2 py-3 transition-all duration-200',
+                                    'bg-primary-50 dark:bg-primary-900/20 border-2 border-primary-500 dark:border-primary-400' =>
                                             $isCurrent,
-                                        'border-emerald-400/60 bg-emerald-50/70 text-emerald-700 dark:border-emerald-400/40 dark:bg-emerald-500/10 dark:text-emerald-200' =>
+                                    'bg-emerald-50 dark:bg-emerald-900/20 border-2 border-emerald-400 dark:border-emerald-500' =>
                                             $isCompleted,
-                                        'border-slate-200/70 text-slate-500 hover:-translate-y-1 hover:border-primary-200 hover:text-primary-600 dark:border-zinc-700/70 dark:text-zinc-300' =>
-                                            !$isCurrent && !$isCompleted,
-                                        'cursor-not-allowed opacity-60 hover:translate-y-0 hover:border-slate-200 hover:text-slate-500 dark:hover:border-zinc-700' =>
+                                    'bg-slate-50 dark:bg-zinc-800/50 border-2 border-slate-200 dark:border-zinc-700 opacity-60 cursor-not-allowed' =>
                                             $isLocked,
+                                    'bg-white dark:bg-zinc-800/30 border-2 border-slate-200 dark:border-zinc-700 hover:border-primary-300 hover:bg-primary-50/50 dark:hover:bg-primary-900/10' =>
+                                        !$isCurrent && !$isCompleted && !$isLocked,
                                     ])>
-                                    <div class="flex items-center justify-between">
                                         <span @class([
-                                            'flex h-10 w-10 flex-none items-center justify-center rounded-full text-sm font-semibold transition',
-                                            'bg-gradient-to-br from-primary-500 to-sky-500 text-white shadow-lg shadow-primary-500/30' =>
-                                                $isCurrent,
-                                            'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' => $isCompleted,
-                                            'bg-slate-100 text-slate-500 dark:bg-zinc-700 dark:text-zinc-200' =>
+                                    'flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all',
+                                    'bg-primary-600 text-white shadow-md' => $isCurrent,
+                                    'bg-emerald-500 text-white shadow-md' => $isCompleted,
+                                    'bg-slate-300 text-slate-600 dark:bg-zinc-600 dark:text-zinc-300' =>
                                                 !$isCurrent && !$isCompleted,
                                         ])>
+                                    @if ($isCompleted)
+                                        <i class="ph ph-check text-sm"></i>
+                                    @else
                                             {{ $wizardStep['id'] + 1 }}
+                                    @endif
                                         </span>
-                                    </div>
-                                    <div class="text-start">
+                                <div class="text-center min-w-0 w-full">
                                         <p @class([
-                                            'text-[14px] font-semibold leading-5',
-                                            'text-primary-600 dark:text-primary-200' => $isCurrent,
-                                            'text-emerald-600 dark:text-emerald-200' => $isCompleted && !$isCurrent,
-                                            'text-slate-600 dark:text-zinc-200' => !$isCurrent && !$isCompleted,
+                                        'text-[11px] sm:text-xs font-semibold leading-tight truncate w-full',
+                                        'text-primary-700 dark:text-primary-200' => $isCurrent,
+                                        'text-emerald-700 dark:text-emerald-200' => $isCompleted,
+                                        'text-slate-600 dark:text-zinc-400' => !$isCurrent && !$isCompleted,
                                         ])>
                                             {{ $wizardStep['label'] }}
                                         </p>
-                                        <p class="mt-2 text-[12px] leading-6 text-slate-500 dark:text-zinc-400">
-                                            {{ $wizardStep['caption'] }}
-                                        </p>
                                     </div>
                                 </button>
-                            </div>
                         @endforeach
                     </div>
                 </div>
             </section>
             {{-- Step: Brief --}}
             @if ($step === 0)
-                <section class="card px-5 sm:px-8 py-8 border border-slate-100/80 shadow-sm dark:border-zinc-700/60">
-                    <div class="flex items-start gap-3 border-b border-slate-100 pb-6 dark:border-zinc-700/70">
-                        <div
-                            class="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-primary-100 text-primary-600 dark:bg-primary-500/15 dark:text-primary-200">
-                            <i class="ph-duotone ph-lightbulb text-xl"></i>
+                <section
+                    class="rounded-2xl bg-white dark:bg-zinc-900/50 shadow-sm border border-slate-200/50 dark:border-zinc-800/50 overflow-hidden">
+                    {{-- Step Header --}}
+                    <div class="px-5 py-5 sm:px-6 sm:py-6 border-b border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900/30">
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-primary-100 text-primary-600 dark:bg-primary-500/20 dark:text-primary-400">
+                                <i class="ph-duotone ph-lightbulb text-lg"></i>
                         </div>
-                        <div>
-                            <h2 class="text-base font-semibold text-zinc-900 dark:text-white">
+                            <div class="min-w-0 flex-1">
+                                <h2 class="text-base font-bold text-slate-900 dark:text-white">
                                 ١. بلور الفكرة والهدف
                             </h2>
-                            <p class="mt-1 text-sm text-slate-500 dark:text-zinc-400">
-                                وثّق النتيجة التي تريدها، وحدد الفئة المناسبة، وأضف الأسئلة الاستكشافية لتسريع التقديمات
-                                عالية الجودة.
+                                <p class="mt-1 text-sm text-slate-600 dark:text-zinc-400 leading-relaxed">
+                                    وثّق النتيجة التي تريدها، وحدد الفئة المناسبة، وأضف الأسئلة الاستكشافية
                             </p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mt-8 space-y-8">
-                        <div class="grid gap-6 md:grid-cols-2">
+                    {{-- Step Content --}}
+                    <div class="px-5 py-6 sm:px-6 sm:py-8 space-y-6 sm:space-y-8">
+                        {{-- Title & Category --}}
+                        <div class="grid gap-5 sm:gap-6 sm:grid-cols-2">
+                            <div>
                             <x-forms.text-input required label="{{ __('messages.t_project_title') }}"
                                 placeholder="{{ __('messages.t_enter_title') }}" model="title" icon="text-italic" />
-
+                            </div>
+                            <div>
                             <x-forms.select-simple required live model="category" :label="__('messages.t_category')"
                                 :placeholder="__('messages.t_choose_category')">
                                 <x-slot:options>
@@ -210,26 +221,26 @@
                                     @endforeach
                                 </x-slot:options>
                             </x-forms.select-simple>
+                            </div>
                         </div>
 
-                        <div class="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-                            <div>
+                        {{-- Description with Sidebar --}}
+                        <div class="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+                            <div class="space-y-4">
                                 <x-forms.textarea required label="{{ __('messages.t_project_description') }}"
-                                    placeholder="{{ __('messages.t_enter_description') }}" model="description" :rows="14"
+                                    placeholder="{{ __('messages.t_enter_description') }}" model="description" :rows="12"
                                     icon="text" :hint="__('messages.t_post_project_description_hint')" />
                                 @if (!empty($assistantShortcuts['description_blocks']) && is_array($assistantShortcuts['description_blocks']))
                                     <div
-                                        class="mt-4 rounded-xl bg-slate-50 p-4 text-[12.5px] leading-6 text-slate-600 dark:bg-zinc-800 dark:text-zinc-300">
-                                        <div
-                                            class="mb-2 flex items-center gap-2 font-semibold text-slate-700 dark:text-zinc-200">
-                                            <i class="ph-duotone ph-sparkle text-base text-primary-500"></i>
-                                            <span>مقترحات تقسيم الوصف</span>
+                                        class="rounded-lg border border-primary-200/50 bg-primary-50/50 dark:border-primary-800/30 dark:bg-primary-900/10 p-4">
+                                        <div class="flex items-center gap-2 mb-3">
+                                            <i class="ph-duotone ph-sparkle text-base text-primary-600 dark:text-primary-400"></i>
+                                            <span class="text-xs font-semibold text-primary-800 dark:text-primary-200">مقترحات تقسيم الوصف</span>
                                         </div>
-                                        <ul class="space-y-1.5">
+                                        <ul class="space-y-2 text-xs leading-relaxed text-primary-700 dark:text-primary-300">
                                             @foreach ($assistantShortcuts['description_blocks'] as $block)
                                                 <li class="flex items-start gap-2">
-                                                    <i
-                                                        class="ph ph-caret-left text-xs text-primary-500 dark:text-primary-300 mt-1"></i>
+                                                    <i class="ph ph-caret-right text-xs text-primary-500 dark:text-primary-400 mt-1 flex-shrink-0"></i>
                                                     <span>{{ $block }}</span>
                                                 </li>
                                             @endforeach
@@ -237,20 +248,18 @@
                                     </div>
                                 @endif
                             </div>
-                            <div class="space-y-5">
+                            <div class="space-y-4">
                                 @if (!empty($assistantShortcuts['title_prompts']) && is_array($assistantShortcuts['title_prompts']))
                                     <div
-                                        class="rounded-2xl border border-slate-200/80 bg-white/90 p-5 dark:border-zinc-700 dark:bg-zinc-800/80">
-                                        <div
-                                            class="flex items-center gap-2 text-sm font-semibold text-zinc-800 dark:text-zinc-100">
-                                            <i class="ph-duotone ph-quotes text-lg text-primary-500"></i>
-                                            <span>نصائح لصياغة عنوان جذاب</span>
+                                        class="rounded-lg border border-slate-200 bg-white dark:border-zinc-700 dark:bg-zinc-800/50 p-4">
+                                        <div class="flex items-center gap-2 mb-3">
+                                            <i class="ph-duotone ph-quotes text-base text-primary-500"></i>
+                                            <span class="text-xs font-semibold text-slate-800 dark:text-zinc-100">نصائح لصياغة عنوان جذاب</span>
                                         </div>
-                                        <ul class="mt-4 space-y-2.5 text-[12.5px] leading-6 text-slate-600 dark:text-zinc-300">
+                                        <ul class="space-y-2 text-xs leading-relaxed text-slate-600 dark:text-zinc-300">
                                             @foreach ($assistantShortcuts['title_prompts'] as $tip)
                                                 <li class="flex items-start gap-2">
-                                                    <i
-                                                        class="ph ph-sparkle text-xs text-primary-500 dark:text-primary-300 mt-1"></i>
+                                                    <i class="ph ph-sparkle text-xs text-primary-500 dark:text-primary-400 mt-0.5 flex-shrink-0"></i>
                                                     <span>{{ $tip }}</span>
                                                 </li>
                                             @endforeach
@@ -259,15 +268,15 @@
                                 @endif
                                 @if (!empty($playbooks['briefing']) && is_array($playbooks['briefing']))
                                     <div
-                                        class="rounded-2xl border border-indigo-100 bg-indigo-50/70 p-5 text-[12.5px] leading-6 text-indigo-800 dark:border-indigo-400/30 dark:bg-indigo-500/10 dark:text-indigo-200">
-                                        <div class="flex items-center gap-2 text-sm font-semibold">
-                                            <i class="ph-duotone ph-notepad text-lg"></i>
-                                            <span>قائمة تحقق موجزة</span>
+                                        class="rounded-lg border border-indigo-200 bg-indigo-50/50 dark:border-indigo-800/30 dark:bg-indigo-900/10 p-4">
+                                        <div class="flex items-center gap-2 mb-3">
+                                            <i class="ph-duotone ph-notepad text-base text-indigo-600 dark:text-indigo-400"></i>
+                                            <span class="text-xs font-semibold text-indigo-800 dark:text-indigo-200">قائمة تحقق موجزة</span>
                                         </div>
-                                        <ul class="mt-3 space-y-2">
+                                        <ul class="space-y-2 text-xs leading-relaxed text-indigo-700 dark:text-indigo-300">
                                             @foreach ($playbooks['briefing'] as $item)
                                                 <li class="flex items-start gap-2">
-                                                    <i class="ph ph-check-circle text-xs mt-1"></i>
+                                                    <i class="ph ph-check-circle text-xs text-indigo-500 dark:text-indigo-400 mt-0.5 flex-shrink-0"></i>
                                                     <span>{{ $item }}</span>
                                                 </li>
                                             @endforeach
@@ -277,43 +286,50 @@
                             </div>
                         </div>
 
+                        {{-- Discovery Questions --}}
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
-                                <h3 class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
-                                    @lang('messages.t_discovery_questions')
-                                </h3>
+                                <div>
+                                    <h3 class="text-sm font-bold text-slate-900 dark:text-white">
+                                        @lang('messages.t_discovery_questions')
+                                    </h3>
+                                    <p class="mt-0.5 text-xs text-slate-500 dark:text-zinc-400">
+                                        أسئلة اختيارية للمستقلين لتوضيح تفاصيل المشروع
+                                    </p>
+                                </div>
                                 <button type="button"
-                                    class="inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-primary-700"
-                                    wire:click="addQuestion">
-                                    <i class="ph ph-plus-circle text-sm"></i>
-                                    <span>إضافة سؤال</span>
+                                    class="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 hover:bg-primary-700 px-3 py-1.5 text-xs font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    wire:click="addQuestion" @disabled(count($questions ?? []) >= 8)>
+                                    <i class="ph ph-plus text-sm"></i>
+                                    <span>إضافة</span>
                                 </button>
                             </div>
                             @if (is_array($questions) && count($questions))
                                 <div class="space-y-3">
                                     @foreach ($questions as $i => $q)
                                         <div
-                                            class="rounded-2xl border border-slate-200/70 bg-white/80 p-4 dark:border-zinc-700 dark:bg-zinc-800/70">
+                                            class="group rounded-lg border border-slate-200 bg-white dark:border-zinc-700 dark:bg-zinc-800/50 p-4 transition-colors hover:border-primary-300 dark:hover:border-primary-700">
                                             <div class="flex items-start gap-3">
                                                 <div
-                                                    class="flex h-7 w-7 flex-none items-center justify-center rounded-full bg-primary-100 text-[12px] font-semibold text-primary-600 dark:bg-primary-500/15 dark:text-primary-200">
+                                                    class="flex h-7 w-7 flex-none items-center justify-center rounded-md bg-primary-100 text-xs font-bold text-primary-700 dark:bg-primary-500/20 dark:text-primary-300">
                                                     {{ $i + 1 }}
                                                 </div>
-                                                <div class="flex-1 space-y-3">
+                                                <div class="flex-1 space-y-2.5 min-w-0">
                                                     <input type="text"
-                                                        class="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200"
+                                                        class="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:focus:ring-primary-800"
                                                         placeholder="{{ __('messages.t_question_placeholder') }}"
                                                         wire:model.defer="questions.{{ $i }}.text" maxlength="200" />
                                                     <label
-                                                        class="inline-flex items-center gap-2 text-[12px] text-slate-500 dark:text-zinc-300">
+                                                        class="inline-flex items-center gap-2 text-xs text-slate-600 dark:text-zinc-400 cursor-pointer">
                                                         <input type="checkbox" wire:model="questions.{{ $i }}.is_required"
-                                                            class="rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                                                            class="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500 dark:border-zinc-600">
                                                         <span>@lang('messages.t_mark_question_required')</span>
                                                     </label>
                                                 </div>
-                                                <button type="button" class="text-xs font-medium text-red-600 hover:text-red-700"
-                                                    wire:click="removeQuestion({{ $i }})">
-                                                    @lang('messages.t_remove')
+                                                <button type="button"
+                                                    class="flex-shrink-0 text-xs font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors p-1"
+                                                    wire:click="removeQuestion({{ $i }})" title="@lang('messages.t_remove')">
+                                                    <i class="ph ph-x text-base"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -321,61 +337,73 @@
                                 </div>
                             @else
                                 <div
-                                    class="rounded-2xl border border-dashed border-slate-200 p-4 text-center text-[12.5px] text-slate-500 dark:border-zinc-600 dark:text-zinc-400">
-                                    @lang('messages.t_project_discovery_questions_empty')
+                                    class="rounded-lg border-2 border-dashed border-slate-200 dark:border-zinc-700 bg-slate-50/50 dark:bg-zinc-800/30 p-6 text-center">
+                                    <i class="ph ph-question text-2xl text-slate-400 dark:text-zinc-500 mb-2"></i>
+                                    <p class="text-xs text-slate-500 dark:text-zinc-400">
+                                        @lang('messages.t_project_discovery_questions_empty')
+                                    </p>
                                 </div>
                             @endif
                         </div>
                     </div>
 
-                    <div class="mt-10 flex items-center justify-end gap-3">
-                        <button type="button"
-                            class="inline-flex items-center gap-2 rounded-full bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed"
-                            wire:click="nextStep" wire:loading.attr="disabled" wire:loading.class="opacity-70"
-                            wire:target="nextStep">
-                            <span>التالي</span>
-                            <i class="ph ph-arrow-circle-right text-base"></i>
-                            <svg class="h-4 w-4 text-white/90" viewBox="0 0 24 24" fill="none" wire:loading
+                    {{-- Navigation Buttons --}}
+                    <div
+                        class="sticky bottom-0 left-0 right-0 z-10 px-5 py-4 sm:px-6 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm border-t border-slate-200 dark:border-zinc-800 sm:relative sm:bg-transparent sm:backdrop-blur-none sm:border-t-0 sm:px-5 sm:py-6">
+                        <div class="flex items-center justify-end gap-3">
+                            <button type="button"
+                                class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 hover:bg-primary-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+                                wire:click="nextStep" wire:loading.attr="disabled" wire:loading.class="opacity-70"
                                 wire:target="nextStep">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                                </circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                            </svg>
-                        </button>
+                                <span wire:loading.remove wire:target="nextStep">التالي</span>
+                                <i class="ph ph-arrow-right text-base" wire:loading.remove wire:target="nextStep"></i>
+                                <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" wire:loading
+                                    wire:target="nextStep">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                                    </circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </section>
             @endif
 
             {{-- Step: Skills & files --}}
             @if ($step === 1)
-                <section class="card px-5 sm:px-8 py-8 border border-slate-100/80 shadow-sm dark:border-zinc-700/60">
-                    <div class="flex items-start gap-3 border-b border-slate-100 pb-6 dark:border-zinc-700/70">
-                        <div
-                            class="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-200">
-                            <i class="ph-duotone ph-asterisk text-xl"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-base font-semibold text-zinc-900 dark:text-white">
-                                ٢. مهارات الفريق والمواد الداعمة
-                            </h2>
-                            <p class="mt-1 text-sm text-slate-500 dark:text-zinc-400">
-                                حدد المهارات المطلوبة، وارفع الملفات المرجعية، وامنح المستقلين السياق المناسب للنجاح من أول
-                                مرة.
-                            </p>
+                <section
+                    class="rounded-2xl bg-white dark:bg-zinc-900/50 shadow-sm border border-slate-200/50 dark:border-zinc-800/50 overflow-hidden">
+                    {{-- Step Header --}}
+                    <div class="px-5 py-5 sm:px-6 sm:py-6 border-b border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900/30">
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
+                                <i class="ph-duotone ph-asterisk text-lg"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h2 class="text-base font-bold text-slate-900 dark:text-white">
+                                    ٢. مهارات الفريق والمواد الداعمة
+                                </h2>
+                                <p class="mt-1 text-sm text-slate-600 dark:text-zinc-400 leading-relaxed">
+                                    حدد المهارات المطلوبة وارفع الملفات المرجعية
+                                </p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mt-8 space-y-8">
+                    {{-- Step Content --}}
+                    <div class="px-5 py-6 sm:px-6 sm:py-8 space-y-6 sm:space-y-8">
                         <div class="grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(280px,1fr)]">
                             <div class="space-y-6">
                                 <div
-                                    class="rounded-2xl border border-slate-200/80 bg-white/90 px-5 py-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-800/70">
-                                    <div class="flex flex-wrap items-center justify-between gap-3">
+                                    class="rounded-lg border border-slate-200 bg-white dark:border-zinc-700 dark:bg-zinc-800/50 px-4 py-5 shadow-sm">
+                                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                                         <div>
-                                            <h3 class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
+                                            <h3 class="text-sm font-bold text-slate-900 dark:text-white">
                                                 {{ __('messages.t_skills') }}
                                             </h3>
-                                            <p class="mt-1 text-[13px] text-slate-500 dark:text-zinc-400">
+                                            <p class="mt-0.5 text-xs text-slate-600 dark:text-zinc-400">
                                                 {{ __('messages.t_what_skills_are_required') }}
                                             </p>
                                         </div>
@@ -383,9 +411,9 @@
                                             <button type="button" wire:click="generateSkillRecommendations"
                                                 wire:loading.attr="disabled"
                                                 wire:target="generateSkillRecommendations,applyAllSkillRecommendations"
-                                                class="inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed">
+                                                class="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 hover:bg-primary-700 px-3 py-1.5 text-xs font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                                                 <svg wire:loading wire:target="generateSkillRecommendations"
-                                                    class="h-4 w-4 animate-spin text-white/80" viewBox="0 0 24 24" fill="none">
+                                                    class="h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
                                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                                         stroke-width="4"></circle>
                                                     <path class="opacity-75" fill="currentColor"
@@ -393,7 +421,7 @@
                                                 </svg>
                                                 <i class="ph ph-sparkle text-sm" wire:loading.remove
                                                     wire:target="generateSkillRecommendations"></i>
-                                                <span>تشغيل المساعد الذكي</span>
+                                                <span>مساعد ذكي</span>
                                             </button>
                                         @endif
                                     </div>
@@ -405,15 +433,14 @@
                                                 $availableCount = $skillItems->count();
                                             @endphp
                                             <div x-data class="relative">
-                                                <i
-                                                    class="ph  text-slate-400 dark:text-zinc-500 absolute inset-y-0 right-4 my-auto text-sm"></i>
+                                                <i class="ph ph-magnifying-glass text-slate-400 dark:text-zinc-500 absolute inset-y-0 right-3 my-auto text-base pointer-events-none"></i>
                                                 <input type="search" wire:model.debounce.400ms="skillSearch"
                                                     wire:keydown.enter.prevent
-                                                    class="w-full rounded-full border border-slate-200/70 bg-white/85 px-12 py-2 text-xs font-semibold text-slate-600 transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-200"
-                                                    placeholder="ابحث ضمن 200 مهارة، مثال: Laravel أو SEO أو UX" />
+                                                    class="w-full rounded-lg border border-slate-200 bg-white px-10 py-2.5 text-sm text-slate-700 placeholder:text-slate-400 transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-200 dark:placeholder:text-zinc-500 dark:focus:ring-primary-800"
+                                                    placeholder="ابحث عن مهارة... مثال: Laravel, SEO, UX" />
                                                 @if (filled($skillSearch))
                                                     <button type="button" wire:click="clearSkillSearch"
-                                                        class="absolute inset-y-0 left-3 my-auto inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-600"
+                                                        class="absolute inset-y-0 left-3 my-auto inline-flex h-7 w-7 items-center justify-center rounded-md bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-600"
                                                         title="مسح البحث">
                                                         <i class="ph ph-x text-sm"></i>
                                                     </button>
@@ -445,12 +472,12 @@
                                                         @if ($skillId && $skillUid && $skillName)
                                                             <button type="button" wire:click="addSkill('{{ $skillUid }}')"
                                                                 wire:key="skill-pill-{{ $skillUid }}"
-                                                                class="group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-primary-200 {{ $isSelected ? 'border-primary-600 bg-primary-600 text-white hover:bg-primary-700' : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-primary-200 hover:text-primary-600 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300' }}">
-                                                                <span class="truncate max-w-[160px]">{{ $skillName }}</span>
+                                                                class="group inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary-200 min-h-[32px] {{ $isSelected ? 'border-primary-600 bg-primary-600 text-white hover:bg-primary-700 shadow-sm' : 'border-slate-200 bg-white text-slate-700 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-primary-600 dark:hover:bg-primary-900/20' }}">
+                                                                <span class="truncate max-w-[140px]">{{ $skillName }}</span>
                                                                 @if ($isSelected)
-                                                                    <i class="ph ph-check-circle text-sm opacity-80"></i>
+                                                                    <i class="ph ph-check text-sm flex-shrink-0"></i>
                                                                 @else
-                                                                    <i class="ph ph-plus text-sm opacity-60"></i>
+                                                                    <i class="ph ph-plus text-sm opacity-70 flex-shrink-0"></i>
                                                                 @endif
                                                             </button>
                                                         @endif
@@ -611,13 +638,18 @@
                             </div>
                         </div>
 
-                        <div class="space-y-3">
+                        {{-- File Upload --}}
+                        <div class="space-y-4">
                             <div class="flex items-center justify-between">
-                                <label class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
-                                    {{ __('messages.t_project_upload_brief_title') }}
-                                </label>
-                                <span
-                                    class="flex items-center gap-1 text-[11px] font-semibold text-primary-600 dark:text-primary-200"
+                                <div>
+                                    <label class="text-sm font-bold text-slate-900 dark:text-white">
+                                        {{ __('messages.t_project_upload_brief_title') }}
+                                    </label>
+                                    <p class="mt-0.5 text-xs text-slate-500 dark:text-zinc-400">
+                                        رفع ملفات مرجعية (اختياري)
+                                    </p>
+                                </div>
+                                <span class="flex items-center gap-1.5 text-xs font-medium text-primary-600 dark:text-primary-400"
                                     wire:loading wire:target="attachments">
                                     <svg class="h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -625,24 +657,25 @@
                                         <path class="opacity-75" fill="currentColor"
                                             d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                                     </svg>
-                                    <span>جارٍ رفع الملفات...</span>
+                                    <span>جاري الرفع...</span>
                                 </span>
                             </div>
 
-                            <label for="wizard-attachments" class="block">
+                            <label for="wizard-attachments" class="block cursor-pointer">
                                 <div
-                                    class="group rounded-2xl border-2 border-dashed border-slate-200 bg-white/80 px-6 py-8 text-center text-slate-600 transition hover:border-primary-300 hover:bg-primary-50/40 dark:border-zinc-600 dark:bg-zinc-800/70 dark:text-zinc-300 dark:hover:border-primary-400">
+                                    class="group rounded-lg border-2 border-dashed border-slate-300 bg-slate-50/50 dark:border-zinc-600 dark:bg-zinc-800/30 px-6 py-8 text-center transition-all hover:border-primary-400 hover:bg-primary-50/30 dark:hover:border-primary-600 dark:hover:bg-primary-900/10">
                                     <input id="wizard-attachments" type="file" class="sr-only" multiple
                                         wire:model="attachments">
                                     <div class="flex flex-col items-center gap-3">
                                         <div
-                                            class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-500/10 text-primary-600 group-hover:bg-primary-500/20 dark:bg-primary-500/15 dark:text-primary-200">
-                                            <i class="ph ph-cloud-arrow-up text-xl"></i>
+                                            class="flex h-14 w-14 items-center justify-center rounded-xl bg-primary-100 text-primary-600 transition-colors group-hover:bg-primary-200 dark:bg-primary-900/30 dark:text-primary-400">
+                                            <i class="ph ph-cloud-arrow-up text-2xl"></i>
                                         </div>
-                                        <div class="space-y-1 text-[13px]">
-                                            <p class="font-semibold text-slate-700 dark:text-zinc-100">اسحب الملفات إلى هنا
-                                                أو اضغط للاختيار</p>
-                                            <p class="text-slate-500 dark:text-zinc-400">
+                                        <div class="space-y-1">
+                                            <p class="text-sm font-semibold text-slate-700 dark:text-zinc-100">
+                                                اسحب الملفات هنا أو اضغط للاختيار
+                                            </p>
+                                            <p class="text-xs text-slate-500 dark:text-zinc-400">
                                                 {{ __('messages.t_project_attachment_limit_hint', ['max' => 5, 'size' => '25MB']) }}
                                             </p>
                                         </div>
@@ -651,22 +684,22 @@
                             </label>
 
                             @error('attachments.*')
-                                <p class="text-[12px] font-medium text-red-600">{{ $message }}</p>
+                                <p class="text-xs font-medium text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
 
                             @if (is_array($attachments) && count($attachments))
                                 <ul class="space-y-2">
                                     @foreach ($attachments as $idx => $file)
                                         <li
-                                            class="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
-                                            <div class="flex items-center gap-2">
-                                                <i class="ph ph-paperclip text-sm text-primary-500"></i>
-                                                <span
-                                                    class="max-w-[220px] truncate">{{ $file->getClientOriginalName() ?? 'file' }}</span>
+                                            class="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+                                            <div class="flex items-center gap-2 min-w-0 flex-1">
+                                                <i class="ph ph-file text-base text-primary-500 flex-shrink-0"></i>
+                                                <span class="truncate">{{ $file->getClientOriginalName() ?? 'file' }}</span>
                                             </div>
-                                            <button type="button" class="text-[12px] font-medium text-red-600 hover:text-red-700"
-                                                wire:click="removeAttachment({{ $idx }})">
-                                                @lang('messages.t_remove')
+                                            <button type="button"
+                                                class="flex-shrink-0 text-xs font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors p-1"
+                                                wire:click="removeAttachment({{ $idx }})" title="@lang('messages.t_remove')">
+                                                <i class="ph ph-x text-base"></i>
                                             </button>
                                         </li>
                                     @endforeach
@@ -731,50 +764,61 @@
                     </div>
 
 
-                    <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <button type="button"
-                            class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-6 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-primary-200 hover:text-primary-600 dark:border-zinc-600 dark:text-zinc-300"
-                            wire:click="prevStep">
-                            <i class="ph ph-arrow-circle-left text-base"></i>
-                            <span>السابق</span>
-                        </button>
-                        <button type="button"
-                            class="inline-flex items-center gap-2 rounded-full bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed"
-                            wire:click="nextStep" wire:loading.attr="disabled" wire:loading.class="opacity-70"
-                            wire:target="nextStep">
-                            <span>التالي</span>
-                            <i class="ph ph-arrow-circle-right text-base"></i>
-                            <svg class="h-4 w-4 text-white/90" viewBox="0 0 24 24" fill="none" wire:loading
+                    </div>
+
+                    {{-- Navigation Buttons --}}
+                    <div
+                        class="sticky bottom-0 left-0 right-0 z-10 px-5 py-4 sm:px-6 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm border-t border-slate-200 dark:border-zinc-800 sm:relative sm:bg-transparent sm:backdrop-blur-none sm:border-t-0 sm:px-5 sm:py-6">
+                        <div class="flex items-center justify-between gap-3">
+                            <button type="button"
+                                class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white hover:border-primary-300 hover:bg-primary-50 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-primary-600 dark:hover:bg-primary-900/20 min-h-[44px]"
+                                wire:click="prevStep">
+                                <i class="ph ph-arrow-left text-base"></i>
+                                <span>السابق</span>
+                            </button>
+                            <button type="button"
+                                class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 hover:bg-primary-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+                                wire:click="nextStep" wire:loading.attr="disabled" wire:loading.class="opacity-70"
                                 wire:target="nextStep">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                                </circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                            </svg>
-                        </button>
+                                <span wire:loading.remove wire:target="nextStep">التالي</span>
+                                <i class="ph ph-arrow-right text-base" wire:loading.remove wire:target="nextStep"></i>
+                                <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" wire:loading
+                                    wire:target="nextStep">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                                    </circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </section>
             @endif
 
             {{-- Step: Budget & promotion --}}
             @if ($step === 2)
-                <section class="card px-5 sm:px-8 py-8 border border-slate-100/80 shadow-sm dark:border-zinc-700/60">
-                    <div class="flex items-start gap-3 border-b border-slate-100 pb-6 dark:border-zinc-700/70">
-                        <div
-                            class="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-100">
-                            <i class="ph-duotone ph-currency-dollar text-xl"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-base font-semibold text-zinc-900 dark:text-white">
-                                ٣. الميزانية وخطط الترويج
-                            </h2>
-                            <p class="mt-1 text-sm text-slate-500 dark:text-zinc-400">
-                                اختر أسلوب الدفع المناسب، ثبت نطاق الميزانية، وفعّل خيارات إبراز المشروع للوصول إلى أفضل
-                                الخبراء.
-                            </p>
+                <section
+                    class="rounded-2xl bg-white dark:bg-zinc-900/50 shadow-sm border border-slate-200/50 dark:border-zinc-800/50 overflow-hidden">
+                    {{-- Step Header --}}
+                    <div class="px-5 py-5 sm:px-6 sm:py-6 border-b border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900/30">
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
+                                <i class="ph-duotone ph-currency-dollar text-lg"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h2 class="text-base font-bold text-slate-900 dark:text-white">
+                                    ٣. الميزانية وخطط الترويج
+                                </h2>
+                                <p class="mt-1 text-sm text-slate-600 dark:text-zinc-400 leading-relaxed">
+                                    اختر أسلوب الدفع المناسب وحدد نطاق الميزانية
+                                </p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mt-8 space-y-10">
+                    {{-- Step Content --}}
+                    <div class="px-5 py-6 sm:px-6 sm:py-8 space-y-6 sm:space-y-8">
                         <div>
                             <div class="grid gap-5 md:grid-cols-2">
                                 <label
@@ -997,26 +1041,33 @@
                         @endif
                     </div>
 
-                    <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <button type="button"
-                            class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-6 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-primary-200 hover:text-primary-600 dark:border-zinc-600 dark:text-zinc-300"
-                            wire:click="prevStep">
-                            <i class="ph ph-arrow-circle-left text-base"></i>
-                            <span>السابق</span>
-                        </button>
-                        <button type="button"
-                            class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed sm:w-auto"
-                            wire:click="nextStep" wire:loading.attr="disabled" wire:loading.class="opacity-70"
-                            wire:target="nextStep">
-                            <span>الانتقال إلى المعاينة</span>
-                            <i class="ph ph-eye text-base"></i>
-                            <svg class="h-4 w-4 text-white/90" viewBox="0 0 24 24" fill="none" wire:loading
+                    </div>
+
+                    {{-- Navigation Buttons --}}
+                    <div
+                        class="sticky bottom-0 left-0 right-0 z-10 px-5 py-4 sm:px-6 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm border-t border-slate-200 dark:border-zinc-800 sm:relative sm:bg-transparent sm:backdrop-blur-none sm:border-t-0 sm:px-5 sm:py-6">
+                        <div class="flex items-center justify-between gap-3">
+                            <button type="button"
+                                class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white hover:border-primary-300 hover:bg-primary-50 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-primary-600 dark:hover:bg-primary-900/20 min-h-[44px]"
+                                wire:click="prevStep">
+                                <i class="ph ph-arrow-left text-base"></i>
+                                <span>السابق</span>
+                            </button>
+                            <button type="button"
+                                class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 hover:bg-primary-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] sm:w-auto w-full"
+                                wire:click="nextStep" wire:loading.attr="disabled" wire:loading.class="opacity-70"
                                 wire:target="nextStep">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                                </circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                            </svg>
-                        </button>
+                                <span wire:loading.remove wire:target="nextStep">الانتقال إلى المعاينة</span>
+                                <i class="ph ph-eye text-base" wire:loading.remove wire:target="nextStep"></i>
+                                <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" wire:loading
+                                    wire:target="nextStep">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                                    </circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </section>
             @endif

@@ -2,18 +2,23 @@
 
 namespace App\Providers;
 
+use App\Events\Hourly\ContractEnded;
+use App\Events\Hourly\ContractPaused;
+use App\Events\Hourly\ContractResumed;
+use App\Events\Hourly\InvoiceDisputed;
+use App\Events\Hourly\InvoicePaymentProcessed;
+use App\Events\Hourly\InvoiceReviewed;
+use App\Events\Hourly\OfferDeclined;
+use App\Events\Hourly\OfferSent;
+use App\Events\Hourly\PaymentReleased;
+use App\Events\Hourly\ProposalWithdrawn;
+use App\Listeners\Hourly\SendInvoiceReadyNotification;
+use App\Listeners\Hourly\SendOfferDeclinedNotification;
+use App\Listeners\Hourly\SendOfferNotification;
+use App\Listeners\Hourly\SendPaymentReleasedNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Notifications\Events\NotificationSent;
-use App\Listeners\BroadcastNotificationListener;
-use App\Listeners\LogMessagingEvent;
-use App\Events\MessageDelivered;
-use App\Events\MessageRead;
-use App\Events\MessageSent;
-use App\Events\TypingStarted;
-use App\Events\TypingStopped;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -26,28 +31,39 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        \SocialiteProviders\Manager\SocialiteWasCalled::class => [
-            \SocialiteProviders\LinkedIn\LinkedInExtendSocialite::class.'@handle',
-            \SocialiteProviders\Google\GoogleExtendSocialite::class.'@handle',
-            \SocialiteProviders\Facebook\FacebookExtendSocialite::class.'@handle'
+        
+        // Hourly contract lifecycle events
+        OfferSent::class => [
+            SendOfferNotification::class,
         ],
-        NotificationSent::class => [
-            BroadcastNotificationListener::class,
+        OfferDeclined::class => [
+            SendOfferDeclinedNotification::class,
         ],
-        MessageSent::class => [
-            LogMessagingEvent::class,
+        ProposalWithdrawn::class => [
+            // Add listeners if needed
         ],
-        MessageDelivered::class => [
-            LogMessagingEvent::class,
+        ContractPaused::class => [
+            // Add listeners if needed
         ],
-        MessageRead::class => [
-            LogMessagingEvent::class,
+        ContractResumed::class => [
+            // Add listeners if needed
         ],
-        TypingStarted::class => [
-            LogMessagingEvent::class,
+        ContractEnded::class => [
+            // Add listeners if needed
         ],
-        TypingStopped::class => [
-            LogMessagingEvent::class,
+        
+        // Invoice and payment events
+        InvoiceReviewed::class => [
+            SendInvoiceReadyNotification::class,
+        ],
+        InvoicePaymentProcessed::class => [
+            // Add listeners if needed
+        ],
+        InvoiceDisputed::class => [
+            // Add listeners if needed
+        ],
+        PaymentReleased::class => [
+            SendPaymentReleasedNotification::class,
         ],
     ];
 

@@ -12,5 +12,12 @@ return [
     'access_token_abilities' => [
         'tracker:use',
     ],
-    'admin_required_ability' => 'tracker:manage', 
+    'admin_required_ability' => 'tracker:manage',
+    
+    // Screenshot settings
+    'screenshots' => [
+        'enabled' => env('TRACKER_SCREENSHOTS_ENABLED', true), // Re-enabled for server upload
+        'storage_mode' => env('TRACKER_SCREENSHOT_MODE', 'server'), // Upload to server
+        'max_size_mb' => env('TRACKER_SCREENSHOT_MAX_SIZE', 5),
+    ],
 ];

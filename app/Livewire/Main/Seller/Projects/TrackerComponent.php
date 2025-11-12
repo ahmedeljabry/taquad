@@ -120,24 +120,46 @@ class TrackerComponent extends Component
 
         $this->recentEntries = TimeEntry::query()
             ->where('contract_id', $contractId)
+            ->with(['snapshots' => function ($query) {
+                $query->orderBy('captured_at');
+            }])
             ->orderByDesc('started_at')
-            ->limit(5)
+            ->limit(10)
             ->get([
                 'id',
                 'started_at',
+                'ended_at',
                 'duration_minutes',
                 'activity_score',
                 'client_status',
                 'low_activity',
+                'memo',
+                'note',
+                'has_screenshot',
+                'is_manual',
             ])
             ->map(function (TimeEntry $entry) {
+                $snapshots = $entry->snapshots->map(function ($snapshot) {
+                    return [
+                        'id' => $snapshot->id,
+                        'url' => \Storage::disk($snapshot->disk)->url($snapshot->image_path),
+                        'captured_at' => $snapshot->captured_at,
+                    ];
+                })->toArray();
+
                 return [
-                    'id'          => $entry->id,
-                    'started_at'  => $entry->started_at,
-                    'duration'    => (int) $entry->duration_minutes,
-                    'activity'    => (int) $entry->activity_score,
-                    'status'      => $entry->client_status?->value ?? $entry->client_status,
-                    'low_activity'=> (bool) $entry->low_activity,
+                    'id'            => $entry->id,
+                    'started_at'    => $entry->started_at,
+                    'ended_at'      => $entry->ended_at,
+                    'duration'      => (int) $entry->duration_minutes,
+                    'activity'      => (int) $entry->activity_score,
+                    'status'        => $entry->client_status?->value ?? $entry->client_status,
+                    'low_activity'  => (bool) $entry->low_activity,
+                    'memo'          => $entry->memo,
+                    'note'          => $entry->note,
+                    'has_screenshot'=> (bool) $entry->has_screenshot,
+                    'is_manual'     => (bool) $entry->is_manual,
+                    'snapshots'     => $snapshots,
                 ];
             })
             ->all();

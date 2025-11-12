@@ -58,6 +58,8 @@ return [
 
     'asset_url' => 'http://localhost/taquad/public',
 
+    'force_https_urls' => env('FORCE_HTTPS_URLS'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

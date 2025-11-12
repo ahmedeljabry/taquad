@@ -4,68 +4,109 @@ namespace App\Services\Tracker;
 
 use App\Enums\ContractStatus;
 use App\Models\Contract;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Cache;
 
 class ContractService
 {
-    public function create(array $attributes): Contract
+    /**
+     * Create a new contract
+     *
+     * @param  array  $data
+     * @return Contract
+     */
+    public function create(array $data): Contract
     {
-        return DB::transaction(function () use ($attributes) {
-            $contract = Contract::create($attributes);
-            $this->ensureUniqueActiveContract($contract);
+        $contract = Contract::create($data);
+        
+        // Clear cache for contract queries
+        $this->clearContractCache($contract);
+        
+        return $contract;
+    }
 
-            return $contract->fresh();
+    /**
+     * Get active contracts for a user (with caching)
+     *
+     * @param  int  $userId
+     * @param  string  $role  'client' or 'freelancer'
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getActiveContracts(int $userId, string $role = 'freelancer')
+    {
+        $cacheKey = "contracts:active:{$role}:{$userId}";
+        
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($userId, $role) {
+            $column = $role === 'client' ? 'client_id' : 'freelancer_id';
+            
+            return Contract::query()
+                ->where($column, $userId)
+                ->where('status', ContractStatus::Active)
+                ->with(['project', 'trackerProject'])
+                ->orderBy('created_at', 'desc')
+                ->get();
         });
     }
 
-    public function update(Contract $contract, array $attributes): Contract
+    /**
+     * Check if a user has an active contract for a project
+     *
+     * @param  int  $projectId
+     * @param  int  $freelancerId
+     * @return bool
+     */
+    public function hasActiveContract(int $projectId, int $freelancerId): bool
     {
-        return DB::transaction(function () use ($contract, $attributes) {
-            $contract->fill($attributes);
-            $contract->save();
-            $this->ensureUniqueActiveContract($contract);
-
-            return $contract->fresh();
+        $cacheKey = "contract:active:project:{$projectId}:freelancer:{$freelancerId}";
+        
+        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($projectId, $freelancerId) {
+            return Contract::query()
+                ->where('project_id', $projectId)
+                ->where('freelancer_id', $freelancerId)
+                ->whereIn('status', [ContractStatus::Active, ContractStatus::OfferSent])
+                ->exists();
         });
     }
 
-    public function changeStatus(Contract $contract, ContractStatus $status): Contract
+    /**
+     * Validate weekly hours limit
+     *
+     * @param  Contract  $contract
+     * @param  int  $additionalMinutes
+     * @param  \Carbon\CarbonImmutable  $weekStart
+     * @return array{valid: bool, current_hours: float, limit: float, available: float}
+     */
+    public function validateWeeklyLimit(Contract $contract, int $additionalMinutes, \Carbon\CarbonImmutable $weekStart): array
     {
-        return DB::transaction(function () use ($contract, $status) {
-            $contract->status = $status;
-            if ($status === ContractStatus::Active && $contract->starts_at === null) {
-                $contract->starts_at = now();
-            }
-            if ($status === ContractStatus::Ended) {
-                $contract->ends_at = now();
-            }
-            $contract->save();
-
-            return $contract->fresh();
-        });
+        $weekEnd = $weekStart->endOfWeek();
+        
+        $currentMinutes = $contract->time_entries()
+            ->whereBetween('started_at', [$weekStart, $weekEnd])
+            ->sum('duration_minutes');
+        
+        $currentHours = $currentMinutes / 60;
+        $additionalHours = $additionalMinutes / 60;
+        $limit = (float) $contract->weekly_limit_hours;
+        $totalHours = $currentHours + $additionalHours;
+        
+        return [
+            'valid' => $totalHours <= $limit,
+            'current_hours' => round($currentHours, 2),
+            'limit' => $limit,
+            'available' => round(max(0, $limit - $currentHours), 2),
+            'exceeds_by' => $totalHours > $limit ? round($totalHours - $limit, 2) : 0,
+        ];
     }
 
-    protected function ensureUniqueActiveContract(Contract $contract): void
+    /**
+     * Clear contract-related caches
+     *
+     * @param  Contract  $contract
+     * @return void
+     */
+    protected function clearContractCache(Contract $contract): void
     {
-        if ($contract->status !== ContractStatus::Active) {
-            return;
-        }
-
-        $duplicate = Contract::query()
-            ->where('id', '!=', $contract->id)
-            ->where('tracker_project_id', $contract->tracker_project_id)
-            ->when($contract->project_id, function ($query) use ($contract) {
-                $query->where('project_id', $contract->project_id);
-            })
-            ->where('freelancer_id', $contract->freelancer_id)
-            ->where('status', ContractStatus::Active->value)
-            ->exists();
-
-        if ($duplicate) {
-            throw ValidationException::withMessages([
-                'freelancer_id' => __('messages.t_tracker_contract_unique_active'),
-            ]);
-        }
+        Cache::forget("contracts:active:client:{$contract->client_id}");
+        Cache::forget("contracts:active:freelancer:{$contract->freelancer_id}");
+        Cache::forget("contract:active:project:{$contract->project_id}:freelancer:{$contract->freelancer_id}");
     }
 }

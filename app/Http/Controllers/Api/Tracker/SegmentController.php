@@ -78,10 +78,13 @@ class SegmentController extends Controller
                 $entry->signature            = $signature;
                 $entry->synced_at            = now();
                 $entry->created_from_tracker = true;
+                
+                // Handle screenshot metadata (for local-only storage mode)
+                $hasScreenshot = (bool) Arr::get($segment, 'has_screenshot', false);
+                $entry->has_screenshot = $hasScreenshot;
 
                 if ($isNewEntry) {
                     $entry->client_status   = TimeEntryClientStatus::Pending;
-                    $entry->has_screenshot  = false;
                 }
 
                 $entry->save();
