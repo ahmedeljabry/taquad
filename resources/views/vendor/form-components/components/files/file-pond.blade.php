@@ -21,6 +21,7 @@
         })"
         x-cloak
         x-on:file-pond-clear.window="__clear($event.detail.id)"
+        data-filepond-root="true"
 
         @if ($hasXModel())
             {{ $attributes->whereStartsWith('x-model') }}

@@ -29,6 +29,7 @@
     x-cloak
     @if ($id) id="{{ $id }}" @endif
     {{ $attributes->class($containerClass()) }}
+    data-rich-text="quill"
 
     @if ($hasXModel())
         x-modelable="__value"

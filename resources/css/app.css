@@ -1,5 +1,7 @@
 @import "./theme.css";
+@import "@tabler/icons-webfont/tabler-icons.min.css";
 @import "filepond/dist/filepond.min.css";
+@import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 @import "flatpickr/dist/flatpickr.min.css";
 @import "quill/dist/quill.snow.css";
 @import "../../vendor/rawilk/laravel-form-components/resources/css/index.css";

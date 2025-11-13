@@ -20,6 +20,7 @@
     @endif
 
     class="date-picker-root"
+    data-date-picker-root="true"
 >
     <div
         class="{{ $containerClass() }}"
