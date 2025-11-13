@@ -42,8 +42,6 @@
 
     <div
         @if ($hasWireModel()) wire:ignore @endif
-        {{-- stop quills input event from bubbling up and conflicting with ours --}}
-        {{-- our input event won't be stopped since it's dispatched from the root element --}}
         x-on:input.stop="() => {}"
     >
         <div x-ref="quill"></div>

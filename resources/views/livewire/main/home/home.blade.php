@@ -585,7 +585,8 @@
                                     <a href="{{ url('profile', $seller->username) }}" target="_blank"
                                         class="relative inline-flex">
                                         <img class="h-16 w-16 rounded-2xl object-cover lazy" src="{{ placeholder_img() }}"
-                                            data-src="{{ src($seller->avatar) }}" alt="{{ $seller->username }}">
+                                            data-src="{{ src($seller->avatar) }}" alt="{{ $seller->username }}"
+                                            loading="lazy" decoding="async">
                                         @if ($seller->isOnline() && !$seller->availability)
                                             <span
                                                 class="absolute -top-1 -left-1 block h-3 w-3 rounded-full bg-green-400 ring-2 ring-white dark:ring-gray-900"></span>
@@ -603,7 +604,8 @@
                                             {{ $seller->username }}
                                             @if ($seller->status === 'verified')
                                                 <img class="h-4 w-4" src="{{ url('public/img/auth/verified-badge.svg') }}"
-                                                    alt="{{ __('messages.t_account_verified') }}">
+                                                    alt="{{ __('messages.t_account_verified') }}"
+                                                    loading="lazy" decoding="async">
                                             @endif
                                         </a>
                                         <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">
@@ -824,14 +826,14 @@
     </div>
 
 @push('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Observer.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/DrawSVGPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MorphSVGPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Observer.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/DrawSVGPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MorphSVGPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
 
     <script>
         const initHomepageAnimations = () => {
