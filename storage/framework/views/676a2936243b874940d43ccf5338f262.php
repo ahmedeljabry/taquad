@@ -63,60 +63,6 @@
             </div>
         <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
-        
-        <div
-            class="hidden lg:flex items-center justify-between px-4 sm:px-6 lg:px-8 py-2 text-xs font-semibold text-slate-500 dark:text-zinc-300">
-            <div class="flex items-center gap-6">
-                <span class="inline-flex items-center gap-2">
-                    <i class="ph-duotone ph-shield-star text-primary-500 text-base"></i>
-                    حماية دفع مضمونة وتقارير تنفيذ لحظية
-                </span>
-                <span class="inline-flex items-center gap-2">
-                    <i class="ph-duotone ph-lightning text-amber-500 text-base"></i>
-                    متوسط زمن الرد على المشاريع أقل من ٦ ساعات
-                </span>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="relative" x-data="themeToggle()">
-                    <button type="button"
-                        class="inline-flex items-center gap-2 rounded-full border border-slate-300/60 px-4 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-primary-400 hover:text-primary-600 dark:border-zinc-600 dark:text-zinc-200 dark:hover:border-primary-400 dark:hover:text-primary-200"
-                        @click="open = !open" @keydown.escape.window="open = false" :aria-expanded="open">
-                        <i :class="`ph ${currentIcon()} text-base`"></i>
-                        <span class="hidden sm:inline-flex" x-text="currentLabel()"></span>
-                    </button>
-                    <div x-cloak x-show="open" x-transition.origin.top.right @click.outside="open = false"
-                        class="absolute z-30 mt-2 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl shadow-slate-900/5 dark:border-zinc-700 dark:bg-zinc-800">
-                        <ul class="py-1 text-xs font-semibold text-slate-600 dark:text-zinc-300">
-                            <template x-for="option in options" :key="option.value">
-                                <li>
-                                    <button type="button"
-                                        class="flex w-full items-center gap-3 px-4 py-2 text-left transition hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-primary-500/10 dark:hover:text-primary-200"
-                                        @click="setTheme(option.value)">
-                                        <i :class="`ph ${option.icon} text-base`"></i>
-                                        <div class="flex flex-col">
-                                            <span x-text="option.label"></span>
-                                            <span x-show="preference === option.value"
-                                                class="text-[10px] font-medium text-primary-500 dark:text-primary-300">الوضع
-                                                الحالي</span>
-                                        </div>
-                                    </button>
-                                </li>
-                            </template>
-                        </ul>
-                    </div>
-                </div>
-                <a href="<?php echo e(url('help/contact'), false); ?>"
-                    class="inline-flex items-center gap-2 rounded-full border border-slate-300/60 px-4 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-primary-400 hover:text-primary-600 dark:border-zinc-600 dark:text-zinc-200 dark:hover:border-primary-400 dark:hover:text-primary-300">
-                    <i class="ph ph-headset"></i>
-                    دعم العملاء
-                </a>
-                <a href="<?php echo e(url('explore/projects'), false); ?>"
-                    class="inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm shadow-primary-500/30 transition hover:-translate-y-0.5 hover:bg-primary-700">
-                    استكشاف الفرص
-                    <i class="ph ph-arrow-line-up-right text-sm"></i>
-                </a>
-            </div>
-        </div>
 
         
         <nav class="relative container max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -485,19 +431,45 @@ if (isset($__slots)) unset($__slots);
 
                                 
                                 <div
-                                    class="absolute w-72 top-8 ltr:left-1/2 rtl:right-1/2 ltr:-ml-48 rtl:-mr-48 z-1 pt-8 invisible group-hover:visible">
+                                    class="absolute w-80 top-8 ltr:left-1/2 rtl:right-1/2 ltr:-ml-64 rtl:-mr-64 z-1 pt-8 invisible group-hover:visible">
                                     <div
-                                        class="bg-white dark:bg-zinc-800 shadow-xl ring-1 ring-black ring-opacity-5 rounded-lg transform origin-top transition duration-300 ease-out opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-900 dark:scrollbar-track-zinc-600">
+                                        class="bg-white dark:bg-zinc-800 shadow-xl ring-1 ring-black ring-opacity-5 rounded-xl transform origin-top transition duration-300 ease-out opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 max-h-[32rem] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-900 dark:scrollbar-track-zinc-600">
                                         <div
                                             class="transform transition duration-500 ease-out opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100">
                                             <div class="divide-y divide-slate-100 dark:divide-zinc-700">
 
-                                                <p class="py-3 px-3.5 truncate">
-                                                    <span
-                                                        class="block mb-0.5 text-xs text-gray-500 dark:text-gray-300"><?php echo e(__('messages.t_logged_in_as_username', ['username' => auth()->user()->username]), false); ?></span>
-                                                    <span
-                                                        class="font-semibold dark:text-white"><?php echo e(money(auth()->user()->balance_available, settings('currency')->code, true), false); ?></span>
-                                                </p>
+                                                
+                                                <div class="px-4 py-4 bg-gradient-to-r from-primary-50 to-sky-50 dark:from-primary-900/20 dark:to-sky-900/20 border-b border-slate-100 dark:border-zinc-700">
+                                                    <div class="flex items-center gap-3">
+                                                        <?php if(auth()->user()->avatar): ?>
+                                                            <img class="object-cover w-12 h-12 rounded-full ring-2 ring-white dark:ring-zinc-700" src="<?php echo e(src(auth()->user()->avatar), false); ?>"
+                                                                alt="<?php echo e(auth()->user()->username, false); ?>">
+                                                        <?php else: ?>
+                                                            <div
+                                                                class="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-primary-100 rounded-full dark:bg-primary-500/20 ring-2 ring-white dark:ring-zinc-700">
+                                                                <span
+                                                                    class="font-semibold text-primary-600 dark:text-primary-300 uppercase text-sm tracking-wider">
+                                                                    <?php echo e(Str::take(auth()->user()->username, 2), false); ?>
+
+                                                                </span>
+                                                            </div>
+                                                        <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                                                        <div class="flex-1 min-w-0">
+                                                            <p class="text-sm font-bold text-slate-900 dark:text-white truncate">
+                                                                <?php echo e(auth()->user()->username, false); ?>
+
+                                                            </p>
+                                                            <p class="text-xs text-slate-600 dark:text-zinc-400 mt-0.5">
+                                                                <?php echo e(__('messages.t_logged_in_as_username', ['username' => auth()->user()->username]), false); ?>
+
+                                                            </p>
+                                                            <p class="text-sm font-semibold text-primary-600 dark:text-primary-400 mt-1">
+                                                                <?php echo e(money(auth()->user()->balance_available, settings('currency')->code, true), false); ?>
+
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
                                                 
                                                 <div class="py-1.5 px-3.5">
@@ -697,6 +669,45 @@ if (isset($__slots)) unset($__slots);
                                                             class="font-semibold text-xs text-gray-700 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-500"><?php echo e(__('messages.t_messages'), false); ?></span>
                                                     </a>
 
+                                                </div>
+
+                                                
+                                                <div class="py-1.5 px-3.5 border-t border-slate-100 dark:border-zinc-700">
+                                                    <div class="flex items-center justify-between py-1.5">
+                                                        <div class="flex items-center gap-3">
+                                                            <i class="ph ph-moon-stars text-gray-400 dark:text-zinc-300 text-base"></i>
+                                                            <span class="font-semibold text-xs text-gray-700 dark:text-gray-100">
+                                                                <?php echo app('translator')->get('messages.t_theme'); ?>
+                                                            </span>
+                                                        </div>
+                                                        <div class="relative" x-data="themeToggle()">
+                                                            <button type="button"
+                                                                class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-primary-400 hover:text-primary-600 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-200 dark:hover:border-primary-400 dark:hover:text-primary-200"
+                                                                @click="open = !open" @keydown.escape.window="open = false" :aria-expanded="open">
+                                                                <i :class="`ph ${currentIcon()} text-sm`"></i>
+                                                                <span class="hidden sm:inline-flex" x-text="currentLabel()"></span>
+                                                            </button>
+                                                            <div x-cloak x-show="open" x-transition.origin.top.right @click.outside="open = false"
+                                                                class="absolute z-30 mt-2 ltr:right-0 rtl:left-0 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl shadow-slate-900/5 dark:border-zinc-700 dark:bg-zinc-800">
+                                                                <ul class="py-1 text-xs font-semibold text-slate-600 dark:text-zinc-300">
+                                                                    <template x-for="option in options" :key="option.value">
+                                                                        <li>
+                                                                            <button type="button"
+                                                                                class="flex w-full items-center gap-3 px-4 py-2 text-left transition hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-primary-500/10 dark:hover:text-primary-200"
+                                                                                @click="setTheme(option.value)">
+                                                                                <i :class="`ph ${option.icon} text-base`"></i>
+                                                                                <div class="flex flex-col">
+                                                                                    <span x-text="option.label"></span>
+                                                                                    <span x-show="preference === option.value"
+                                                                                        class="text-[10px] font-medium text-primary-500 dark:text-primary-300">الوضع الحالي</span>
+                                                                                </div>
+                                                                            </button>
+                                                                        </li>
+                                                                    </template>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                                 

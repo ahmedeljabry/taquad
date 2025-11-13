@@ -20,11 +20,26 @@ class ProjectValidator
 
             // Get max skills
             $max_skills = settings('projects')->max_skills;
+            $deliverablesLimit = 6;
 
             // Set rules
             $rules      = [
                 'title'         => 'required|max:100',
                 'description'   => 'required',
+                'expected_deliverables' => [
+                    'array',
+                    "max:$deliverablesLimit",
+                    function ($attribute, $value, $fail) {
+                        $hasDeliverable = collect($value ?? [])->contains(function ($item) {
+                            return trim((string) $item) !== '';
+                        });
+
+                        if (!$hasDeliverable) {
+                            $fail(__('messages.t_expected_deliverables_required'));
+                        }
+                    },
+                ],
+                'expected_deliverables.*' => 'nullable|string|max:160',
                 'category'      => 'required|exists:projects_categories,id',
                 'skills'        => ['required', 'array', "max:$max_skills"],
                 'skills.*'      => [ Rule::exists('projects_skills', 'id')->where(function($query) use ($request) {
@@ -53,6 +68,9 @@ class ProjectValidator
                 'description.required'   => __('messages.t_validator_required'),
                 'category.required'      => __('messages.t_validator_required'),
                 'category.exists'        => __('messages.t_validator_exists'),
+                'expected_deliverables.array' => __('messages.t_validator_array'),
+                'expected_deliverables.max'   => __('messages.t_validator_max_array', ['max' => $deliverablesLimit]),
+                'expected_deliverables.*.max' => __('messages.t_validator_max', ['max' => 160]),
                 'skills.required'        => __('messages.t_validator_required'),
                 'skills.array'           => __('messages.t_validator_array'),
                 'skills.max'             => __('messages.t_validator_max_array', ['max' => $max_skills]),
@@ -88,6 +106,7 @@ class ProjectValidator
                 'title'         => $request->title,
                 'description'   => $request->description,
                 'category'      => $request->category,
+                'expected_deliverables' => $request->expected_deliverables,
                 'skills'        => $request->required_skills,
                 'salary_type'   => $request->salary_type,
                 'min_price'     => $request->min_price,

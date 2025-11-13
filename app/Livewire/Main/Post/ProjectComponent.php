@@ -25,7 +25,7 @@ class ProjectComponent extends Component
     public $title;
     public $description;
     public $category;
-    public $salary_type;
+    public $salary_type = 'fixed';
     public $min_price;
     public $max_price;
     public $currency_symbol;
@@ -49,6 +49,7 @@ class ProjectComponent extends Component
     public array $playbooks         = [];
     public array $assistantShortcuts = [];
     public array $descriptionSuggestions = [];
+    public array $expected_deliverables = [''];
     public ?string $selectedTemplate = null;
     public array $templateConversation = [];
     public array $templateMatches = [];
@@ -59,6 +60,7 @@ class ProjectComponent extends Component
     #[Locked]
     public $promoting_total = 0;
     public int $step = 0;
+    protected int $deliverablesLimit = 6;
 
 
     public function nextStep()
@@ -86,6 +88,10 @@ class ProjectComponent extends Component
             $this->salary_type = 'fixed';
             return;
         }
+
+        // Reset prices when changing salary type
+        $this->min_price = null;
+        $this->max_price = null;
 
         if ($value === 'hourly') {
             if ($this->hourly_weekly_limit === null) {
@@ -122,6 +128,7 @@ class ProjectComponent extends Component
         $this->questions           = [];
         $this->milestones          = [];
         $this->requires_nda        = false;
+        $this->expected_deliverables = [''];
         $this->nda_scope           = null;
         $this->nda_term_months     = 12;
         $this->selectedTemplate    = null;
@@ -169,6 +176,20 @@ class ProjectComponent extends Component
                 'title'       => 'required|string|max:120',
                 'description' => 'required|string|min:30',
                 'category'    => 'required|exists:projects_categories,id',
+                'expected_deliverables' => [
+                    'array',
+                    'max:' . $this->deliverablesLimit,
+                    function ($attribute, $value, $fail) {
+                        $hasDeliverable = collect($value ?? [])->contains(function ($item) {
+                            return trim((string) $item) !== '';
+                        });
+
+                        if (!$hasDeliverable) {
+                            $fail(__('messages.t_expected_deliverables_required'));
+                        }
+                    },
+                ],
+                'expected_deliverables.*' => 'nullable|string|max:160',
             ],
             1 => [
                 'required_skills' => 'array|min:1',
@@ -332,6 +353,11 @@ class ProjectComponent extends Component
         }
 
         return $this->templateLibrary[$this->selectedTemplate] ?? null;
+    }
+
+    public function getDeliverablesLimitProperty(): int
+    {
+        return $this->deliverablesLimit;
     }
 
 
@@ -683,11 +709,64 @@ class ProjectComponent extends Component
         $this->pushTemplateMessage('user', $message);
         $this->templateMessage = '';
 
+        // Find matching templates
         $matches = $this->matchTemplates($message);
         $this->templateMatches = array_map(fn($template) => $this->simplifyTemplateCard($template), $matches);
 
-        $assistantReply = $this->buildAssistantReply($matches);
+        // Build AI-powered assistant reply with template suggestions
+        $assistantReply = $this->buildAIAssistantReply($message, $matches);
         $this->pushTemplateMessage('assistant', $assistantReply);
+    }
+
+    public function searchTemplates(string $query): array
+    {
+        if (strlen(trim($query)) < 2) {
+            return [];
+        }
+
+        $matches = $this->matchTemplates($query);
+        return array_map(fn($template) => [
+            'id' => $template['id'] ?? '',
+            'name' => $template['name'] ?? $template['headline'] ?? '',
+            'summary' => $template['summary'] ?? '',
+        ], array_slice($matches, 0, 6));
+    }
+
+    protected function buildAIAssistantReply(string $userMessage, array $templates): string
+    {
+        if (empty($templates)) {
+            return 'لم أجد قالباً مطابقاً تماماً. دعني أقترح عليك بعض القوالب العامة التي قد تناسب مشروعك:\n\n' . 
+                   $this->getGeneralTemplateSuggestions();
+        }
+
+        $reply = "بناءً على وصفك، وجدت " . count($templates) . " قالباً مناسباً:\n\n";
+        
+        $topTemplates = array_slice($templates, 0, 3);
+        foreach ($topTemplates as $index => $template) {
+            $name = $template['name'] ?? $template['headline'] ?? 'قالب';
+            $summary = $template['summary'] ?? '';
+            $reply .= ($index + 1) . ". **{$name}**\n";
+            if ($summary) {
+                $reply .= "   {$summary}\n";
+            }
+            $reply .= "\n";
+        }
+
+        if (count($templates) > 3) {
+            $reply .= "و " . (count($templates) - 3) . " قوالب أخرى متاحة.\n\n";
+        }
+
+        $reply .= "انقر على أي قالب لتطبيقه تلقائياً على مشروعك! 🚀";
+        
+        return $reply;
+    }
+
+    protected function getGeneralTemplateSuggestions(): string
+    {
+        $generalTemplates = array_slice(array_values($this->templateLibrary), 0, 3);
+        return collect($generalTemplates)
+            ->map(fn($template, $index) => ($index + 1) . '. ' . ($template['name'] ?? $template['headline'] ?? 'قالب'))
+            ->implode("\n");
     }
 
     public function getReviewDataProperty(): array
@@ -753,6 +832,8 @@ class ProjectComponent extends Component
             ->values()
             ->all();
 
+        $deliverables = $this->sanitizedDeliverables();
+
         $selectedPlans = collect($this->plans ?? [])
             ->whereIn('id', $this->selected_plans ?? [])
             ->map(function ($plan) use ($currency) {
@@ -783,6 +864,7 @@ class ProjectComponent extends Component
             'skills'          => $this->selectedSkillLabels,
             'questions'       => $questions,
             'milestones'      => $milestones,
+            'deliverables'    => $deliverables,
             'attachments'     => $attachments,
             'plans'           => $selectedPlans,
             'plans_total'     => $this->promoting_total,
@@ -1046,6 +1128,14 @@ class ProjectComponent extends Component
 
         $this->applyTemplateSkills($template, $categoryId);
 
+        $templateDeliverables = collect($template['deliverables'] ?? [])
+            ->map(fn($deliverable) => trim((string) $deliverable))
+            ->filter()
+            ->values()
+            ->take($this->deliverablesLimit)
+            ->all();
+        $this->expected_deliverables = !empty($templateDeliverables) ? $templateDeliverables : [''];
+
         if (!empty($template['questions']) && is_array($template['questions'])) {
             $this->questions = collect($template['questions'])
                 ->take(8)
@@ -1089,6 +1179,7 @@ class ProjectComponent extends Component
     {
         $this->selectedTemplate = null;
         $this->milestones       = [];
+        $this->expected_deliverables = [''];
         $this->dispatch('project-template-cleared');
         $this->pushTemplateMessage('assistant', 'تمت إعادة ضبط الحقول. يمكنك اختيار قالب جديد أو متابعة التحرير يدوياً.');
     }
@@ -1360,6 +1451,7 @@ class ProjectComponent extends Component
             $requiresNda       = (bool) $this->requires_nda;
             $ndaTermMonths     = $requiresNda ? max(1, (int) ($this->nda_term_months ?? 12)) : null;
             $ndaScopeSanitized = $requiresNda ? clean((string) ($this->nda_scope ?? '')) : null;
+            $deliverables      = $this->sanitizedDeliverables();
 
             if ($ndaScopeSanitized !== null) {
                 $this->nda_scope = $ndaScopeSanitized;
@@ -1415,6 +1507,7 @@ class ProjectComponent extends Component
             $project->pid              = $pid;
             $project->title            = $title;
             $project->description      = clean($this->description);
+            $project->expected_deliverables = $deliverables;
             $project->slug             = $slug;
             $project->category_id      = $this->category;
             $project->budget_min       = $this->min_price;
@@ -1777,6 +1870,39 @@ class ProjectComponent extends Component
 
         unset($this->attachments[$index]);
         $this->attachments = array_values($this->attachments);
+    }
+
+    public function addDeliverable(): void
+    {
+        if (count($this->expected_deliverables ?? []) >= $this->deliverablesLimit) {
+            return;
+        }
+
+        $this->expected_deliverables[] = '';
+    }
+
+    public function removeDeliverable(int $index): void
+    {
+        if (!isset($this->expected_deliverables[$index])) {
+            return;
+        }
+
+        unset($this->expected_deliverables[$index]);
+        $this->expected_deliverables = array_values($this->expected_deliverables);
+
+        if (empty($this->expected_deliverables)) {
+            $this->expected_deliverables[] = '';
+        }
+    }
+
+    protected function sanitizedDeliverables(): array
+    {
+        return collect($this->expected_deliverables ?? [])
+            ->map(fn($value) => trim((string) $value))
+            ->filter()
+            ->values()
+            ->take($this->deliverablesLimit)
+            ->all();
     }
 
     protected function generateNdaDocument(Project $project, string $scope, int $termMonths): ?string

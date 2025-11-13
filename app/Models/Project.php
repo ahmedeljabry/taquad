@@ -55,7 +55,17 @@ class Project extends Model implements Sitemapable
         'counter_bids',
         'expiry_date',
         'awarded_bid_id',
-        'awarded_freelancer_id'
+        'awarded_freelancer_id',
+        'expected_deliverables',
+    ];
+
+    /**
+     * Casts
+     *
+     * @var array
+     */
+    protected $casts = [
+        'expected_deliverables' => 'array',
     ];
 
     /**

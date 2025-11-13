@@ -6,11 +6,16 @@
         ['id' => 3, 'label' => 'معاينة قبل النشر', 'caption' => 'راجع كل التفاصيل قبل الإطلاق.'],
     ];
     $activeTemplate = $this->selectedTemplateData;
+    $currency = settings('currency');
+    $currencyCode = $currency?->code ?? 'SAR';
+    $totalSteps = count($wizardSteps);
 ?>
 
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-950">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-20 sm:pt-12 sm:pb-24" x-data="projectIntro()"
-    x-init="init()" x-cloak>
+    <div class="post-project-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 pb-40 sm:mt-28 sm:pb-44"
+        x-data="projectIntro()"
+        x-init="init()"
+        x-cloak>
         
     <div wire:loading.flex
             class="fixed inset-0 z-[70] items-center justify-center bg-white/90 backdrop-blur-md dark:bg-zinc-900/90">
@@ -25,11 +30,8 @@
             </div>
         </div>
 
-        <div class="space-y-6 sm:space-y-8">
-
-            
-            
-
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_420px]">
+            <div class="space-y-6 sm:space-y-8 lg:sticky lg:top-28 lg:self-start lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:pr-2">
             
             <div x-show="showIntro" x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform translate-y-2"
@@ -72,9 +74,9 @@
             <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
             
-            <section class="relative rounded-2xl bg-white dark:bg-zinc-900/50 shadow-sm border border-slate-200/50 dark:border-zinc-800/50 overflow-hidden">
+            <section class="sticky top-28 z-30 rounded-2xl bg-white dark:bg-zinc-900/50 shadow-sm border border-slate-200/50 dark:border-zinc-800/50 overflow-hidden">
                 <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-sky-500/5 pointer-events-none"></div>
-                
+
                 <div class="relative px-5 py-6 sm:px-6 sm:py-8">
                     <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div class="flex items-start gap-3 sm:gap-4">
@@ -107,113 +109,17 @@
                             </p>
                         </div>
                     <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-                    </div>
                 </div>
-
-                <?php
-                    $totalSteps = count($wizardSteps);
-                    $progressPercent = $totalSteps > 1 ? ($step / ($totalSteps - 1)) * 100 : 0;
-                ?>
-
-                
-                <div class="relative px-5 pb-6 sm:px-6 sm:pb-8">
-                    
-                    <div class="mb-6">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-medium text-slate-600 dark:text-zinc-400">
-                                الخطوة <?php echo e($step + 1, false); ?> من <?php echo e($totalSteps, false); ?>
-
-                            </span>
-                            <span class="text-xs font-semibold text-primary-600 dark:text-primary-400">
-                                <?php echo e(round($progressPercent), false); ?>%
-                            </span>
                         </div>
-                        <div class="h-2 w-full rounded-full bg-slate-200 dark:bg-zinc-700 overflow-hidden">
-                            <div class="h-full rounded-full bg-gradient-to-r from-primary-500 via-sky-500 to-emerald-500 transition-all duration-500 ease-out"
-                            style="width: <?php echo e($progressPercent, false); ?>%;">
-                        </div>
-                    </div>
-                    </div>
 
-                    
-                    <div class="flex items-center justify-between gap-2 sm:gap-4">
-                        <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $wizardSteps; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $wizardStep): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <?php
-                                $isCurrent = $wizardStep['id'] === $step;
-                                $isCompleted = $wizardStep['id'] < $step;
-                                $isLocked = $wizardStep['id'] > $step;
-                            ?>
-                                <button type="button" <?php if(!$isLocked): ?> wire:click="$set('step', <?php echo e($wizardStep['id'], false); ?>)"
-                                <?php endif; ?> <?php if($isLocked): echo 'disabled'; endif; ?>
-                                wire:key="wizard-step-<?php echo e($wizardStep['id'], false); ?>"
-                                class="<?php echo \Illuminate\Support\Arr::toCssClasses([
-                                    'group relative flex flex-1 flex-col items-center gap-2 rounded-lg px-2 py-3 transition-all duration-200',
-                                    'bg-primary-50 dark:bg-primary-900/20 border-2 border-primary-500 dark:border-primary-400' =>
-                                            $isCurrent,
-                                    'bg-emerald-50 dark:bg-emerald-900/20 border-2 border-emerald-400 dark:border-emerald-500' =>
-                                            $isCompleted,
-                                    'bg-slate-50 dark:bg-zinc-800/50 border-2 border-slate-200 dark:border-zinc-700 opacity-60 cursor-not-allowed' =>
-                                            $isLocked,
-                                    'bg-white dark:bg-zinc-800/30 border-2 border-slate-200 dark:border-zinc-700 hover:border-primary-300 hover:bg-primary-50/50 dark:hover:bg-primary-900/10' =>
-                                        !$isCurrent && !$isCompleted && !$isLocked,
-                                    ]); ?>">
-                                        <span class="<?php echo \Illuminate\Support\Arr::toCssClasses([
-                                    'flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all',
-                                    'bg-primary-600 text-white shadow-md' => $isCurrent,
-                                    'bg-emerald-500 text-white shadow-md' => $isCompleted,
-                                    'bg-slate-300 text-slate-600 dark:bg-zinc-600 dark:text-zinc-300' =>
-                                                !$isCurrent && !$isCompleted,
-                                        ]); ?>">
-                                    <!--[if BLOCK]><![endif]--><?php if($isCompleted): ?>
-                                        <i class="ph ph-check text-sm"></i>
-                                    <?php else: ?>
-                                            <?php echo e($wizardStep['id'] + 1, false); ?>
-
-                                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-                                        </span>
-                                <div class="text-center min-w-0 w-full">
-                                        <p class="<?php echo \Illuminate\Support\Arr::toCssClasses([
-                                        'text-[11px] sm:text-xs font-semibold leading-tight truncate w-full',
-                                        'text-primary-700 dark:text-primary-200' => $isCurrent,
-                                        'text-emerald-700 dark:text-emerald-200' => $isCompleted,
-                                        'text-slate-600 dark:text-zinc-400' => !$isCurrent && !$isCompleted,
-                                        ]); ?>">
-                                            <?php echo e($wizardStep['label'], false); ?>
-
-                                        </p>
-                                    </div>
-                                </button>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
-                    </div>
-                </div>
             </section>
             
             <!--[if BLOCK]><![endif]--><?php if($step === 0): ?>
-                <section
-                    class="rounded-2xl bg-white dark:bg-zinc-900/50 shadow-sm border border-slate-200/50 dark:border-zinc-800/50 overflow-hidden">
-                    
-                    <div class="px-5 py-5 sm:px-6 sm:py-6 border-b border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900/30">
-                        <div class="flex items-start gap-3">
-                            <div
-                                class="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-primary-100 text-primary-600 dark:bg-primary-500/20 dark:text-primary-400">
-                                <i class="ph-duotone ph-lightbulb text-lg"></i>
-                        </div>
-                            <div class="min-w-0 flex-1">
-                                <h2 class="text-base font-bold text-slate-900 dark:text-white">
-                                ١. بلور الفكرة والهدف
-                            </h2>
-                                <p class="mt-1 text-sm text-slate-600 dark:text-zinc-400 leading-relaxed">
-                                    وثّق النتيجة التي تريدها، وحدد الفئة المناسبة، وأضف الأسئلة الاستكشافية
-                            </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    
-                    <div class="px-5 py-6 sm:px-6 sm:py-8 space-y-6 sm:space-y-8">
+                <section class="rounded-xl bg-white dark:bg-zinc-900/50 shadow-sm border border-slate-200/50 dark:border-zinc-800/50">
+                    <div class="px-5 py-6 sm:px-6 sm:py-8 space-y-6">
                         
                         <div class="grid gap-5 sm:gap-6 sm:grid-cols-2">
-                            <div>
+                        <div>
                             <?php if (isset($component)) { $__componentOriginal0241d3f51813223308810020791c4a83 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal0241d3f51813223308810020791c4a83 = $attributes; } ?>
 <?php $component = App\View\Components\Forms\TextInput::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? (array) $attributes->getIterator() : [])); ?>
@@ -344,12 +250,76 @@
                         </div>
 
                         
+                        <div class="rounded-2xl border border-slate-200 bg-white px-4 py-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/60 sm:px-6">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-900 dark:text-white">المخرجات المتوقعة</p>
+                                    <p class="text-xs text-slate-500 dark:text-zinc-400">حدد ما الذي سيستلمه العميل عند اكتمال المشروع بحد أقصى <?php echo e($this->deliverablesLimit, false); ?> عناصر.</p>
+                                </div>
+                                <button type="button"
+                                    class="inline-flex items-center justify-center gap-2 rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-xs font-semibold text-primary-700 transition hover:bg-primary-100 dark:border-primary-600/70 dark:bg-primary-900/10 dark:text-primary-200"
+                                    wire:click="addDeliverable"
+                                    <?php if(count($expected_deliverables ?? []) >= $this->deliverablesLimit): echo 'disabled'; endif; ?>">
+                                    <i class="ph ph-plus-circle"></i>
+                                    <span>إضافة مخرج</span>
+                                </button>
+                            </div>
+                            <div class="mt-5 space-y-3">
+                                <!--[if BLOCK]><![endif]--><?php $__empty_1 = true; $__currentLoopData = $expected_deliverables; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $deliverable): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                    <div class="flex flex-col gap-2 rounded-xl border border-slate-200 bg-white px-3 py-3 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/70" wire:key="deliverable-row-<?php echo e($index, false); ?>">
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-primary-100 text-xs font-bold text-primary-700 dark:bg-primary-500/20 dark:text-primary-200">
+                                                <?php echo e($index + 1, false); ?>
+
+                                            </div>
+                                            <input type="text"
+                                                class="flex-1 rounded-lg border border-slate-200 bg-transparent px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-zinc-600 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                                                placeholder="مثال: لوحة تحكم تفاعلية تعرض مؤشرات الأداء الرئيسة"
+                                                wire:model.defer="expected_deliverables.<?php echo e($index, false); ?>"
+                                                maxlength="160" />
+                                            <button type="button"
+                                                class="flex h-8 w-8 flex-none items-center justify-center rounded-lg text-slate-400 hover:text-rose-500 focus:outline-none"
+                                                wire:click="removeDeliverable(<?php echo e($index, false); ?>)"
+                                                title="<?php echo app('translator')->get('messages.t_remove'); ?>">
+                                                <i class="ph ph-x text-lg"></i>
+                                            </button>
+                                        </div>
+                                        <!--[if BLOCK]><![endif]--><?php $__errorArgs = ['expected_deliverables.' . $index];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <p class="text-xs font-medium text-rose-500"><?php echo e($message, false); ?></p>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
+                                    </div>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                    <div class="rounded-xl border-2 border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-500 dark:border-zinc-700 dark:text-zinc-400">
+                                        ابدأ بإضافة أول مخرج لضمان وضوح التسليمات.
+                                    </div>
+                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                            </div>
+                            <!--[if BLOCK]><![endif]--><?php $__errorArgs = ['expected_deliverables'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <p class="mt-3 text-xs font-semibold text-rose-500"><?php echo e($message, false); ?></p>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
+                        </div>
+
+                        
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <h3 class="text-sm font-bold text-slate-900 dark:text-white">
-                                        <?php echo app('translator')->get('messages.t_discovery_questions'); ?>
-                                    </h3>
+                                    <?php echo app('translator')->get('messages.t_discovery_questions'); ?>
+                                </h3>
                                     <p class="mt-0.5 text-xs text-slate-500 dark:text-zinc-400">
                                         أسئلة اختيارية للمستقلين لتوضيح تفاصيل المشروع
                                     </p>
@@ -398,60 +368,20 @@
                                     class="rounded-lg border-2 border-dashed border-slate-200 dark:border-zinc-700 bg-slate-50/50 dark:bg-zinc-800/30 p-6 text-center">
                                     <i class="ph ph-question text-2xl text-slate-400 dark:text-zinc-500 mb-2"></i>
                                     <p class="text-xs text-slate-500 dark:text-zinc-400">
-                                        <?php echo app('translator')->get('messages.t_project_discovery_questions_empty'); ?>
+                                    <?php echo app('translator')->get('messages.t_project_discovery_questions_empty'); ?>
                                     </p>
                                 </div>
                             <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                         </div>
                     </div>
 
-                    
-                    <div
-                        class="sticky bottom-0 left-0 right-0 z-10 px-5 py-4 sm:px-6 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm border-t border-slate-200 dark:border-zinc-800 sm:relative sm:bg-transparent sm:backdrop-blur-none sm:border-t-0 sm:px-5 sm:py-6">
-                        <div class="flex items-center justify-end gap-3">
-                            <button type="button"
-                                class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 hover:bg-primary-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
-                                wire:click="nextStep" wire:loading.attr="disabled" wire:loading.class="opacity-70"
-                                wire:target="nextStep">
-                                <span wire:loading.remove wire:target="nextStep">التالي</span>
-                                <i class="ph ph-arrow-right text-base" wire:loading.remove wire:target="nextStep"></i>
-                                <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" wire:loading
-                                    wire:target="nextStep">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                                    </circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
-                                    </path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
                 </section>
             <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
             
             <!--[if BLOCK]><![endif]--><?php if($step === 1): ?>
-                <section
-                    class="rounded-2xl bg-white dark:bg-zinc-900/50 shadow-sm border border-slate-200/50 dark:border-zinc-800/50 overflow-hidden">
-                    
-                    <div class="px-5 py-5 sm:px-6 sm:py-6 border-b border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900/30">
-                        <div class="flex items-start gap-3">
-                            <div
-                                class="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
-                                <i class="ph-duotone ph-asterisk text-lg"></i>
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <h2 class="text-base font-bold text-slate-900 dark:text-white">
-                                    ٢. مهارات الفريق والمواد الداعمة
-                                </h2>
-                                <p class="mt-1 text-sm text-slate-600 dark:text-zinc-400 leading-relaxed">
-                                    حدد المهارات المطلوبة وارفع الملفات المرجعية
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    
-                    <div class="px-5 py-6 sm:px-6 sm:py-8 space-y-6 sm:space-y-8">
+                <section class="rounded-xl bg-white dark:bg-zinc-900/50 shadow-sm border border-slate-200/50 dark:border-zinc-800/50">
+                    <div class="px-5 py-6 sm:px-6 sm:py-8 space-y-6">
                         <div class="grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(280px,1fr)]">
                             <div class="space-y-6">
                                 <div
@@ -700,14 +630,19 @@
                             </div>
                         </div>
 
-                        <div class="space-y-3">
+                        
+                        <div class="space-y-4">
                             <div class="flex items-center justify-between">
-                                <label class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
+                                <div>
+                                    <label class="text-sm font-bold text-slate-900 dark:text-white">
                                     <?php echo e(__('messages.t_project_upload_brief_title'), false); ?>
 
                                 </label>
-                                <span
-                                    class="flex items-center gap-1 text-[11px] font-semibold text-primary-600 dark:text-primary-200"
+                                    <p class="mt-0.5 text-xs text-slate-500 dark:text-zinc-400">
+                                        رفع ملفات مرجعية (اختياري)
+                                    </p>
+                                </div>
+                                <span class="flex items-center gap-1.5 text-xs font-medium text-primary-600 dark:text-primary-400"
                                     wire:loading wire:target="attachments">
                                     <svg class="h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -715,24 +650,25 @@
                                         <path class="opacity-75" fill="currentColor"
                                             d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                                     </svg>
-                                    <span>جارٍ رفع الملفات...</span>
+                                    <span>جاري الرفع...</span>
                                 </span>
                             </div>
 
-                            <label for="wizard-attachments" class="block">
+                            <label for="wizard-attachments" class="block cursor-pointer">
                                 <div
-                                    class="group rounded-2xl border-2 border-dashed border-slate-200 bg-white/80 px-6 py-8 text-center text-slate-600 transition hover:border-primary-300 hover:bg-primary-50/40 dark:border-zinc-600 dark:bg-zinc-800/70 dark:text-zinc-300 dark:hover:border-primary-400">
+                                    class="group rounded-lg border-2 border-dashed border-slate-300 bg-slate-50/50 dark:border-zinc-600 dark:bg-zinc-800/30 px-6 py-8 text-center transition-all hover:border-primary-400 hover:bg-primary-50/30 dark:hover:border-primary-600 dark:hover:bg-primary-900/10">
                                     <input id="wizard-attachments" type="file" class="sr-only" multiple
                                         wire:model="attachments">
                                     <div class="flex flex-col items-center gap-3">
                                         <div
-                                            class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-500/10 text-primary-600 group-hover:bg-primary-500/20 dark:bg-primary-500/15 dark:text-primary-200">
-                                            <i class="ph ph-cloud-arrow-up text-xl"></i>
+                                            class="flex h-14 w-14 items-center justify-center rounded-xl bg-primary-100 text-primary-600 transition-colors group-hover:bg-primary-200 dark:bg-primary-900/30 dark:text-primary-400">
+                                            <i class="ph ph-cloud-arrow-up text-2xl"></i>
                                         </div>
-                                        <div class="space-y-1 text-[13px]">
-                                            <p class="font-semibold text-slate-700 dark:text-zinc-100">اسحب الملفات إلى هنا
-                                                أو اضغط للاختيار</p>
-                                            <p class="text-slate-500 dark:text-zinc-400">
+                                        <div class="space-y-1">
+                                            <p class="text-sm font-semibold text-slate-700 dark:text-zinc-100">
+                                                اسحب الملفات هنا أو اضغط للاختيار
+                                            </p>
+                                            <p class="text-xs text-slate-500 dark:text-zinc-400">
                                                 <?php echo e(__('messages.t_project_attachment_limit_hint', ['max' => 5, 'size' => '25MB']), false); ?>
 
                                             </p>
@@ -746,7 +682,7 @@ $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                                <p class="text-[12px] font-medium text-red-600"><?php echo e($message, false); ?></p>
+                                <p class="text-xs font-medium text-red-600 dark:text-red-400"><?php echo e($message, false); ?></p>
                             <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
@@ -756,15 +692,15 @@ unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
                                 <ul class="space-y-2">
                                     <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $attachments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $idx => $file): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <li
-                                            class="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
-                                            <div class="flex items-center gap-2">
-                                                <i class="ph ph-paperclip text-sm text-primary-500"></i>
-                                                <span
-                                                    class="max-w-[220px] truncate"><?php echo e($file->getClientOriginalName() ?? 'file', false); ?></span>
+                                            class="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+                                            <div class="flex items-center gap-2 min-w-0 flex-1">
+                                                <i class="ph ph-file text-base text-primary-500 flex-shrink-0"></i>
+                                                <span class="truncate"><?php echo e($file->getClientOriginalName() ?? 'file', false); ?></span>
                                             </div>
-                                            <button type="button" class="text-[12px] font-medium text-red-600 hover:text-red-700"
-                                                wire:click="removeAttachment(<?php echo e($idx, false); ?>)">
-                                                <?php echo app('translator')->get('messages.t_remove'); ?>
+                                            <button type="button"
+                                                class="flex-shrink-0 text-xs font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors p-1"
+                                                wire:click="removeAttachment(<?php echo e($idx, false); ?>)" title="<?php echo app('translator')->get('messages.t_remove'); ?>">
+                                                <i class="ph ph-x text-base"></i>
                                             </button>
                                         </li>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
@@ -830,85 +766,52 @@ unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
                     </div>
 
 
-                    <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <button type="button"
-                            class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-6 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-primary-200 hover:text-primary-600 dark:border-zinc-600 dark:text-zinc-300"
-                            wire:click="prevStep">
-                            <i class="ph ph-arrow-circle-left text-base"></i>
-                            <span>السابق</span>
-                        </button>
-                        <button type="button"
-                            class="inline-flex items-center gap-2 rounded-full bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed"
-                            wire:click="nextStep" wire:loading.attr="disabled" wire:loading.class="opacity-70"
-                            wire:target="nextStep">
-                            <span>التالي</span>
-                            <i class="ph ph-arrow-circle-right text-base"></i>
-                            <svg class="h-4 w-4 text-white/90" viewBox="0 0 24 24" fill="none" wire:loading
-                                wire:target="nextStep">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                                </circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                            </svg>
-                        </button>
                     </div>
+
                 </section>
             <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
             
             <!--[if BLOCK]><![endif]--><?php if($step === 2): ?>
-                <section class="card px-5 sm:px-8 py-8 border border-slate-100/80 shadow-sm dark:border-zinc-700/60">
-                    <div class="flex items-start gap-3 border-b border-slate-100 pb-6 dark:border-zinc-700/70">
-                        <div
-                            class="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-100">
-                            <i class="ph-duotone ph-currency-dollar text-xl"></i>
-                        </div>
+                <section class="rounded-xl bg-white dark:bg-zinc-900/50 shadow-sm border border-slate-200/50 dark:border-zinc-800/50">
+                    <div class="px-5 py-6 sm:px-6 sm:py-8 space-y-6">
                         <div>
-                            <h2 class="text-base font-semibold text-zinc-900 dark:text-white">
-                                ٣. الميزانية وخطط الترويج
-                            </h2>
-                            <p class="mt-1 text-sm text-slate-500 dark:text-zinc-400">
-                                اختر أسلوب الدفع المناسب، ثبت نطاق الميزانية، وفعّل خيارات إبراز المشروع للوصول إلى أفضل
-                                الخبراء.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="mt-8 space-y-10">
-                        <div>
-                            <div class="grid gap-5 md:grid-cols-2">
+                            <div class="grid gap-4 sm:grid-cols-2">
                                 <label
-                                    class="relative flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-4 transition hover:border-primary-200 hover:bg-primary-50/30 dark:border-zinc-600 dark:hover:border-primary-400"
-                                    :class="{ 'border-primary-500 bg-primary-50/60 dark:border-primary-400/70 dark:bg-primary-500/10': $wire.salary_type === 'fixed' }">
+                                    class="group relative flex cursor-pointer items-start gap-3 rounded-lg border-2 px-4 py-4 transition-all hover:border-primary-300 hover:shadow-sm dark:hover:border-primary-600"
+                                    :class="{ 'border-primary-500 bg-primary-50/50 shadow-sm dark:border-primary-400 dark:bg-primary-900/20': $wire.salary_type === 'fixed', 'border-slate-200 bg-white dark:border-zinc-700 dark:bg-zinc-800/50': $wire.salary_type !== 'fixed' }">
                                     <input type="radio" id="post-project-salary-type-fixed" name="salary_type"
-                                        wire:model="salary_type" value="fixed" class="hidden">
+                                        wire:model="salary_type" value="fixed" class="sr-only">
                                     <span
-                                        class="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-primary-600/10 text-primary-600 dark:bg-primary-500/15 dark:text-primary-200">
-                                        <i class="ph-duotone ph-money text-xl"></i>
+                                        class="flex h-10 w-10 flex-none items-center justify-center rounded-lg transition-colors"
+                                        :class="{ 'bg-primary-600 text-white': $wire.salary_type === 'fixed', 'bg-slate-100 text-slate-600 dark:bg-zinc-700 dark:text-zinc-300': $wire.salary_type !== 'fixed' }">
+                                        <i class="ph-duotone ph-money text-lg"></i>
                                     </span>
-                                    <span class="flex flex-col">
-                                        <span class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
+                                    <span class="flex flex-col min-w-0 flex-1">
+                                        <span class="text-sm font-bold text-slate-900 dark:text-white">
                                             <?php echo app('translator')->get('messages.t_fixed_price'); ?>
                                         </span>
-                                        <span class="text-[12.5px] text-slate-500 dark:text-zinc-400">
-                                            نطاق واضح مع مخرجات محددة سلفاً.
+                                        <span class="mt-0.5 text-xs text-slate-600 dark:text-zinc-400 leading-relaxed">
+                                            نطاق واضح مع مخرجات محددة
                                         </span>
                                     </span>
                                 </label>
                                 <label
-                                    class="relative flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-4 transition hover:border-primary-200 hover:bg-primary-50/30 dark:border-zinc-600 dark:hover:border-primary-400"
-                                    :class="{ 'border-primary-500 bg-primary-50/60 dark:border-primary-400/70 dark:bg-primary-500/10': $wire.salary_type === 'hourly' }">
+                                    class="group relative flex cursor-pointer items-start gap-3 rounded-lg border-2 px-4 py-4 transition-all hover:border-primary-300 hover:shadow-sm dark:hover:border-primary-600"
+                                    :class="{ 'border-primary-500 bg-primary-50/50 shadow-sm dark:border-primary-400 dark:bg-primary-900/20': $wire.salary_type === 'hourly', 'border-slate-200 bg-white dark:border-zinc-700 dark:bg-zinc-800/50': $wire.salary_type !== 'hourly' }">
                                     <input type="radio" id="post-project-salary-type-hourly" name="salary_type"
-                                        wire:model="salary_type" value="hourly" class="hidden">
+                                        wire:model="salary_type" value="hourly" class="sr-only">
                                     <span
-                                        class="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-primary-600/10 text-primary-600 dark:bg-primary-500/15 dark:text-primary-200">
-                                        <i class="ph-duotone ph-clock text-xl"></i>
+                                        class="flex h-10 w-10 flex-none items-center justify-center rounded-lg transition-colors"
+                                        :class="{ 'bg-primary-600 text-white': $wire.salary_type === 'hourly', 'bg-slate-100 text-slate-600 dark:bg-zinc-700 dark:text-zinc-300': $wire.salary_type !== 'hourly' }">
+                                        <i class="ph-duotone ph-clock text-lg"></i>
                                     </span>
-                                    <span class="flex flex-col">
-                                        <span class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
+                                    <span class="flex flex-col min-w-0 flex-1">
+                                        <span class="text-sm font-bold text-slate-900 dark:text-white">
                                             <?php echo app('translator')->get('messages.t_hourly_price'); ?>
                                         </span>
-                                        <span class="text-[12.5px] text-slate-500 dark:text-zinc-400">
-                                            <?php echo app('translator')->get('messages.t_hourly_price_hint'); ?>
+                                        <span class="mt-0.5 text-xs text-slate-600 dark:text-zinc-400 leading-relaxed">
+                                            مثالي للأعمال المستمرة والدفع حسب الوقت الفعلي المبذول
                                         </span>
                                     </span>
                                 </label>
@@ -919,48 +822,80 @@ unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
                                 $minLabel = $isHourly ? __('messages.t_hourly_min_rate') : __('messages.t_min_price');
                                 $maxLabel = $isHourly ? __('messages.t_hourly_max_rate') : __('messages.t_max_price');
                                 $currencySuffix = $currency_symbol . ($isHourly ? ' / ' . __('messages.t_hour_short') : '');
+
+                                // Predefined price ranges
+                                $priceRanges = [
+                                    ['min' => 5, 'max' => 10, 'label' => '5 - 10'],
+                                    ['min' => 10, 'max' => 20, 'label' => '10 - 20'],
+                                    ['min' => 20, 'max' => 50, 'label' => '20 - 50'],
+                                    ['min' => 50, 'max' => 100, 'label' => '50 - 100'],
+                                    ['min' => 100, 'max' => 200, 'label' => '100 - 200'],
+                                    ['min' => 200, 'max' => 500, 'label' => '200 - 500'],
+                                    ['min' => 500, 'max' => 1000, 'label' => '500 - 1,000'],
+                                    ['min' => 1000, 'max' => 2500, 'label' => '1,000 - 2,500'],
+                                    ['min' => 2500, 'max' => 5000, 'label' => '2,500 - 5,000'],
+                                    ['min' => 5000, 'max' => 10000, 'label' => '5,000 - 10,000'],
+                                    ['min' => 10000, 'max' => 25000, 'label' => '10,000 - 25,000'],
+                                    ['min' => 25000, 'max' => 50000, 'label' => '25,000+'],
+                                ];
                             ?>
                             <div class="mt-6 grid gap-6 md:grid-cols-2">
-                                <?php if (isset($component)) { $__componentOriginal0241d3f51813223308810020791c4a83 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal0241d3f51813223308810020791c4a83 = $attributes; } ?>
-<?php $component = App\View\Components\Forms\TextInput::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? (array) $attributes->getIterator() : [])); ?>
-<?php $component->withName('forms.text-input'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag && $constructor = (new ReflectionClass(App\View\Components\Forms\TextInput::class))->getConstructor()): ?>
-<?php $attributes = $attributes->except(collect($constructor->getParameters())->map->getName()->all()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['required' => true,'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($minLabel),'placeholder' => '0.00','model' => 'min_price','suffix' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currencySuffix)]); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal0241d3f51813223308810020791c4a83)): ?>
-<?php $attributes = $__attributesOriginal0241d3f51813223308810020791c4a83; ?>
-<?php unset($__attributesOriginal0241d3f51813223308810020791c4a83); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal0241d3f51813223308810020791c4a83)): ?>
-<?php $component = $__componentOriginal0241d3f51813223308810020791c4a83; ?>
-<?php unset($__componentOriginal0241d3f51813223308810020791c4a83); ?>
-<?php endif; ?>
-                                <?php if (isset($component)) { $__componentOriginal0241d3f51813223308810020791c4a83 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal0241d3f51813223308810020791c4a83 = $attributes; } ?>
-<?php $component = App\View\Components\Forms\TextInput::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? (array) $attributes->getIterator() : [])); ?>
-<?php $component->withName('forms.text-input'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag && $constructor = (new ReflectionClass(App\View\Components\Forms\TextInput::class))->getConstructor()): ?>
-<?php $attributes = $attributes->except(collect($constructor->getParameters())->map->getName()->all()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['required' => true,'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($maxLabel),'placeholder' => '0.00','model' => 'max_price','suffix' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currencySuffix)]); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal0241d3f51813223308810020791c4a83)): ?>
-<?php $attributes = $__attributesOriginal0241d3f51813223308810020791c4a83; ?>
-<?php unset($__attributesOriginal0241d3f51813223308810020791c4a83); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal0241d3f51813223308810020791c4a83)): ?>
-<?php $component = $__componentOriginal0241d3f51813223308810020791c4a83; ?>
-<?php unset($__componentOriginal0241d3f51813223308810020791c4a83); ?>
-<?php endif; ?>
+                                <div>
+                                    <label for="min_price_select" class="block text-xs font-bold tracking-wide mb-2.5 text-slate-700 dark:text-white">
+                                        <?php echo e($minLabel, false); ?>
+
+                                        <span class="font-bold text-red-400">*</span>
+                                    </label>
+                                    <select id="min_price_select" wire:model.live="min_price"
+                                        class="block w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:focus:ring-primary-800">
+                                        <option value="">اختر السعر الأدنى</option>
+                                        <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $priceRanges; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $range): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($range['min'], false); ?>"><?php echo e($range['label'], false); ?> <?php echo e($currency_symbol, false); ?><?php echo e($isHourly ? ' / ' . __('messages.t_hour_short') : '', false); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
+                                    </select>
+                                    <!--[if BLOCK]><![endif]--><?php $__errorArgs = ['min_price'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <p class="mt-1 text-xs font-medium text-red-600 dark:text-red-400"><?php echo e($message, false); ?></p>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
+                                </div>
+                                <div>
+                                    <label for="max_price_select" class="block text-xs font-bold tracking-wide mb-2.5 text-slate-700 dark:text-white">
+                                        <?php echo e($maxLabel, false); ?>
+
+                                        <span class="font-bold text-red-400">*</span>
+                                    </label>
+                                    <select id="max_price_select" wire:model.live="max_price"
+                                        class="block w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:focus:ring-primary-800">
+                                        <option value="">اختر السعر الأقصى</option>
+                                        <?php if($min_price): ?>
+                                            <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $priceRanges; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $range): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <!--[if BLOCK]><![endif]--><?php if($range['max'] > $min_price): ?>
+                                                    <option value="<?php echo e($range['max'], false); ?>"><?php echo e($range['max'], false); ?>+ <?php echo e($currency_symbol, false); ?><?php echo e($isHourly ? ' / ' . __('messages.t_hour_short') : '', false); ?></option>
+                                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
+                                        <?php else: ?>
+                                            <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $priceRanges; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $range): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($range['max'], false); ?>"><?php echo e($range['max'], false); ?>+ <?php echo e($currency_symbol, false); ?><?php echo e($isHourly ? ' / ' . __('messages.t_hour_short') : '', false); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
+                                        <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                                    </select>
+                                    <!--[if BLOCK]><![endif]--><?php $__errorArgs = ['max_price'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <p class="mt-1 text-xs font-medium text-red-600 dark:text-red-400"><?php echo e($message, false); ?></p>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
+                                </div>
                             </div>
 
                             <!--[if BLOCK]><![endif]--><?php if($isHourly): ?>
@@ -1209,56 +1144,16 @@ unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
                         <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                     </div>
 
-                    <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <button type="button"
-                            class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-6 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-primary-200 hover:text-primary-600 dark:border-zinc-600 dark:text-zinc-300"
-                            wire:click="prevStep">
-                            <i class="ph ph-arrow-circle-left text-base"></i>
-                            <span>السابق</span>
-                        </button>
-                        <button type="button"
-                            class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed sm:w-auto"
-                            wire:click="nextStep" wire:loading.attr="disabled" wire:loading.class="opacity-70"
-                            wire:target="nextStep">
-                            <span>الانتقال إلى المعاينة</span>
-                            <i class="ph ph-eye text-base"></i>
-                            <svg class="h-4 w-4 text-white/90" viewBox="0 0 24 24" fill="none" wire:loading
-                                wire:target="nextStep">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                                </circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                            </svg>
-                        </button>
                     </div>
+
                 </section>
             <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
             
             <!--[if BLOCK]><![endif]--><?php if($step === 3): ?>
-                <section class="card px-5 sm:px-8 py-8 border border-slate-100/80 shadow-sm dark:border-zinc-700/60">
-                    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                        <div class="flex items-start gap-3">
-                            <div
-                                class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-200">
-                                <i class="ph ph-eye text-xl"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-base font-semibold text-zinc-900 dark:text-white">
-                                    ٤. معاينة قبل النشر
-                                </h2>
-                                <p class="mt-1 text-sm text-slate-500 dark:text-zinc-400">
-                                    راجع تفاصيل المشروع سريعاً ثم انقر على «نشر المشروع» لإرساله إلى المجتمع.
-                                </p>
-                            </div>
-                        </div>
-                        <div
-                            class="rounded-full bg-emerald-500/15 px-4 py-1 text-[12px] font-semibold text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-200">
-                            <i class="ph ph-lightning text-xs"></i>
-                            كل الحقول الأساسية مكتملة
-                        </div>
-                    </div>
-
-                    <div class="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(320px,1fr)]">
+                <section class="rounded-xl bg-white dark:bg-zinc-900/50 shadow-sm border border-slate-200/50 dark:border-zinc-800/50">
+                    <div class="px-5 py-6 sm:px-6 sm:py-8">
+                        <div class="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(320px,1fr)]">
                         <article
                             class="rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
                             <header class="border-b border-slate-200 pb-5 dark:border-zinc-700">
@@ -1449,30 +1344,221 @@ unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
                             </div>
                         </aside>
                     </div>
-                    <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    </div>
+                </section>
+            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+            </div>
+
+            <aside class="space-y-6">
+                
+                <div class="fixed right-4 top-28 w-[360px] z-40 hidden lg:flex flex-col h-[calc(100vh-8rem)] rounded-2xl border border-slate-200 bg-white/95 backdrop-blur-sm shadow-xl dark:border-zinc-800 dark:bg-zinc-900/95" 
+                                x-data="{ 
+                                    showSuggestions: false,
+                                    suggestions: [],
+                                    searchDebounce: null,
+                                    isTyping: false,
+                                    init() {
+                                        this.$watch('$wire.templateMessage', (value) => {
+                                            clearTimeout(this.searchDebounce);
+                                            if (value && value.length > 2) {
+                                                this.isTyping = true;
+                                                this.searchDebounce = setTimeout(() => {
+                                                    this.showSuggestions = true;
+                                                    this.isTyping = false;
+                                                    window.Livewire.find('<?php echo e($_instance->getId(), false); ?>').call('searchTemplates', value).then((results) => {
+                                                        this.suggestions = results || [];
+                                                    });
+                                                }, 300);
+                                            } else {
+                                                this.showSuggestions = false;
+                                                this.suggestions = [];
+                                                this.isTyping = false;
+                                            }
+                                        });
+                                    },
+                                    selectTemplate(template) {
+                                        $wire.templateMessage = template.name;
+                                        this.showSuggestions = false;
+                                        setTimeout(() => {
+                                            $wire.sendTemplatePrompt();
+                                        }, 100);
+                                    }
+                                }">
+                                <div class="p-4 border-b border-slate-200 dark:border-zinc-800 bg-gradient-to-r from-primary-50 to-sky-50 dark:from-primary-900/20 dark:to-sky-900/20">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-600 dark:bg-primary-500/20 dark:text-primary-300">
+                                            <i class="ph ph-sparkle text-xl"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-[11px] font-semibold uppercase tracking-wide text-primary-500 dark:text-primary-300">قوالب ذكية</p>
+                                            <h3 class="text-sm font-bold text-slate-900 dark:text-white">اختر قالباً يملأ العنوان، الوصف والمهارات تلقائياً</h3>
+                                            <p class="text-xs text-slate-600 dark:text-zinc-400 mt-0.5">اكتب وصف مشروعك ليقترح لك المساعد أقرب قالب</p>
+                                        </div>
+                                    </div>
+                                    <!--[if BLOCK]><![endif]--><?php if($activeTemplate): ?>
+                                        <div class="mt-3 flex items-center justify-between rounded-lg bg-emerald-50 px-3 py-2 dark:bg-emerald-900/20">
+                                            <div class="flex items-center gap-2">
+                                                <i class="ph ph-check-circle text-emerald-600 dark:text-emerald-400"></i>
+                                                <span class="text-xs font-semibold text-emerald-700 dark:text-emerald-200">قالب مفعل</span>
+                                            </div>
+                                            <button type="button" class="text-[10px] font-semibold text-emerald-700 hover:text-emerald-900 dark:text-emerald-200"
+                                                wire:click="clearTemplate">
+                                                إزالة
+                                            </button>
+                                        </div>
+                                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                                </div>
+                                <div class="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-zinc-900 dark:scrollbar-track-zinc-600">
+                                    
+                                    <div x-show="showSuggestions && suggestions.length > 0" 
+                                        x-transition:enter="transition ease-out duration-200"
+                                        x-transition:enter-start="opacity-0 transform translate-y-2"
+                                        x-transition:enter-end="opacity-100 transform translate-y-0"
+                                        class="space-y-2 mb-4">
+                                        <div class="flex items-center gap-1.5 text-[10px] font-semibold text-primary-600 dark:text-primary-400">
+                                            <i class="ph ph-sparkle text-xs"></i>
+                                            <span>اقتراحات ذكية:</span>
+                                        </div>
+                                        <div class="grid gap-2">
+                                            <template x-for="(template, index) in suggestions.slice(0, 4)" :key="index">
+                                                <button type="button"
+                                                    @click="selectTemplate(template)"
+                                                    class="group text-right rounded-xl border-2 border-primary-200 bg-gradient-to-r from-primary-50 to-sky-50 p-3 transition-all hover:border-primary-400 hover:shadow-md dark:border-primary-800/40 dark:from-primary-900/20 dark:to-sky-900/20 dark:hover:border-primary-600">
+                                                    <div class="flex items-start justify-between gap-2">
+                                                        <i class="ph ph-magic-wand text-primary-600 dark:text-primary-400 text-base flex-shrink-0"></i>
+                                                        <div class="flex-1 min-w-0">
+                                                            <div class="font-bold text-xs text-primary-900 dark:text-primary-100 mb-1" x-text="template.name"></div>
+                                                            <div x-show="template.summary" class="text-[10px] font-normal text-primary-700/80 dark:text-primary-300/70 line-clamp-2" x-text="template.summary"></div>
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    
+                                    <!--[if BLOCK]><![endif]--><?php $__empty_1 = true; $__currentLoopData = $templateConversation; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $message): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                        <?php
+                                            $isUserMessage = ($message['role'] ?? 'assistant') === 'user';
+                                            $timestamp = $message['timestamp'] ?? null;
+                                        ?>
+                                        <div wire:key="template-msg-<?php echo e($loop->index, false); ?>"
+                                            class="<?php echo \Illuminate\Support\Arr::toCssClasses([
+                                                'rounded-xl px-3 py-2 text-xs leading-relaxed',
+                                                'bg-primary-600/10 text-primary-900 dark:bg-primary-500/20 dark:text-primary-100 text-right' => $isUserMessage,
+                                                'bg-slate-100 text-slate-700 dark:bg-zinc-800/80 dark:text-zinc-100 text-right' => !$isUserMessage,
+                                            ]); ?>">
+                                            <div class="mb-1 flex items-center justify-between text-[10px] font-semibold">
+                                                <span><?php echo e($isUserMessage ? 'أنت' : 'المساعد', false); ?></span>
+                                                <!--[if BLOCK]><![endif]--><?php if($timestamp): ?>
+                                                    <time class="text-[10px] font-normal text-slate-400 dark:text-zinc-500">
+                                                        <?php echo e(\Illuminate\Support\Carbon::parse($timestamp)->diffForHumans(null, null, true), false); ?>
+
+                                                    </time>
+                                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                                            </div>
+                                            <p class="whitespace-pre-line text-[11px]">
+                                                <?php echo e($message['content'], false); ?>
+
+                                            </p>
+                                        </div>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                        <div class="text-center py-8">
+                                            <i class="ph ph-sparkle text-3xl text-primary-400 dark:text-primary-500 mb-2"></i>
+                                            <p class="text-xs font-semibold text-slate-700 dark:text-zinc-300 mb-1">ابدأ بكتابة وصف مشروعك</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-zinc-400">سيقترح لك المساعد القوالب المناسبة تلقائياً</p>
+                                        </div>
+                                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                                </div>
+                                <div class="p-4 border-t border-slate-200 dark:border-zinc-800 space-y-2">
+                                    <div x-show="isTyping" class="flex items-center gap-2 text-[10px] text-slate-500 dark:text-zinc-400 mb-2">
+                                        <i class="ph ph-circle-dashed animate-spin text-xs"></i>
+                                        <span>جارٍ البحث عن قوالب مناسبة...</span>
+                                    </div>
+                                    <form wire:submit.prevent="sendTemplatePrompt" class="flex items-center gap-2">
+                                        <div class="relative flex-1">
+                                            <input type="text"
+                                                wire:model.live.debounce.300ms="templateMessage"
+                                                placeholder="اكتب وصف مشروعك..."
+                                                class="w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2 text-xs text-slate-700 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-zinc-700 dark:bg-zinc-900/60 dark:text-zinc-100 dark:placeholder:text-zinc-500" />
+                                        </div>
+                                        <button type="submit"
+                                            class="inline-flex items-center gap-1 rounded-xl bg-primary-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-primary-700 disabled:opacity-60"
+                                            wire:loading.attr="disabled"
+                                            wire:target="sendTemplatePrompt">
+                                            <i class="ph ph-paper-plane-tilt text-sm"></i>
+                                            <span class="hidden sm:inline">إرسال</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+            </aside>
+        </div>
+
+        <?php
+            $progressPercent = $totalSteps > 1 ? ($step / ($totalSteps - 1)) * 100 : 0;
+            $isFirstStep = $step === 0;
+            $isLastStep = $step === ($totalSteps - 1);
+            $primaryAction = $isLastStep ? 'create' : 'nextStep';
+            $primaryLabel = $isLastStep ? __('messages.t_post_project') : 'التالي';
+            $primaryIcon = $isLastStep ? 'ph-paper-plane-right' : 'ph-arrow-left';
+            $prevLabel = $isLastStep ? 'عودة للتعديل' : 'السابق';
+        ?>
+
+        
+        <div class="post-project-navigation fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-zinc-900 border-t border-slate-200 dark:border-zinc-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+                
+                <div class="mb-3">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs font-medium text-slate-600 dark:text-zinc-400">
+                            الخطوة <?php echo e($step + 1, false); ?> من <?php echo e($totalSteps, false); ?>
+
+                        </span>
+                        <span class="text-xs font-semibold text-primary-600 dark:text-primary-400">
+                            <?php echo e(round($progressPercent), false); ?>%
+                        </span>
+                    </div>
+                    <div class="h-1.5 w-full rounded-full bg-slate-200 dark:bg-zinc-700 overflow-hidden">
+                        <div class="h-full rounded-full bg-gradient-to-r from-primary-500 via-sky-500 to-emerald-500 transition-all duration-500 ease-out"
+                            style="width: <?php echo e($progressPercent, false); ?>%;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between gap-3 rtl:flex-row-reverse">
                         <button type="button"
-                            class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-6 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-primary-200 hover:text-primary-600 dark:border-zinc-600 dark:text-zinc-300"
-                            wire:click="prevStep">
-                            <i class="ph ph-arrow-circle-left text-base"></i>
-                            <span>عودة للتعديل</span>
-                        </button>
-                        <button type="button"
-                            class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed sm:w-auto"
-                            wire:click="create" wire:loading.attr="disabled" wire:loading.class="opacity-70"
-                            wire:target="create">
-                            <span><?php echo app('translator')->get('messages.t_post_project'); ?></span>
-                            <i class="ph ph-paper-plane-right text-base"></i>
-                            <svg class="h-4 w-4 text-white/90" viewBox="0 0 24 24" fill="none" wire:loading
-                                wire:target="create">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                                </circle>
+                        class="<?php echo \Illuminate\Support\Arr::toCssClasses([
+                            'inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 min-h-[44px] shadow-sm hover:shadow-md',
+                            'hover:border-primary-300 hover:bg-primary-50 dark:hover:border-primary-600 dark:hover:bg-primary-900/20' => !$isFirstStep,
+                            'opacity-50 cursor-not-allowed' => $isFirstStep,
+                        ]); ?>"
+                        wire:click="prevStep"
+                        <?php if($isFirstStep): echo 'disabled'; endif; ?>>
+                        <i class="ph ph-arrow-right text-sm rtl:rotate-180"></i>
+                        <span><?php echo e($prevLabel, false); ?></span>
+                    </button>
+                    <button type="button"
+                        class="<?php echo \Illuminate\Support\Arr::toCssClasses([
+                            'inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-colors min-h-[44px] shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed',
+                            'bg-emerald-600 hover:bg-emerald-700' => $isLastStep,
+                            'bg-primary-600 hover:bg-primary-700' => !$isLastStep,
+                        ]); ?>"
+                        wire:click="<?php echo e($primaryAction, false); ?>"
+                        wire:loading.attr="disabled"
+                        wire:loading.class="opacity-70"
+                        wire:target="<?php echo e($primaryAction, false); ?>">
+                        <span wire:loading.remove wire:target="<?php echo e($primaryAction, false); ?>"><?php echo e($primaryLabel, false); ?></span>
+                        <i class="ph <?php echo e($primaryIcon, false); ?> text-sm rtl:rotate-180" wire:loading.remove wire:target="<?php echo e($primaryAction, false); ?>"></i>
+                        <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" wire:loading
+                            wire:target="<?php echo e($primaryAction, false); ?>">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                             </svg>
                         </button>
                     </div>
-                </section>
-            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
         </div>
+        </div>
+
     </div>
 </div>
 
@@ -1481,11 +1567,13 @@ unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
         document.addEventListener('alpine:init', () => {
             Alpine.data('projectIntro', () => ({
                 showIntro: true,
+
                 init() {
                     if (window.localStorage) {
                         this.showIntro = localStorage.getItem('project-wizard-intro') !== 'hidden';
                     }
                 },
+
                 dismissIntro(persist = false) {
                     this.showIntro = false;
                     if (persist && window.localStorage) {
@@ -1493,31 +1581,22 @@ unset($__errorArgs, $__bag); ?><!--[if ENDBLOCK]><![endif]-->
                     }
                 },
             }));
-
-        });
-
-        document.addEventListener('livewire:load', () => {
-            document.body.classList.add('post-project-no-footer');
-        });
-
-        document.addEventListener('beforeunload', () => {
-            document.body.classList.remove('post-project-no-footer');
-        });
-
-        document.addEventListener('livewire:navigated', (event) => {
-            const destination = event?.detail?.to?.url || window.location.href;
-            if (!destination.includes('post/project')) {
-                document.body.classList.remove('post-project-no-footer');
-            }
         });
     </script>
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startPush('styles'); ?>
     <style>
-        body.post-project-no-footer footer {
-            display: none !important;
+        .post-project-navigation {
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        [dir="rtl"] .post-project-navigation {
+            direction: rtl;
         }
     </style>
 <?php $__env->stopPush(); ?>
+
+<?php $__env->startSection('hideMainFooter'); ?>
+<?php $__env->stopSection(); ?>
 <?php /**PATH C:\xampp\htdocs\taquad\resources\views/livewire/main/post/project.blade.php ENDPATH**/ ?>

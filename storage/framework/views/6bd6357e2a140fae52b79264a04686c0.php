@@ -867,8 +867,8 @@ if (isset($__slots)) unset($__slots);
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Observer.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://assets.codepen.io/16327/DrawSVGPlugin3.min.js"></script>
-    <script src="https://assets.codepen.io/16327/MorphSVGPlugin3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/DrawSVGPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MorphSVGPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -876,7 +876,14 @@ if (isset($__slots)) unset($__slots);
                 return;
             }
 
-            const pluginCandidates = [window.ScrollTrigger, window.ScrollToPlugin, window.Flip, window.TextPlugin].filter(Boolean);
+            const pluginCandidates = [
+                window.ScrollTrigger,
+                window.ScrollToPlugin,
+                window.Flip,
+                window.TextPlugin,
+                window.DrawSVGPlugin,
+                window.MorphSVGPlugin,
+            ].filter(Boolean);
 
             if (pluginCandidates.length) {
                 gsap.registerPlugin(...pluginCandidates);
