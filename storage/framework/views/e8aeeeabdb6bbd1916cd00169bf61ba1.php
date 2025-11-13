@@ -518,7 +518,6 @@ if (isset($__slots)) unset($__slots);
 
         <?php echo \Rawilk\FormComponents\Facades\FormComponents::javaScript(); ?>
 
-        <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
 
         
         <script src="https://js.pusher.com/8.2/pusher.min.js"></script>

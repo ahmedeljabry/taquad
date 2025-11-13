@@ -348,7 +348,6 @@
 
         @fcScripts
 
-        <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
 
         {{-- Add global real‑time unread counter to browser tab --}}
         <script src="https://js.pusher.com/8.2/pusher.min.js"></script>

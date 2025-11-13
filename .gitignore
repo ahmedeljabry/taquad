@@ -19,3 +19,7 @@ frankenphp
 frankenphp-worker.php
 /taquad-hourly
 /.cursor
+/storage/logs/*.log
+/storage/framework/cache/**
+/storage/framework/sessions/**
+/storage/framework/views/**

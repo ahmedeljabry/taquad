@@ -1,5 +1,5 @@
-<?php if (! $__env->hasRenderedOnce('28b95a31-4615-4589-aa1b-fa03aefd5933')): $__env->markAsRenderedOnce('28b95a31-4615-4589-aa1b-fa03aefd5933'); ?>
-    <link rel="preload" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css" as="style">
-    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
+<?php if (! $__env->hasRenderedOnce('ade53692-7e5e-4819-9de7-e2d26ccb4d09')): $__env->markAsRenderedOnce('ade53692-7e5e-4819-9de7-e2d26ccb4d09'); ?>
+    <link rel="preload" href="<?php echo e(asset('vendor/phosphor/duotone.css'), false); ?>" as="style">
+    <link rel="stylesheet" href="<?php echo e(asset('vendor/phosphor/duotone.css'), false); ?>">
 <?php endif; ?>
 <?php /**PATH C:\xampp\htdocs\taquad\resources\views/components/phosphor/styles.blade.php ENDPATH**/ ?>

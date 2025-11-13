@@ -834,10 +834,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MorphSVGPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        const initHomepageAnimations = () => {
             if (typeof gsap === 'undefined') {
                 return;
             }
+
+            const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
             const pluginCandidates = [
                 window.ScrollTrigger,
@@ -854,19 +856,21 @@
 
             const heroSegments = gsap.utils.toArray('[data-hero-segment]');
             if (heroSegments.length) {
-                gsap.set(heroSegments, { opacity: 0, y: 36 });
-                gsap.timeline({ delay: 0.25, defaults: { duration: 0.9, ease: 'power3.out' } })
-                    .to(heroSegments, { opacity: 1, y: 0, stagger: 0.12 });
+                if (prefersReducedMotion) {
+                    heroSegments.forEach((segment) => {
+                        segment.style.opacity = '1';
+                        segment.style.transform = 'none';
+                    });
+                } else {
+                    gsap.set(heroSegments, { opacity: 0, y: 36 });
+                    gsap.timeline({ delay: 0.25, defaults: { duration: 0.9, ease: 'power3.out' } })
+                        .to(heroSegments, { opacity: 1, y: 0, stagger: 0.12 });
+                }
             }
 
             const heroHeadline = document.querySelector('#hero-dynamic-text');
-            if (heroHeadline && window.TextPlugin) {
-                const heroTexts = [
-                    'ذكي',
-                    'مبدع',
-                    'دقيق'
-                ];
-
+            if (!prefersReducedMotion && heroHeadline && window.TextPlugin) {
+                const heroTexts = ['ذكي', 'مبدع', 'دقيق'];
                 const textTimeline = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 1 });
                 heroTexts.forEach((text) => {
                     textTimeline.to(heroHeadline, { duration: 1.15, text, ease: 'power2.out' });
@@ -886,7 +890,7 @@
             }
 
             const heroUnderline = document.getElementById('hero-underline');
-            if (heroUnderline) {
+            if (!prefersReducedMotion && heroUnderline) {
                 gsap.fromTo(heroUnderline, { scaleX: 0 }, {
                     scaleX: 1,
                     duration: 1,
@@ -896,16 +900,31 @@
                 });
             }
 
-            document.querySelectorAll('[data-scroll-target]').forEach((button) => {
-                button.addEventListener('click', (event) => {
-                    const selector = button.getAttribute('data-scroll-target');
-                    const target = document.querySelector(selector);
-                    if (target && window.ScrollToPlugin) {
+            const scrollButtons = document.querySelectorAll('[data-scroll-target]');
+            if (scrollButtons.length) {
+                scrollButtons.forEach((button) => {
+                    button.addEventListener('click', (event) => {
+                        const selector = button.getAttribute('data-scroll-target');
+                        const target = document.querySelector(selector);
+                        if (!target) {
+                            return;
+                        }
+
                         event.preventDefault();
+
+                        if (prefersReducedMotion || !window.ScrollToPlugin) {
+                            target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+                            return;
+                        }
+
                         gsap.to(window, { duration: 0.9, scrollTo: target, ease: 'power2.out' });
-                    }
+                    });
                 });
-            });
+            }
+
+            if (prefersReducedMotion) {
+                return;
+            }
 
             gsap.utils.toArray('[data-float]').forEach((element) => {
                 const distance = parseFloat(element.dataset.floatDistance || '22');
@@ -1001,6 +1020,21 @@
                     });
                 });
             }
-        });
+        };
+
+        const scheduleHomepageAnimations = () => {
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(initHomepageAnimations, { timeout: 600 });
+                return;
+            }
+
+            window.setTimeout(initHomepageAnimations, 0);
+        };
+
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            scheduleHomepageAnimations();
+        } else {
+            document.addEventListener('DOMContentLoaded', scheduleHomepageAnimations, { once: true });
+        }
     </script>
 @endpush

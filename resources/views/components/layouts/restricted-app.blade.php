@@ -375,7 +375,6 @@
 
         @fcScripts
         
-        <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
 
     </body>
 
