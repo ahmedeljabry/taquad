@@ -10,4 +10,34 @@ export default defineConfig({
             refresh: true,
         })
     ],
+    build: {
+        // Optimize chunk splitting for better caching
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    // Split vendor code for better caching
+                    'vendor': [
+                        'alpinejs',
+                        'axios'
+                    ],
+                },
+            },
+        },
+        // Increase chunk size warning limit
+        chunkSizeWarningLimit: 600,
+        // Enable CSS code splitting
+        cssCodeSplit: true,
+        // Minification
+        minify: 'terser',
+        terserOptions: {
+            compress: {
+                drop_console: true, // Remove console.logs in production
+                drop_debugger: true,
+            },
+        },
+    },
+    // Optimize dependencies
+    optimizeDeps: {
+        include: ['alpinejs', 'axios'],
+    },
 });

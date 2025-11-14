@@ -56,53 +56,31 @@
         {!! SEO::generate() !!}
         {!! JsonLd::generate() !!}
 
-        {{-- Custom fonts --}}
-		{!! settings('appearance')->font_link !!}
-
         {{-- Favicon --}}
         <link rel="icon" type="image/png" href="{{ src( settings('general')->favicon ) }}"/>
 
-        {{-- Preload hero section image --}}
-		@if (settings('hero')->enable_bg_img)
-
-            {{-- Small background --}}
-            @if (settings('hero')->background_small)
-                <link rel="preload prefetch" as="image" href="{{ src(settings('hero')->background_small) }}" type="image/webp" />
-            @endif
-
-            {{-- Medium background --}}
-            @if (settings('hero')->background_medium)
-                <link rel="preload prefetch" as="image" href="{{ src(settings('hero')->background_medium) }}" type="image/webp" />
-            @endif
-
-            {{-- Large background --}}
-            @if (settings('hero')->background_large)
-                <link rel="preload prefetch" as="image" href="{{ src(settings('hero')->background_large) }}" type="image/webp" />
-            @endif
-
-        @endif
-
-        {{-- Fonts --}}
+        {{-- Preconnect to critical origins --}}
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com">
 
-        {{-- Livewire styles --}}
-        @livewireStyles
+        {{-- Preload LCP image (hero background) for mobile-first --}}
+		@if (settings('hero')->enable_bg_img && request()->is('/'))
+            @if (settings('hero')->background_small)
+                <link rel="preload" fetchpriority="high" as="image" href="{{ src(settings('hero')->background_small) }}" type="image/webp" media="(max-width: 600px)" />
+            @endif
+            @if (settings('hero')->background_medium)
+                <link rel="preload" fetchpriority="high" as="image" href="{{ src(settings('hero')->background_medium) }}" type="image/webp" media="(min-width: 601px) and (max-width: 1023px)" />
+            @endif
+            @if (settings('hero')->background_large)
+                <link rel="preload" fetchpriority="high" as="image" href="{{ src(settings('hero')->background_large) }}" type="image/webp" media="(min-width: 1024px)" />
+            @endif
+        @endif
 
-        {{-- Icon set --}}
-        @include('components.phosphor.styles')
-
-        {{-- Styles --}}
-        <link rel="preload" href="{{ mix('css/app.css') }}" as="style">
-        <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-
-        {{-- Preload Livewire --}}
-        <link rel="preload" href="{{ livewire_asset_path() }}" as="script">
-
-		{{-- Custom css --}}
+        {{-- Critical inline CSS for above-the-fold content --}}
         <style>
             :root {
-                --color-primary  : {{ settings('appearance')->colors['primary'] }};
+                --color-primary: {{ settings('appearance')->colors['primary'] }};
                 --color-primary-h: {{ hex2hsl( settings('appearance')->colors['primary'] )[0] }};
                 --color-primary-s: {{ hex2hsl( settings('appearance')->colors['primary'] )[1] }}%;
                 --color-primary-l: {{ hex2hsl( settings('appearance')->colors['primary'] )[2] }}%;
@@ -110,78 +88,60 @@
             html {
                 font-family: @php echo settings('appearance')->font_family @endphp, sans-serif !important;
             }
-            .fileuploader, .fileuploader-popup {
-                font-family: @php echo settings('appearance')->font_family @endphp, sans-serif !important;
-            }
             .home-hero-section {
                 background-color: {{ settings('hero')->bg_color }};
                 background-repeat: no-repeat;
                 background-position: center center;
                 background-size: cover;
-                height: {{ settings('hero')->bg_large_height }}px;
+                height: {{ settings('hero')->bg_small_height ?? 400 }}px;
             }
-
-            {{-- Check if background image enabled --}}
+            @media (min-width: 768px) {
+                .home-hero-section {
+                    height: {{ settings('hero')->bg_large_height ?? 600 }}px;
+                }
+            }
             @if (settings('hero')->enable_bg_img)
-
-                {{-- Background image for small devices --}}
-                @if (settings('hero')->background_small)
-
-                    @media only screen and (max-width: 600px) {
-                        .home-hero-section {
-                            background-image: url('{{ src(settings('hero')->background_small) }}');
-                            height: {{ settings('hero')->bg_small_height }}px;
-                        }
+                @media (max-width: 600px) {
+                    .home-hero-section {
+                        background-image: url('{{ src(settings('hero')->background_small) }}');
                     }
-
-                @endif
-
-                {{-- Background image for medium devices --}}
-                @if (settings('hero')->background_medium)
-
-                    @media only screen and (min-width: 600px) {
-                        .home-hero-section {
-                            background-image: url('{{ src(settings('hero')->background_medium) }}')
-                        }
+                }
+                @media (min-width: 601px) and (max-width: 1023px) {
+                    .home-hero-section {
+                        background-image: url('{{ src(settings('hero')->background_medium) }}');
                     }
-
-                @endif
-
-                {{-- Background image for large devices --}}
-                @if (settings('hero')->background_large)
-
-                    @media only screen and (min-width: 768px) {
-                        .home-hero-section {
-                            background-image: url('{{ src(settings('hero')->background_large) }}');
-                        }
+                }
+                @media (min-width: 1024px) {
+                    .home-hero-section {
+                        background-image: url('{{ src(settings('hero')->background_large) }}');
                     }
-
-                @endif
-
-                {{-- Background image for large devices --}}
-                @if (settings('hero')->background_large)
-
-                    @media only screen and (min-width: 992px) {
-                        .home-hero-section {
-                            background-image: url('{{ src(settings('hero')->background_large) }}');
-                        }
-                    }
-
-                @endif
-
-                {{-- Background image for large devices --}}
-                @if (settings('hero')->background_large)
-
-                    @media only screen and (min-width: 1200px) {
-                        .home-hero-section {
-                            background-image: url('{{ src(settings('hero')->background_large) }}');
-                        }
-                    }
-
-                @endif
-
+                }
             @endif
+        </style>
 
+        {{-- Livewire styles (inline for critical rendering) --}}
+        @livewireStyles
+
+        {{-- Main CSS via Vite with preload --}}
+        @vite(['resources/css/app.css'])
+
+        {{-- Custom fonts (async to prevent render blocking) --}}
+        @if (settings('appearance')->font_link)
+            <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="{{ settings('appearance')->font_link }}">
+            <noscript><link rel="stylesheet" href="{{ settings('appearance')->font_link }}"></noscript>
+        @endif
+
+        {{-- Icon set --}}
+        @include('components.phosphor.styles')
+
+        {{-- Preload Livewire for faster hydration --}}
+        <link rel="preload" href="{{ livewire_asset_path() }}" as="script">
+
+		{{-- Additional critical CSS --}}
+        <style>
+            .fileuploader, .fileuploader-popup {
+                font-family: @php echo settings('appearance')->font_family @endphp, sans-serif !important;
+            }
         </style>
 
         {{-- Styles --}}
@@ -204,7 +164,14 @@
 
         {{-- Custom head code --}}
         @if (settings('appearance')->custom_code_head_main_layout)
-            {!! settings('appearance')->custom_code_head_main_layout !!}
+            @php
+                $customHeadCode = settings('appearance')->custom_code_head_main_layout;
+                // Remove GSAP trial/premium plugins that cause errors
+                $customHeadCode = preg_replace('/<script[^>]*DrawSVGPlugin[^>]*><\/script>/i', '', $customHeadCode);
+                $customHeadCode = preg_replace('/<script[^>]*MorphSVGPlugin[^>]*><\/script>/i', '', $customHeadCode);
+                $customHeadCode = preg_replace('/<script[^>]*gsap-trial[^>]*><\/script>/i', '', $customHeadCode);
+            @endphp
+            {!! $customHeadCode !!}
         @endif
 
     </head>
@@ -299,12 +266,12 @@
         <wireui:scripts />
         @include('components.wireui.basepath')
 
-        {{-- Core --}}
-        <script defer src="{{ mix('js/app.js') }}"></script>
+        {{-- Core JS via Vite --}}
+        @vite(['resources/js/app.js'])
 
-        {{-- Helpers --}}
+        {{-- Helpers (deferred for non-critical functionality) --}}
         <script defer src="{{ url('public/js/utils.js?v=1.3.1') }}"></script>
-        <script src="{{ url('public/js/components.js?v=1.3.1') }}"></script>
+        <script defer src="{{ url('public/js/components.js?v=1.3.1') }}"></script>
 
         {{-- Custom JS codes --}}
         <script defer>
@@ -390,7 +357,14 @@
 
         {{-- Custom footer code --}}
         @if (settings('appearance')->custom_code_footer_main_layout)
-            {!! settings('appearance')->custom_code_footer_main_layout !!}
+            @php
+                $customFooterCode = settings('appearance')->custom_code_footer_main_layout;
+                // Remove GSAP trial/premium plugins that cause errors
+                $customFooterCode = preg_replace('/<script[^>]*DrawSVGPlugin[^>]*><\/script>/i', '', $customFooterCode);
+                $customFooterCode = preg_replace('/<script[^>]*MorphSVGPlugin[^>]*><\/script>/i', '', $customFooterCode);
+                $customFooterCode = preg_replace('/<script[^>]*gsap-trial[^>]*><\/script>/i', '', $customFooterCode);
+            @endphp
+            {!! $customFooterCode !!}
         @endif
 
     </body>
