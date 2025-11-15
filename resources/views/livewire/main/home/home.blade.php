@@ -1154,8 +1154,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Observer.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/DrawSVGPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MorphSVGPlugin.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
 
     <script>
         const initHomepageAnimations = () => {
@@ -1170,8 +1168,6 @@
                 window.ScrollToPlugin,
                 window.Flip,
                 window.TextPlugin,
-                window.DrawSVGPlugin,
-                window.MorphSVGPlugin,
             ].filter(Boolean);
 
             if (pluginCandidates.length) {

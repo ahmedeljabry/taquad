@@ -18,7 +18,7 @@
 ?>
 
 <header class="<?php echo \Illuminate\Support\Arr::toCssClasses(['w-full z-10 fixed', 'main-header-scrolling' => !is_hero_section()]); ?>" id="main-header">
-    <div x-data="window.TTRjRvxLbHzaKxW">
+    <div x-data="window.TTRjRvxLbHzaKxW" x-init="init()" x-on:keydown.window.escape="closeMobileMenu()">
 
         
         <!--[if BLOCK]><![endif]--><?php if(settings('general')->header_announce_text && !Cookie::get('header_announce_closed')): ?>
@@ -74,9 +74,9 @@
 
                     
                     <button type="button"
-                        class="dark:bg-transparent rounded-md text-gray-500 dark:text-gray-100 dark:hover:text-white ltr:mr-5 rtl:ml-5 md:hidden"
-                        x-on:click="mobile_menu = true">
-                        <span class="sr-only">Open menu</span>
+                        class="md:hidden rounded-lg border border-transparent p-2 text-gray-500 transition hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 dark:text-gray-100"
+                        x-on:click="toggleMobileMenu()" :aria-expanded="mobile_menu.toString()" aria-controls="mobile-primary-navigation">
+                        <span class="sr-only">فتح القائمة</span>
                         <svg class="text-gray-400 hover:text-gray-700 dark:text-gray-100 dark:hover:text-white h-6 w-6"
                             stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg">
@@ -796,244 +796,101 @@ if (isset($__slots)) unset($__slots);
         </nav>
 
         
-        <div x-show="mobile_menu" style="display: none" class="fixed inset-0 flex z-40 lg:hidden" x-ref="mobile_menu">
+        <div x-show="mobile_menu" x-cloak class="fixed inset-0 z-40 lg:hidden" x-ref="mobile_menu" role="dialog" aria-modal="true" aria-label="القائمة الرئيسية">
 
             
-            <div x-show="mobile_menu" style="display: none" x-transition:enter="ease-in-out duration-500"
+            <div x-show="mobile_menu" x-transition:enter="ease-in-out duration-500"
                 x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                 x-transition:leave="ease-in-out duration-500" x-transition:leave-start="opacity-100"
-                x-transition:leave-end="opacity-0" class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-                @click="mobile_menu = false" aria-hidden="true">
+                x-transition:leave-end="opacity-0" class="absolute inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity"
+                @click="closeMobileMenu()" aria-hidden="true">
             </div>
 
             
-            <div x-show="mobile_menu" style="display: none"
+            <div x-show="mobile_menu"
                 x-transition:enter="transition ease-in-out duration-300 transform"
-                x-transition:enter-start="ltr:-translate-x-full rtl:translate-x-full"
-                x-transition:enter-end="ltr:translate-x-0 rtl:translate-x-0"
+                x-transition:enter-start="ltr:translate-x-full rtl:-translate-x-full"
+                x-transition:enter-end="translate-x-0"
                 x-transition:leave="transition ease-in-out duration-300 transform"
-                x-transition:leave-start="ltr:translate-x-0 rtl:translate-x-0"
-                x-transition:leave-end="ltr:-translate-x-full rtl:translate-x-full"
-                class="relative max-w-[275px] w-full bg-white dark:bg-zinc-700 shadow-xl flex flex-col overflow-y-auto">
-
-                
-                <!--[if BLOCK]><![endif]--><?php if(auth()->guard()->guest()): ?>
-                    <div class="w-full mb-6 px-5 pt-5">
-                        <a href="<?php echo e(url('auth/register'), false); ?>"
-                            class="w-full inline-flex justify-center items-center rounded border text-xs uppercase tracking-widest font-semibold focus:outline-none px-3 py-2 leading-6 border-primary-700 bg-primary-700 text-white hover:text-white hover:bg-primary-800 hover:border-primary-800 focus:ring focus:ring-primary-500 focus:ring-opacity-50 active:bg-primary-700 active:border-primary-700">
-                            <span><?php echo app('translator')->get('messages.t_join'); ?></span>
-                        </a>
-                    </div>
-                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-
-                
-                <div class="<?php echo \Illuminate\Support\Arr::toCssClasses(['w-full overflow-auto h-full', 'pt-5' => auth()->check()]); ?>">
-
-                    <div class="flex items-center justify-center">
-
-                        
-                        <!--[if BLOCK]><![endif]--><?php if(auth()->guard()->check()): ?>
-                            <button x-on:click="notifications_menu = true" type="button"
-                                class="text-gray-500 hover:text-primary-600 transition-colors duration-300 py-2 relative mx-4 dark:text-gray-100 dark:hover:text-white md:hidden">
-                                <svg class="text-gray-400 hover:text-gray-700 h-6 w-6 dark:text-gray-100 dark:hover:text-white"
-                                    stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M19 13.586V10c0-3.217-2.185-5.927-5.145-6.742C13.562 2.52 12.846 2 12 2s-1.562.52-1.855 1.258C7.185 4.074 5 6.783 5 10v3.586l-1.707 1.707A.996.996 0 0 0 3 16v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a.996.996 0 0 0-.293-.707L19 13.586zM19 17H5v-.586l1.707-1.707A.996.996 0 0 0 7 14v-4c0-2.757 2.243-5 5-5s5 2.243 5 5v4c0 .266.105.52.293.707L19 16.414V17zm-7 5a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22z">
-                                    </path>
-                                </svg>
-                                <!--[if BLOCK]><![endif]--><?php if($notifications && count($notifications)): ?>
-                                    <span class="flex absolute h-2 w-2 top-0 ltr:right-0 rtl:left-0 mt-0 ltr:-mr-1 rtl:-ml-1">
-                                        <span
-                                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
-                                    </span>
-                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-                            </button>
-                        <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-
-                        
-                        <!--[if BLOCK]><![endif]--><?php if(auth()->guard()->check()): ?>
-                            <a href="<?php echo e(route('messages.inbox'), false); ?>"
-                                class="text-gray-500 hover:text-primary-600 transition-colors duration-300 py-2 relative mx-4 dark:text-gray-100 dark:hover:text-white md:hidden">
-                                <svg class="text-gray-400 hover:text-gray-700 h-6 w-6 dark:text-gray-100 dark:hover:text-white"
-                                    stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.044l7.386 5.745a.994.994 0 0 0 1.228 0L20 9.044 20.002 18H4z">
-                                    </path>
-                                </svg>
-                            </a>
-                        <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-
+                x-transition:leave-start="translate-x-0"
+                x-transition:leave-end="ltr:translate-x-full rtl:-translate-x-full"
+                class="relative ml-auto flex h-full w-full max-w-xs sm:max-w-md pl-12 ltr:pl-12 rtl:pr-12">
+                <div class="mobile-nav-panel relative flex h-full w-full flex-col overflow-hidden rounded-l-3xl bg-white/95 px-6 py-6 shadow-2xl backdrop-blur-xl dark:bg-slate-900/95">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-gray-400 dark:text-gray-500">التنقّل</p>
+                            <p class="mt-1 text-base font-semibold text-gray-900 dark:text-white">القائمة</p>
+                        </div>
+                        <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:text-primary-600 hover:border-primary-100 dark:border-slate-700 dark:text-gray-100 dark:hover:border-primary-400"
+                            x-on:click="closeMobileMenu()">
+                            <span class="sr-only">إغلاق القائمة</span>
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
                     </div>
 
-                    
-                    <!--[if BLOCK]><![endif]--><?php if(auth()->guard()->check()): ?>
-                        <?php if (isset($component)) { $__componentOriginal897c321ee9b9bb967400e80c55835c23 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal897c321ee9b9bb967400e80c55835c23 = $attributes; } ?>
-<?php $component = App\View\Components\Main\Account\Sidebar::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? (array) $attributes->getIterator() : [])); ?>
-<?php $component->withName('main.account.sidebar'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag && $constructor = (new ReflectionClass(App\View\Components\Main\Account\Sidebar::class))->getConstructor()): ?>
-<?php $attributes = $attributes->except(collect($constructor->getParameters())->map->getName()->all()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['class' => 'border-b border-gray-100 dark:border-zinc-600 mb-[14px]']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal897c321ee9b9bb967400e80c55835c23)): ?>
-<?php $attributes = $__attributesOriginal897c321ee9b9bb967400e80c55835c23; ?>
-<?php unset($__attributesOriginal897c321ee9b9bb967400e80c55835c23); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal897c321ee9b9bb967400e80c55835c23)): ?>
-<?php $component = $__componentOriginal897c321ee9b9bb967400e80c55835c23; ?>
-<?php unset($__componentOriginal897c321ee9b9bb967400e80c55835c23); ?>
-<?php endif; ?>
-                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-
-                    
-                    <!--[if BLOCK]><![endif]--><?php if(auth()->guard()->guest()): ?>
-                        <a href="<?php echo e(url('auth/login'), false); ?>"
-                            class="py-2 px-5 block text-gray-500 dark:text-gray-200 font-semibold text-sm">
-                            <?php echo app('translator')->get('messages.t_sign_in'); ?>
-                        </a>
-                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-
-                    
-                    <?php if(auth()->guest() || (auth()->check() && auth()->user()->account_type !== 'seller')): ?>
-                        <a href="<?php echo e(url('start_selling'), false); ?>"
-                            class="py-2 px-5 block text-gray-500 dark:text-gray-200 font-semibold text-sm">
-                            <?php echo app('translator')->get('messages.t_become_a_seller'); ?>
-                        </a>
-                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-
-                    
-                    <!--[if BLOCK]><![endif]--><?php if(settings('projects')->is_enabled): ?>
-                        <a href="<?php echo e(url('explore/projects'), false); ?>"
-                            class="py-2 px-5 block text-gray-500 dark:text-gray-200 font-semibold text-sm">
-                            <?php echo app('translator')->get('messages.t_explore_projects'); ?>
-                        </a>
-                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-
-                    
-                    <a href="<?php echo e(route('desktop.app'), false); ?>"
-                        class="py-2 px-5 block text-gray-500 dark:text-gray-200 font-semibold text-sm">
-                        تطبيق سطح المكتب
-                    </a>
-
-                    
-                    <a href="<?php echo e(route('categories.index'), false); ?>"
-                        class="py-2 px-5 block text-gray-500 dark:text-gray-200 font-semibold text-sm">
-                        القطاعات
-                    </a>
-
-                    
-                    <div class="w-full h-px bg-gray-100 dark:bg-zinc-600 my-3"></div>
-
-                    
-                    <a href="<?php echo e(url('/'), false); ?>"
-                        class="py-2 px-5 flex items-center text-gray-500 dark:text-gray-200 font-semibold text-sm">
-                        <svg class="w-[18px] h-[18px] ltr:mr-2.5 rtl:ml-2.5" stroke="currentColor" fill="currentColor"
-                            stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M5 22h14a2 2 0 0 0 2-2v-9a1 1 0 0 0-.29-.71l-8-8a1 1 0 0 0-1.41 0l-8 8A1 1 0 0 0 3 11v9a2 2 0 0 0 2 2zm5-2v-5h4v5zm-5-8.59 7-7 7 7V20h-3v-5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v5H5z">
-                            </path>
-                        </svg>
-                        <?php echo app('translator')->get('messages.t_home'); ?>
-                    </a>
-
-                    
-                    <div x-data="{ open: false }" class="space-y-1">
-
-                        
-                        <a href="javascript:void(0)"
-                            class="py-2 px-5 text-gray-500 dark:text-gray-200 font-semibold text-sm flex items-center space-x-3 rtl:space-x-reverse relative z-1"
-                            x-on:click="open = !open">
-                            <span class="grow flex items-center">
-                                <svg class="w-[18px] h-[18px] ltr:mr-2.5 rtl:ml-2.5" stroke="currentColor"
-                                    fill="currentColor" stroke-width="0" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm7.931 9h-2.764a14.67 14.67 0 0 0-1.792-6.243A8.013 8.013 0 0 1 19.931 11zM12.53 4.027c1.035 1.364 2.427 3.78 2.627 6.973H9.03c.139-2.596.994-5.028 2.451-6.974.172-.01.344-.026.519-.026.179 0 .354.016.53.027zm-3.842.7C7.704 6.618 7.136 8.762 7.03 11H4.069a8.013 8.013 0 0 1 4.619-6.273zM4.069 13h2.974c.136 2.379.665 4.478 1.556 6.23A8.01 8.01 0 0 1 4.069 13zm7.381 6.973C10.049 18.275 9.222 15.896 9.041 13h6.113c-.208 2.773-1.117 5.196-2.603 6.972-.182.012-.364.028-.551.028-.186 0-.367-.016-.55-.027zm4.011-.772c.955-1.794 1.538-3.901 1.691-6.201h2.778a8.005 8.005 0 0 1-4.469 6.201z">
-                                    </path>
-                                </svg>
-                                <?php echo e($default_language_name, false); ?>
-
-                            </span>
-                            <span x-bind:class="{ 'rotate-90': !open, 'rotate-0': open }"
-                                class="transform transition ease-out duration-150 opacity-75 rotate-0">
-                                <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"
-                                    class="hi-solid hi-chevron-down inline-block w-4 h-4">
-                                    <path fill-rule="evenodd"
-                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                            </span>
-                        </a>
-
-                        
-                        <div x-show="open" style="display: none" x-transition:enter="transition ease-out duration-100"
-                            x-transition:enter-start="transform -translate-y-6 opacity-0"
-                            x-transition:enter-end="transform translate-y-0 opacity-100"
-                            x-transition:leave="transition ease-in duration-100 bg-transparent"
-                            x-transition:leave-start="transform translate-y-0 opacity-100"
-                            x-transition:leave-end="transform -translate-y-6 opacity-0" class="relative z-0">
-
-                            <!--[if BLOCK]><![endif]--><?php $__currentLoopData = supported_languages(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $lang): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <div <?php if($default_language_code !== $lang->language_code): ?>
-                                wire:click="setLocale('<?php echo e($lang->language_code, false); ?>')" <?php endif; ?>
-                                    class="py-2 px-5 rounded-sm inline-flex items-center cursor-pointer justify-between <?php echo e($default_language_code === $lang->language_code ? 'bg-primary-100/25 text-primary-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-600', false); ?> focus:outline-none w-full">
-                                    <div class="inline-flex items-center">
-                                        <img src="<?php echo e(placeholder_img(), false); ?>" data-src="<?php echo e(countryFlag($lang->country_code), false); ?>"
-                                            alt="<?php echo e($lang->name, false); ?>" class="lazy w-5 ltr:mr-3 rtl:ml-3">
-                                        <span class="font-normal text-xs dark:text-gray-300"><?php echo e($lang->name, false); ?></span>
-                                    </div>
-                                    <!--[if BLOCK]><![endif]--><?php if($default_language_code === $lang->language_code): ?>
-                                        <div class="block">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                    <?php else: ?>
-                                        <div wire:loading wire:target="setLocale('<?php echo e($lang->language_code, false); ?>')">
-                                            <svg role="status" class="block w-4 h-4 text-gray-700 animate-spin"
-                                                viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                                                    fill="#E5E7EB" />
-                                                <path
-                                                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                                                    fill="currentColor" />
-                                            </svg>
-                                        </div>
-                                    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
-                                </div>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
-
+                    <div class="mt-6 space-y-5 overflow-y-auto pr-1">
+                        <div class="relative">
+                            <label for="mobile-search" class="sr-only">البحث</label>
+                            <input id="mobile-search" type="search" class="w-full rounded-2xl border border-gray-200 bg-white/80 text-sm text-gray-700 placeholder:text-gray-400 focus:border-primary-400 focus:ring-2 focus:ring-primary-100 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-100" placeholder="ابحث في المنصة">
+                            <span class="pointer-events-none absolute inset-y-0 ltr:right-4 rtl:left-4 flex items-center text-gray-400"><i class="ph-duotone ph-magnifying-glass text-lg"></i></span>
                         </div>
 
+                        <!--[if BLOCK]><![endif]--><?php if(auth()->guard()->check()): ?>
+                            <div class="rounded-2xl border border-gray-100 bg-gray-50/70 p-4 dark:border-slate-800 dark:bg-slate-800/70">
+                                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-gray-400 dark:text-gray-500">مرحباً</p>
+                                <p class="mt-1 text-base font-semibold text-gray-900 dark:text-white"><?php echo e(auth()->user()->username, false); ?></p>
+                                <div class="mt-3 flex gap-3 text-sm">
+                                    <a href="<?php echo e(url('account/dashboard'), false); ?>" class="inline-flex flex-1 items-center justify-center rounded-full bg-white px-3 py-2 font-semibold text-gray-700 shadow-sm dark:bg-slate-900 dark:text-gray-100">لوحة التحكم</a>
+                                    <a href="<?php echo e(url('inbox'), false); ?>" class="inline-flex flex-1 items-center justify-center rounded-full border border-gray-200 px-3 py-2 font-semibold text-gray-600 dark:border-slate-700 dark:text-gray-100"><i class="ph-duotone ph-chat-circle-text text-lg ltr:mr-1 rtl:ml-1"></i>الرسائل</a>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <div class="flex gap-3">
+                                <a href="<?php echo e(url('auth/login'), false); ?>" class="flex-1 rounded-full border border-gray-200 px-3 py-2 text-center text-sm font-semibold text-gray-700 hover:border-primary-300 hover:text-primary-600 dark:border-slate-700 dark:text-gray-200 dark:hover:text-white">تسجيل الدخول</a>
+                                <a href="<?php echo e(url('auth/register'), false); ?>" class="flex-1 rounded-full bg-primary-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-lg shadow-primary-500/30">إنشاء حساب</a>
+                            </div>
+                        <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+
+                        <nav class="space-y-1 text-sm font-semibold text-gray-600 dark:text-gray-200">
+                            <a href="<?php echo e(url('/'), false); ?>" class="flex items-center justify-between rounded-2xl px-4 py-3 hover:bg-gray-100 dark:hover:bg-slate-800"><span><i class="ph-duotone ph-house-line ltr:mr-3 rtl:ml-3"></i>الرئيسية</span><i class="ph-duotone ph-arrow-up-right"></i></a>
+                            <a href="<?php echo e(url('categories'), false); ?>" class="flex items-center justify-between rounded-2xl px-4 py-3 hover:bg-gray-100 dark:hover:bg-slate-800"><span><i class="ph-duotone ph-folders ltr:mr-3 rtl:ml-3"></i>التصنيفات</span><i class="ph-duotone ph-arrow-up-right"></i></a>
+                            <a href="<?php echo e(url('sellers'), false); ?>" class="flex items-center justify-between rounded-2xl px-4 py-3 hover:bg-gray-100 dark:hover:bg-slate-800"><span><i class="ph-duotone ph-users-three ltr:mr-3 rtl:ml-3"></i>خبراء مستقلون</span><span class="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-200">مباشر</span></a>
+                            <!--[if BLOCK]><![endif]--><?php if(settings('projects')->is_enabled): ?>
+                                <a href="<?php echo e(url('post/project'), false); ?>" class="flex items-center justify-between rounded-2xl px-4 py-3 hover:bg-gray-100 dark:hover:bg-slate-800"><span><i class="ph-duotone ph-rocket-launch ltr:mr-3 rtl:ml-3"></i>أضف مشروعك</span><i class="ph-duotone ph-arrow-up-right"></i></a>
+                            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                            <a href="<?php echo e(url('blog'), false); ?>" class="flex items-center justify-between rounded-2xl px-4 py-3 hover:bg-gray-100 dark:hover:bg-slate-800"><span><i class="ph-duotone ph-article ltr:mr-3 rtl:ml-3"></i>المدونة</span><i class="ph-duotone ph-arrow-up-right"></i></a>
+                        </nav>
+
+                        <div class="border-t border-gray-100 pt-5 dark:border-slate-800">
+                            <div x-data="{ open: false }">
+                                <button type="button" class="flex w-full items-center justify-between rounded-2xl px-4 py-3 text-sm font-semibold text-gray-600 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-800" x-on:click="open = !open">
+                                    <span class="inline-flex items-center"><i class="ph-duotone ph-translate ltr:mr-3 rtl:ml-3"></i><?php echo e($default_language_name, false); ?></span>
+                                    <i class="ph-duotone ph-caret-down" :class="{ 'rotate-180': open }"></i>
+                                </button>
+                                <div x-show="open" x-transition class="mt-2 space-y-1 rounded-2xl border border-gray-100 bg-white p-2 dark:border-slate-700 dark:bg-slate-800">
+                                    <!--[if BLOCK]><![endif]--><?php $__currentLoopData = supported_languages(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $lang): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <button type="button" <?php if($default_language_code !== $lang->language_code): ?> wire:click="setLocale('<?php echo e($lang->language_code, false); ?>')" <?php endif; ?> class="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-slate-700 <?php echo e($default_language_code === $lang->language_code ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-300' : '', false); ?>">
+                                            <span class="inline-flex items-center"><img src="<?php echo e(placeholder_img(), false); ?>" data-src="<?php echo e(countryFlag($lang->country_code), false); ?>" class="lazy h-4 w-4 rounded-full ltr:mr-2 rtl:ml-2" alt="<?php echo e($lang->name, false); ?>"><?php echo e($lang->name, false); ?></span>
+                                            <!--[if BLOCK]><![endif]--><?php if($default_language_code === $lang->language_code): ?>
+                                                <i class="ph-duotone ph-check-circle"></i>
+                                            <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                                        </button>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
+                                </div>
+                            </div>
+
+                            <a href="<?php echo e(url('help/contact'), false); ?>" class="mt-4 inline-flex w-full items-center justify-center rounded-2xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 hover:border-primary-200 hover:text-primary-600 dark:border-slate-700 dark:text-gray-200 dark:hover:text-white"><i class="ph-duotone ph-headset ltr:mr-2 rtl:ml-2"></i>تواصل معنا</a>
+                        </div>
                     </div>
 
-                    
-                    <a href="<?php echo e(url('help/contact'), false); ?>"
-                        class="py-2 px-5 flex items-center text-gray-500 dark:text-gray-200 font-semibold text-sm">
-                        <svg class="w-[18px] h-[18px] ltr:mr-2.5 rtl:ml-2.5" stroke="currentColor" fill="currentColor"
-                            stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M12 6a3.939 3.939 0 0 0-3.934 3.934h2C10.066 8.867 10.934 8 12 8s1.934.867 1.934 1.934c0 .598-.481 1.032-1.216 1.626a9.208 9.208 0 0 0-.691.599c-.998.997-1.027 2.056-1.027 2.174V15h2l-.001-.633c.001-.016.033-.386.441-.793.15-.15.339-.3.535-.458.779-.631 1.958-1.584 1.958-3.182A3.937 3.937 0 0 0 12 6zm-1 10h2v2h-2z">
-                            </path>
-                            <path
-                                d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z">
-                            </path>
-                        </svg>
-                        <?php echo app('translator')->get('messages.t_contact_us'); ?>
-                    </a>
-
-
+                    <div class="mt-auto space-y-3 border-t border-gray-100 pt-5 dark:border-slate-800">
+                        <a href="<?php echo e(url('post/project'), false); ?>" class="flex items-center justify-center rounded-2xl bg-gradient-to-r from-primary-600 to-amber-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/40 hover:shadow-primary-500/30"><i class="ph-duotone ph-sparkle ltr:mr-2 rtl:ml-2 text-lg"></i>ابدأ الآن</a>
+                        <div class="text-center text-xs text-gray-400 dark:text-gray-500">© <?php echo e(date('Y'), false); ?> <?php echo e($site_title, false); ?> — جميع الحقوق محفوظة</div>
+                    </div>
                 </div>
-
             </div>
 
         </div>
@@ -1071,6 +928,20 @@ if (isset($__slots)) unset($__slots);
                 notifications_menu: false,
                 open: false,
                 is_announce: true,
+
+                init() {
+                    this.$watch('mobile_menu', (state) => {
+                        document.documentElement.classList.toggle('mobile-menu-open', state);
+                    });
+                },
+
+                toggleMobileMenu() {
+                    this.mobile_menu = !this.mobile_menu;
+                },
+
+                closeMobileMenu() {
+                    this.mobile_menu = false;
+                },
 
                 // Close announce
                 closeAnnounce() {
