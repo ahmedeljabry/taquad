@@ -3,7 +3,7 @@
     
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <meta name="csrf-token" content="<?php echo e(csrf_token(), false); ?>">
         <title><?php echo e(__('messages.t_toast_something_went_wrong'), false); ?></title>
@@ -57,7 +57,7 @@
         </script>
 
         <script >window.Wireui = {hook(hook, callback) {window.addEventListener(`wireui:${hook}`, () => callback())},dispatchHook(hook) {window.dispatchEvent(new Event(`wireui:${hook}`))}}</script>
-<script src="http://localhost/taquad/wireui/assets/scripts?id=2bb2382efa56ba70bd4659eaccb242c7" defer ></script>
+<script src="http://localhost/taquad/public/wireui/assets/scripts?id=2bb2382efa56ba70bd4659eaccb242c7" defer ></script>
         <?php echo $__env->make('components.wireui.basepath', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
         <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css','resources/js/app.js']); ?>

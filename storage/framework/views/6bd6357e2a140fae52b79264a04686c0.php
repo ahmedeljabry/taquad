@@ -374,8 +374,7 @@
         </section>
 
         <section id="desktop-app" class="relative overflow-hidden py-20">
-            <div aria-hidden
-                class="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-slate-50 dark:from-[#071022] dark:via-[#0c162d] dark:to-[#05060b]">
+            <div aria-hidden class="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-slate-50 dark:from-[#071022] dark:via-[#0c162d] dark:to-[#05060b]">
             </div>
             <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div class="grid items-center gap-12 lg:grid-cols-2">
@@ -406,6 +405,13 @@
                                 </li>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><!--[if ENDBLOCK]><![endif]-->
                         </ul>
+                        <div class="flex justify-end pt-2">
+                            <a href="<?php echo e(route('desktop.app'), false); ?>"
+                                class="inline-flex items-center gap-2 rounded-full border border-primary-200 px-5 py-2 text-xs font-semibold text-primary-700 transition hover:-translate-y-0.5 hover:bg-primary-50 dark:border-primary-500/40 dark:text-primary-200 dark:hover:bg-primary-500/10">
+                                <i class="ph ph-arrow-square-out"></i>
+                                صفحة التطبيق الكاملة
+                            </a>
+                        </div>
                         <div class="flex flex-wrap justify-end gap-3 pt-4 rtl:flex-row-reverse rtl:justify-start">
                             <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $desktopDownloads; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $download): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <a href="<?php echo e($download['href'], false); ?>"
@@ -708,6 +714,13 @@
                         <p class="mt-3 text-gray-600 dark:text-gray-300">
                             اختر من بين المجالات الأكثر نشاطاً وابدأ فوراً مع محترفين يفهمون السوق المحلي.
                         </p>
+                        <div class="mt-6 flex justify-center">
+                            <a href="<?php echo e(route('categories.index'), false); ?>"
+                                class="inline-flex items-center gap-2 rounded-full border border-primary-200 px-5 py-2 text-sm font-semibold text-primary-700 transition hover:-translate-y-0.5 hover:bg-primary-50 dark:border-primary-500/40 dark:text-primary-200 dark:hover:bg-primary-500/10">
+                                <i class="ph ph-folders"></i>
+                                تصفح جميع القطاعات
+                            </a>
+                        </div>
                     </div>
 
                     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

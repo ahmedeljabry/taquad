@@ -16,6 +16,8 @@ use App\Http\Controllers\Messages\StartConversationController;
 use App\Livewire\Main\Project\InviteComponent;
 use App\Livewire\Main\Account\Projects\Options\TrackerComponent;
 use App\Livewire\Main\Seller\Projects\TrackerComponent as SellerTrackerComponent;
+use App\Livewire\Main\Desktop\AppComponent as DesktopAppComponent;
+use App\Livewire\Main\Category\IndexComponent as CategoryIndexComponent;
 
 // Base path for Livewire assets when the app runs from a sub-directory
 $livewireBasePath = trim(parse_url(config('app.url'), PHP_URL_PATH) ?: '', '/');
@@ -86,6 +88,14 @@ Route::namespace('App\Livewire\Main')->middleware(['restricted'])->group(functio
         // Home
         Route::get('/', HomeComponent::class);
     });
+
+    // Desktop
+    Route::prefix('desktop')->group(function () {
+        Route::get('app', DesktopAppComponent::class)->name('desktop.app');
+    });
+
+    // Categories
+    Route::get('categories', CategoryIndexComponent::class)->name('categories.index');
 
     // Post
     Route::namespace('Post')->prefix('post')->middleware('auth')->group(function () {

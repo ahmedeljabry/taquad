@@ -386,11 +386,11 @@ if (isset($__slots)) unset($__slots);
                                         </nav>
                                     </div>
                                 </div>
-                            </div>
-
                         </div>
 
-                        
+                    </div>
+
+                    
                         <!--[if BLOCK]><![endif]--><?php if(auth()->guard()->check()): ?>
                             <div class="relative group">
 
@@ -915,6 +915,18 @@ if (isset($__slots)) unset($__slots);
                             <?php echo app('translator')->get('messages.t_explore_projects'); ?>
                         </a>
                     <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+
+                    
+                    <a href="<?php echo e(route('desktop.app'), false); ?>"
+                        class="py-2 px-5 block text-gray-500 dark:text-gray-200 font-semibold text-sm">
+                        تطبيق سطح المكتب
+                    </a>
+
+                    
+                    <a href="<?php echo e(route('categories.index'), false); ?>"
+                        class="py-2 px-5 block text-gray-500 dark:text-gray-200 font-semibold text-sm">
+                        القطاعات
+                    </a>
 
                     
                     <div class="w-full h-px bg-gray-100 dark:bg-zinc-600 my-3"></div>

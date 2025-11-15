@@ -353,11 +353,11 @@
                                         </nav>
                                     </div>
                                 </div>
-                            </div>
-
                         </div>
 
-                        {{-- Profile --}}
+                    </div>
+
+                    {{-- Profile --}}
                         @auth
                             <div class="relative group">
 
@@ -855,6 +855,18 @@
                             @lang('messages.t_explore_projects')
                         </a>
                     @endif
+
+                    {{-- Desktop app --}}
+                    <a href="{{ route('desktop.app') }}"
+                        class="py-2 px-5 block text-gray-500 dark:text-gray-200 font-semibold text-sm">
+                        تطبيق سطح المكتب
+                    </a>
+
+                    {{-- Categories --}}
+                    <a href="{{ route('categories.index') }}"
+                        class="py-2 px-5 block text-gray-500 dark:text-gray-200 font-semibold text-sm">
+                        القطاعات
+                    </a>
 
                     {{-- Divider --}}
                     <div class="w-full h-px bg-gray-100 dark:bg-zinc-600 my-3"></div>
