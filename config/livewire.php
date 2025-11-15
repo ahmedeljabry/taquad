@@ -147,5 +147,5 @@ return [
     /**
      * Asset url
      */
-    'asset_url' => null
+    'asset_url' => is_localhost() ? basename(base_path()) . "/livewire/livewire.js" : null
 ];

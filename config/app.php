@@ -28,7 +28,7 @@ return [
     |
     */
 
-    'env' => 'local',
+    'env' => env('APP_ENV', 'production'),
 
     /*
     |--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ return [
     |
     */
 
-    'debug' => true,
+    'debug' => env('APP_DEBUG', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -56,7 +56,7 @@ return [
 
     'url'       => env('APP_URL', 'http://localhost/taquad/public'),
 
-    'asset_url' => 'http://localhost/taquad/public',
+    'asset_url' => env('ASSET_URL', 'http://localhost/taquad/public'),
 
     'force_https_urls' => env('FORCE_HTTPS_URLS'),
 
@@ -223,6 +223,6 @@ return [
     /**
      * Mix base url
      */
-    'mix_url' => 'http://localhost/taquad/public'
+    'mix_url' => env('ASSET_URL', 'http://localhost/taquad/public'),
 
 ];
