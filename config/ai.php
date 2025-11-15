@@ -37,6 +37,7 @@ return [
 
     'assistant' => [
         'history_limit' => env('AI_ASSISTANT_HISTORY_LIMIT', 8),
+        'max_answer_tokens'  => 160,
         'system_prompt' => $systemPrompt,
     ],
 ];
