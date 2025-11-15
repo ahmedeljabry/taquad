@@ -652,7 +652,7 @@ Route::namespace('App\Http\Controllers\Callback')->prefix('callback')->group(fun
     Route::post('xendit', 'XenditController@webhook');
 
     // Youcanpay
-    Route::get('youcanpay', 'YoucanpayController@callback');
+Route::get('youcanpay', 'YoucanpayController@callback');
 });
 
 

@@ -4835,7 +4835,6 @@ function on( elem, types, selector, data, fn, one ) {
 
 /*
  * Helper functions for managing events -- not part of the public interface.
- * Props to Dean Edwards' addEvent library for many of the ideas.
  */
 jQuery.event = {
 
@@ -6726,7 +6725,6 @@ if ( window.getComputedStyle ) {
 
 		if ( computed ) {
 
-			// A tribute to the "awesome hack by Dean Edwards"
 			// Chrome < 17 and Safari 5.0 uses "computed value"
 			// instead of "used value" for margin-right
 			// Safari 5.1.7 (at least) returns percentage for a larger set of values,
@@ -6775,7 +6773,6 @@ if ( window.getComputedStyle ) {
 			ret = style[ name ];
 		}
 
-		// From the awesome hack by Dean Edwards
 		// http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
 
 		// If we're not dealing with a regular pixel number

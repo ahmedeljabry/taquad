@@ -28,8 +28,21 @@
         <link rel="icon" type="image/png" href="{{ src( settings('general')->favicon ) }}"/>
 
         {{-- Css styles --}}
-        <link href="{{ asset('vendor/bladewind/css/animate.min.css') }}" rel="stylesheet" />
-        <link href="{{ asset('vendor/bladewind/css/bladewind-ui.min.css') }}" rel="stylesheet" />
+        <link rel="preload"
+              href="{{ asset('vendor/bladewind/css/animate.min.css') }}"
+              as="style"
+              onload="this.onload=null;this.rel='stylesheet'">
+        <noscript>
+            <link href="{{ asset('vendor/bladewind/css/animate.min.css') }}" rel="stylesheet" />
+        </noscript>
+
+        <link rel="preload"
+              href="{{ asset('vendor/bladewind/css/bladewind-ui.min.css') }}"
+              as="style"
+              onload="this.onload=null;this.rel='stylesheet'">
+        <noscript>
+            <link href="{{ asset('vendor/bladewind/css/bladewind-ui.min.css') }}" rel="stylesheet" />
+        </noscript>
 
         {{-- Bootstrap persisted theme before hydration --}}
         <script>
@@ -209,66 +222,63 @@
         @livewireScripts
 
         {{-- jQuery --}}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
         {{-- Helpers --}}
         <script defer src="{{ url('public/js/utils.js?v=1.3.1') }}"></script>
-        <script src="{{ url('public/js/components.js?v=1.3.1') }}"></script>
+        <script defer src="{{ url('public/js/components.js?v=1.3.1') }}"></script>
 
         {{-- Custom JS codes --}}
         <script defer>
-
             document.addEventListener("DOMContentLoaded", function(){
+                if (window.jQuery?.event?.special) {
+                    const specials = window.jQuery.event.special;
+                    const passiveSetup = (eventName, optionsFactory) => {
+                        specials[eventName] = {
+                            setup: function (_, ns, handle) {
+                                this.addEventListener(
+                                    eventName,
+                                    handle,
+                                    optionsFactory(ns)
+                                );
+                            }
+                        };
+                    };
 
-                jQuery.event.special.touchstart = {
-                    setup: function( _, ns, handle ) {
-                        this.addEventListener("touchstart", handle, { passive: !ns.includes("noPreventDefault") });
-                    }
-                };
-                jQuery.event.special.touchmove = {
-                    setup: function( _, ns, handle ) {
-                        this.addEventListener("touchmove", handle, { passive: !ns.includes("noPreventDefault") });
-                    }
-                };
-                jQuery.event.special.wheel = {
-                    setup: function( _, ns, handle ){
-                        this.addEventListener("wheel", handle, { passive: true });
-                    }
-                };
-                jQuery.event.special.mousewheel = {
-                    setup: function( _, ns, handle ){
-                        this.addEventListener("mousewheel", handle, { passive: true });
-                    }
-                };
+                    passiveSetup("touchstart", (ns) => ({ passive: !ns.includes("noPreventDefault") }));
+                    passiveSetup("touchmove", (ns) => ({ passive: !ns.includes("noPreventDefault") }));
+                    passiveSetup("wheel",   () => ({ passive: true }));
+                    passiveSetup("mousewheel", () => ({ passive: true }));
+                }
 
-                // Refresh
-                window.addEventListener('refresh',() => {
-                    location.reload();
-                });
-
+                window.addEventListener('refresh', () => location.reload());
             });
 
             function jwUBiFxmwbrUwww() {
                 return {
-
                     scroll: false,
-
                     init() {
-                        var _this = this;
-                        $(document).scroll(function () {
-                            $(this).scrollTop() > 70 ? _this.scroll = true : _this.scroll = false;
-                        });
+                        const updateScrollFlag = () => {
+                            this.scroll = (window.pageYOffset || document.documentElement.scrollTop) > 70;
+                        };
 
+                        let ticking = false;
+                        const onScroll = () => {
+                            if (!ticking) {
+                                window.requestAnimationFrame(() => {
+                                    updateScrollFlag();
+                                    ticking = false;
+                                });
+                                ticking = true;
+                            }
+                        };
+
+                        window.addEventListener('scroll', onScroll, { passive: true });
+                        updateScrollFlag();
                     }
-
                 }
             }
             window.jwUBiFxmwbrUwww = jwUBiFxmwbrUwww();
-
-            document.ontouchmove = function(event){
-                event.preventDefault();
-            }
-
         </script>
 
         {{-- Laravel components --}}
@@ -278,7 +288,7 @@
         <x-livewire-alert::scripts />
 
         {{-- JS Plugins --}}
-        <script src="{{ asset('vendor/bladewind/js/helpers.js') }}"></script>
+        <script defer src="{{ asset('vendor/bladewind/js/helpers.js') }}"></script>
 
         {{-- Custom scripts --}}
         @stack('scripts')
@@ -291,60 +301,57 @@
         {{-- Scroll event --}}
         @if (is_hero_section())
             <script>
-                $(window).scroll(function(){
-                    var   screen_width         = screen.width;
-                    var   doc                  = document.documentElement;
-                    var   top                  = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
-                    const header_element       = $('#main-header');
-                    const search_box           = $('.main-search-box');
-                    const logo_img_element     = $('#primary-logo-img');
-                    const primary_logo_src     = logo_img_element.attr('data-primary-logo');
-                    const transparent_logo_src = logo_img_element.attr('data-transparent-logo');
+                (function () {
+                    const headerElement   = document.getElementById('main-header');
+                    const logoImgElement  = document.getElementById('primary-logo-img');
+                    const searchBox       = document.querySelector('.main-search-box');
 
-                    if (top >= 100) {
-                        header_element.addClass('main-header-scrolling');
-                        logo_img_element.attr('src', primary_logo_src);
-                    } else if (top == 0 || top <= 100) {
-                        header_element.removeClass('main-header-scrolling');
-                        logo_img_element.attr('src', transparent_logo_src);
+                    if (!headerElement || !logoImgElement) {
+                        return;
                     }
 
-                    if (screen_width > 1024) {
-                        if (top >= 200) {
-                            search_box.removeClass('hidden');
-                        } else if (top < 200) {
-                            search_box.addClass('hidden');
+                    const updateHeaderState = () => {
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+                        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+                        const primaryLogo = logoImgElement.dataset.primaryLogo;
+                        const transparentLogo = logoImgElement.dataset.transparentLogo;
+
+                        if (scrollTop >= 100) {
+                            headerElement.classList.add('main-header-scrolling');
+                            if (primaryLogo && logoImgElement.src !== primaryLogo) {
+                                logoImgElement.src = primaryLogo;
+                            }
+                        } else {
+                            headerElement.classList.remove('main-header-scrolling');
+                            if (transparentLogo && logoImgElement.src !== transparentLogo) {
+                                logoImgElement.src = transparentLogo;
+                            }
                         }
-                    }
-                });
 
-                window.addEventListener('load', function () {
-                    var   screen_width         = screen.width;
-                    var   top                  = self['pageYOffset'] || document.documentElement.scrollTop;
-                    const header_element       = $('#main-header');
-                    const search_box           = $('.main-search-box');
-                    const logo_img_element     = $('#primary-logo-img');
-                    const primary_logo_src     = logo_img_element.attr('data-primary-logo');
-                    const transparent_logo_src = logo_img_element.attr('data-transparent-logo');
-
-                    if (top >= 100) {
-                        header_element.addClass('main-header-scrolling');
-                        logo_img_element.attr('src', primary_logo_src);
-                    } else if (top == 0 || top <= 100) {
-                        header_element.removeClass('main-header-scrolling');
-                        logo_img_element.attr('src', transparent_logo_src);
-                    }
-
-                    if (screen_width > 1024) {
-                        if (top >= 200) {
-                            search_box.removeClass('hidden');
-                        } else if (top < 200) {
-                            search_box.addClass('hidden');
+                        if (searchBox && viewportWidth > 1024) {
+                            if (scrollTop >= 200) {
+                                searchBox.classList.remove('hidden');
+                            } else {
+                                searchBox.classList.add('hidden');
+                            }
                         }
-                    }
+                    };
 
-                });
+                    let ticking = false;
+                    const onScroll = () => {
+                        if (!ticking) {
+                            window.requestAnimationFrame(() => {
+                                updateHeaderState();
+                                ticking = false;
+                            });
+                            ticking = true;
+                        }
+                    };
 
+                    window.addEventListener('scroll', onScroll, { passive: true });
+                    window.addEventListener('load', updateHeaderState, { once: true });
+                    updateHeaderState();
+                })();
             </script>
         @endif
 
@@ -540,20 +547,19 @@
                     // Get id to scroll
                     const id = event.detail;
 
-                    // Scroll
-                    $('html, body').animate({
-                        scrollTop: $("#" + id).offset().top
-                    }, 500);
+                    const target = document.getElementById(id);
+                    if (!target) {
+                        return;
+                    }
+
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
                 });
 
                 // Scroll to up page
                 window.Livewire.on('scrollUp', () => {
 
-                    // Scroll
-                    $('html, body').animate({
-                        scrollTop: $("body").offset().top
-                    }, 500);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
 
                 });
 
@@ -563,6 +569,3 @@
     </body>
 
 </html>
-
-
-

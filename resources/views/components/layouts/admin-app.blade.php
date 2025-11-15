@@ -670,13 +670,7 @@
                                 class="absolute ltr:right-0 rtl:left-0 ltr:origin-top-right rtl:origin-top-left mt-2 w-48 shadow-xl rounded z-1">
                                 <div class="bg-white ring-1 ring-black ring-opacity-5 rounded divide-y divide-gray-100 dark:bg-zinc-900 dark:divide-zinc-800">
                                     <div class="p-2 space-y-1">
-
-                                        {{-- Quick support --}}
-                                        <a href="mailto:mredwardhendrix@gmail.com" target="_blank" class="flex items-center space-x-2 rtl:space-x-reverse rounded py-2 px-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:bg-gray-100 focus:text-gray-700 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:focus:bg-zinc-800 dark:focus:text-zinc-200">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-5 h-5 opacity-50" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
-                                            <span>@lang('messages.t_fast_support')</span>
-                                        </a>
-
+                                        
                                         {{-- Edit profile --}}
                                         <a href="{{ admin_url('profile') }}" class="flex items-center space-x-2 rtl:space-x-reverse rounded py-2 px-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:bg-gray-100 focus:text-gray-700 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:focus:bg-zinc-800 dark:focus:text-zinc-200">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-5 h-5 opacity-50" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/></svg>

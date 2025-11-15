@@ -230,7 +230,10 @@
                             منصة ذكاء اصطناعي ترافقك من الفكرة إلى التسليم
                         </div>
 
-                        <h1 class="text-4xl font-black leading-snug text-slate-900 sm:text-5xl md:text-6xl dark:text-white" data-hero-segment style="line-height: 80px;padding:10px;border-radus:50%;">
+                        <h1 class="text-4xl font-black leading-snug text-slate-900 sm:text-5xl md:text-6xl dark:text-white"
+                            data-hero-segment
+                            data-hero-critical
+                            style="line-height: 80px;padding:10px;border-radus:50%;">
                             قدّم فكرتك، شكّل فريقك،
                             <span id="hero-dynamic-text" class="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-primary-600 to-amber-500" style="border:2px solid #f59e0b;border-radius: 14px;padding: 6px;font-size: 68px;"></span>
                         </h1>
@@ -1176,15 +1179,21 @@
 
             const heroSegments = gsap.utils.toArray('[data-hero-segment]');
             if (heroSegments.length) {
-                if (prefersReducedMotion) {
-                    heroSegments.forEach((segment) => {
-                        segment.style.opacity = '1';
-                        segment.style.transform = 'none';
-                    });
+                const heroCriticalSegments = heroSegments.filter((segment) => segment.hasAttribute('data-hero-critical'));
+                const heroAnimatedSegments = heroSegments.filter((segment) => !segment.hasAttribute('data-hero-critical'));
+                const revealImmediately = (segment) => {
+                    segment.style.opacity = '1';
+                    segment.style.transform = 'none';
+                };
+
+                heroCriticalSegments.forEach(revealImmediately);
+
+                if (prefersReducedMotion || !heroAnimatedSegments.length) {
+                    heroAnimatedSegments.forEach(revealImmediately);
                 } else {
-                    gsap.set(heroSegments, { opacity: 0, y: 36 });
-                    gsap.timeline({ delay: 0.25, defaults: { duration: 0.9, ease: 'power3.out' } })
-                        .to(heroSegments, { opacity: 1, y: 0, stagger: 0.12 });
+                    gsap.set(heroAnimatedSegments, { opacity: 0, y: 30 });
+                    gsap.timeline({ delay: 0.15, defaults: { duration: 0.9, ease: 'power3.out' } })
+                        .to(heroAnimatedSegments, { opacity: 1, y: 0, stagger: 0.12 });
                 }
             }
 
@@ -1343,9 +1352,8 @@
         };
 
         const scheduleHomepageAnimations = () => {
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(initHomepageAnimations, { timeout: 600 });
-                return;
+            if ('requestAnimationFrame' in window) {
+                return window.requestAnimationFrame(() => initHomepageAnimations());
             }
 
             window.setTimeout(initHomepageAnimations, 0);

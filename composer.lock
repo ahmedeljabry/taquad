@@ -6975,7 +6975,6 @@
                 "Curve25519",
                 "Ed25519",
                 "EdDSA",
-                "Edwards-curve Digital Signature Algorithm",
                 "Elliptic Curve Diffie-Hellman",
                 "Poly1305",
                 "Pure-PHP cryptography",

@@ -4506,7 +4506,6 @@ function on( elem, types, selector, data, fn, one ) {
 
 /*
  * Helper functions for managing events -- not part of the public interface.
- * Props to Dean Edwards' addEvent library for many of the ideas.
  */
 jQuery.event = {
 
@@ -5810,7 +5809,6 @@ function curCSS( elem, name, computed ) {
 	// getPropertyValue is only needed for .css('filter') (#12537)
 	if ( computed ) {
 
-		// A tribute to the "awesome hack by Dean Edwards"
 		// Android Browser returns percentage for some values,
 		// but width seems to be reliably pixels.
 		// This is against the CSSOM draft spec:

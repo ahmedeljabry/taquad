@@ -6,11 +6,17 @@
             'support'         => url('help/contact'),
             'knowledgebase'   => url('blog'),
         ],
+        'assistant' => [
+            'endpoint'     => route('assistant.chat'),
+            'historyLimit' => (int) config('ai.assistant.history_limit', 8),
+        ],
         'copy' => [
             'success'  => __('messages.t_ai_widget_ticket_success'),
             'error'    => __('messages.t_ai_widget_ticket_error'),
             'fallback' => __('messages.t_ai_widget_fallback'),
             'thinking' => __('messages.t_ai_widget_thinking'),
+            'stopResponse'      => __('messages.t_ai_widget_stop_response') ?? 'إيقاف الاستجابة',
+            'cancelledResponse' => __('messages.t_ai_widget_cancelled_response') ?? 'تم إيقاف الاستجابة.',
             'toggle'   => __('messages.t_ai_widget_toggle_label'),
             'title'    => __('messages.t_ai_widget_title'),
             'tagline'  => __('messages.t_ai_widget_tagline'),
@@ -73,7 +79,7 @@
         ],
     ];
 ?>
-<?php if (! $__env->hasRenderedOnce('010b28eb-be00-4d09-9c62-e23d0e51a38a')): $__env->markAsRenderedOnce('010b28eb-be00-4d09-9c62-e23d0e51a38a'); ?>
+<?php if (! $__env->hasRenderedOnce('34c9c955-2f36-43d7-a7ce-851d3c7c01a9')): $__env->markAsRenderedOnce('34c9c955-2f36-43d7-a7ce-851d3c7c01a9'); ?>
     <style>
         #ai-support-widget {
             position: fixed;
@@ -256,13 +262,14 @@
             padding: 0.65rem 0.85rem;
             background: rgba(37, 99, 235, 0.08);
             color: #1f2937;
+            position: relative;
         }
 
         .ai-support-message.is-user {
             margin-inline-start: auto;
             justify-content: flex-end;
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.95), rgba(79, 70, 229, 0.9));
-            color: #fff;
+            background: #e5e7eb;
+            color: #0f172a;
         }
 
         .ai-support-message span {
@@ -321,6 +328,15 @@
             color: #1d4ed8;
         }
 
+        @keyframes ai-support-spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .ai-support-chat-form {
             margin-top: 0.85rem;
             display: flex;
@@ -358,6 +374,64 @@
 
         .ai-support-chat-form button:hover {
             transform: translateY(-1px);
+        }
+
+        .ai-support-chat-form button i.is-spinning {
+            animation: ai-support-spin 0.65s linear infinite;
+        }
+
+        .ai-support-chat-form button.is-loading {
+            background: #94a3b8;
+            cursor: pointer;
+        }
+
+        .ai-support-chat-form button.is-loading:hover {
+            background: #ef4444;
+        }
+
+        @keyframes ai-support-typing-dots {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.4;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .ai-support-chat-form.is-busy {
+            opacity: 0.9;
+        }
+
+        .ai-support-message.is-typing {
+            opacity: 0.7;
+        }
+
+        .ai-support-message.is-typing span::after {
+            content: '';
+            display: inline-flex;
+            width: 0.4rem;
+            height: 0.4rem;
+            border-radius: 50%;
+            background: currentColor;
+            margin-inline-start: 0.35rem;
+            animation: ai-support-typing-dots 0.9s infinite ease-in-out;
+        }
+
+        .ai-support-message.is-streaming span {
+            border-inline-end: 1px solid rgba(15, 23, 42, 0.18);
+            padding-inline-end: 0.1rem;
+            animation: ai-support-caret 1s steps(2) infinite;
+        }
+
+        @keyframes ai-support-caret {
+            0%, 100% {
+                border-color: transparent;
+            }
+            50% {
+                border-color: rgba(15, 23, 42, 0.35);
+            }
         }
 
         .ai-support-ticket {
@@ -582,7 +656,6 @@
     </style>
 <?php endif; ?>
 
-
 <div id="ai-support-widget" class="ai-support-widget" data-ai-widget data-config='<?php echo json_encode($aiWidgetConfig, JSON_UNESCAPED_UNICODE, 512) ?>'>
     <button type="button" class="ai-support-toggle" data-widget-toggle aria-expanded="false" aria-controls="ai-support-panel">
         <span class="ai-support-toggle__icon">
@@ -610,15 +683,15 @@
             <button type="button" data-widget-tab="ticket"><?php echo e($aiWidgetConfig['copy']['ticketTab'], false); ?></button>
         </div>
 
+
         <div class="ai-support-body">
             <section data-widget-pane="assistant" class="is-active">
                 <div class="ai-support-chat" data-widget-chat-log>
+                    <div class="ai-support-suggestions" data-widget-suggestions></div>
                     <div class="ai-support-message is-assistant">
                         <span><?php echo e($aiWidgetConfig['copy']['greeting'], false); ?></span>
                     </div>
                 </div>
-
-                <div class="ai-support-suggestions" data-widget-suggestions></div>
 
                 <form class="ai-support-chat-form" data-widget-chat-form>
                     <input type="text" data-widget-chat-input autocomplete="off" placeholder="<?php echo e($aiWidgetConfig['copy']['inputPlaceholder'], false); ?>">
@@ -674,7 +747,7 @@
     </div>
 </div>
 
-<?php if (! $__env->hasRenderedOnce('daf70447-c7c4-4891-924e-95bc7382b946')): $__env->markAsRenderedOnce('daf70447-c7c4-4891-924e-95bc7382b946'); ?>
+<?php if (! $__env->hasRenderedOnce('8c6e96e7-1eb7-436c-8524-eb493940194d')): $__env->markAsRenderedOnce('8c6e96e7-1eb7-436c-8524-eb493940194d'); ?>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         const widgetRoot = document.querySelector('[data-ai-widget]');
@@ -685,10 +758,15 @@
         const config = JSON.parse(widgetRoot.dataset.config || '{}');
         const routes = config.routes || {};
         const copy = config.copy || {};
+        const assistantConfig = config.assistant || {};
         const knowledgeBase = Array.isArray(config.knowledge) ? config.knowledge : [];
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         const supportEndpoint = "<?php echo e(route('support.widget.store'), false); ?>";
         const LINK_ICON = '<i class="ph ph-arrow-up-right" aria-hidden="true"></i>';
+        const assistantEndpoint = assistantConfig.endpoint || '';
+        const historyLimit = Number(assistantConfig.historyLimit || 8) || 8;
+        const stopLabel = copy.stopResponse || 'إيقاف الاستجابة';
+        const cancelledLabel = copy.cancelledResponse || 'تم إيقاف الاستجابة.';
 
         const toggleBtn = widgetRoot.querySelector('[data-widget-toggle]');
         const closeBtn = widgetRoot.querySelector('[data-widget-close]');
@@ -702,8 +780,16 @@
         const ticketForm = widgetRoot.querySelector('[data-widget-ticket-form]');
         const ticketSubmit = widgetRoot.querySelector('[data-widget-ticket-submit]');
         const ticketFeedback = widgetRoot.querySelector('[data-widget-ticket-feedback]');
+        const chatSubmitButton = chatForm?.querySelector('button[type="submit"]');
+        const chatSubmitIcon = chatSubmitButton?.querySelector('i');
 
         let closeTimeoutId = null;
+        let isChatBusy = false;
+        const conversation = [];
+        let hasShownLinkBadges = false;
+        let activeAbortController = null;
+        let activeResponseController = null;
+        let isSubmitHovering = false;
 
         function setOpen(open) {
             widgetRoot.classList.toggle('is-open', open);
@@ -770,22 +856,27 @@
             });
         }
 
-        function appendMessage(role, text) {
+        function scrollChatToEnd() {
+            chatLog.scrollTo({ top: chatLog.scrollHeight, behavior: 'smooth' });
+        }
+
+        function appendMessage(role, text, options = {}) {
+            const { plainText = false } = options;
             const message = document.createElement('div');
             message.className = `ai-support-message ${role === 'user' ? 'is-user' : 'is-assistant'}`;
             const span = document.createElement('span');
-            if (role === 'assistant') {
+            if (role === 'assistant' && !plainText) {
                 span.innerHTML = text;
             } else {
                 span.textContent = text;
             }
             message.appendChild(span);
             chatLog.appendChild(message);
-            chatLog.scrollTo({ top: chatLog.scrollHeight, behavior: 'smooth' });
+            scrollChatToEnd();
             return message;
         }
 
-        function generateAnswer(query) {
+        function getFallbackAnswer(query) {
             const normalized = query.trim().toLowerCase();
             if (!normalized.length) {
                 return '';
@@ -812,23 +903,255 @@
             return `${copy.fallback} <br><br><a href="${routes.knowledgebase}" target="_blank" rel="noopener">مقالات مركز المعرفة</a> <a href="${routes.support}" target="_blank" rel="noopener">فتح تذكرة دعم</a>`;
         }
 
-        function appendAssistantMessage(answer) {
-            const message = appendMessage('assistant', answer);
-            message.querySelectorAll('a').forEach((anchor) => {
+        function appendAssistantMessage(answer, options = {}) {
+            const { plainText = false, rawHtml = false } = options;
+            let content = (answer ?? '').toString();
+
+            if (!plainText && !rawHtml) {
+                content = convertTextToHtml(content);
+            }
+
+            const message = appendMessage('assistant', content, { plainText });
+
+            if (!plainText) {
+                enhanceAssistantLinks(message);
+            }
+
+            return message;
+        }
+
+        function convertTextToHtml(text = '') {
+            if (!text) {
+                return '';
+            }
+
+            const sanitized = escapeHtml(text).replace(/\r\n|\r/g, '\n');
+            const linkified = sanitized.replace(/(https?:\/\/[^\s<]+)/gi, (url) => {
+                const safeUrl = url.replace(/"/g, '&quot;');
+                return `<a href="${safeUrl}" target="_blank" rel="noopener">${safeUrl}</a>`;
+            });
+
+            return linkified.replace(/\n/g, '<br>');
+        }
+
+        function escapeHtml(value = '') {
+            return value
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function enhanceAssistantLinks(message) {
+            const anchors = Array.from(message.querySelectorAll('a'));
+            if (!anchors.length) {
+                return;
+            }
+
+            anchors.forEach((anchor) => {
+                if (!anchor.getAttribute('target')) {
+                    anchor.setAttribute('target', '_blank');
+                }
+                if (!anchor.getAttribute('rel')) {
+                    anchor.setAttribute('rel', 'noopener');
+                }
+            });
+
+            if (hasShownLinkBadges) {
+                return;
+            }
+
+            anchors.forEach((anchor) => {
                 const href = anchor.getAttribute('href') || '#';
-                const target = anchor.getAttribute('target') || '_blank';
-                const rel = anchor.getAttribute('rel') || 'noopener';
                 const text = anchor.textContent.trim() || href;
 
                 const badge = document.createElement('a');
                 badge.href = href;
-                badge.target = target;
-                badge.rel = rel;
+                badge.target = anchor.getAttribute('target') || '_blank';
+                badge.rel = anchor.getAttribute('rel') || 'noopener';
                 badge.className = 'ai-support-link-badge';
                 badge.innerHTML = `<span>${text}</span>${LINK_ICON}`;
 
                 anchor.replaceWith(badge);
             });
+
+            hasShownLinkBadges = true;
+        }
+
+        function appendThinkingMessage() {
+            const message = appendAssistantMessage(copy.thinking || '...', { plainText: true });
+            message.classList.add('is-typing');
+            return message;
+        }
+
+        function renderAssistantReply(answer) {
+            const normalized = (answer ?? '').toString().replace(/\r\n|\r/g, '\n');
+            const message = appendMessage('assistant', '', { plainText: true });
+            const span = message.querySelector('span');
+
+            if (!span) {
+                return message;
+            }
+
+            message.classList.add('is-streaming');
+            span.textContent = '';
+
+            let isFinalized = false;
+            const controller = {
+                stopped: false,
+                stop() {
+                    this.stopped = true;
+                    finalize();
+                }
+            };
+
+            activeResponseController = controller;
+
+            let index = 0;
+
+            function finalize() {
+                if (isFinalized) {
+                    return;
+                }
+                isFinalized = true;
+                const text = span.textContent || '';
+                const finalText = text.length ? text : normalized;
+                span.innerHTML = convertTextToHtml(finalText);
+                enhanceAssistantLinks(message);
+                message.classList.remove('is-streaming');
+                scrollChatToEnd();
+                if (activeResponseController === controller) {
+                    activeResponseController = null;
+                }
+            }
+
+            function tick() {
+                if (controller.stopped || index >= normalized.length || isFinalized) {
+                    finalize();
+                    return;
+                }
+
+                span.textContent += normalized.charAt(index);
+                index += 1;
+                scrollChatToEnd();
+                setTimeout(tick, normalized.charAt(index - 1) === '\n' ? 35 : 14);
+            }
+
+            tick();
+            return message;
+        }
+
+        function trimConversation() {
+            const max = Math.max(historyLimit * 2, 6);
+            if (conversation.length > max) {
+                conversation.splice(0, conversation.length - max);
+            }
+        }
+
+        function setChatBusy(state) {
+            isChatBusy = state;
+            if (chatForm) {
+                chatForm.classList.toggle('is-busy', state);
+            }
+            if (chatSubmitButton) {
+                chatSubmitButton.classList.toggle('is-loading', state);
+                chatSubmitButton.dataset.mode = state ? 'stop' : 'send';
+                const sendLabel = copy.send || 'إرسال';
+                chatSubmitButton.setAttribute('aria-label', state ? stopLabel : sendLabel);
+            }
+            refreshSubmitIcon();
+        }
+
+        function refreshSubmitIcon() {
+            if (!chatSubmitIcon) {
+                return;
+            }
+
+            if (!isChatBusy) {
+                chatSubmitIcon.className = 'ph ph-paper-plane-tilt';
+                chatSubmitIcon.classList.remove('is-spinning');
+                return;
+            }
+
+            if (isSubmitHovering) {
+                chatSubmitIcon.className = 'ph ph-stop';
+                chatSubmitIcon.classList.remove('is-spinning');
+            } else {
+                chatSubmitIcon.className = 'ph ph-spinner-gap';
+                chatSubmitIcon.classList.add('is-spinning');
+            }
+        }
+
+        function stopAssistantResponse() {
+            let stopped = false;
+            if (activeAbortController) {
+                activeAbortController.abort();
+                activeAbortController = null;
+                stopped = true;
+            }
+            if (activeResponseController) {
+                activeResponseController.stop();
+                activeResponseController = null;
+                stopped = true;
+            }
+            if (stopped) {
+                isSubmitHovering = false;
+                refreshSubmitIcon();
+            }
+        }
+
+        async function requestAssistantReply(message, history = []) {
+            if (!assistantEndpoint) {
+                throw new Error(copy.error || 'خدمة المساعد غير متاحة حالياً.');
+            }
+
+            const payload = { message: message.trim() };
+            if (Array.isArray(history) && history.length) {
+                payload.history = history;
+            }
+
+            const controller = new AbortController();
+            activeAbortController = controller;
+            let response;
+            try {
+                response = await fetch(assistantEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
+                });
+            } catch (error) {
+                if (error?.name === 'AbortError') {
+                    const abortError = new Error(cancelledLabel);
+                    abortError.isUserCancelled = true;
+                    throw abortError;
+                }
+                throw new Error(copy.error || 'تعذر الاتصال بخدمة المساعد، حاول مجدداً.');
+            } finally {
+                if (activeAbortController === controller) {
+                    activeAbortController = null;
+                }
+            }
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                const message = data?.message || copy.error || 'حدث خطأ غير متوقع.';
+                throw new Error(message);
+            }
+
+            const reply = (data?.reply || '').toString().trim();
+            if (!reply.length) {
+                throw new Error(copy.fallback || 'لا أستطيع توليد إجابة حالياً.');
+            }
+
+            return reply;
         }
 
         function handleOpen() {
@@ -858,6 +1181,24 @@
             }
         });
 
+        if (chatSubmitButton) {
+            chatSubmitButton.addEventListener('mouseenter', () => {
+                isSubmitHovering = true;
+                refreshSubmitIcon();
+            });
+            chatSubmitButton.addEventListener('mouseleave', () => {
+                isSubmitHovering = false;
+                refreshSubmitIcon();
+            });
+            chatSubmitButton.addEventListener('click', (event) => {
+                if (isChatBusy) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    stopAssistantResponse();
+                }
+            });
+        }
+
         tabs.forEach((tab) => {
             tab.addEventListener('click', () => {
                 if (tab.classList.contains('is-active')) {
@@ -876,27 +1217,44 @@
             });
         });
 
-        function submitQuery(rawQuery, options = {}) {
+        async function submitQuery(rawQuery) {
             const trimmed = (rawQuery || '').trim();
-            if (!trimmed.length) {
+            if (!trimmed.length || isChatBusy) {
                 return;
             }
 
+            stopAssistantResponse();
             appendMessage('user', trimmed);
             chatInput.value = '';
             renderSuggestions(getSuggestions());
 
-            const thinking = appendMessage('assistant', copy.thinking || '...');
-            thinking.classList.add('is-typing');
+            const thinking = appendThinkingMessage();
 
-            setTimeout(() => {
+            const historyPayload = conversation.slice(-historyLimit);
+            conversation.push({ role: 'user', content: trimmed });
+            setChatBusy(true);
+
+            try {
+                const reply = await requestAssistantReply(trimmed, historyPayload);
                 thinking.remove();
-                const answer = generateAnswer(trimmed);
-                if (answer) {
-                    appendAssistantMessage(answer);
+                renderAssistantReply(reply);
+                conversation.push({ role: 'assistant', content: reply });
+                trimConversation();
+            } catch (error) {
+                thinking.remove();
+                conversation.pop();
+                const aborted = Boolean(error?.isUserCancelled);
+                appendAssistantMessage(error.message || copy.error || 'حدث خطأ غير متوقع.', { plainText: true });
+                if (!aborted) {
+                    const fallback = getFallbackAnswer(trimmed);
+                    if (fallback) {
+                        appendAssistantMessage(fallback, { rawHtml: true });
+                    }
                 }
-                renderSuggestions(getSuggestions());
-            }, options.instant ? 260 : 420);
+            } finally {
+                setChatBusy(false);
+                renderSuggestions(getSuggestions(chatInput.value));
+            }
         }
 
         suggestionsContainer.addEventListener('click', (event) => {
@@ -907,7 +1265,7 @@
             event.preventDefault();
             event.stopPropagation();
             setOpen(true);
-            submitQuery(button.dataset.prefill || button.textContent, { instant: true });
+            submitQuery(button.dataset.prefill || button.textContent);
             chatInput.focus({ preventScroll: true });
         });
 
@@ -972,5 +1330,4 @@
     });
 </script>
 <?php endif; ?>
-
 <?php /**PATH C:\xampp\htdocs\taquad\resources\views/components/layouts/partials/ai-widget.blade.php ENDPATH**/ ?>

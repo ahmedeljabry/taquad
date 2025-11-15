@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Tracker\HealthController;
 use App\Http\Controllers\Api\Tracker\ProfileController;
 use App\Http\Controllers\Api\Tracker\SegmentController;
 use App\Http\Controllers\Api\Tracker\ScreenshotController;
+use App\Http\Controllers\Api\TaquadAssistantController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,8 @@ use App\Http\Controllers\Api\Tracker\ScreenshotController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('assistant/chat', [TaquadAssistantController::class, 'chat'])->name('assistant.chat');
 
 Route::prefix('tracker')->name('tracker.')->group(function () {
     Route::match(['get', 'head'], 'healthz', HealthController::class)->name('healthz');
