@@ -73,7 +73,7 @@
         ],
     ];
 ?>
-<?php if (! $__env->hasRenderedOnce('221554f8-3dce-4441-a1e6-1666714e513f')): $__env->markAsRenderedOnce('221554f8-3dce-4441-a1e6-1666714e513f'); ?>
+<?php if (! $__env->hasRenderedOnce('010b28eb-be00-4d09-9c62-e23d0e51a38a')): $__env->markAsRenderedOnce('010b28eb-be00-4d09-9c62-e23d0e51a38a'); ?>
     <style>
         #ai-support-widget {
             position: fixed;
@@ -674,7 +674,7 @@
     </div>
 </div>
 
-<?php if (! $__env->hasRenderedOnce('579cf2cc-b1c3-4541-b822-2ab1720623db')): $__env->markAsRenderedOnce('579cf2cc-b1c3-4541-b822-2ab1720623db'); ?>
+<?php if (! $__env->hasRenderedOnce('daf70447-c7c4-4891-924e-95bc7382b946')): $__env->markAsRenderedOnce('daf70447-c7c4-4891-924e-95bc7382b946'); ?>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         const widgetRoot = document.querySelector('[data-ai-widget]');

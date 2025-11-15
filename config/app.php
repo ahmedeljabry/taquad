@@ -54,9 +54,9 @@ return [
     |
     */
 
-    'url'       => env('APP_URL', 'http://localhost/taquad/public'),
+    'url'       => env('APP_URL', 'https://taquad.com/public'),
 
-    'asset_url' => env('ASSET_URL', 'http://localhost/taquad/public'),
+    'asset_url' => env('ASSET_URL', 'https://taquad.com/public'),
 
     'force_https_urls' => env('FORCE_HTTPS_URLS'),
 
@@ -223,6 +223,6 @@ return [
     /**
      * Mix base url
      */
-    'mix_url' => env('ASSET_URL', 'http://localhost/taquad/public'),
+    'mix_url' => env('ASSET_URL', 'https://taquad.com/public'),
 
 ];
