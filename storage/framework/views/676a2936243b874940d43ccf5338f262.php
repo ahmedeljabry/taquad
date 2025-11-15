@@ -65,7 +65,7 @@
 
 
         
-        <nav class="relative container max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="relative container mt-2 max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
             <div
                 class="flex items-center justify-between gap-4 rounded-full border border-white/60 bg-white/85 px-4 sm:px-6 py-2 shadow-[0_18px_45px_-22px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-white/10 dark:bg-[#0e1629]/80">
 

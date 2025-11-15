@@ -13,7 +13,7 @@
 
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <meta name="csrf-token" content="<?php echo e(csrf_token(), false); ?>">
 
@@ -87,6 +87,14 @@
         
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+        <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+        <link rel="preconnect" href="https://js.pusher.com">
+        <link rel="dns-prefetch" href="https://js.pusher.com">
+        <link rel="preconnect" href="https://sockjs.pusher.com">
+        <link rel="dns-prefetch" href="https://sockjs.pusher.com">
 
         
         <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::styles(); ?>

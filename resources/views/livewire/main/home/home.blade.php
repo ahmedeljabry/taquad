@@ -88,6 +88,66 @@
                 ],
             ];
 
+            $desktopDownloads = [
+                [
+                    'icon' => 'ph-microsoft-windows-logo',
+                    'label' => 'ويندوز 11/10',
+                    'sub' => 'ملف EXE موّقع 64-بت',
+                    'href' => url('/apps/desktop/windows'),
+                ],
+                [
+                    'icon' => 'ph-apple-logo',
+                    'label' => 'macOS Sonoma',
+                    'sub' => 'حزمة DMG يونيفرسال',
+                    'href' => url('/apps/desktop/macos'),
+                ],
+            ];
+
+            $desktopAppHighlights = [
+                'تعقب الساعات بلا اتصال مع مزامنة فورية عند الاتصال.',
+                'اختصارات لوحة مفاتيح لتبديل المشاريع وإطلاق المؤقت بسرعة.',
+                'سجل نشاط تفصيلي يربط كل دقيقة بمرحلة المشروع في لوحة التحكم.',
+            ];
+
+            $scheduledPaymentsHighlights = [
+                [
+                    'icon' => 'ph-calendar-check',
+                    'title' => 'مراحل مرتبطة بالتسليم',
+                    'description' => 'اربط كل دفعة بمعيار قبول واضح يفعّلها تلقائياً عندما تعتمد الفريق العمل.',
+                ],
+                [
+                    'icon' => 'ph-lock-key',
+                    'title' => 'تحكم كامل في الإطلاق',
+                    'description' => 'أوقف أو عدّل أي دفعة قبل خروجها مع سجل نشاط يُظهر من عدّل ومتى.',
+                ],
+                [
+                    'icon' => 'ph-chart-line-up',
+                    'title' => 'توقع التدفق النقدي',
+                    'description' => 'لوحة توقعات تعرض موعد كل دفعة والقيمة المتوقعة حتى ٦ أسابيع قادمة.',
+                ],
+            ];
+
+            $scheduledPaymentPhases = [
+                [
+                    'title' => 'مرحلة الاكتشاف وكتابة المتطلبات',
+                    'amount' => '35%',
+                    'status' => 'مكتمل',
+                    'eta' => 'تم إطلاقها عبر الأتمتة',
+                ],
+                [
+                    'title' => 'نماذج أولية وتجربة المستخدم',
+                    'amount' => '25%',
+                    'status' => 'قيد الانتظار',
+                    'eta' => 'تنطلق تلقائياً بعد الموافقة على النماذج',
+                ],
+                [
+                    'title' => 'الإطلاق العام والدعم',
+                    'amount' => '40%',
+                    'status' => 'مجدولة',
+                    'eta' => 'تاريخ متاح للتعديل مع إشعار مسبق',
+                ],
+            ];
+
             $futureLaunches = [
                 [
                     'icon' => 'ph-device-mobile',
@@ -96,21 +156,14 @@
                     'subtitle' => 'راقب فريقك أينما كنت',
                     'description' => 'إشعارات فورية، متابعة المهام بالذكاء الاصطناعي، وتوقيع العقود عبر الهاتف لعالم عمل أكثر مرونة.',
                 ],
-                [
-                    'icon' => 'ph-timer',
-                    'badge' => 'قيد التطوير',
-                    'title' => 'تعقب الساعات الذكي',
-                    'subtitle' => 'لوحة شفافة لساعات العمل',
-                    'description' => 'سجل تلقائي لساعات المستقلين، تنبيهات تجاوز الحدود، وتصدير الفواتير بنقرة واحدة.',
-                ],
-                [
-                    'icon' => 'ph-currency-circle-dollar',
-                    'badge' => 'قريباً',
-                    'title' => 'مدفوعات مجدولة',
-                    'subtitle' => 'دفع مرن لمراحل عملك',
-                    'description' => 'قم بجدولة المدفوعات حسب المراحل، أطلقها تلقائياً عند الموافقة، وراقب التدفق النقدي لحظياً.',
-                ],
             ];
+
+            $futureLaunchGridClasses = 'md:grid-cols-2 lg:grid-cols-3';
+            if (count($futureLaunches) === 1) {
+                $futureLaunchGridClasses = 'grid-cols-1 max-w-xl mx-auto';
+            } elseif (count($futureLaunches) === 2) {
+                $futureLaunchGridClasses = 'md:grid-cols-2';
+            }
 
             $testimonials = [
                 [
@@ -319,6 +372,261 @@
             </div>
         </section>
 
+        <section id="desktop-app" class="relative overflow-hidden py-20">
+            <div aria-hidden
+                class="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-slate-50 dark:from-[#071022] dark:via-[#0c162d] dark:to-[#05060b]">
+            </div>
+            <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+                <div class="grid items-center gap-12 lg:grid-cols-2">
+                    <div class="space-y-6 text-right" data-animate>
+                        <div class="flex flex-wrap items-center justify-end gap-3 rtl:flex-row-reverse rtl:justify-start">
+                            <span
+                                class="inline-flex items-center gap-2 rounded-full bg-amber-100/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-amber-700 shadow-sm rtl:flex-row-reverse dark:bg-amber-400/10 dark:text-amber-200">
+                                Beta
+                            </span>
+                            <span class="text-xs font-medium text-gray-500 dark:text-gray-300">
+                                تطبيق سطح المكتب متاح للتجربة المبكرة
+                            </span>
+                        </div>
+                        <h2 class="text-3xl font-bold leading-tight text-gray-900 dark:text-white sm:text-4xl">
+                            حمّل تطبيق سطح المكتب لتعقب الوقت بلا انقطاع
+                        </h2>
+                        <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                            أطلقنا النسخة التجريبية من التطبيق المكتبي ليعمل جنباً إلى جنب مع لوحة القيادة. راقب الوقت،
+                            ثبّت المهام، وامنح فريقك تجربة عمل أسرع حتى أثناء العمل دون اتصال.
+                        </p>
+                        <ul class="space-y-3 text-sm leading-relaxed text-gray-600 text-right dark:text-gray-300">
+                            @foreach ($desktopAppHighlights as $highlight)
+                                <li class="flex items-start gap-3 justify-end rtl:flex-row-reverse rtl:justify-start">
+                                    <span class="text-primary-500 dark:text-primary-300">
+                                        <i class="ph ph-check-circle text-lg"></i>
+                                    </span>
+                                    <span>{{ $highlight }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <div class="flex flex-wrap justify-end gap-3 pt-4 rtl:flex-row-reverse rtl:justify-start">
+                            @foreach ($desktopDownloads as $download)
+                                <a href="{{ $download['href'] }}"
+                                    class="group inline-flex w-full max-w-sm items-center justify-between gap-4 rounded-2xl border border-white/60 bg-white/80 px-4 py-3 text-right shadow-lg backdrop-blur transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white rtl:flex-row-reverse dark:border-white/10 dark:bg-white/5 dark:hover:border-primary-500/30">
+                                    <div class="flex items-center gap-3 rtl:flex-row-reverse">
+                                        <div
+                                            class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-600/10 text-primary-600 dark:bg-primary-500/20 dark:text-primary-200">
+                                            <i class="ph {{ $download['icon'] }} text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                                                {{ $download['label'] }}
+                                            </p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-300">{{ $download['sub'] }}</p>
+                                        </div>
+                                    </div>
+                                    <i
+                                        class="ph ph-arrow-line-down text-xl text-primary-600 transition group-hover:translate-y-0.5 dark:text-primary-200"></i>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="relative" data-animate data-animate-delay="0.1">
+                        <div
+                            class="relative overflow-hidden rounded-[32px] border border-white/60 bg-white/90 p-8 text-right shadow-2xl backdrop-blur dark:border-white/10 dark:bg-white/5">
+                            <div class="flex items-center justify-between text-xs text-gray-500 rtl:flex-row-reverse dark:text-gray-300">
+                                <span
+                                    class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-amber-700 rtl:flex-row-reverse dark:bg-amber-400/10 dark:text-amber-100">
+                                    Beta
+                                </span>
+                                <span class="font-semibold">v0.9 Desktop</span>
+                            </div>
+                            <div
+                                class="mt-6 rounded-3xl border border-slate-100 bg-white/90 px-5 py-4 text-sm shadow-sm dark:border-white/5 dark:bg-white/5">
+                                <div class="flex items-center justify-between text-xs text-gray-500 rtl:flex-row-reverse dark:text-gray-300">
+                                    <span>المؤقت الحالي</span>
+                                    <span>02:13:41</span>
+                                </div>
+                                <div class="mt-3 flex items-center justify-between rtl:flex-row-reverse">
+                                    <div>
+                                        <p class="font-semibold text-gray-900 dark:text-white">تصميم لوحة التقارير</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-300">مشروع SaaS | UX</p>
+                                    </div>
+                                    <span
+                                        class="inline-flex items-center gap-1 rounded-full bg-primary-50 px-2.5 py-1 text-[11px] font-semibold text-primary-700 rtl:flex-row-reverse dark:bg-primary-500/15 dark:text-primary-200">
+                                        تسجيل مباشر
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mt-5 rounded-3xl bg-slate-900/95 p-5 text-white shadow-inner">
+                                <div class="flex items-center justify-between text-xs text-white/70 rtl:flex-row-reverse">
+                                    <span>سجل النشاط</span>
+                                    <span>آخر ٣ أحداث</span>
+                                </div>
+                                <div class="mt-4 space-y-4 text-sm">
+                                    <div class="flex items-start gap-3 rtl:flex-row-reverse">
+                                        <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10">
+                                            <i class="ph ph-target text-lg"></i>
+                                        </span>
+                                        <div>
+                                            <p class="font-semibold">بدء مؤقت مرحلة التصميم</p>
+                                            <p class="text-xs text-white/70">ياسر - منذ دقيقتين</p>
+                                        </div>
+                                        <span class="ltr:ml-auto rtl:mr-auto text-xs font-semibold text-emerald-300">+00:32</span>
+                                    </div>
+                                    <div class="flex items-start gap-3 rtl:flex-row-reverse">
+                                        <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10">
+                                            <i class="ph ph-plug text-lg"></i>
+                                        </span>
+                                        <div>
+                                            <p class="font-semibold">مزامنة مع لوحة التحكم</p>
+                                            <p class="text-xs text-white/70">منذ ٥ دقائق</p>
+                                        </div>
+                                        <span class="ltr:ml-auto rtl:mr-auto text-xs font-semibold text-sky-300">99.2%</span>
+                                    </div>
+                                    <div class="flex items-start gap-3 rtl:flex-row-reverse">
+                                        <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10">
+                                            <i class="ph ph-upload-simple text-lg"></i>
+                                        </span>
+                                        <div>
+                                            <p class="font-semibold">رفع لقطات العمل</p>
+                                            <p class="text-xs text-white/70">نور - منذ ٨ دقائق</p>
+                                        </div>
+                                        <span class="ltr:ml-auto rtl:mr-auto text-xs font-semibold text-amber-200">3 ملفات</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-6 grid gap-4 sm:grid-cols-3">
+                                <div
+                                    class="rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-center shadow-sm dark:border-white/5 dark:bg-white/10">
+                                    <p class="text-xs text-gray-500 dark:text-gray-300">مزامنة ناجحة</p>
+                                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">99%</p>
+                                </div>
+                                <div
+                                    class="rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-center shadow-sm dark:border-white/5 dark:bg-white/10">
+                                    <p class="text-xs text-gray-500 dark:text-gray-300">استخدام دون اتصال</p>
+                                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">18 ساعة</p>
+                                </div>
+                                <div
+                                    class="rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-center shadow-sm dark:border-white/5 dark:bg-white/10">
+                                    <p class="text-xs text-gray-500 dark:text-gray-300">أجهزة مفعّلة</p>
+                                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">12</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="pointer-events-none absolute -top-10 hidden h-32 w-32 rounded-full bg-primary-500/20 blur-3xl ltr:-left-10 rtl:-right-10 lg:block">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scheduled-payments" class="bg-slate-50 py-20 dark:bg-[#070d19]">
+            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+                <div class="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
+                    <div class="order-2 space-y-6 text-right lg:order-1" data-animate>
+                        <div class="flex flex-wrap items-center justify-end gap-3 rtl:flex-row-reverse rtl:justify-start">
+                            <span
+                                class="inline-flex items-center gap-2 rounded-full bg-amber-100/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-amber-700 shadow-sm rtl:flex-row-reverse dark:bg-amber-400/10 dark:text-amber-200">
+                                Beta
+                            </span>
+                            <span class="text-xs font-medium text-gray-500 dark:text-gray-300">
+                                المدفوعات المجدولة أصبحت جاهزة للتجربة
+                            </span>
+                        </div>
+                        <h2 class="text-3xl font-bold leading-tight text-gray-900 dark:text-white sm:text-4xl">
+                            خطط دفعات مرنة تربط كل ريال بتحقيق إنجاز فعلي
+                        </h2>
+                        <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                            حوّل المدفوعات إلى تدفقات آلية مرتبطة بسير العمل. حدّد المراحل، نسب الدفع، وأذونات الإطلاق،
+                            وسيضمن النظام تشغيل الدفعات عند اكتمال الشروط مع سجل موافقة واضح.
+                        </p>
+                        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            @foreach ($scheduledPaymentsHighlights as $item)
+                                <div
+                                    class="rounded-3xl border border-white/60 bg-white/80 p-5 shadow-lg backdrop-blur dark:border-white/10 dark:bg-white/5">
+                                    <div
+                                        class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-600/10 text-primary-600 dark:bg-primary-500/15 dark:text-primary-200">
+                                        <i class="ph {{ $item['icon'] }} text-xl"></i>
+                                    </div>
+                                    <h3 class="text-base font-semibold text-gray-900 dark:text-white">{{ $item['title'] }}
+                                    </h3>
+                                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                                        {{ $item['description'] }}
+                                    </p>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="flex flex-wrap justify-end gap-4 rtl:flex-row-reverse rtl:justify-start">
+                            <div
+                                class="min-w-[240px] rounded-3xl border border-white/60 bg-white/80 px-5 py-4 text-right shadow-lg backdrop-blur dark:border-white/10 dark:bg-white/5">
+                                <p class="text-xs text-gray-500 dark:text-gray-300">الدفعات المفعّلة تلقائياً</p>
+                                <p class="text-2xl font-semibold text-gray-900 dark:text-white">92%</p>
+                                <p class="text-xs font-semibold text-emerald-600 dark:text-emerald-300">+8% خلال أسبوع</p>
+                            </div>
+                            <div
+                                class="min-w-[240px] rounded-3xl border border-white/60 bg-white/80 px-5 py-4 text-right shadow-lg backdrop-blur dark:border-white/10 dark:bg-white/5">
+                                <p class="text-xs text-gray-500 dark:text-gray-300">متوسط زمن الموافقة</p>
+                                <p class="text-2xl font-semibold text-gray-900 dark:text-white">6 دقائق</p>
+                                <p class="text-xs font-semibold text-primary-600 dark:text-primary-200">مراجعة ثنائية</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-1 lg:order-2" data-animate data-animate-delay="0.1">
+                        <div
+                            class="relative overflow-hidden rounded-[32px] border border-slate-200 bg-white p-8 text-right shadow-2xl dark:border-white/10 dark:bg-white/5">
+                            <div class="flex items-center justify-between rtl:flex-row-reverse">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">مخطط المدفوعات الذكي</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-300">مرتبط بتقدم المشروع تلقائياً</p>
+                                </div>
+                                <span
+                                    class="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-primary-700 rtl:flex-row-reverse dark:bg-primary-500/15 dark:text-primary-200">
+                                    Beta
+                                </span>
+                            </div>
+                            <div class="mt-6 space-y-4">
+                                @foreach ($scheduledPaymentPhases as $phase)
+                                    <div
+                                        class="rounded-3xl border border-slate-100 bg-white/80 px-4 py-4 shadow-sm dark:border-white/10 dark:bg-white/5">
+                                        <div class="flex items-center justify-between text-sm font-semibold text-gray-900 rtl:flex-row-reverse dark:text-white">
+                                            <span class="max-w-[70%]">{{ $phase['title'] }}</span>
+                                            <span>{{ $phase['amount'] }}</span>
+                                        </div>
+                                        <div class="mt-2 text-xs text-gray-500 dark:text-gray-300">{{ $phase['status'] }}</div>
+                                        <div class="mt-1 text-xs font-semibold text-primary-600 dark:text-primary-300">
+                                            {{ $phase['eta'] }}
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <div class="mt-6 rounded-3xl bg-slate-900/95 p-5 text-white shadow-inner">
+                                <div class="flex flex-wrap items-center gap-3 text-xs text-white/70 rtl:flex-row-reverse">
+                                    <span>الحماية الذكية</span>
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 rtl:flex-row-reverse">
+                                        <i class="ph ph-shield-check"></i>
+                                        تفعيل مزدوج
+                                    </span>
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 rtl:flex-row-reverse">
+                                        <i class="ph ph-bell"></i>
+                                        إشعار قبل ٢٤ ساعة
+                                    </span>
+                                </div>
+                                <div class="mt-4 flex flex-wrap items-center gap-4 text-sm rtl:flex-row-reverse">
+                                    <div>
+                                        <p class="text-xl font-semibold">إطلاق مرحلة التصميم</p>
+                                        <p class="text-xs text-white/70">بمجرد اعتماد مدير المشروع</p>
+                                    </div>
+                                    <button type="button"
+                                        class="ltr:ml-auto rtl:mr-auto inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 text-xs font-semibold text-white">
+                                        <i class="ph ph-toggle-right"></i>
+                                        نشط
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="relative overflow-hidden py-20">
             <div aria-hidden class="absolute inset-0 bg-gradient-to-br from-slate-100 via-white to-primary-50 dark:from-[#0f172a] dark:via-[#0b1220] dark:to-[#111827]"></div>
             <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -332,7 +640,8 @@
                             نُطلق قريباً أدوات تجعل العمل الحر أكثر مرونة
                         </h2>
                         <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-                            تابع التحديثات القادمة: تطبيق جوال مُصمم لإدارة المشروع أثناء التنقل، وتعقب ساعات متقدم بإشعارات ذكية، ومنظومة دفع مرنة مهيأة للفرق المتعددة. شاركنا رأيك واختر الميزات التي تهمك ليتم إطلاقها أولاً.
+                            تابع التحديثات القادمة: تطبيق جوال مُصمم لإدارة المشروع أثناء التنقل مع إشعارات ذكية ومتابعة
+                            كاملة لسير العمل. شاركنا رأيك واختر التجارب التي تحتاجها لنرفع ترتيبها في خارطة الطريق.
                         </p>
                     </div>
                     <div class="flex items-center gap-3 rounded-2xl border border-white/60 bg-white/80 px-5 py-4 shadow-lg backdrop-blur dark:border-white/10 dark:bg-white/5" data-animate data-animate-delay="0.1">
@@ -341,15 +650,15 @@
                         </div>
                         <div class="text-sm text-gray-600 dark:text-gray-300">
                             <p class="font-semibold">اشترك في نشرة التحديثات</p>
-                            <p>أول من يعلم بإطلاق التطبيق وتعقب الساعات.</p>
+                            <p>أول من يعلم بإطلاق التطبيق المحمول وأي تحديثات جديدة.</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div class="grid gap-6 {{ $futureLaunchGridClasses }}">
                     @foreach ($futureLaunches as $release)
                         <div class="group relative overflow-hidden rounded-3xl border border-white/70 bg-white/80 p-6 shadow-lg backdrop-blur transition hover:-translate-y-1 hover:shadow-2xl dark:border-white/10 dark:bg-white/5" data-animate data-animate-delay="{{ $loop->index * 0.08 }}">
-                            <div class="absolute -right-10 top-0 h-32 w-32 rounded-full bg-primary-500/10 blur-3xl transition group-hover:bg-primary-500/20"></div>
+                            <div class="absolute top-0 h-32 w-32 rounded-full bg-primary-500/10 blur-3xl transition group-hover:bg-primary-500/20 ltr:-right-10 rtl:-left-10"></div>
                             <div class="flex items-center justify-between">
                                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-600/90 text-white shadow-md shadow-primary-500/30">
                                     <i class="ph {{ $release['icon'] }} text-2xl"></i>
